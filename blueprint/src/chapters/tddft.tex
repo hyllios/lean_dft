@@ -298,6 +298,62 @@ to continuing a solution is the boundary $\det(K+\mathbf 1\mathbf 1^T)=0$ of $\O
   Theorem~\ref{thm:nlse_global}; the density matches on the whole interval as in Theorem~\ref{thm:td_existence}.
 \end{proof}
 
+\section{Complex hopping}
+
+A Hermitian hopping $A+iB$ ($A$ real symmetric, $B$ real antisymmetric, e.g.\ Peierls phases of a magnetic flux)
+gives, for $\psi=x+iy$, $\dot x=A_vy+Bx$, $\dot y=-A_vx+By$. It is the real symmetric hopping
+$\tilde H=\begin{pmatrix}A&-B\\B&A\end{pmatrix}$ on the doubled configuration space $C\times\{0,1\}$, through the
+embedding $\psi\mapsto((x,y),(y,-x))$, which doubles densities.
+
+\begin{lemma}[Doubling]
+  \label{lem:doubling}
+  \lean{LatticeDFT.dblH, LatticeDFT.dblN, LatticeDFT.dbl, LatticeDFT.blk, LatticeDFT.proj, LatticeDFT.anti,
+    LatticeDFT.schrC, LatticeDFT.dblH_isSymm, LatticeDFT.hamN_dbl, LatticeDFT.dblH_mulVec_false,
+    LatticeDFT.dblH_mulVec_true, LatticeDFT.blk_dblH_mulVec, LatticeDFT.dbl_schrC, LatticeDFT.proj_schr,
+    LatticeDFT.proj_dbl, LatticeDFT.anti_dbl, LatticeDFT.dbl_proj_of_anti, LatticeDFT.tdens_dbl,
+    LatticeDFT.anti_schr, LatticeDFT.projL, LatticeDFT.antiL, LatticeDFT.dblL, LatticeDFT.proj_hasDerivAt,
+    LatticeDFT.anti_hasDerivAt, LatticeDFT.dbl_hasDerivAt, LatticeDFT.dot_sym, LatticeDFT.dot_antisym,
+    LatticeDFT.anti_norm_hasDerivAt, LatticeDFT.eq_zero_of_Qf_one}
+  \leanok
+  \uses{thm:force_balance}
+  The embedding maps complex-hopping trajectories to doubled ones, and the linear projection maps doubled
+  trajectories back. The component of a doubled trajectory outside the image of the embedding evolves under the
+  conjugate Hamiltonian, so its norm is conserved: a doubled trajectory starting in the image stays there.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Block computations; $\frac{d}{dt}\|q\|^2=2(q_1^TA_vq_2-q_2^TA_vq_1)-2(q_1^TBq_1+q_2^TBq_2)=0$.
+\end{proof}
+
+\begin{theorem}[Lattice TDDFT with complex hopping]
+  \label{thm:td_complex}
+  \lean{LatticeDFT.omegaC, LatticeDFT.tcurC, LatticeDFT.vC, LatticeDFT.hnd2, LatticeDFT.hsum2,
+    LatticeDFT.tdens_eq_of_dbl, LatticeDFT.td_existence_complex, LatticeDFT.td_uniqueness_complex,
+    LatticeDFT.complex_of_dbl, LatticeDFT.td_global_complex}
+  \leanok
+  \uses{lem:doubling, thm:td_existence, thm:td_uniqueness, thm:td_global}
+  Theorems~\ref{thm:td_existence}, \ref{thm:td_uniqueness} and~\ref{thm:td_global} hold for Hermitian hopping, with
+  $\Omega$ defined through the doubled system.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Apply them to the doubled system with target $2n(t)$ and initial state $\mathrm{dbl}\,\psi_0$, and project back.
+\end{proof}
+
+\begin{theorem}[Zero flux]
+  \label{thm:omegaC_zero}
+  \lean{LatticeDFT.dblH_mul_zero, LatticeDFT.dblH_sub_zero, LatticeDFT.Nmat_dbl, LatticeDFT.Qf_dbl_zero,
+    LatticeDFT.kfb_dbl_zero, LatticeDFT.kJ_ker_iff, LatticeDFT.omegaC_zero}
+  \leanok
+  \uses{thm:td_complex}
+  For $B=0$ the set $\Omega$ of the doubled description is the original one.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $K$ of the doubled state is $2K$; with zero column sums, $(cK+\mathbf 1\mathbf 1^T)w=0$ iff $Kw=0$ and
+  $\sum_iw_i=0$, for any $c\ne0$.
+\end{proof}
+
 \section{Time-dependent Kohn--Sham}
 
 \begin{lemma}[The density of a trajectory is $C^2$]
