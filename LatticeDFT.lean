@@ -1,6 +1,7 @@
 import LatticeDFT.Basic.GroundState
 import LatticeDFT.Basic.SingleParticle
 import LatticeDFT.Basic.Spectral
+import LatticeDFT.Convex.MoreauYosida
 import LatticeDFT.Fermions.CauchyBinet
 import LatticeDFT.Fermions.Configurations
 import LatticeDFT.Fermions.FirstQuantization
@@ -19,7 +20,9 @@ import LatticeDFT.KohnSham.Aufbau
 import LatticeDFT.KohnSham.Duality
 import LatticeDFT.KohnSham.Existence
 import LatticeDFT.KohnSham.Hypersimplex
+import LatticeDFT.KohnSham.Iteration
 import LatticeDFT.KohnSham.Maximizer
+import LatticeDFT.KohnSham.RegularizedKS
 import LatticeDFT.KohnSham.Representability
 import LatticeDFT.KohnSham.Uniqueness
 import LatticeDFT.PathSum.Assignment

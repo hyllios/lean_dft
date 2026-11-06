@@ -277,16 +277,197 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
   Combine Theorem~\ref{thm:interior_positive_mixture} with Theorem~\ref{thm:ks_potential_exists}.
 \end{proof}
 
-\section{The Kohn--Sham iteration}
+\section{The regularised Kohn--Sham iteration}
 
-\begin{theorem}[Convergence of the regularised Kohn--Sham iteration]
-  \label{thm:ks_iteration}
-  \uses{thm:lieb_duality, thm:ks_potential_exists_interior}
-  With the Moreau--Yosida regularisation of $F$ and an adaptive damping step, the exact Kohn--Sham
-  iteration converges to the ground-state density (Penz, Laestadius, Tellgren, Ruggenthaler,
-  Phys.~Rev.~Lett.~123, 037401 (2019)).
+We follow Penz, Laestadius, Tellgren and Ruggenthaler, Phys.~Rev.~Lett.~123, 037401 (2019), together with
+its erratum (with P.~E.~Lammert). The original letter claimed that the iterates converge. The erratum
+points out that $\|x_{i+1}-x_i\|\to0$ does not imply this, and proves the weaker statement formalised here:
+the iterates are bounded, and every accumulation point is a ground-state quasi-density.
+
+Densities and potentials live in $X=\ell^2(V)$ with inner product $\ip{\cdot}{\cdot}$; $\varepsilon>0$ is
+the regularisation parameter.
+
+\subsection{An abstract convergence theorem}
+
+\begin{definition}[Moreau--Yosida smoothness]
+  \label{def:IsMYSmooth}
+  \lean{LatticeDFT.IsMYSmooth}
+  \leanok
+  $g:X\to X$ is an $\varepsilon$-gradient of $F:X\to\R$ if, for all $x,y$,
+  \[F(x)+\ip{g(x)}{y-x}\le F(y)\le F(x)+\ip{g(x)}{y-x}+\tfrac1{2\varepsilon}\|y-x\|^2 .\]
+\end{definition}
+
+\begin{lemma}[Co-coercivity]
+  \label{lem:cocoercive}
+  \lean{LatticeDFT.IsMYSmooth.add_linear, LatticeDFT.IsMYSmooth.lower_strong, LatticeDFT.IsMYSmooth.cocoercive, LatticeDFT.IsMYSmooth.norm_sub_le, LatticeDFT.IsMYSmooth.continuous, LatticeDFT.IsMYSmooth.norm_le, LatticeDFT.IsMYSmooth.continuous_fun}
+  \leanok
+  \uses{def:IsMYSmooth}
+  The structure is preserved by adding a linear term. Moreover
+  $\varepsilon\|g(x)-g(y)\|^2\le\ip{g(x)-g(y)}{x-y}$, so $g$ is $\varepsilon^{-1}$-Lipschitz, and $F$ is
+  continuous.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Compare $x$, $y$ and $z=y-\varepsilon(g(y)-g(x))$ using both inequalities, then symmetrise.
+\end{proof}
+
+\begin{lemma}[Regularised ground states exist]
+  \label{lem:exists_stationary}
+  \lean{LatticeDFT.IsMYSmooth.exists_stationary}
+  \leanok
+  \uses{lem:cocoercive}
+  If the sublevel sets of $F+\ip{w}{\cdot}$ are bounded, then there is a $y$ with $g(y)+w=0$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  A minimiser exists by compactness. At a minimiser the upper bound in direction $-\varepsilon(g(y)+w)$
+  forces $g(y)+w=0$.
+\end{proof}
+
+\begin{definition}[MYKSODA]
+  \label{def:myksoda}
+  \lean{LatticeDFT.ksStep, LatticeDFT.ksStep_mul}
+  \leanok
+  Let $F$ (interacting) and $T$ (non-interacting reference) have $\varepsilon$-gradients $g_F$, $g_T$, and let
+  $v$ be the external potential. The iteration is:
+  (a) $w_i = v+g_F(x_i)-g_T(x_i)$ (Kohn--Sham potential);
+  (b) choose $x_i'$ with $g_T(x_i')=-w_i$ (ground state of the regularised reference system);
+  (c) $x_{i+1}=x_i+s_i(x_i'-x_i)$ with $s_i=-\varepsilon\ip{g_F(x_i)+v}{d_i}/\|d_i\|^2$, where
+  $d_i = x_i'-x_i$ (and $s_i=0$ if $d_i=0$).
+\end{definition}
+
+\begin{lemma}[One step]
+  \label{lem:step_descent}
+  \lean{LatticeDFT.step_descent, LatticeDFT.step_lower}
+  \leanok
+  \uses{def:myksoda, def:IsMYSmooth}
+  With $G=F+\ip{v}{\cdot}$ and $h_i=x_{i+1}-x_i$: $G(x_{i+1})\le G(x_i)-\|h_i\|^2/(2\varepsilon)$. If
+  $\ip{g}{d}\le-\varepsilon\|g\|^2$, then $\varepsilon^2\|g\|^2\le\|h\|\,\|d\|$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Insert the step into the upper bound; the chosen step is the vertex of the parabola.
+\end{proof}
+
+\begin{theorem}[Convergence of MYKSODA, abstract form]
+  \label{thm:myksoda_converges}
+  \lean{LatticeDFT.myksoda_converges, LatticeDFT.myksoda_exists}
+  \leanok
+  \uses{lem:step_descent, lem:cocoercive, lem:exists_stationary}
+  Assume that the proximal points $y-\varepsilon g_T(y)$ are bounded and the sublevel sets of $G$ are
+  bounded. Then the iteration exists from every starting point, and:
+  \begin{enumerate}
+    \item the energies $G(x_i)$ decrease;
+    \item $g_F(x_i)+v\to0$;
+    \item there is an accumulation point;
+    \item every accumulation point $z=\lim x_{\varphi(i)}$ satisfies $g_F(z)+v=0$ and minimises $G$;
+      $G(x_i)\to G(z)$; and $w_{\varphi(i)}\to-g_T(z)$.
+  \end{enumerate}
 \end{theorem}
 \begin{proof}
-  Optimal damping makes the regularised energy decrease monotonically. Strong convexity of the regularised
-  functional gives convergence of the densities.
+  \leanok
+  Co-coercivity of $g_T$ applied to $x_i$ and $x_i'$ gives the key estimate
+  $\ip{g_F(x_i)+v}{d_i}\le-\varepsilon\|g_F(x_i)+v\|^2$ (eq.~(17) of the paper).
+  \begin{itemize}
+    \item The energies decrease and are bounded below on the bounded sublevel set, so
+      $\sum_i\|h_i\|^2<\infty$.
+    \item The directions $d_i$ are bounded, so $\|g_F(x_i)+v\|^2\le\|h_i\|\,D/\varepsilon^2\to0$.
+    \item Bolzano--Weierstrass gives an accumulation point; continuity of the gradients gives the limits.
+    \item Convexity gives $G(x_i)\le G(z)+\|g_F(x_i)+v\|\,\|z-x_i\|$, hence the energy limit.
+  \end{itemize}
+\end{proof}
+
+\subsection{Moreau--Yosida envelopes}
+
+\begin{definition}[Moreau envelope]
+  \label{def:myEnv}
+  \lean{LatticeDFT.prox, LatticeDFT.myEnv, LatticeDFT.myGrad}
+  \leanok
+  For $f$ convex and lower semicontinuous on a nonempty compact convex $D\subset X$ (and $+\infty$ outside):
+  \begin{itemize}
+    \item $\mathrm{prox}(x)$ minimises $f(q)+\|x-q\|^2/(2\varepsilon)$ over $q\in D$;
+    \item $f_\varepsilon(x)$ is the minimum value;
+    \item $\nabla f_\varepsilon(x)=\varepsilon^{-1}(x-\mathrm{prox}(x))$.
+  \end{itemize}
+\end{definition}
+
+\begin{lemma}[Proximal point]
+  \label{lem:prox}
+  \lean{LatticeDFT.prox_spec, LatticeDFT.nonneg_of_forall_small, LatticeDFT.prox_vi}
+  \leanok
+  \uses{def:myEnv}
+  The proximal point exists and lies in $D$. It satisfies the variational inequality
+  $f(p)+\varepsilon^{-1}\ip{x-p}{q-p}\le f(q)$ for all $q\in D$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  A lower semicontinuous function attains its minimum on a compact set. For the inequality, compare $p$ with
+  $p+t(q-p)$ and let $t\to0^+$.
+\end{proof}
+
+\begin{theorem}[Moreau envelopes are MY-smooth]
+  \label{thm:isMYSmooth_myEnv}
+  \lean{LatticeDFT.isMYSmooth_myEnv, LatticeDFT.sub_smul_myGrad, LatticeDFT.myEnv_prox_bounded, LatticeDFT.myEnv_sublevel_bounded}
+  \leanok
+  \uses{lem:prox, def:IsMYSmooth}
+  $\nabla f_\varepsilon$ is an $\varepsilon$-gradient of $f_\varepsilon$. The proximal points are bounded,
+  and the sublevel sets of $f_\varepsilon+\ip{w}{\cdot}$ are bounded for every $w$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The upper bound uses $\mathrm{prox}(x)$ as a competitor at $y$. The lower bound follows from the
+  variational inequality plus $\|u-b\|^2\ge0$. Growth: $f_\varepsilon(y)\ge\min f+\mathrm{dist}(y,D)^2/(2\varepsilon)$.
+\end{proof}
+
+\subsection{The lattice iteration}
+
+\begin{lemma}[Lieb's functional on $\ell^2$]
+  \label{lem:liebE}
+  \lean{LatticeDFT.densDomE, LatticeDFT.liebE, LatticeDFT.Freg, LatticeDFT.gFreg, LatticeDFT.inner_eq_dot, LatticeDFT.densDomain_eq, LatticeDFT.isCompact_densDomain, LatticeDFT.isCompact_densDomE, LatticeDFT.densDomE_nonempty, LatticeDFT.convexOn_liebE, LatticeDFT.convex_densDomE, LatticeDFT.liebE_lsc, LatticeDFT.isMYSmooth_Freg}
+  \leanok
+  \uses{thm:lieb_duality, thm:isMYSmooth_myEnv}
+  The density domain is a nonempty compact convex set: the image of the standard simplex. Lieb's functional
+  is convex on it. It is also lower semicontinuous there, being a supremum of continuous functions. Hence
+  its Moreau--Yosida regularisation $F_\varepsilon$ is MY-smooth.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Combine the preceding results.
+\end{proof}
+
+\begin{theorem}[Back to densities]
+  \label{thm:density_of_quasi}
+  \lean{LatticeDFT.density_of_quasi}
+  \leanok
+  \uses{lem:liebE, lem:prox}
+  If $\nabla F_\varepsilon(z)=-v$, then $\rho=z+\varepsilon v$ is an ensemble density and
+  $F(\rho)+v\cdot\rho=E(v)$: $\rho$ is a ground-state density in the sense of Lieb's variational
+  principle.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\rho=\mathrm{prox}(z)$. The variational inequality shows that $\rho$ minimises $F+v\cdot$ over the domain,
+  and Lieb duality identifies the minimum with $E(v)$.
+\end{proof}
+
+\begin{theorem}[Convergence of the regularised Kohn--Sham iteration on a lattice]
+  \label{thm:ks_iteration}
+  \lean{LatticeDFT.lattice_myksoda, LatticeDFT.lattice_myksoda_exists}
+  \leanok
+  \uses{thm:myksoda_converges, thm:density_of_quasi, lem:liebE}
+  Let $H_0$ (interacting) and $H_0'$ (reference) be symmetric, $v\in\ell^2(V)$ and $\varepsilon>0$. The
+  MYKSODA iteration with the regularised Lieb functionals of both systems exists from every starting point.
+  Its energies decrease, and it has accumulation points. For every accumulation point $z$:
+  \begin{itemize}
+    \item $z$ minimises the regularised energy, and the energies converge to that minimum;
+    \item $\rho=z+\varepsilon v$ is a ground-state density of the interacting system;
+    \item the Kohn--Sham potentials converge along the subsequence to $v_{KS}$, and
+      $\rho_{KS}=z+\varepsilon v_{KS}$ is a ground-state density of the reference system in $v_{KS}$
+      (eq.~(24) of the paper).
+  \end{itemize}
+\end{theorem}
+\begin{proof}
+  \leanok
+  Instantiate Theorem~\ref{thm:myksoda_converges} with $F_\varepsilon$ and $T_\varepsilon$, then apply
+  Theorem~\ref{thm:density_of_quasi} to both systems.
 \end{proof}
