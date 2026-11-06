@@ -169,6 +169,44 @@ amplitude for moving both of them is the product of the two separate amplitudes.
   Theorem~\ref{thm:generic_hk_ae_mod} with Theorems~\ref{thm:rigid_occS} and~\ref{thm:hstar_spin}.
 \end{proof}
 
+\section{Spin-DFT language: scalar potential and magnetic field}
+
+Write $v_\uparrow=v-B$, $v_\downarrow=v+B$: a scalar potential $v$ and a collinear magnetic field $B$
+(Zeeman coupling $-B(n_\uparrow-n_\downarrow)$, $\mu_B=1$).
+
+\begin{theorem}[A uniform field is not determined by the ground state]
+  \label{thm:groundState_field_shift}
+  \lean{LatticeDFT.isGroundState_add_const, LatticeDFT.groundState_field_shift}
+  \leanok
+  \uses{def:H0S, def:IsGroundState}
+  A potential change that is constant on every configuration does not change the ground states. In
+  particular, adding a uniform constant to $v$ and a uniform constant to $B$ leaves every ground state a
+  ground state.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The Hamiltonian changes by a multiple of the identity, $a(N_\uparrow+N_\downarrow)+b(N_\downarrow-N_\uparrow)$.
+\end{proof}
+
+\begin{theorem}[Generic Hohenberg--Kohn theorem in spin-DFT language]
+  \label{thm:generic_hk_spin_field}
+  \lean{LatticeDFT.zeeman, LatticeDFT.zeemanEquiv, LatticeDFT.NonUVField, LatticeDFT.generic_hk_spin_field}
+  \leanok
+  \uses{thm:generic_hk_spin, thm:groundState_field_shift}
+  Under the hypotheses of Theorem~\ref{thm:generic_hk_spin}, for almost every $(v,B)$ a ground state
+  shared with $(v',B')$ forces both $v-v'$ and $B-B'$ to be constant. The exceptional $(v,B)$ lie in a
+  closed, nowhere dense, Lebesgue-null set.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $(v,B)\mapsto(v-B,v+B)$ is an invertible linear map, so preimages of closed, nowhere dense and null sets
+  are closed, nowhere dense and null. Separate constants on the two spins correspond exactly to constants
+  in $v$ and in $B$.
+\end{proof}
+
+So in spin-DFT the magnetic field is never unique (a uniform field can always be added), and generically
+this is the only freedom.
+
 The total density with a spin-\emph{independent} potential is a different and harder question: the
 potentials $v_\uparrow=v_\downarrow$ form a null set in the space of all $(v_\uparrow,v_\downarrow)$, so the
 theorem above says nothing about them. There, spin symmetry forces some amplitudes to vanish and the strong-

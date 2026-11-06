@@ -44,6 +44,9 @@ a potential differing by more than a separate constant on each spin form a close
 Lebesgue-null set. The separate constants are the known non-uniqueness of spin-DFT (a uniform magnetic
 field along the quantisation axis); generically there is no other. The proof shows that the
 strong-potential leading coefficient of the two species factorises into the spinless ones.
+In spin-DFT language (`generic_hk_spin_field`, with `v↑ = v - B`, `v↓ = v + B`): a uniform shift of the
+magnetic field `B` never changes the ground state (`groundState_field_shift`), and for almost every
+`(v, B)` it is the only freedom besides the usual constant in `v`.
 
 ### Kohn–Sham theory
 
@@ -86,7 +89,7 @@ proof is wrong.
 | `KohnSham/Existence` | existence of Kohn–Sham potentials for lattice fermions |
 | `KohnSham/Hypersimplex` | interior densities are positive mixtures of configurations; KS potentials for every density with `0 < ρ_i < 1` |
 | `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
-| `Spin/KronSum`, `Spin/SpinResolved` | two spin species: Kronecker sums, factorisation of the leading coefficients, spin-resolved generic HK |
+| `Spin/KronSum`, `Spin/SpinResolved`, `Spin/SpinField` | two spin species: Kronecker sums, factorisation of the leading coefficients, spin-resolved generic HK; the same in terms of `(v, B)` |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
 | `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
 
