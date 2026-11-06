@@ -6,6 +6,7 @@ import DFT.Continuum.BoxSolve
 import DFT.Continuum.BoxSturm
 import DFT.Continuum.FromLattice
 import DFT.Continuum.HK
+import DFT.Continuum.Pair
 import DFT.Lattice.Basic.GroundState
 import DFT.Lattice.Basic.SingleParticle
 import DFT.Lattice.Basic.Spectral

@@ -200,3 +200,28 @@ $\psi''=(v-E)\psi$, $\psi(0)=0$, $\psi'(0)=1$, and take the largest $E$ for whic
   $\psi_{E^*}'(1)<0$. By Picone no state has energy below $E^*$, while $\psi_{E^*}$ has energy exactly $E^*$
   (integration by parts). A cutoff puts it in the form domain.
 \end{proof}
+
+\section{Two particles in a box}
+
+Two particles on $[0,1]$ with hard walls, a continuous interaction $w(x_1,x_2)$ and a one-body potential acting as
+$v(x_1)+v(x_2)$: the configuration space is the square $(0,1)^2$, states are $C^2$, symmetric (bosons) or
+antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\nabla\psi|^2$.
+
+\begin{theorem}[Hohenberg--Kohn for two particles, conditional on unique continuation]
+  \label{thm:hk_pair}
+  \lean{DFT.Continuum.Pair.Sq, DFT.Continuum.Pair.μ2, DFT.Continuum.Pair.Dom2, DFT.Continuum.Pair.d1, DFT.Continuum.Pair.d2, DFT.Continuum.Pair.integrable2, DFT.Continuum.Pair.diff2, DFT.Continuum.Pair.cont_d1, DFT.Continuum.Pair.cont_d2, DFT.Continuum.Pair.L2, DFT.Continuum.Pair.continuous_L2, DFT.Continuum.Pair.h02, DFT.Continuum.Pair.setting2, DFT.Continuum.Pair.integral_swap, DFT.Continuum.Pair.sep_pair, DFT.Continuum.Pair.rigidL_pair, DFT.Continuum.Pair.dens_eq_of_marginal, DFT.Continuum.Pair.hk_pair_of_ucp}
+  \leanok
+  \uses{thm:hk_continuum}
+  Separation and rigidity hold on the square, and equal one-body densities $\rho(x)=\int\psi(x,y)^2\,dy$ give equal
+  density functionals. Hence if ground states of continuous $v$ and $v'$ have the same density and the ground state of
+  $v$ vanishes only on a null set, $v-v'$ is constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Separation: symmetrise a test function $\varphi\mapsto\varphi+\sigma\,\varphi\circ\mathrm{swap}$ (swap preserves the
+  measure of the square) and use the fundamental lemma on the open square. Rigidity: on the diagonal,
+  $2v(x)=c$. Densities: Fubini, and exchange symmetry turns $\int v(x_2)\psi^2$ into $\int v(x_1)\psi^2$.
+\end{proof}
+
+The one assumption left, unique continuation for ground states of $-\Delta+V$ in two dimensions, is a genuine PDE
+fact (Carleman/Aronszajn-type unique continuation); in one dimension it reduced to ODE uniqueness.
