@@ -230,22 +230,58 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
   Theorem~\ref{thm:ensemble_vrep} with occupations $n_i(s)=[i\in s]$.
 \end{proof}
 
+\begin{lemma}[Vertex description of the hypersimplex]
+  \label{lem:hypersimplex_mixture}
+  \lean{LatticeDFT.IsMixture, LatticeDFT.nfrac, LatticeDFT.mixture_combo, LatticeDFT.hypersimplex_mixture}
+  \leanok
+  Every $\rho\in[0,1]^M$ with $\sum_i\rho_i=N$ is a mixture (convex combination) of $N$-particle
+  configuration densities.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Induction on the number of fractional sites ($0<\rho_i<1$). If there are none, $\rho$ is the occupation
+  vector of a configuration. Since $\sum_i\rho_i$ is an integer, there is never exactly one fractional site,
+  so otherwise there are two, $i\neq j$. Moving particle weight from $j$ to $i$ (or back) as far as possible
+  gives two densities $\rho^\pm$, still in the box with the same sum, each with fewer fractional sites, and
+  $\rho$ is a convex combination of them. A convex combination of mixtures is a mixture.
+\end{proof}
+
 \begin{theorem}[Interior densities]
   \label{thm:interior_positive_mixture}
-  \uses{thm:ks_potential_exists}
+  \lean{LatticeDFT.interior_positive_mixture}
+  \leanok
+  \uses{lem:hypersimplex_mixture}
   A density with $0<\rho_i<1$ and $\sum_i\rho_i=N$ is a strictly positive mixture of the $N$-particle
-  configuration densities. Hence all such densities are (Kohn--Sham) ensemble $v$-representable.
+  configuration densities.
 \end{theorem}
 \begin{proof}
-  Write $\rho=(1-\varepsilon)\rho'+\varepsilon\bar\rho$, where $\bar\rho$ is the uniform mixture and $\rho'$
-  still lies in the hypersimplex for small $\varepsilon$. Then use the vertex description of the hypersimplex.
+  \leanok
+  Let $\bar\rho$ be the uniform mixture of all configurations and $\varepsilon=\min_i\min(\rho_i,1-\rho_i)>0$.
+  Then $\rho'=(\rho-\varepsilon\bar\rho)/(1-\varepsilon)$ lies in the hypersimplex, so it is a mixture
+  $\sum_s\mu_s n_s$ (Lemma~\ref{lem:hypersimplex_mixture}). The weights $(1-\varepsilon)\mu_s+\varepsilon/|\Conf|$
+  are strictly positive and reproduce $\rho$.
+\end{proof}
+
+\begin{theorem}[Existence of Kohn--Sham potentials, textbook form]
+  \label{thm:ks_potential_exists_interior}
+  \lean{LatticeDFT.v_representable_interior, LatticeDFT.ks_potential_exists_interior}
+  \leanok
+  \uses{thm:interior_positive_mixture, thm:ks_potential_exists}
+  For $N$ spinless fermions with $0<N<M$ on any graph, any hopping $t$ and any configuration-diagonal
+  interaction, every density with $0<\rho_i<1$ and $\sum_i\rho_i=N$ is the density of a ground-state ensemble
+  of $H(v)$ for some potential $v$. In particular (no interaction), every such density has a Kohn--Sham
+  potential.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Combine Theorem~\ref{thm:interior_positive_mixture} with Theorem~\ref{thm:ks_potential_exists}.
 \end{proof}
 
 \section{The Kohn--Sham iteration}
 
 \begin{theorem}[Convergence of the regularised Kohn--Sham iteration]
   \label{thm:ks_iteration}
-  \uses{thm:lieb_duality, thm:ks_potential_exists}
+  \uses{thm:lieb_duality, thm:ks_potential_exists_interior}
   With the Moreau--Yosida regularisation of $F$ and an adaptive damping step, the exact Kohn--Sham
   iteration converges to the ground-state density (Penz, Laestadius, Tellgren, Ruggenthaler,
   Phys.~Rev.~Lett.~123, 037401 (2019)).

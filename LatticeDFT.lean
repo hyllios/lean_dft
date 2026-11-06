@@ -18,6 +18,7 @@ import LatticeDFT.HK.SquareWall
 import LatticeDFT.KohnSham.Aufbau
 import LatticeDFT.KohnSham.Duality
 import LatticeDFT.KohnSham.Existence
+import LatticeDFT.KohnSham.Hypersimplex
 import LatticeDFT.KohnSham.Maximizer
 import LatticeDFT.KohnSham.Representability
 import LatticeDFT.KohnSham.Uniqueness

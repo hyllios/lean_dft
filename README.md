@@ -51,6 +51,7 @@ The proof uses only the standard axioms (`propext`, `Classical.choice`, `Quot.so
 | `KohnSham/Duality` | Lieb's functional, convex duality |
 | `KohnSham/Maximizer`, `KohnSham/Representability` | ensemble v-representability (maximiser, limit argument, separation) |
 | `KohnSham/Existence` | existence of Kohn–Sham potentials for lattice fermions |
+| `KohnSham/Hypersimplex` | interior densities are positive mixtures of configurations; every density with 0 < ρᵢ < 1 has a Kohn–Sham potential |
 
 **Blueprint.** A human-readable description of every definition, lemma and theorem, with proofs and links to
 the Lean declarations, is in `blueprint/` (LaTeX, built by CI into a website with a dependency graph and a PDF:
