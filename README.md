@@ -81,6 +81,11 @@ Schrödinger equation.
   determinant is now real-analytic in `θ` and nonzero at `θ = 0`, so by the principle of isolated
   zeros the bad field strengths form a closed set without accumulation points (finite in every
   bounded interval, `0` excluded); off it, almost every potential has all its ground states in `Ω`.
+* Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
+  `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
+  `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
+  `(v₀ - v₁)² (4T² n₀n₁ - ṅ₀²) = (n̈₀ + 2T²(n₀ - n₁))²`, the known closed form; every eigenstate lies in
+  `Ω`, while the Rabi oscillation of a particle released from one site never does.
 * `van_leeuwen` (van Leeuwen's theorem on the lattice): the density of any trajectory of any system,
   driven by a continuous potential, is reproduced locally in time by any other system on the same
   sites, starting from a state in its own `Ω` with the same initial density and current. The
@@ -144,6 +149,7 @@ proof is wrong.
 | `TDDFT/ComplexHopping` | lattice TDDFT with complex (Peierls) hopping via a doubled real system |
 | `TDDFT/FluxGround` | ground states with flux: doubled Krylov criterion, generic flux strengths |
 | `TDDFT/Peierls` | ground states with Peierls phases `t e^{iθφ}`: analytic dependence on the field, isolated bad field strengths |
+| `TDDFT/Dimer` | reality check: one particle on two sites; `Ω = {bond order ≠ 0}`, speed limit, closed-form TD potential, Rabi oscillation outside `Ω` (numerical check in `scripts/dimer_check.py`) |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |

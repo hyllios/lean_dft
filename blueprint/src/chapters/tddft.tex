@@ -433,7 +433,49 @@ both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
   discrete set; off it the doubled Krylov polynomials are nonzero and Theorem~\ref{thm:mem_omegaC_of_hstarC} applies.
 \end{proof}
 
-\section{Time-dependent Kohn--Sham}
+\section{A reality check: the dimer}
+
+One particle on two sites, $H=-T\sigma_x$, $n_i(c)=\delta_{ic}$. Write $b=\mathrm{Re}(\bar\psi_0\psi_1)$ (bond order) and
+$f=-\mathrm{Im}(\bar\psi_0\psi_1)$.
+
+\begin{lemma}[The dimer force balance]
+  \label{lem:dimer_fb}
+  \lean{LatticeDFT.Dimer.H, LatticeDFT.Dimer.occ, LatticeDFT.Dimer.bond, LatticeDFT.Dimer.flow,
+    LatticeDFT.Dimer.H_apply, LatticeDFT.Dimer.H_mulVec, LatticeDFT.Dimer.hamN_zero_dimer, LatticeDFT.Dimer.H_isSymm,
+    LatticeDFT.Dimer.tdens_dimer, LatticeDFT.Dimer.tcur_dimer, LatticeDFT.Dimer.kfb_dimer,
+    LatticeDFT.Dimer.qsrc_dimer, LatticeDFT.Dimer.det_kJ_dimer, LatticeDFT.Dimer.bond_sq_add_flow_sq,
+    LatticeDFT.Dimer.mem_omega_dimer_iff}
+  \leanok
+  \uses{thm:force_balance}
+  $\dot n_0=2Tf$, $K=2Tb\begin{psmallmatrix}1&-1\\-1&1\end{psmallmatrix}$, $q_0=2T^2(n_1-n_0)$,
+  $\det(K+\mathbb 1\mathbb 1^T)=8Tb$, and $b^2+f^2=n_0n_1$. Hence $\Omega=\{T\neq0,\ b\neq0\}$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Direct computation.
+\end{proof}
+
+\begin{theorem}[Speed limit and closed-form potential]
+  \label{thm:dimer}
+  \lean{LatticeDFT.Dimer.speed_limit, LatticeDFT.Dimer.speed_limit_eq_iff, LatticeDFT.Dimer.ddens_dimer,
+    LatticeDFT.Dimer.dimer_td_potential, LatticeDFT.Dimer.vfb_dimer, LatticeDFT.Dimer.dimer_eigen_mem_omega,
+    LatticeDFT.Dimer.rabi, LatticeDFT.Dimer.rabi_hasDerivAt, LatticeDFT.Dimer.tdens_rabi,
+    LatticeDFT.Dimer.rabi_not_mem_omega}
+  \leanok
+  \uses{lem:dimer_fb}
+  Every state obeys $\dot n_0^2\le 4T^2n_0n_1$, with equality exactly outside $\Omega$. Along any trajectory
+  $(v_0-v_1)^2(4T^2n_0n_1-\dot n_0^2)=(\ddot n_0+2T^2(n_0-n_1))^2$; with $d=n_0-n_1$ this is the known
+  $\Delta v=\mp(\ddot d+4T^2d)/\sqrt{4T^2(1-d^2)-\dot d^2}$, and the general map $v(\psi,\ddot n)$ reduces to
+  $v_0-v_1=(q_0-\ddot n_0)/(2Tb)$. Every real eigenstate lies in $\Omega$; the Rabi oscillation
+  $\psi=(\cos Tt,\ i\sin Tt)$ never does.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\ddot n_0=q_0-2Tb(v_0-v_1)$ and $4T^2n_0n_1-\dot n_0^2=4T^2b^2$. An eigenvector with a zero component vanishes
+  when $T\ne0$. The Rabi state has $b=0$.
+\end{proof}
+
+
 
 \begin{lemma}[The density of a trajectory is $C^2$]
   \label{lem:density_c2}
