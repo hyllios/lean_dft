@@ -41,9 +41,12 @@ The proof uses only the standard axioms (`propext`, `Classical.choice`, `Quot.so
 | `Fermions/Slater` | Slater determinants in first quantization |
 | `Fermions/SecondQuantization` | second quantization `Γ h` via determinants; `H0F` |
 | `Fermions/FirstQuantization` | many-body powers as signed sums of single-particle powers |
+| `Fermions/CauchyBinet` | Cauchy–Binet for Slater determinants; orthonormality of Slater states |
 | `StrongPotential/*` | strong-potential leading coefficients, power sums, explicit coefficients |
 | `PathSum/*` | optimal assignments, free-fermion leading coefficients, route sums, resonance argument |
 | `GenericHK` | the main theorem |
+| `KohnSham/Aufbau` | aufbau: non-interacting ground states are Slater determinants of the lowest orbitals |
+| `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
 
 **Blueprint.** A human-readable description of every definition, lemma and theorem, with proofs and links to
 the Lean declarations, is in `blueprint/` (LaTeX, built by CI into a website with a dependency graph and a PDF:
@@ -71,7 +74,9 @@ Requires the Lean toolchain in `lean-toolchain` and Mathlib as pinned in `lake-m
 * Spinful (Hubbard) fermions: certified by exact computation for small lattices, not yet in the general proof.
 * Frustrated or complex hopping: the general proof covers uniform hopping `t ≠ 0`.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
-* Planned: Kohn–Sham theory and non-interacting v-representability on lattices; time-dependent DFT.
+* Kohn–Sham: aufbau and generic uniqueness of the KS potential are proved; convex duality (Lieb functional),
+  ensemble v-representability and the regularized KS iteration are open targets in the blueprint.
+* Planned: time-dependent DFT.
 
 ## Authors
 

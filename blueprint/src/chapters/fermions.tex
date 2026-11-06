@@ -177,3 +177,44 @@
   \leanok
   Write $\ip{c}{\cdot}$ as a signed sum of product functions and apply the word expansion.
 \end{proof}
+
+\section{Cauchy--Binet and orthonormality}
+
+\begin{lemma}[Overlap determinant]
+  \label{lem:det_gram}
+  \lean{LatticeDFT.gram, LatticeDFT.det_gram}
+  \leanok
+  \uses{def:slater}
+  For two families of orbitals with overlap matrix $G_{ij}=\sum_x\varphi_i(x)\psi_j(x)$,
+  $\det G=\sum_\tau\Psi_\varphi(\tau)\prod_j\psi_j(\tau_j)$, summed over all position tuples.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Expand the product of sums in the Leibniz formula, then reindex the permutations.
+\end{proof}
+
+\begin{theorem}[Cauchy--Binet]
+  \label{thm:cauchy_binet}
+  \lean{LatticeDFT.cauchy_binet}
+  \leanok
+  \uses{lem:det_gram, thm:slater_expand}
+  $\sum_s\Psi_\varphi(s)\Psi_\psi(s)=\det G$, summed over configurations.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Expand $\Psi_\varphi(\tau)$ in configurations (Theorem~\ref{thm:slater_expand}). The remaining sum is
+  Lemma~\ref{lem:det_gram} applied to the indicator orbitals of $s$.
+\end{proof}
+
+\begin{theorem}[Orthonormality of Slater determinants]
+  \label{thm:slater_orthonormal}
+  \lean{LatticeDFT.slaterSub, LatticeDFT.slater_orthonormal}
+  \leanok
+  \uses{thm:cauchy_binet, lem:amp_props}
+  For orthonormal orbitals $\varphi_a$, the Slater determinants $\Psi_S$ of the orbital subsets $S$ are
+  orthonormal.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Their overlap matrix is a $0/1$ matrix whose determinant is $\delta_{ST}$.
+\end{proof}

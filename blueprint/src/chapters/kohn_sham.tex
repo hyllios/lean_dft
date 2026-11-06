@@ -1,0 +1,129 @@
+\chapter{Kohn--Sham theory on lattices}
+\label{chap:ks}
+
+Kohn--Sham theory replaces the interacting system by a non-interacting one with the same ground-state
+density. On a lattice this requires (i) the structure of non-interacting ground states (aufbau), (ii) the
+existence of a Kohn--Sham potential for a given density (non-interacting $v$-representability), and (iii) its
+uniqueness. Statements without a check mark are open targets of the formalization.
+
+\section{Non-interacting ground states}
+
+\begin{definition}[Orbital energies]
+  \label{def:orbEnergy}
+  \lean{LatticeDFT.orbEnergy}
+  \leanok
+  For orbital energies $\varepsilon_a$ and an orbital subset $S$ of size $N$, $E_S=\sum_{a\in S}\varepsilon_a$.
+\end{definition}
+
+\begin{lemma}[Slater determinants of eigen-orbitals]
+  \label{lem:slaterSub_eigen}
+  \lean{LatticeDFT.slaterSub_eigen}
+  \leanok
+  \uses{thm:gamma_slater, def:orbEnergy}
+  If $h\varphi_a=\varepsilon_a\varphi_a$, then $\Gamma(h)\Psi_S=E_S\Psi_S$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Theorem~\ref{thm:gamma_slater}.
+\end{proof}
+
+\begin{theorem}[Variational lower bound]
+  \label{thm:qf_gamma_ge}
+  \lean{LatticeDFT.slaterMat, LatticeDFT.slaterMat_orth, LatticeDFT.dot_slaterMat, LatticeDFT.qf_gamma_ge}
+  \leanok
+  \uses{thm:slater_orthonormal, lem:slaterSub_eigen}
+  For an orthonormal eigenbasis of $h$ and every many-body state $\Psi$,
+  $\ip{\Psi}{\Gamma(h)\Psi}\ge\big(\min_SE_S\big)\|\Psi\|^2$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The matrix $P$ whose columns are the $\Psi_S$ is orthogonal ($P^TP=1$, hence $PP^T=1$), and
+  $\Gamma(h)P=P\,\diag(E_S)$. In the coefficients $c=P^T\Psi$ the energy is $\sum_SE_Sc_S^2$.
+\end{proof}
+
+\begin{theorem}[Aufbau]
+  \label{thm:aufbau}
+  \lean{LatticeDFT.exists_eigenbasis, LatticeDFT.conf_nonempty, LatticeDFT.aufbau}
+  \leanok
+  \uses{thm:qf_gamma_ge, def:IsGroundState}
+  For a symmetric $h$ and $N\le M$, the ground-state energy of $\Gamma(h)$ is the smallest sum of $N$
+  orbital energies. The Slater determinant of a minimising set of orbitals is a many-body ground state.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Spectral theorem (Mathlib) for an orthonormal eigenbasis, then Theorem~\ref{thm:qf_gamma_ge}.
+\end{proof}
+
+\begin{theorem}[Lowest orbitals]
+  \label{thm:aufbau_lowest}
+  \uses{thm:aufbau}
+  A set $S$ minimises $E_S$ if and only if it consists of $N$ orbitals of lowest energy (with arbitrary
+  choices among degenerate ones at the Fermi level).
+\end{theorem}
+\begin{proof}
+  Exchange argument: replacing an orbital by a lower unused one does not increase $E_S$.
+\end{proof}
+
+\section{Uniqueness of the Kohn--Sham potential}
+
+\begin{theorem}[Generic uniqueness]
+  \label{thm:ks_potential_generic_unique}
+  \lean{LatticeDFT.ks_potential_generic_unique}
+  \leanok
+  \uses{thm:generic_hk_lattice_fermions}
+  For spinless fermions on a connected graph with $t\ne0$, the Kohn--Sham potential reproducing a ground
+  state is unique up to a constant outside a closed, nowhere dense, null set of potentials. It is not unique
+  everywhere: the non-interacting two-fermion square has a whole plane of exceptions
+  (Theorems~\ref{thm:hk_fails_square}, \ref{thm:square_wall}).
+\end{theorem}
+\begin{proof}
+  \leanok
+  Theorem~\ref{thm:generic_hk_lattice_fermions} with vanishing interaction.
+\end{proof}
+
+\section{Density functionals and $v$-representability}
+
+\begin{definition}[Constrained-search and Lieb functionals]
+  \label{def:lieb}
+  \uses{def:hamN, def:IsGroundState}
+  For a density $\rho$ with $0\le\rho_i\le1$ and $\sum_i\rho_i=N$, let $F(\rho)$ be the minimum of
+  $\operatorname{tr}(\Gamma H_0)$ over ensembles (density matrices) $\Gamma$ with density $\rho$.
+  The ground-state energy is $E(v)=\min_\Gamma\operatorname{tr}(\Gamma H(v))$.
+\end{definition}
+
+\begin{theorem}[Convex duality]
+  \label{thm:lieb_duality}
+  \uses{def:lieb}
+  $F$ is convex and continuous on the density domain, $E(v)=\min_\rho\,[F(\rho)+\sum_iv_i\rho_i]$, and
+  $F(\rho)=\sup_v\,[E(v)-\sum_iv_i\rho_i]$.
+\end{theorem}
+\begin{proof}
+  The set of ensembles with prescribed density is convex and compact, and the objective is linear. Duality
+  is the finite-dimensional Fenchel--Moreau theorem.
+\end{proof}
+
+\begin{theorem}[Ensemble $v$-representability]
+  \label{thm:ensemble_vrep}
+  \uses{thm:lieb_duality}
+  Every density with $0<\rho_i<1$ and $\sum_i\rho_i=N$ is the ground-state density of some ensemble of
+  $H(v)$, for any $H_0$; in particular it is non-interacting ensemble $v$-representable, so a Kohn--Sham
+  potential exists.
+\end{theorem}
+\begin{proof}
+  A finite convex function has a nonempty subdifferential at interior points of its domain; any
+  $-v\in\partial F(\rho)$ works (Chayes--Chayes--Ruskai; Penz--van Leeuwen).
+\end{proof}
+
+\section{The Kohn--Sham iteration}
+
+\begin{theorem}[Convergence of the regularised Kohn--Sham iteration]
+  \label{thm:ks_iteration}
+  \uses{thm:lieb_duality, thm:ensemble_vrep}
+  With the Moreau--Yosida regularisation of $F$ and an adaptive damping step, the exact Kohn--Sham
+  iteration converges to the ground-state density (Penz, Laestadius, Tellgren, Ruggenthaler,
+  Phys.~Rev.~Lett.~123, 037401 (2019)).
+\end{theorem}
+\begin{proof}
+  Optimal damping makes the regularised energy decrease monotonically. Strong convexity of the regularised
+  functional gives convergence of the densities.
+\end{proof}
