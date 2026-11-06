@@ -410,6 +410,29 @@ both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
   many roots; off them the doubled Krylov polynomials are nonzero.
 \end{proof}
 
+\begin{theorem}[TDDFT with Peierls phases from the ground state]
+  \label{thm:generic_peierls}
+  \lean{LatticeDFT.analyticAt_pow_apply, LatticeDFT.analyticAt_det, LatticeDFT.finite_inter_Icc_of_discrete,
+    LatticeDFT.hstarC_of_hstar_analytic, LatticeDFT.gamma_neg, LatticeDFT.gamma_transpose,
+    LatticeDFT.analyticAt_gamma_apply, LatticeDFT.peierlsRe, LatticeDFT.peierlsIm, LatticeDFT.peierlsRe_zero,
+    LatticeDFT.peierlsIm_zero, LatticeDFT.peierlsRe_isSymm, LatticeDFT.peierlsIm_antisymm,
+    LatticeDFT.analyticAt_peierlsRe, LatticeDFT.analyticAt_peierlsIm, LatticeDFT.generic_peierls_ground_mem_omegaC}
+  \leanok
+  \uses{thm:generic_flux}
+  Spinless lattice fermions on a connected graph, symmetric hopping $t$ of a common sign, any interaction, and
+  Peierls phases: the hopping is $t_{ab}e^{i\theta\varphi_{ab}}$ with $\varphi$ antisymmetric. There is a closed set
+  $\Lambda\not\ni 0$ of field strengths without accumulation points (finite in every bounded interval) such that for
+  $\theta\notin\Lambda$, outside a closed, nowhere dense, null set of potentials, every ground state lies in $\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The real and imaginary parts $\Gamma(-t\cos\theta\varphi)+V_{\mathrm{int}}$ and $\Gamma(-t\sin\theta\varphi)$ have
+  entries analytic in $\theta$, hence so do the doubled Krylov determinants at a fixed potential (polynomials in the
+  entries). At $\theta=0$ the imaginary part vanishes and the determinant is the square of the real one, nonzero at a
+  suitable potential. By the principle of isolated zeros the product of the determinants vanishes only on a closed
+  discrete set; off it the doubled Krylov polynomials are nonzero and Theorem~\ref{thm:mem_omegaC_of_hstarC} applies.
+\end{proof}
+
 \section{Time-dependent Kohn--Sham}
 
 \begin{lemma}[The density of a trajectory is $C^2$]

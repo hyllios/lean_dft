@@ -76,6 +76,11 @@ Schrödinger equation.
   Krylov criterion (both real components of each configuration); without flux its determinant is
   the square of the real one, so along the flux family it is a polynomial in `r` that is nonzero
   at `r = 0`.
+* `generic_peierls_ground_mem_omegaC`: the same with genuine Peierls phases, hopping
+  `t_ab e^{iθ φ_ab}` (any antisymmetric pattern `φ`, field strength `θ`). The doubled Krylov
+  determinant is now real-analytic in `θ` and nonzero at `θ = 0`, so by the principle of isolated
+  zeros the bad field strengths form a closed set without accumulation points (finite in every
+  bounded interval, `0` excluded); off it, almost every potential has all its ground states in `Ω`.
 * `van_leeuwen` (van Leeuwen's theorem on the lattice): the density of any trajectory of any system,
   driven by a continuous potential, is reproduced locally in time by any other system on the same
   sites, starting from a state in its own `Ω` with the same initial density and current. The
@@ -138,6 +143,7 @@ proof is wrong.
 | `TDDFT/Global` | uniform Picard–Lindelöf steps, norm conservation, blow-up alternative and global uniqueness for lattice TDDFT |
 | `TDDFT/ComplexHopping` | lattice TDDFT with complex (Peierls) hopping via a doubled real system |
 | `TDDFT/FluxGround` | ground states with flux: doubled Krylov criterion, generic flux strengths |
+| `TDDFT/Peierls` | ground states with Peierls phases `t e^{iθφ}`: analytic dependence on the field, isolated bad field strengths |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
@@ -176,8 +182,8 @@ Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Ma
 * Frustrated or complex hopping: the general proof needs hopping amplitudes of a common sign. Frustrated
   hopping (e.g. π-flux) can genuinely fail.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
-* Time-dependent DFT: local existence and uniqueness are proved; global-in-time statements (how long a
-  solution stays in `Ω`) and complex hopping are open.
+* Time-dependent DFT: local existence, global uniqueness, the blow-up alternative and complex (Peierls)
+  hopping are proved; how long a given solution actually stays in `Ω` is not controlled.
 
 ## License
 
