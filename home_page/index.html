@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lattice DFT in Lean</title>
+<style>
+  :root { --bg:#fff; --fg:#1d1f21; --accent:#157878; --muted:#606c71; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#16181a; --fg:#e6e6e6; --accent:#4fb3b3; --muted:#9aa4a8; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.6 system-ui, sans-serif; }
+  header { background:linear-gradient(120deg,#155799,#159957); color:#fff; padding:3rem 1rem; text-align:center; }
+  header h1 { margin:0 0 .3rem; font-size:2rem; } header p { margin:0; opacity:.9; }
+  main { max-width:44rem; margin:2rem auto; padding:0 16px; }
+  a { color:var(--accent); } li { margin:.4rem 0; } .muted { color:var(--muted); font-size:.9rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Lattice density-functional theory in Lean</h1>
+  <p>by Miguel A. L. Marques</p>
+</header>
+<main>
+  <p>A Lean 4 / Mathlib formalization of the foundations of DFT for finite lattice systems: ground states, the
+  Hohenberg–Kohn theorem and its failures, second-quantized lattice fermions, a generic Hohenberg–Kohn theorem,
+  and Kohn–Sham theory.</p>
+  <ul>
+    <li><a href="blueprint/">Blueprint (web)</a></li>
+    <li><a href="blueprint.pdf">Blueprint (pdf)</a></li>
+    <li><a href="blueprint/dep_graph_document.html">Dependency graph</a></li>
+    <li><a href="https://github.com/hyllios/lean_dft">Source code on GitHub</a></li>
+  </ul>
+  <p class="muted">The formalization was developed with the assistance of Claude (Anthropic).</p>
+</main>
+</body>
+</html>

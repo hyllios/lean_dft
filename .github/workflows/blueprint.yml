@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   build_project:
-    runs-on: ubuntu-24.04  # setup-ruby does not support the ubuntu-26.04 image behind ubuntu-latest yet
+    runs-on: ubuntu-24.04
     name: Build project
     steps:
       - name: Cleanup to free disk space
@@ -47,7 +47,7 @@ jobs:
           lint: false
           mk_all-check: true
 
-      # The blueprint, checkdecls and home page are built explicitly (instead of with docgen-action),
+      # The blueprint, checkdecls and the static home page are built explicitly (instead of with docgen-action),
       # because docgen-action still ran doc-gen on the dependencies and exhausted the runner's memory.
       - name: Build blueprint and copy to `home_page/blueprint`
         uses: xu-cheng/texlive-action@f886de8159e5952a131848a5fa9c3196a2132b5d # v2
@@ -72,24 +72,11 @@ jobs:
       - name: Check declarations mentioned in the blueprint exist in Lean code
         run: ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
 
-      - name: Bundle dependencies
-        uses: ruby/setup-ruby@eaecf785f6a34567a6d97f686bbb7bccc1ac1e5c # v1.237.0
-        with:
-          working-directory: home_page
-          ruby-version: "3.1"
-          bundler-cache: true
-
-      - name: Build website using Jekyll
-        working-directory: home_page
-        env:
-          JEKYLL_GITHUB_TOKEN: ${{ github.token }}
-        run: JEKYLL_ENV=production bundle exec jekyll build
-
       - name: Upload website (blueprint and home page)
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
-          path: home_page/_site
+          path: home_page
 
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push'
