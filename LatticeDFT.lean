@@ -1,5 +1,6 @@
 import LatticeDFT.Basic.GroundState
 import LatticeDFT.Basic.SingleParticle
+import LatticeDFT.Basic.Spectral
 import LatticeDFT.Fermions.CauchyBinet
 import LatticeDFT.Fermions.Configurations
 import LatticeDFT.Fermions.FirstQuantization
@@ -15,6 +16,10 @@ import LatticeDFT.HK.Examples
 import LatticeDFT.HK.Gap
 import LatticeDFT.HK.SquareWall
 import LatticeDFT.KohnSham.Aufbau
+import LatticeDFT.KohnSham.Duality
+import LatticeDFT.KohnSham.Existence
+import LatticeDFT.KohnSham.Maximizer
+import LatticeDFT.KohnSham.Representability
 import LatticeDFT.KohnSham.Uniqueness
 import LatticeDFT.PathSum.Assignment
 import LatticeDFT.PathSum.FreeFermions

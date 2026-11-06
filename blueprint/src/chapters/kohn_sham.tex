@@ -81,44 +81,171 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
   Theorem~\ref{thm:generic_hk_lattice_fermions} with vanishing interaction.
 \end{proof}
 
-\section{Density functionals and $v$-representability}
+\section{Lieb's functional and convex duality}
 
-\begin{definition}[Constrained-search and Lieb functionals]
+Let $E(v)$ be the ground-state energy of $H(v)$. Ensemble densities of configurations form the density domain
+$\mathcal{D}=\{\sum_c\lambda_cn(c):\lambda\ \text{a probability vector}\}$.
+
+\begin{definition}[Lieb's functional]
   \label{def:lieb}
-  \uses{def:hamN, def:IsGroundState}
-  For a density $\rho$ with $0\le\rho_i\le1$ and $\sum_i\rho_i=N$, let $F(\rho)$ be the minimum of
-  $\operatorname{tr}(\Gamma H_0)$ over ensembles (density matrices) $\Gamma$ with density $\rho$.
-  The ground-state energy is $E(v)=\min_\Gamma\operatorname{tr}(\Gamma H(v))$.
+  \lean{LatticeDFT.Egs, LatticeDFT.DensDomain, LatticeDFT.lieb}
+  \leanok
+  \uses{def:hamN, thm:exists_groundState}
+  $F(\rho)=\sup_v\,[E(v)-v\cdot\rho]$, the Legendre transform of $E$.
 \end{definition}
 
-\begin{theorem}[Convex duality]
-  \label{thm:lieb_duality}
+\begin{lemma}
+  \label{lem:lieb_basic}
+  \lean{LatticeDFT.Egs_le_config, LatticeDFT.lieb_bdd, LatticeDFT.le_lieb, LatticeDFT.dens_mem_domain}
+  \leanok
   \uses{def:lieb}
-  $F$ is convex and continuous on the density domain, $E(v)=\min_\rho\,[F(\rho)+\sum_iv_i\rho_i]$, and
-  $F(\rho)=\sup_v\,[E(v)-\sum_iv_i\rho_i]$.
+  $E(v)\le (H_0)_{cc}+\sum_iv_in_i(c)$ for every configuration $c$. Hence $F$ is finite on $\mathcal{D}$, and
+  ground-state densities lie in $\mathcal{D}$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Use the configuration $e_c$ as a trial state, and take convex combinations.
+\end{proof}
+
+\begin{theorem}[Lieb duality]
+  \label{thm:lieb_duality}
+  \lean{LatticeDFT.lieb_duality}
+  \leanok
+  \uses{lem:lieb_basic, thm:exists_groundState}
+  $E(v)=\min_{\rho\in\mathcal{D}}\,[F(\rho)+v\cdot\rho]$, the minimum being attained at the density of any
+  ground state of $H(v)$.
 \end{theorem}
 \begin{proof}
-  The set of ensembles with prescribed density is convex and compact, and the objective is linear. Duality
-  is the finite-dimensional Fenchel--Moreau theorem.
+  \leanok
+  ``$\le$'' holds by definition of $F$. For a ground state $\psi$, the variational principle gives
+  $E(v')-v'\cdot\rho_\psi\le\qf(H_0,\psi)=E(v)-v\cdot\rho_\psi$ for all $v'$.
+\end{proof}
+
+\begin{theorem}[Convexity]
+  \label{thm:lieb_convexOn}
+  \lean{LatticeDFT.lieb_convexOn}
+  \leanok
+  \uses{lem:lieb_basic}
+  $F$ is convex on the (convex) density domain.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A supremum of affine functions.
+\end{proof}
+
+\section{Existence of the Kohn--Sham potential}
+
+Assume nonnegative occupations with fixed particle number ($\sum_in_i(c)=N$), rigid occupations, and a
+density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive mixture).
+
+\begin{lemma}[Regularity of $E$]
+  \label{lem:Egs_regular}
+  \lean{LatticeDFT.sum_dens, LatticeDFT.qf_hamN_shift, LatticeDFT.Egs_shift, LatticeDFT.Nr_nonneg, LatticeDFT.qf_hamN_diff_le, LatticeDFT.Egs_lipschitz, LatticeDFT.continuous_Egs}
+  \leanok
+  \uses{lem:lieb_basic}
+  $E(v+k)=E(v)+kN$, and $|E(v)-E(v')|\le N\|v-v'\|_\infty$. In particular $E$ is continuous.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Compare expectation values in the ground states of both Hamiltonians.
+\end{proof}
+
+\begin{theorem}[Coercivity and a maximiser]
+  \label{thm:exists_maximiser}
+  \lean{LatticeDFT.aval, LatticeDFT.mval, LatticeDFT.mval_le, LatticeDFT.continuous_mval, LatticeDFT.mval_smul, LatticeDFT.weighted_aval, LatticeDFT.mval_nonpos, LatticeDFT.const_of_mval_eq_zero, LatticeDFT.coercive, LatticeDFT.sum_rho, LatticeDFT.exists_maximiser}
+  \leanok
+  \uses{lem:Egs_regular, def:NonUV}
+  There is $\delta>0$ with $E(v)-v\cdot\rho\le K-\delta\|v\|$ whenever $\sum_iv_i=0$. Consequently
+  $v\mapsto E(v)-v\cdot\rho$ attains its maximum.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Let $m(v)=\min_c\,(v\cdot n(c)-v\cdot\rho)$. Since $\sum_c\lambda_c(v\cdot n(c)-v\cdot\rho)=0$ with
+  $\lambda>0$, we have $m\le0$, with equality only for constant $v$ (rigidity). Compactness of the unit sphere
+  in $\{\sum_iv_i=0\}$ gives the uniform $\delta$. Then maximise over a large ball and use shift invariance.
+\end{proof}
+
+\begin{theorem}[Ground states below the target]
+  \label{thm:exists_gs_below}
+  \lean{LatticeDFT.qf_hamN_add, LatticeDFT.continuous_qf, LatticeDFT.continuous_dens, LatticeDFT.isCompact_sphere1, LatticeDFT.exists_gs_below}
+  \leanok
+  \uses{thm:exists_maximiser, thm:exists_groundState}
+  At a maximiser $v^*$, for every direction $w$ some normalised ground state $\psi$ of $H(v^*)$ satisfies
+  $w\cdot\rho_\psi\le w\cdot\rho$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Ground states $\psi_k$ of $H(v^*+t_kw)$ satisfy $w\cdot\rho_{\psi_k}\le w\cdot\rho$ by maximality.
+  A convergent subsequence (the unit sphere is compact) gives a ground state of $H(v^*)$, by continuity of $E$.
+\end{proof}
+
+\begin{definition}[Ground-state ensembles]
+  \label{def:Ens}
+  \lean{LatticeDFT.Ens, LatticeDFT.ensDens, LatticeDFT.ensDens_vecMulVec, LatticeDFT.pure_mem_Ens}
+  \leanok
+  \uses{thm:exists_groundState}
+  $\mathrm{Ens}(v)$ is the set of density matrices $\Gamma$ (symmetric, positive semidefinite, trace one)
+  with $H(v)\Gamma=E(v)\Gamma$, i.e.\ supported on the ground-state space. Their density is
+  $\rho_\Gamma(i)=\sum_cn_i(c)\Gamma_{cc}$. Pure ground states $\psi\psi^T$ belong to $\mathrm{Ens}(v)$.
+\end{definition}
+
+\begin{lemma}[Ensembles form a compact convex set]
+  \label{lem:Ens_compact}
+  \lean{LatticeDFT.quad_single, LatticeDFT.Ens_bound, LatticeDFT.convex_Ens, LatticeDFT.isCompact_Ens, LatticeDFT.continuous_ensDens}
+  \leanok
+  \uses{def:Ens}
+  $\mathrm{Ens}(v)$ is convex and compact (closed, with entries in $[-1,1]$).
+\end{lemma}
+\begin{proof}
+  \leanok
+  Entry bounds follow from positivity in the directions $e_a\pm e_b$ and the trace condition.
 \end{proof}
 
 \begin{theorem}[Ensemble $v$-representability]
   \label{thm:ensemble_vrep}
-  \uses{thm:lieb_duality}
-  Every density with $0<\rho_i<1$ and $\sum_i\rho_i=N$ is the ground-state density of some ensemble of
-  $H(v)$, for any $H_0$; in particular it is non-interacting ensemble $v$-representable, so a Kohn--Sham
-  potential exists.
+  \lean{LatticeDFT.ensemble_v_representable}
+  \leanok
+  \uses{thm:exists_gs_below, lem:Ens_compact}
+  Every strictly positive mixture $\rho$ of configuration densities is the density of a ground-state ensemble
+  of $H(v)$ for some $v$. This holds for any symmetric $H_0$, interacting or not.
 \end{theorem}
 \begin{proof}
-  A finite convex function has a nonempty subdifferential at interior points of its domain; any
-  $-v\in\partial F(\rho)$ works (Chayes--Chayes--Ruskai; Penz--van Leeuwen).
+  \leanok
+  Take a maximiser $v^*$. If $\rho$ were not an ensemble density, the compact convex set of ensemble
+  densities could be separated from $\rho$ by a direction $w$ (Hahn--Banach). That contradicts
+  Theorem~\ref{thm:exists_gs_below}.
+\end{proof}
+
+\begin{theorem}[Kohn--Sham potentials exist]
+  \label{thm:ks_potential_exists}
+  \lean{LatticeDFT.sum_occF, LatticeDFT.v_representable_lattice_fermions, LatticeDFT.ks_potential_exists}
+  \leanok
+  \uses{thm:ensemble_vrep, thm:rigid_occF, def:H0F}
+  For $N$ spinless fermions ($0<N<M$) on any graph and any density--density interaction, every strictly
+  positive mixture of configuration densities is ensemble $v$-representable. With vanishing interaction this
+  is the existence of a Kohn--Sham potential.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Theorem~\ref{thm:ensemble_vrep} with occupations $n_i(s)=[i\in s]$.
+\end{proof}
+
+\begin{theorem}[Interior densities]
+  \label{thm:interior_positive_mixture}
+  \uses{thm:ks_potential_exists}
+  A density with $0<\rho_i<1$ and $\sum_i\rho_i=N$ is a strictly positive mixture of the $N$-particle
+  configuration densities. Hence all such densities are (Kohn--Sham) ensemble $v$-representable.
+\end{theorem}
+\begin{proof}
+  Write $\rho=(1-\varepsilon)\rho'+\varepsilon\bar\rho$, where $\bar\rho$ is the uniform mixture and $\rho'$
+  still lies in the hypersimplex for small $\varepsilon$. Then use the vertex description of the hypersimplex.
 \end{proof}
 
 \section{The Kohn--Sham iteration}
 
 \begin{theorem}[Convergence of the regularised Kohn--Sham iteration]
   \label{thm:ks_iteration}
-  \uses{thm:lieb_duality, thm:ensemble_vrep}
+  \uses{thm:lieb_duality, thm:ks_potential_exists}
   With the Moreau--Yosida regularisation of $F$ and an adaptive damping step, the exact Kohn--Sham
   iteration converges to the ground-state density (Penz, Laestadius, Tellgren, Ruggenthaler,
   Phys.~Rev.~Lett.~123, 037401 (2019)).

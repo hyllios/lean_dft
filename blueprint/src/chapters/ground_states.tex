@@ -135,3 +135,32 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
   \leanok
   Explicit sum-of-squares decomposition of $\qf(H,\varphi)-E\|\varphi\|^2$.
 \end{proof}
+
+\section{Existence of ground states}
+
+\begin{theorem}[Spectral lower bound]
+  \label{thm:qf_ge_of_diagonalisation}
+  \lean{LatticeDFT.qf_ge_of_diagonalisation, LatticeDFT.exists_diagonalisation}
+  \leanok
+  \uses{def:qf}
+  A symmetric real matrix is diagonalised by an orthogonal matrix, $HP=P\diag(\lambda)$ (spectral
+  theorem). For such $P$, $\qf(H,\psi)\ge(\min\lambda)\|\psi\|^2$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Mathlib's orthonormal eigenvector basis; expand $\psi=Pc$.
+\end{proof}
+
+\begin{theorem}[Ground states exist; ground-state energy]
+  \label{thm:exists_groundState}
+  \lean{LatticeDFT.exists_groundState, LatticeDFT.gsEnergy, LatticeDFT.gsEnergy_le, LatticeDFT.qf_groundState_eq, LatticeDFT.isGroundState_of_qf_eq}
+  \leanok
+  \uses{thm:qf_ge_of_diagonalisation, def:IsGroundState}
+  Every symmetric matrix on a nonempty finite set has a normalised ground state. The ground-state energy
+  $E_0$ is the minimum of $\qf$ over unit vectors. A unit vector is a ground state if and only if its energy
+  equals $E_0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Take an eigenvector of the smallest eigenvalue.
+\end{proof}

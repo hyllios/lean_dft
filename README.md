@@ -47,6 +47,10 @@ The proof uses only the standard axioms (`propext`, `Classical.choice`, `Quot.so
 | `GenericHK` | the main theorem |
 | `KohnSham/Aufbau` | aufbau: non-interacting ground states are Slater determinants of the lowest orbitals |
 | `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
+| `Basic/Spectral` | existence of ground states; ground-state energy |
+| `KohnSham/Duality` | Lieb's functional, convex duality |
+| `KohnSham/Maximizer`, `KohnSham/Representability` | ensemble v-representability (maximiser, limit argument, separation) |
+| `KohnSham/Existence` | existence of Kohn–Sham potentials for lattice fermions |
 
 **Blueprint.** A human-readable description of every definition, lemma and theorem, with proofs and links to
 the Lean declarations, is in `blueprint/` (LaTeX, built by CI into a website with a dependency graph and a PDF:
@@ -74,8 +78,9 @@ Requires the Lean toolchain in `lean-toolchain` and Mathlib as pinned in `lake-m
 * Spinful (Hubbard) fermions: certified by exact computation for small lattices, not yet in the general proof.
 * Frustrated or complex hopping: the general proof covers uniform hopping `t ≠ 0`.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
-* Kohn–Sham: aufbau and generic uniqueness of the KS potential are proved; convex duality (Lieb functional),
-  ensemble v-representability and the regularized KS iteration are open targets in the blueprint.
+* Kohn–Sham: aufbau, Lieb duality, ensemble v-representability (existence of KS potentials for strictly
+  positive mixtures of configuration densities) and generic uniqueness are proved; the hypersimplex
+  description of interior densities and the regularized KS iteration are open targets in the blueprint.
 * Planned: time-dependent DFT.
 
 ## Authors
