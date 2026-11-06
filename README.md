@@ -62,6 +62,10 @@ Schrödinger equation.
   non-constant zero mode of `K` (`kMat_shared`).
 * `generic_ground_mem_omega`: the corrected statement. For almost every static potential, every ground
   state of lattice fermions is in `Ω`, so TDDFT starting from it is well posed.
+* `td_global` (continuation in time): the norm is conserved, so the only way the TDDFT solution can
+  stop is by reaching the boundary of `Ω`. For every `T`, either the potential exists on all of
+  `[t₀, T]`, or the evolution comes arbitrarily close to `det(K + 𝟙𝟙ᵀ) = 0` before `T`. Solutions
+  are unique on the whole interval (`goodOn_unique`).
 * `van_leeuwen` (van Leeuwen's theorem on the lattice): the density of any trajectory of any system,
   driven by a continuous potential, is reproduced locally in time by any other system on the same
   sites, starting from a state in its own `Ω` with the same initial density and current. The
@@ -121,6 +125,7 @@ proof is wrong.
 | `Spin/KronSum`, `Spin/SpinResolved`, `Spin/SpinField` | two spin species: Kronecker sums, factorisation of the leading coefficients, spin-resolved generic HK; the same in terms of `(v, B)` |
 | `TDDFT/ForceBalance` | force-balance matrix at a ground state: f-sum rule, counterexample to Farzanehpour–Tokatly Theorem 2, generic v-representability of ground states |
 | `TDDFT/Dynamics`, `TDDFT/Existence`, `TDDFT/GroundStart` | continuity and force-balance equations, local existence and uniqueness of the TDDFT potential, TDDFT from generic ground states |
+| `TDDFT/Global` | uniform Picard–Lindelöf steps, norm conservation, blow-up alternative and global uniqueness for lattice TDDFT |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |

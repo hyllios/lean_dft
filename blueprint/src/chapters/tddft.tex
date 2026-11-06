@@ -231,6 +231,73 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
   $w$ is constant (Theorem~\ref{thm:generic_td_vrep}) with zero sum.
 \end{proof}
 
+\section{Continuation in time}
+
+The NLSE conserves the norm $\sum_c(x_c^2+y_c^2)$, so its solutions cannot run off to infinity: the only obstruction
+to continuing a solution is the boundary $\det(K+\mathbf 1\mathbf 1^T)=0$ of $\Omega$.
+
+\begin{lemma}[Uniform local solutions]
+  \label{lem:exists_unif_step}
+  \lean{LatticeDFT.exists_mem_closedBall_of_isPicardLindelof, LatticeDFT.exists_local_unif,
+    LatticeDFT.exists_unif_step}
+  \leanok
+  \uses{thm:exists_local}
+  For a compact set $S\subseteq\Omega$ and a compact time interval $[a,b]$ there is $\varepsilon>0$ such that from
+  every starting time in $[a,b]$ and every starting state in $S$ the NLSE has a solution, staying in $\Omega$, on
+  an interval of length $2\varepsilon$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The Picard--Lindel\"of constants built around a point $(t_1,\psi_1)$ work for all starting data near it; cover
+  $[a,b]\times S$ by finitely many such neighbourhoods.
+\end{proof}
+
+\begin{lemma}[Norm conservation, compactness, gluing]
+  \label{lem:march_tools}
+  \lean{LatticeDFT.continuous_det_kJ, LatticeDFT.detSet, LatticeDFT.detSet_subset, LatticeDFT.Qf_one_eq,
+    LatticeDFT.isCompact_detSet, LatticeDFT.Qf_one_hasDerivAt, LatticeDFT.const_on_Icc, LatticeDFT.GoodOn,
+    LatticeDFT.goodOn_glue}
+  \leanok
+  \uses{thm:force_balance}
+  The norm is constant along the NLSE; for $\delta>0$ the states of a given norm with $|\det(K+\mathbf 1\mathbf 1^T)|
+  \ge\delta$ form a compact subset of $\Omega$; a solution on $[t_0,s]$ and a local solution around $s$ glue to a
+  solution (one-sided derivatives agree at $s$).
+\end{lemma}
+\begin{proof}
+  \leanok
+  $\frac{d}{dt}\|\psi\|^2=W(H-H)=0$; closed and bounded in finite dimension; $\mathrm{Iic}\,s\cup\mathrm{Ici}\,s=\mathbb R$.
+\end{proof}
+
+\begin{theorem}[Blow-up alternative for the NLSE]
+  \label{thm:nlse_global}
+  \lean{LatticeDFT.nlse_march, LatticeDFT.nlse_global, LatticeDFT.goodOn_unique}
+  \leanok
+  \uses{lem:exists_unif_step, lem:march_tools}
+  The NLSE solution from $\psi_0\in\Omega$ either exists, inside $\Omega$, on all of $[t_0,T]$, or for every $\delta>0$
+  it reaches a state with $|\det(K+\mathbf 1\mathbf 1^T)|<\delta$ before $T$. Solutions on $[t_0,s]$ are unique.
+\end{theorem}
+\begin{proof}
+  \leanok
+  March in steps of $\varepsilon/2$ (Lemma~\ref{lem:exists_unif_step} on the compact set of
+  Lemma~\ref{lem:march_tools}) while $|\det|\ge\delta$; after finitely many steps $T$ is reached. Uniqueness: the set
+  where two solutions agree is closed, contains $t_0$, and extends to the right of each of its points by local
+  uniqueness.
+\end{proof}
+
+\begin{theorem}[Lattice TDDFT: blow-up alternative]
+  \label{thm:td_global}
+  \lean{LatticeDFT.tdsol_of_goodOn, LatticeDFT.td_global}
+  \leanok
+  \uses{thm:nlse_global, thm:td_existence}
+  Under the hypotheses of Theorem~\ref{thm:td_existence}, for every $T\ge t_0$: either the potential exists on all of
+  $[t_0,T]$ (Schr\"odinger evolution in $\Omega$ with density $n(t)$), or the evolution comes arbitrarily close to
+  the boundary of $\Omega$ before $T$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Theorem~\ref{thm:nlse_global}; the density matches on the whole interval as in Theorem~\ref{thm:td_existence}.
+\end{proof}
+
 \section{Time-dependent Kohn--Sham}
 
 \begin{lemma}[The density of a trajectory is $C^2$]
