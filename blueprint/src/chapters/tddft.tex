@@ -1,4 +1,4 @@
-\chapter{Time-dependent DFT: the initial state}
+\chapter{Time-dependent DFT}
 \label{chap:tddft}
 
 On a lattice, time-dependent DFT reduces to ordinary differential equations (Farzanehpour and Tokatly,
@@ -9,8 +9,11 @@ zero eigenvalue besides the constant potentials, Picard--Lindel\"of gives a uniq
 time, for every density with continuous $\ddot n$ consistent with $\psi_0$. Such initial states form the
 \emph{$v$-representability set} $\Omega$.
 
-Their Theorem~2 states that every ground state on a connected lattice is in $\Omega$. This chapter shows
-that the statement is false, and proves it for almost every static potential.
+This chapter proves their Theorem~1 (local existence and uniqueness of the potential), shows that their
+Theorem~2 (every ground state on a connected lattice is in $\Omega$) is false, and proves Theorem~2 for
+almost every static potential.
+
+\section{The initial state}
 
 \begin{definition}[Force-balance matrix]
   \label{def:kMat}
@@ -98,4 +101,132 @@ fails.
 \begin{proof}
   \leanok
   Take the zero set of $\prod_cP_c$ and apply Theorem~\ref{thm:kMat_definite_of_hstar}.
+\end{proof}
+
+\section{The dynamics}
+
+Write $\psi=x+iy$. For real $H(v)=H_0+\mathrm{diag}(\sum_iv_in_i)$ the Schr\"odinger equation
+$i\dot\psi=H(v)\psi$ is the real system $\dot x=Hy$, $\dot y=-Hx$. With $N_i=\mathrm{diag}(n_i)$ and
+$Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
+
+\begin{definition}[Density, current, force balance]
+  \label{def:schr}
+  \lean{LatticeDFT.Nmat, LatticeDFT.Qf, LatticeDFT.Wf, LatticeDFT.schr, LatticeDFT.tdens, LatticeDFT.tcur, LatticeDFT.qsrc, LatticeDFT.kfb}
+  \leanok
+  \uses{def:hamN}
+  $\rho_i=Q(N_i)$, $j_i=2\,W(H_0N_i)$, $q_i=2\,Q(H_0N_iH_0-H_0H_0N_i)$ and
+  $K_{ij}=-2\,Q(H_0N_iN_j-N_jH_0N_i)$.
+\end{definition}
+
+\begin{theorem}[Continuity and force balance]
+  \label{thm:force_balance}
+  \lean{LatticeDFT.Qf_hasDerivAt, LatticeDFT.Wf_hasDerivAt, LatticeDFT.tdens_hasDerivAt, LatticeDFT.tcur_hasDerivAt}
+  \leanok
+  \uses{def:schr}
+  Along any trajectory, $\frac{d}{dt}Q(A)=W(HA-AH)$ and $\frac{d}{dt}W(M)=Q(MH-HM)$. Hence $\dot\rho_i=j_i$
+  (whatever the potential), and $\dot j_i=q_i-\sum_jK_{ij}v_j$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Product rule and $H^T=H$. The potential commutes with $N_i$, so it drops out of $\dot\rho$; in $\dot j$
+  it enters linearly through $H_0N_iN_j-N_jH_0N_i$.
+\end{proof}
+
+\begin{lemma}[Gauge identities]
+  \label{lem:gauge}
+  \lean{LatticeDFT.sum_Nmat, LatticeDFT.kfb_sum_right, LatticeDFT.kfb_sum_left, LatticeDFT.qsrc_sum}
+  \leanok
+  \uses{def:schr}
+  If every configuration has the same particle number, $K$ annihilates constants, the column sums of $K$
+  vanish, and $\sum_iq_i=0$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $\sum_iN_i$ is a multiple of the identity.
+\end{proof}
+
+\begin{theorem}[The force balance determines the potential]
+  \label{thm:vfb}
+  \lean{LatticeDFT.onesM, LatticeDFT.kJ, LatticeDFT.vfb, LatticeDFT.vfb_spec, LatticeDFT.vfb_unique}
+  \leanok
+  \uses{lem:gauge}
+  If $\det(K(\psi)+\mathbf 1\mathbf 1^T)\ne0$ and $\sum_is_i=0$, then $v=(K+\mathbf 1\mathbf 1^T)^{-1}(q-s)$
+  is the unique potential with $\sum_iv_i=0$ and $Kv=q-s$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Summing $(K+\mathbf 1\mathbf 1^T)v=q-s$ over $i$ kills the $K$ part and the right-hand side, so
+  $\sum_iv_i=0$.
+\end{proof}
+
+\begin{theorem}[The NLSE vector field is smooth on $\Omega$]
+  \label{thm:smooth_field}
+  \lean{LatticeDFT.vfb_cramer, LatticeDFT.contDiffAt_vfb, LatticeDFT.field, LatticeDFT.contDiffAt_field, LatticeDFT.omega, LatticeDFT.isOpen_omega}
+  \leanok
+  \uses{thm:vfb}
+  $\Omega=\{\psi:\det(K(\psi)+\mathbf 1\mathbf 1^T)\ne0\}$ is open, and
+  $(\psi,s)\mapsto$ (Schr\"odinger field with potential $v(\psi,s)$) is smooth near every point of
+  $\Omega\times\R^M$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  By Cramer's rule $v_j$ is a ratio of polynomials in $(\psi,s)$ with denominator $\det(K+\mathbf 1\mathbf 1^T)$.
+\end{proof}
+
+\begin{theorem}[Local solution of the NLSE]
+  \label{thm:exists_local}
+  \lean{LatticeDFT.nlse, LatticeDFT.exists_local}
+  \leanok
+  \uses{thm:smooth_field}
+  For continuous $\ddot n$ and $\psi_0\in\Omega$ the NLSE has a solution on an interval around $t_0$, and its
+  vector field is uniformly Lipschitz on a ball around $\psi_0$ inside $\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A $C^1$ map is Lipschitz near a point; keep $\ddot n(t)$ close to $\ddot n(t_0)$ by continuity, bound the field,
+  and apply Picard--Lindel\"of.
+\end{proof}
+
+\begin{theorem}[Lattice TDDFT: existence]
+  \label{thm:td_existence}
+  \lean{LatticeDFT.const_of_hasDerivAt_zero, LatticeDFT.td_existence}
+  \leanok
+  \uses{thm:exists_local, thm:force_balance, thm:vfb}
+  Let $n(t)$ have continuous $\ddot n$ with $\sum_i\ddot n_i=0$, and let $\psi_0\in\Omega$ reproduce $n(t_0)$ and
+  $\dot n(t_0)$. Then, on an interval around $t_0$, a solution of the Schr\"odinger equation driven by a potential
+  with $\sum_iv_i=0$ has density $n(t)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Along the NLSE solution the force balance gives $\ddot\rho=\ddot n$. The current mismatch $j-\dot n$ then has zero
+  derivative and vanishes at $t_0$; so the density mismatch has zero derivative and vanishes too.
+\end{proof}
+
+\begin{theorem}[Lattice TDDFT: uniqueness]
+  \label{thm:td_uniqueness}
+  \lean{LatticeDFT.pot_eq_vfb, LatticeDFT.td_uniqueness}
+  \leanok
+  \uses{thm:exists_local, thm:force_balance, thm:vfb}
+  Two trajectories from the same $\psi_0\in\Omega$ with the same density $n(t)$ (potentials with
+  $\sum_iv_i=0$) coincide near $t_0$, and so do their potentials.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Differentiating $\rho=n$ twice gives $Kv=q-\ddot n$, so $v=v(\psi,\ddot n)$: both trajectories solve the NLSE,
+  which has unique solutions.
+\end{proof}
+
+\begin{theorem}[TDDFT from the ground state, almost every potential]
+  \label{thm:generic_ground_mem_omega}
+  \lean{LatticeDFT.kfb_quad_real, LatticeDFT.mem_omega_of_definite, LatticeDFT.generic_ground_mem_omega}
+  \leanok
+  \uses{thm:generic_td_vrep, thm:kMat_nonpos, thm:td_existence, thm:td_uniqueness}
+  For a real state, $w^TK(\psi_0,0)w=-w^T\mathrm{kMat}(\psi_0)w$. Hence, for spinless lattice fermions,
+  outside a closed, nowhere dense, null set of static potentials every ground state lies in $\Omega$, and
+  every density consistent with it has a unique potential locally in time.
+\end{theorem}
+\begin{proof}
+  \leanok
+  If $(K+\mathbf 1\mathbf 1^T)w=0$ then $0=-w^T\mathrm{kMat}\,w+(\sum_iw_i)^2$; both terms are non-negative, so
+  $w$ is constant (Theorem~\ref{thm:generic_td_vrep}) with zero sum.
 \end{proof}

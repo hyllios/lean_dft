@@ -48,15 +48,20 @@ In spin-DFT language (`generic_hk_spin_field`, with `v↑ = v - B`, `v↓ = v + 
 magnetic field `B` never changes the ground state (`groundState_field_shift`), and for almost every
 `(v, B)` it is the only freedom besides the usual constant in `v`.
 
-### Time-dependent DFT: the initial state
+### Time-dependent DFT
 
-Lattice TDDFT exists locally (Farzanehpour & Tokatly, *Phys. Rev. B* **86**, 125130 (2012)) when the
-force-balance matrix `K(ψ₀)` of the initial state has no zero mode besides constants. Their Theorem 2
-claims this for every ground state on a connected lattice. `square_kMat_degenerate` shows it is false:
-a ground state shared by two different potentials (two fermions on the square) has a non-constant zero
-mode (`kMat_shared`). `generic_td_vrep` proves the corrected statement: for almost every static potential,
-every ground state of lattice fermions has `K(ψ₀)` negative definite modulo constants, so TDDFT exists
-starting from it.
+Lattice TDDFT reduces to ODEs (Farzanehpour & Tokatly, *Phys. Rev. B* **86**, 125130 (2012)): the
+force-balance equation `K(ψ) v = q(ψ) - n̈` lets one eliminate the potential, which gives a nonlinear
+Schrödinger equation.
+
+* `td_existence`, `td_uniqueness` (their Theorem 1): from an initial state in
+  `Ω = {det(K + 𝟙𝟙ᵀ) ≠ 0}` that reproduces `n(t₀)` and `ṅ(t₀)`, every density with continuous `n̈` is
+  produced, locally in time, by a potential that is unique up to a constant (Picard–Lindelöf).
+* Their Theorem 2 claims every ground state on a connected lattice is in `Ω`. `square_kMat_degenerate`
+  shows it is false: a ground state shared by two different potentials (two fermions on the square) has a
+  non-constant zero mode of `K` (`kMat_shared`).
+* `generic_ground_mem_omega`: the corrected statement. For almost every static potential, every ground
+  state of lattice fermions is in `Ω`, so TDDFT starting from it is well posed.
 
 ### Kohn–Sham theory
 
@@ -102,6 +107,7 @@ proof is wrong.
 | `Spin/Symmetric`, `Spin/HubbardCertificates` | generic HK with a symmetry (sector-wise Krylov condition); total-density HK for the Hubbard dimer and triangle |
 | `Spin/KronSum`, `Spin/SpinResolved`, `Spin/SpinField` | two spin species: Kronecker sums, factorisation of the leading coefficients, spin-resolved generic HK; the same in terms of `(v, B)` |
 | `TDDFT/ForceBalance` | force-balance matrix at a ground state: f-sum rule, counterexample to Farzanehpour–Tokatly Theorem 2, generic v-representability of ground states |
+| `TDDFT/Dynamics`, `TDDFT/Existence`, `TDDFT/GroundStart` | continuity and force-balance equations, local existence and uniqueness of the TDDFT potential, TDDFT from generic ground states |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
 | `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
 
@@ -138,9 +144,8 @@ Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Ma
 * Frustrated or complex hopping: the general proof needs hopping amplitudes of a common sign. Frustrated
   hopping (e.g. π-flux) can genuinely fail.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
-* Time-dependent DFT: the initial-state condition is proved for almost every ground state; the
-  dynamics (force-balance ODE and its local solution, Farzanehpour–Tokatly Theorem 1) is not yet
-  formalized.
+* Time-dependent DFT: local existence and uniqueness are proved; global-in-time statements (how long a
+  solution stays in `Ω`) and complex hopping are open.
 
 ## License
 
