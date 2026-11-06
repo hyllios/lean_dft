@@ -2,8 +2,9 @@
 
 A Lean 4 / Mathlib formalization of the foundations of density-functional theory (DFT) for finite lattice
 systems. It covers ground states, the Hohenberg–Kohn (HK) theorem and its failures, second-quantized lattice
-fermions, a **generic Hohenberg–Kohn theorem**, and **Kohn–Sham theory**: existence and generic uniqueness
-of Kohn–Sham potentials, and convergence of the regularised Kohn–Sham iteration.
+fermions, a **generic Hohenberg–Kohn theorem** (spinless, and spin-resolved for spinful electrons), and
+**Kohn–Sham theory**: existence and generic uniqueness of Kohn–Sham potentials, and convergence of the
+regularised Kohn–Sham iteration.
 
 All proofs use only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`), and there is no `sorry`.
 
@@ -33,6 +34,16 @@ lattices in general (Penz & van Leeuwen, *J. Chem. Phys.* **155**, 244111 (2021)
 
 `generic_hk_lattice_fermions_w` extends the theorem to edge-dependent, symmetric hopping amplitudes `t a b`
 that all have the same sign.
+
+### Spin-resolved generic Hohenberg–Kohn theorem
+
+`generic_hk_spin`: for `N↑` spin-up and `N↓` spin-down electrons (`0 < Nσ < M`) on a connected lattice,
+with spin-conserving hopping of a common sign and any diagonal interaction (e.g. Hubbard,
+`generic_hk_hubbard`), the spin-dependent potentials `(v↑, v↓)` at which some ground state is shared with
+a potential differing by more than a separate constant on each spin form a closed, nowhere dense,
+Lebesgue-null set. The separate constants are the known non-uniqueness of spin-DFT (a uniform magnetic
+field along the quantisation axis); generically there is no other. The proof shows that the
+strong-potential leading coefficient of the two species factorises into the spinless ones.
 
 ### Kohn–Sham theory
 
@@ -75,6 +86,7 @@ proof is wrong.
 | `KohnSham/Existence` | existence of Kohn–Sham potentials for lattice fermions |
 | `KohnSham/Hypersimplex` | interior densities are positive mixtures of configurations; KS potentials for every density with `0 < ρ_i < 1` |
 | `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
+| `Spin/KronSum`, `Spin/SpinResolved` | two spin species: Kronecker sums, factorisation of the leading coefficients, spin-resolved generic HK |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
 | `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
 
@@ -103,7 +115,9 @@ Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Ma
 
 ## Scope and open directions
 
-* Spinful (Hubbard) fermions: certified by exact computation for small lattices, not yet in the general proof.
+* Spinful (Hubbard) fermions: the spin-resolved theorem (spin-dependent potentials) is proved. The total
+  density with a spin-independent potential is open in general (spin symmetry forces zeros and the
+  strong-potential limit is degenerate); it is certified by exact computation for small lattices.
 * Frustrated or complex hopping: the general proof needs hopping amplitudes of a common sign. Frustrated
   hopping (e.g. π-flux) can genuinely fail.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.

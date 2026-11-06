@@ -118,19 +118,27 @@ theorem volume_zeroSet {V : Type*} [Fintype V] {P : MvPolynomial V ℝ} (hP : P 
 variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V] [DecidableEq V]
 
 omit [DecidableEq V] in
-/-- **Generic Hohenberg–Kohn, measure version (conditional on (H*)).** Non-uniquely-v-representable
-potentials lie in a closed, nowhere dense, Lebesgue-null set. -/
-theorem generic_hk_ae {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hR : Rigid n)
-    (ord : C → ℕ) (hstar : ∀ c, krylovPoly H0 n c ord ≠ 0) :
-    ∃ Z : Set (V → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ volume Z = 0 ∧ {v | NonUV H0 n v} ⊆ Z := by
+/-- **Generic Hohenberg–Kohn modulo trivial shifts, measure version (conditional on (H*)).** -/
+theorem generic_hk_ae_mod {Tr : Set (V → ℝ)} {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm)
+    {n : V → C → ℝ} (hR : RigidMod Tr n) (ord : C → ℕ) (hstar : ∀ c, krylovPoly H0 n c ord ≠ 0) :
+    ∃ Z : Set (V → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ volume Z = 0 ∧
+      {v | NonUVMod Tr H0 n v} ⊆ Z := by
   set Q := ∏ c, krylovPoly H0 n c ord
   have hQ : Q ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun c _ => hstar c)
   obtain ⟨hcl, hint⟩ := zeroSet_closed_nowhere hQ
   refine ⟨_, hcl, hint, volume_zeroSet hQ, fun v hv => ?_⟩
-  obtain ⟨c, hc⟩ := nonUV_imp_krylov_zero hH0 hR hv ord
+  obtain ⟨c, hc⟩ := nonUVMod_imp_krylov_zero hH0 hR hv ord
   change MvPolynomial.eval v Q = 0
   rw [map_prod]
   exact Finset.prod_eq_zero (Finset.mem_univ c) hc
+
+omit [DecidableEq V] in
+/-- **Generic Hohenberg–Kohn, measure version (conditional on (H*)).** Non-uniquely-v-representable
+potentials lie in a closed, nowhere dense, Lebesgue-null set. -/
+theorem generic_hk_ae {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hR : Rigid n)
+    (ord : C → ℕ) (hstar : ∀ c, krylovPoly H0 n c ord ≠ 0) :
+    ∃ Z : Set (V → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ volume Z = 0 ∧ {v | NonUV H0 n v} ⊆ Z :=
+  generic_hk_ae_mod (Tr := constPot) hH0 hR ord hstar
 
 end
 

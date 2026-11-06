@@ -127,43 +127,54 @@ lemma formZ_ne_zero {y : Conf M N} {z : Fin N → Fin M}
       linarith
   exact exists_perm_of_injective y hinj hmem
 
-/-- **(H*) for spinless lattice fermions** with edge-dependent hopping amplitudes of a common sign.
--/
-theorem hstar_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+/-- **Generic single-species potentials.** For hopping of a common sign there is a potential `u`
+with injective configuration energies, all diagonal strong-potential coefficients nonzero, and any
+given finite family of nonzero polynomials nonzero at `u`. -/
+theorem exists_good_u {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
     {t : Fin M → Fin M → ℝ} {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c : Conf M N)
-    (Vint : Conf M N → ℝ) :
-    krylovPoly (H0Fw G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 := by
+    {κ : Type*} [Finite κ] (R : κ → MvPolynomial (Fin M) ℝ) (hR0 : ∀ k, R k ≠ 0) :
+    ∃ u : Fin M → ℝ, ∃ hw : Function.Injective (wC u : Conf M N → ℝ),
+      (∀ y, alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c
+        (mopt_self G c) y y ≠ 0) ∧ ∀ k, eval u (R k) ≠ 0 := by
   classical
+  have := Fintype.ofFinite κ
   -- polynomial conditions: distinct configuration energies and multiset genericity
   set κ1 := {p : Conf M N × Conf M N // p.1 ≠ p.2}
   set κ2 := {p : Conf M N × (Fin N → Fin M) // ¬ ∃ ρ : Equiv.Perm (Fin N), ∀ l, p.2 l =
       τs p.1 (ρ l)}
-  obtain ⟨u, hu, hD, hR⟩ := exists_common_ne (κ := κ1 ⊕ κ2)
+  obtain ⟨u, hu, hD, hR⟩ := exists_common_ne (κ := (κ1 ⊕ κ2) ⊕ κ)
     (fun y : Conf M N => fun u => DExp G t u c y) (fun y => ratOn_DExp G t c y)
     (fun y => exists_DExp_ne hG hts c y)
-    (fun k => Sum.elim (fun p : κ1 => formW p.1.1 p.1.2) (fun p : κ2 => formZ p.1.1 p.1.2) k)
+    (Sum.elim (Sum.elim (fun p : κ1 => formW p.1.1 p.1.2) (fun p : κ2 => formZ p.1.1 p.1.2)) R)
     (fun k => by
-      rcases k with p | p
+      rcases k with (p | p) | k
       · exact formW_ne_zero p.2
-      · exact formZ_ne_zero p.2)
+      · exact formZ_ne_zero p.2
+      · exact hR0 k)
   have hw : Function.Injective (wC u : Conf M N → ℝ) := by
     intro s s' h
     by_contra hne
-    have := hR (Sum.inl ⟨(s, s'), hne⟩)
+    have := hR (Sum.inl (Sum.inl ⟨(s, s'), hne⟩))
     simp only [Sum.elim_inl, eval_formW, h, sub_self] at this
     exact this rfl
   have hgen : ∀ y : Conf M N, ∀ z : Fin N → Fin M, ∑ l, u (z l) = wC u y →
       ∃ ρ : Equiv.Perm (Fin N), ∀ l, z l = τs y (ρ l) := by
     intro y z hz
     by_contra hne
-    have := hR (Sum.inr ⟨(y, z), hne⟩)
-    simp only [Sum.elim_inr, eval_formZ, hz, sub_self] at this
+    have := hR (Sum.inl (Sum.inr ⟨(y, z), hne⟩))
+    simp only [Sum.elim_inl, Sum.elim_inr, eval_formZ, hz, sub_self] at this
     exact this rfl
-  have hα : ∀ y, alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c
-      (mopt_self G c) y y ≠ 0 := by
-    intro y
-    rw [alpha_eq_D hG t u hu hw c y (hgen y), D_eq_DExp hG t hu c y]
-    exact hD y
+  refine ⟨u, hw, fun y => ?_, fun k => by simpa using hR (Sum.inr k)⟩
+  rw [alpha_eq_D hG t u hu hw c y (hgen y), D_eq_DExp hG t hu c y]
+  exact hD y
+
+/-- **(H*) for spinless lattice fermions** with edge-dependent hopping amplitudes of a common sign.
+-/
+theorem hstar_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ} {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c : Conf M N)
+    (Vint : Conf M N → ℝ) :
+    krylovPoly (H0Fw G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 := by
+  obtain ⟨u, hw, hα, -⟩ := exists_good_u hG hts c (κ := Empty) (fun k => k.elim) (fun k => k.elim)
   exact hstar_of_alpha (lip_mopt hG t c) (mopt_self G c) occF u hw hα Vint
 
 /-- **(H*) for spinless lattice fermions** with uniform hopping `t ≠ 0`. -/

@@ -90,9 +90,30 @@ def NonUV (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) : Prop :=
   ∃ (ψ : C → ℝ) (v' : V → ℝ), IsGroundState (hamN H0 n v) ψ ∧ IsGroundState (hamN H0 n v') ψ ∧
     ¬ ∃ k, ∀ i, v i - v' i = k
 
+/-- Rigidity modulo a set `Tr` of trivial potential shifts: a density-coupled potential that is
+constant on every configuration lies in `Tr`. `Rigid` is the case of the constant potentials. -/
+def RigidMod (Tr : Set (V → ℝ)) (n : V → C → ℝ) : Prop :=
+  ∀ (w : V → ℝ) (κ : ℝ), (∀ c, ∑ i, w i * n i c = κ) → w ∈ Tr
+
+/-- Non-unique v-representability modulo trivial shifts `Tr`: some ground state of `H(v)` is also
+a ground state of `H(v')` with `v - v' ∉ Tr`. `NonUV` is the case of the constant potentials. -/
+def NonUVMod (Tr : Set (V → ℝ)) (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) : Prop :=
+  ∃ (ψ : C → ℝ) (v' : V → ℝ), IsGroundState (hamN H0 n v) ψ ∧ IsGroundState (hamN H0 n v') ψ ∧
+    (fun i => v i - v' i) ∉ Tr
+
+/-- The constant potentials. -/
+def constPot : Set (V → ℝ) := {w | ∃ k, ∀ i, w i = k}
+
+omit [Fintype C] [DecidableEq C] [DecidableEq V] in
+lemma rigid_iff_rigidMod (n : V → C → ℝ) : Rigid n ↔ RigidMod constPot n := Iff.rfl
+
 omit [DecidableEq V] in
-theorem nonUV_imp_krylov_zero {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hR : Rigid n)
-    {v : V → ℝ} (h : NonUV H0 n v) (ord : C → ℕ) :
+lemma nonUV_iff_nonUVMod (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) :
+    NonUV H0 n v ↔ NonUVMod constPot H0 n v := Iff.rfl
+
+omit [DecidableEq V] in
+theorem nonUVMod_imp_krylov_zero {Tr : Set (V → ℝ)} {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm)
+    {n : V → C → ℝ} (hR : RigidMod Tr n) {v : V → ℝ} (h : NonUVMod Tr H0 n v) (ord : C → ℕ) :
     ∃ c, MvPolynomial.eval v (krylovPoly H0 n c ord) = 0 := by
   obtain ⟨ψ, v', hψ, hψ', hne⟩ := h
   have hS := hamN_isSymm hH0 n v
@@ -119,6 +140,12 @@ theorem nonUV_imp_krylov_zero {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V →
   exact ⟨c, by rw [eval_krylovPoly]; exact det_kry_eq_zero hS hψ.1 hE hc ord⟩
 
 omit [DecidableEq V] in
+theorem nonUV_imp_krylov_zero {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hR : Rigid n)
+    {v : V → ℝ} (h : NonUV H0 n v) (ord : C → ℕ) :
+    ∃ c, MvPolynomial.eval v (krylovPoly H0 n c ord) = 0 :=
+  nonUVMod_imp_krylov_zero (Tr := constPot) hH0 hR h ord
+
+omit [DecidableEq V] in
 /-- A real polynomial vanishing on a nonempty open set is the zero polynomial. -/
 theorem eq_zero_of_vanish_on_open {P : MvPolynomial V ℝ} {U : Set (V → ℝ)} (hU : IsOpen U)
     {z : V → ℝ} (hz : z ∈ U) (h : ∀ v ∈ U, MvPolynomial.eval v P = 0) : P = 0 := by
@@ -143,20 +170,27 @@ theorem zeroSet_closed_nowhere {P : MvPolynomial V ℝ} (hP : P ≠ 0) :
   exact hP (eq_zero_of_vanish_on_open isOpen_interior hz (fun v hv => interior_subset hv))
 
 omit [DecidableEq V] in
+/-- **Generic Hohenberg–Kohn modulo trivial shifts (conditional on (H*)).** -/
+theorem generic_hk_mod {Tr : Set (V → ℝ)} {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ}
+    (hR : RigidMod Tr n) (ord : C → ℕ) (hstar : ∀ c, krylovPoly H0 n c ord ≠ 0) :
+    ∃ Z : Set (V → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ {v | NonUVMod Tr H0 n v} ⊆ Z := by
+  set Q := ∏ c, krylovPoly H0 n c ord
+  have hQ : Q ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun c _ => hstar c)
+  obtain ⟨hcl, hint⟩ := zeroSet_closed_nowhere hQ
+  refine ⟨_, hcl, hint, fun v hv => ?_⟩
+  obtain ⟨c, hc⟩ := nonUVMod_imp_krylov_zero hH0 hR hv ord
+  change MvPolynomial.eval v Q = 0
+  rw [map_prod]
+  exact Finset.prod_eq_zero (Finset.mem_univ c) hc
+
+omit [DecidableEq V] in
 /-- **Generic Hohenberg–Kohn (conditional on (H*)).** If the occupations are rigid and, for every
 configuration `c`, the Krylov polynomial is nonzero, then all non-uniquely-v-representable
 potentials lie in a closed set with empty interior. -/
 theorem generic_hk {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hR : Rigid n)
     (ord : C → ℕ) (hstar : ∀ c, krylovPoly H0 n c ord ≠ 0) :
-    ∃ Z : Set (V → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ {v | NonUV H0 n v} ⊆ Z := by
-  set Q := ∏ c, krylovPoly H0 n c ord
-  have hQ : Q ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun c _ => hstar c)
-  obtain ⟨hcl, hint⟩ := zeroSet_closed_nowhere hQ
-  refine ⟨_, hcl, hint, fun v hv => ?_⟩
-  obtain ⟨c, hc⟩ := nonUV_imp_krylov_zero hH0 hR hv ord
-  change MvPolynomial.eval v Q = 0
-  rw [map_prod]
-  exact Finset.prod_eq_zero (Finset.mem_univ c) hc
+    ∃ Z : Set (V → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ {v | NonUV H0 n v} ⊆ Z :=
+  generic_hk_mod (Tr := constPot) hH0 hR ord hstar
 
 end
 

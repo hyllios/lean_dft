@@ -92,6 +92,7 @@ theorem exists_groundState [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) :
 noncomputable def gsEnergy [Nonempty C] (H : Matrix C C ℝ) : ℝ :=
   if hS : H.IsSymm then qf H (Classical.choose (exists_groundState hS)) else 0
 
+omit [DecidableEq C] in
 theorem gsEnergy_le [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {φ : C → ℝ} (hφ : φ ⬝ᵥ φ = 1) :
     gsEnergy H ≤ qf H φ := by
   obtain ⟨hg, hn⟩ := Classical.choose_spec (exists_groundState hS)

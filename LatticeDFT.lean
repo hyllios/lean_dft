@@ -35,6 +35,8 @@ import LatticeDFT.PathSum.FreeFermions
 import LatticeDFT.PathSum.Resonance
 import LatticeDFT.PathSum.ResonantPoint
 import LatticeDFT.PathSum.RouteSums
+import LatticeDFT.Spin.KronSum
+import LatticeDFT.Spin.SpinResolved
 import LatticeDFT.StrongPotential.LeadingCoefficient
 import LatticeDFT.StrongPotential.PowerSums
 import LatticeDFT.StrongPotential.Resolvent
