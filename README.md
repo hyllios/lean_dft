@@ -20,6 +20,7 @@ ground state of a potential differing from `v` by more than a constant form a cl
 Lebesgue-null set. In other words, the HK theorem holds for almost every potential, although it fails on
 lattices in general (Penz & van Leeuwen, *J. Chem. Phys.* **155**, 244111 (2021)). The potential-side
 statement was left open in Penz & van Leeuwen, *Quantum* **7**, 918 (2023).
+`generic_hk_lattice_fermions_w` extends this to edge-dependent (symmetric) hopping amplitudes of a common sign.
 
 The proof uses only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`) and contains no `sorry`.
 
@@ -78,11 +79,12 @@ Requires the Lean toolchain in `lean-toolchain` and Mathlib as pinned in `lake-m
 ## Scope and open directions
 
 * Spinful (Hubbard) fermions: certified by exact computation for small lattices, not yet in the general proof.
-* Frustrated or complex hopping: the general proof covers uniform hopping `t ≠ 0`.
+* Frustrated or complex hopping: the general proof covers hopping amplitudes of a common sign (in particular
+  uniform `t ≠ 0`); frustrated (e.g. π-flux) hopping can genuinely fail.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
-* Kohn–Sham: aufbau, Lieb duality, ensemble v-representability (existence of KS potentials for strictly
-  positive mixtures of configuration densities) and generic uniqueness are proved; the hypersimplex
-  description of interior densities and the regularized KS iteration are open targets in the blueprint.
+* Kohn–Sham: aufbau (including the lowest-orbital characterisation), Lieb duality, existence of KS potentials
+  for every density with `0 < ρ_i < 1`, generic uniqueness, and convergence of the regularised KS iteration
+  (MYKSODA, in the corrected form of the erratum) are proved.
 * Planned: time-dependent DFT.
 
 ## Authors

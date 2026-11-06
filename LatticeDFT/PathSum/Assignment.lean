@@ -77,8 +77,8 @@ lemma Mopt_update {G : SimpleGraph (Fin M)} (hG : G.Connected) (c : Conf M N) (�
     _ = Mopt G c τ + G.dist (τ k) a := by rw [hσ]
 
 /-- `mopt` is a valid distance for the fermionic hopping matrix. -/
-theorem lip_mopt {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : ℝ) (c : Conf M N) :
-    Lip (Γ (-t • G.adjMatrix ℝ) : Matrix (Conf M N) (Conf M N) ℝ) (mopt G c) := by
+theorem lip_mopt {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ) (c : Conf M N) :
+    Lip (Γ (-hopM G t) : Matrix (Conf M N) (Conf M N) ℝ) (mopt G c) := by
   intro y z _ hyz
   -- a nonzero matrix element comes from one hop `τs y k → b` along an edge
   obtain ⟨k, -, hk⟩ := Finset.exists_ne_zero_of_sum_ne_zero hyz
@@ -86,7 +86,7 @@ theorem lip_mopt {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connecte
   have hadj : G.Adj (τs y k) b := by
     by_contra hna
     apply hb
-    simp [SimpleGraph.adjMatrix_apply, hna]
+    simp [hopM, hna]
   have hamp : amp z (Function.update (τs y) k b) ≠ 0 := by
     intro h0; apply hb; rw [h0, mul_zero]
   -- the hopped tuple is a permutation of `τs z`

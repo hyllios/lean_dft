@@ -182,12 +182,13 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
   \lean{LatticeDFT.exists_pred, LatticeDFT.Lval_ne_zero}
   \leanok
   \uses{thm:DExp_eventually_ne}
-  If the target $a$ has the highest energy among all other sites except its partner, and $t\ne0$, then the
-  partner route sum is nonzero.
+  Suppose the target $a$ has the highest energy among all sites except its partner. Suppose also that the
+  hopping amplitudes share a common sign, i.e.\ $s\,t_{ab}>0$ on every edge for some $s$. Then the partner
+  route sum is nonzero.
 \end{theorem}
 \begin{proof}
   \leanok
-  Every route contributes with the sign of $(-t)^{\dist}$, and at least one route exists.
+  Every route contributes with the sign of $(-s)^{\dist}$, and at least one route exists.
 \end{proof}
 
 \begin{theorem}[A generic potential with $D\neq0$]

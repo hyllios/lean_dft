@@ -117,6 +117,16 @@
   It is symmetric, and $H(v)=\Gamma(-tA_G+\diag v)+\diag V_{\mathrm{int}}$.
 \end{definition}
 
+\begin{definition}[Edge-dependent hopping]
+  \label{def:H0Fw}
+  \lean{LatticeDFT.hopM, LatticeDFT.hopM_const, LatticeDFT.hopM_isSymm, LatticeDFT.H0Fw, LatticeDFT.H0Fw_isSymm, LatticeDFT.H0F_eq_H0Fw, LatticeDFT.hamN_H0Fw}
+  \leanok
+  \uses{def:H0F}
+  More generally, let $t_{ab}$ be hopping amplitudes on the edges, and let $T_{ab}=t_{ab}$ if $a\sim b$ and
+  $0$ otherwise. Set $H_0=\Gamma(-T)+\diag(V_{\mathrm{int}})$; it is symmetric if $t$ is. Uniform hopping is
+  the case $t_{ab}=t$.
+\end{definition}
+
 \section{First quantisation and powers}
 
 \begin{definition}[First-quantised one-body operator]

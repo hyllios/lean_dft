@@ -29,11 +29,11 @@ lemma eval_pow_entry {C : Type*} [Fintype C] [DecidableEq C] (P : Matrix C C ℝ
   rw [← Polynomial.coe_evalRingHom, ← RingHom.mapMatrix_apply, ← map_pow, RingHom.mapMatrix_apply]
   rfl
 
-lemma lip_dist {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : ℝ) (b : Fin M) :
-    Lip (-t • G.adjMatrix ℝ) (fun a => G.dist b a) := by
+lemma lip_dist {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ) (b : Fin M) :
+    Lip (-hopM G t) (fun a => G.dist b a) := by
   intro a z _ haz
   have hadj : G.Adj a z := by
-    by_contra hna; apply haz; simp [SimpleGraph.adjMatrix_apply, hna]
+    by_contra hna; apply haz; simp [hopM, hna]
   have := hG.dist_triangle (u := b) (v := z) (w := a)
   rw [SimpleGraph.dist_eq_one_iff_adj.mpr hadj.symm] at this
   exact this
@@ -47,16 +47,16 @@ lemma sum_cnt {k : ℕ} (ι : Fin k → Fin N) : ∑ l, cnt ι l = k := by
 def wC (u : Fin M → ℝ) (s : Conf M N) : ℝ := ∑ i, u i * occF i s
 
 /-- Polynomial version of `gamma_pow_formula`. -/
-lemma gamma_pow_poly (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (u : Fin M → ℝ)
+lemma gamma_pow_poly (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ) (u : Fin M → ℝ)
     (y c : Conf M N) (k : ℕ) :
-    (Hl (Γ (-t • G.adjMatrix ℝ)) 0 (wC u) ^ k) y c =
+    (Hl (Γ (-hopM G t)) 0 (wC u) ^ k) y c =
       ∑ σ : Equiv.Perm (Fin N), Polynomial.C (Equiv.Perm.sign σ : ℝ) *
-        ∑ ι : Fin k → Fin N, ∏ l, (Hl (-t • G.adjMatrix ℝ) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l)) := by
+        ∑ ι : Fin k → Fin N, ∏ l, (Hl (-hopM G t) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l)) := by
   apply Polynomial.funext
   intro lam
   rw [eval_pow_entry, Hl_map_eval]
-  have hG : (Γ (-t • G.adjMatrix ℝ) : Matrix (Conf M N) (Conf M N) ℝ) + Matrix.diagonal (lam • wC u) =
-      Γ (-t • G.adjMatrix ℝ + Matrix.diagonal (lam • u)) := by
+  have hG : (Γ (-hopM G t) : Matrix (Conf M N) (Conf M N) ℝ) + Matrix.diagonal (lam • wC u) =
+      Γ (-hopM G t + Matrix.diagonal (lam • u)) := by
     rw [gamma_add, gamma_diagonal]
     congr 1
     ext s s'
@@ -72,23 +72,23 @@ lemma gamma_pow_poly (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (u
   rw [Polynomial.coe_evalRingHom, eval_pow_entry, Hl_map_eval]
 
 /-- One term: only optimal assignments reach the top degree. -/
-lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : ℝ) (u : Fin M → ℝ)
+lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ) (u : Fin M → ℝ)
     (c y : Conf M N) {k : ℕ} (σ : Equiv.Perm (Fin N)) (ι : Fin k → Fin N) :
     (if mopt G c y ≤ k then
-      (∏ l, (Hl (-t • G.adjMatrix ℝ) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))).coeff (k - mopt G c y)
+      (∏ l, (Hl (-hopM G t) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))).coeff (k - mopt G c y)
       else 0) =
     if acost G c (τs y) σ.symm = mopt G c y then
-      ∏ l, T (-t • G.adjMatrix ℝ) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l)) (cnt ι l) (τs y l)
+      ∏ l, T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l)) (cnt ι l) (τs y l)
     else 0 := by
   set m := mopt G c y
-  set P : Fin N → ℝ[X] := fun l => (Hl (-t • G.adjMatrix ℝ) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))
+  set P : Fin N → ℝ[X] := fun l => (Hl (-hopM G t) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))
   set dd : Fin N → ℕ := fun l => G.dist (τs c (σ.symm l)) (τs y l)
   have hsumn : ∑ l, cnt ι l = k := sum_cnt ι
   have hsumd : ∑ l, dd l = acost G c (τs y) σ.symm := rfl
   have hmle : m ≤ acost G c (τs y) σ.symm := Mopt_le G c (τs y) σ.symm
   have hdeg : ∀ l, (P l).natDegree ≤ cnt ι l - dd l := fun l =>
     entry_natDegree (lip_dist hG t _) (SimpleGraph.dist_self) 0 u (cnt ι l) (τs y l)
-  have hT : ∀ l, T (-t • G.adjMatrix ℝ) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l))
+  have hT : ∀ l, T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l))
       (cnt ι l) (τs y l) = if dd l ≤ cnt ι l then (P l).coeff (cnt ι l - dd l) else 0 := fun l => rfl
   by_cases hall : ∀ l, dd l ≤ cnt ι l
   · have hle : acost G c (τs y) σ.symm ≤ k := by
@@ -108,7 +108,7 @@ lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connecte
     obtain ⟨l0, hl0⟩ := hall
     have hP0 : P l0 = 0 := entry_zero (lip_dist hG t _) (SimpleGraph.dist_self) 0 u hl0
     have hprod : ∏ l, P l = 0 := Finset.prod_eq_zero (Finset.mem_univ l0) hP0
-    rw [show (∏ l, (Hl (-t • G.adjMatrix ℝ) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))) = ∏ l, P l from rfl,
+    rw [show (∏ l, (Hl (-hopM G t) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))) = ∏ l, P l from rfl,
       hprod, coeff_zero, ite_self]
     split_ifs with h
     · symm; apply Finset.prod_eq_zero (Finset.mem_univ l0)
@@ -117,15 +117,15 @@ lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connecte
 
 /-- **Leading coefficient of free fermions = signed sum over optimal assignments of products of
 single-particle leading coefficients.** -/
-theorem T_MB_formula {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : ℝ)
+theorem T_MB_formula {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (c y : Conf M N) (k : ℕ) :
-    T (Γ (-t • G.adjMatrix ℝ)) (wC u) (mopt G c) c k y =
+    T (Γ (-hopM G t)) (wC u) (mopt G c) c k y =
       ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
         (Equiv.Perm.sign σ : ℝ) * ∑ ι : Fin k → Fin N, ∏ l,
-          T (-t • G.adjMatrix ℝ) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l)) (cnt ι l)
+          T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l)) (cnt ι l)
             (τs y l) := by
-  have hT : T (Γ (-t • G.adjMatrix ℝ)) (wC u) (mopt G c) c k y =
-      if mopt G c y ≤ k then ((Hl (Γ (-t • G.adjMatrix ℝ)) 0 (wC u) ^ k) y c).coeff (k - mopt G c y)
+  have hT : T (Γ (-hopM G t)) (wC u) (mopt G c) c k y =
+      if mopt G c y ≤ k then ((Hl (Γ (-hopM G t)) 0 (wC u) ^ k) y c).coeff (k - mopt G c y)
       else 0 := rfl
   rw [hT, gamma_pow_poly, Finset.sum_filter]
   split_ifs with hk
@@ -176,15 +176,15 @@ lemma words_pow (x : Fin N → ℝ) (k : ℕ) :
     · intro h; exact absurd (Finset.mem_univ i) h
 
 /-- Single-particle divided-difference coefficients for the hop `c_{σ⁻¹ l} → y_l`. -/
-noncomputable def βsp (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (hG : G.Connected) (t : ℝ)
+noncomputable def βsp (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (σ : Equiv.Perm (Fin N)) (l : Fin N) :
     Fin M → ℝ :=
-  alphaRep (-t • G.adjMatrix ℝ) u hu (fun a => G.dist (τs c (σ.symm l)) a) (lip_dist hG t _)
+  alphaRep (-hopM G t) u hu (fun a => G.dist (τs c (σ.symm l)) a) (lip_dist hG t _)
     (τs c (σ.symm l)) SimpleGraph.dist_self (τs y l)
 
-theorem T_MB_powersum {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : ℝ)
+theorem T_MB_powersum {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (k : ℕ) :
-    T (Γ (-t • G.adjMatrix ℝ)) (wC u) (mopt G c) c k y =
+    T (Γ (-hopM G t)) (wC u) (mopt G c) c k y =
       ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
         (Equiv.Perm.sign σ : ℝ) * ∑ z : Fin N → Fin M,
           (∏ l, βsp G hG t u hu c y σ l (z l)) * (∑ l, u (z l)) ^ k := by
@@ -201,7 +201,7 @@ theorem T_MB_powersum {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Con
 
 
 /-- Assignment rigidity: a non-vanishing term with target positions permuted by `ρ` forces `ρ = 1`. -/
-lemma assign_rigid {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : ℝ)
+lemma assign_rigid {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (σ : Equiv.Perm (Fin N))
     (hopt : acost G c (τs y) σ.symm = mopt G c y) (ρ : Equiv.Perm (Fin N))
     (hβ : ∏ l, βsp G hG t u hu c y σ l (τs y (ρ l)) ≠ 0) : ρ = 1 := by
@@ -228,11 +228,11 @@ lemma assign_rigid {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connec
   omega
 
 /-- **α_y(y) equals the Slater-type sum over optimal assignments.** -/
-theorem alpha_eq_D {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : ℝ)
+theorem alpha_eq_D {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (hw : Function.Injective (wC u : Conf M N → ℝ))
     (c y : Conf M N)
     (hgen : ∀ z : Fin N → Fin M, ∑ l, u (z l) = wC u y → ∃ ρ : Equiv.Perm (Fin N), ∀ l, z l = τs y (ρ l)) :
-    alphaRep (Γ (-t • G.adjMatrix ℝ)) (wC u) hw (mopt G c) (lip_mopt hG t c) c (mopt_self G c) y y =
+    alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c (mopt_self G c) y y =
       ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
         (Equiv.Perm.sign σ : ℝ) * ∏ l, βsp G hG t u hu c y σ l (τs y l) := by
   classical
@@ -240,7 +240,7 @@ theorem alpha_eq_D {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connec
   set b : Equiv.Perm (Fin N) × (Fin N → Fin M) → ℝ := fun p =>
     if opt p.1 then (Equiv.Perm.sign p.1 : ℝ) * ∏ l, βsp G hG t u hu c y p.1 l (p.2 l) else 0
   set yv : Equiv.Perm (Fin N) × (Fin N → Fin M) → ℝ := fun p => ∑ l, u (p.2 l)
-  have h : ∀ k : ℕ, ∑ s, alphaRep (Γ (-t • G.adjMatrix ℝ)) (wC u) hw (mopt G c) (lip_mopt hG t c) c
+  have h : ∀ k : ℕ, ∑ s, alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c
       (mopt_self G c) y s * wC u s ^ k = ∑ p, b p * yv p ^ k := by
     intro k
     rw [← alphaRep_rep, T_MB_powersum hG t u hu c y k, Fintype.sum_prod_type, Finset.sum_filter]
@@ -253,8 +253,8 @@ theorem alpha_eq_D {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connec
   have key := ps_unique _ _ _ _ h (wC u y)
   -- left side: only `s = y`
   have hL : ∑ s ∈ Finset.univ.filter (fun s => wC u s = wC u y),
-      alphaRep (Γ (-t • G.adjMatrix ℝ)) (wC u) hw (mopt G c) (lip_mopt hG t c) c (mopt_self G c) y s =
-      alphaRep (Γ (-t • G.adjMatrix ℝ)) (wC u) hw (mopt G c) (lip_mopt hG t c) c (mopt_self G c) y y := by
+      alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c (mopt_self G c) y s =
+      alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c (mopt_self G c) y y := by
     rw [Finset.sum_eq_single y]
     · intro s hs hsy; exact absurd (hw (Finset.mem_filter.mp hs).2) hsy
     · intro h0; simp at h0

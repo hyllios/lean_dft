@@ -7,6 +7,7 @@ import LatticeDFT.Generic.NullSets
 `generic_hk_lattice_fermions`: for `N` spinless fermions (`0 < N < M`) on any connected graph with hopping
 `t ≠ 0` and any density–density interaction, the potentials at which a ground state is shared with a potential
 differing by more than a constant form a closed, nowhere dense, Lebesgue-null set.
+`generic_hk_lattice_fermions_w`: the same for edge-dependent hopping amplitudes of a common sign.
 -/
 
 namespace LatticeDFT
@@ -114,17 +115,18 @@ lemma formZ_ne_zero {y : Conf M N} {z : Fin N → Fin M}
       linarith
   exact exists_perm_of_injective y hinj hmem
 
-/-- **(H*) for spinless lattice fermions.** -/
-theorem hstar_lattice_fermions {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) {t : ℝ}
-    (ht : t ≠ 0) (c : Conf M N) (Vint : Conf M N → ℝ) :
-    krylovPoly (H0F G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 := by
+/-- **(H*) for spinless lattice fermions** with edge-dependent hopping amplitudes of a common sign. -/
+theorem hstar_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ} {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c : Conf M N)
+    (Vint : Conf M N → ℝ) :
+    krylovPoly (H0Fw G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 := by
   classical
   -- polynomial conditions: distinct configuration energies and multiset genericity
   set κ1 := {p : Conf M N × Conf M N // p.1 ≠ p.2}
   set κ2 := {p : Conf M N × (Fin N → Fin M) // ¬ ∃ ρ : Equiv.Perm (Fin N), ∀ l, p.2 l = τs p.1 (ρ l)}
   obtain ⟨u, hu, hD, hR⟩ := exists_common_ne (κ := κ1 ⊕ κ2)
     (fun y : Conf M N => fun u => DExp G t u c y) (fun y => ratOn_DExp G t c y)
-    (fun y => exists_DExp_ne hG ht c y)
+    (fun y => exists_DExp_ne hG hts c y)
     (fun k => Sum.elim (fun p : κ1 => formW p.1.1 p.1.2) (fun p : κ2 => formZ p.1.1 p.1.2) k)
     (fun k => by
       rcases k with p | p
@@ -143,12 +145,30 @@ theorem hstar_lattice_fermions {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (h
     have := hR (Sum.inr ⟨(y, z), hne⟩)
     simp only [Sum.elim_inr, eval_formZ, hz, sub_self] at this
     exact this rfl
-  have hα : ∀ y, alphaRep (Γ (-t • G.adjMatrix ℝ)) (wC u) hw (mopt G c) (lip_mopt hG t c) c
+  have hα : ∀ y, alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c
       (mopt_self G c) y y ≠ 0 := by
     intro y
     rw [alpha_eq_D hG t u hu hw c y (hgen y), D_eq_DExp hG t hu c y]
     exact hD y
   exact hstar_of_alpha (lip_mopt hG t c) (mopt_self G c) occF u hw hα Vint
+
+/-- **(H*) for spinless lattice fermions** with uniform hopping `t ≠ 0`. -/
+theorem hstar_lattice_fermions {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) {t : ℝ}
+    (ht : t ≠ 0) (c : Conf M N) (Vint : Conf M N → ℝ) :
+    krylovPoly (H0F G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 := by
+  rw [H0F_eq_H0Fw]
+  exact hstar_lattice_fermions_w hG (s := t) (fun _ _ _ => mul_self_pos.mpr ht) c Vint
+
+/-- **Generic Hohenberg–Kohn theorem for spinless lattice fermions, edge-dependent hopping.** The hopping
+amplitudes `t a b` (symmetric) may vary from edge to edge, as long as they share a common sign (no
+frustration). Then the non-unique potentials are contained in a closed, nowhere dense, Lebesgue-null set. -/
+theorem generic_hk_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a) {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b)
+    (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
+    ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
+      {v | NonUV (H0Fw G t Vint) occF v} ⊆ Z :=
+  generic_hk_ae (H0Fw_isSymm G htsym Vint) (rigid_occF hN0 hNM) _
+    (fun c => hstar_lattice_fermions_w hG hts c Vint)
 
 /-- **Generic Hohenberg–Kohn theorem for spinless lattice fermions.** For `N` fermions (`0 < N < M`) on any
 connected graph with hopping `t ≠ 0` and any density–density interaction, the set of potentials whose ground

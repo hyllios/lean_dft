@@ -29,10 +29,11 @@
 
 \begin{theorem}[(H$^*$) for spinless lattice fermions]
   \label{thm:hstar_lattice_fermions}
-  \lean{LatticeDFT.hstar_lattice_fermions}
+  \lean{LatticeDFT.hstar_lattice_fermions_w, LatticeDFT.hstar_lattice_fermions}
   \leanok
-  \uses{thm:exists_common_ne, thm:exists_DExp_ne, lem:forms, thm:alpha_eq_D, thm:alphaRep_eq_alphaExp, thm:hstar_of_alpha, def:H0F}
-  For a connected graph, $t\ne0$ and any interaction, every Krylov polynomial is nonzero.
+  \uses{thm:exists_common_ne, thm:exists_DExp_ne, lem:forms, thm:alpha_eq_D, thm:alphaRep_eq_alphaExp, thm:hstar_of_alpha, def:H0F, def:H0Fw}
+  Take a connected graph and any interaction, with hopping amplitudes $t_{ab}$ of a common sign (in
+  particular uniform $t\ne0$). Then every Krylov polynomial is nonzero.
 \end{theorem}
 \begin{proof}
   \leanok
@@ -42,12 +43,13 @@
 
 \begin{theorem}[Generic Hohenberg--Kohn theorem]
   \label{thm:generic_hk_lattice_fermions}
-  \lean{LatticeDFT.generic_hk_lattice_fermions}
+  \lean{LatticeDFT.generic_hk_lattice_fermions, LatticeDFT.generic_hk_lattice_fermions_w}
   \leanok
-  \uses{thm:generic_hk_ae, thm:rigid_occF, thm:hstar_lattice_fermions, def:H0F}
-  For $N$ spinless fermions ($0<N<M$) on any connected graph with hopping $t\ne0$ and any density--density
-  interaction, the potentials at which some ground state is shared with a potential differing by more than a
-  constant lie in a closed, nowhere dense, Lebesgue-null set.
+  \uses{thm:generic_hk_ae, thm:rigid_occF, thm:hstar_lattice_fermions, def:H0F, def:H0Fw}
+  Consider $N$ spinless fermions ($0<N<M$) on any connected graph, with any density--density interaction.
+  The hopping may be uniform ($t\ne0$), or symmetric and edge-dependent with a common sign. Then the
+  potentials at which some ground state is shared with a potential differing by more than a constant lie in
+  a closed, nowhere dense, Lebesgue-null set.
 \end{theorem}
 \begin{proof}
   \leanok

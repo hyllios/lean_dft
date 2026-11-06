@@ -18,7 +18,7 @@ open Matrix Filter Topology MvPolynomial
 variable {M N : ℕ}
 
 section
-variable (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (rep : Fin M → Fin M)
+variable (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ) (rep : Fin M → Fin M)
 
 lemma ratOn_Gr (b a : Fin M) : ∀ n p, RatOn (fun θ : Fin M → ℝ => Gr G t (fun i => θ (rep i)) b a n p) := by
   intro n
@@ -75,12 +75,13 @@ lemma exists_pred {G : SimpleGraph (Fin M)} (hG : G.Connected) {b q : Fin M} {n 
     rw [SimpleGraph.dist_comm] at h1
     omega
 
-/-- Positivity of the partner route sums when the target is the highest site. -/
-theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) {t : ℝ} (ht : t ≠ 0)
+/-- Positivity of the partner route sums when the target is the highest site. The hopping is assumed
+unfrustrated in the simplest sense: all amplitudes on edges have the sign of a fixed `s`. -/
+theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) {t : Fin M → Fin M → ℝ}
+    {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b)
     (us : Fin M → ℝ) (π a : Fin M) (hπa : π ≠ a) (hhigh : ∀ q, q ≠ a → q ≠ π → us q < us a) :
     Lval G t us π a π ≠ 0 := by
-  have hs : (-t) ≠ 0 := neg_ne_zero.mpr ht
-  have hpos : ∀ n q, G.dist π q = n → n < G.dist π a → 0 < Λ G t us π a π n q / (-t) ^ n := by
+  have hpos : ∀ n q, G.dist π q = n → n < G.dist π a → 0 < Λ G t us π a π n q * (-s) ^ n := by
     intro n
     induction n with
     | zero =>
@@ -92,46 +93,48 @@ theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Conn
       have hqπ : q ≠ π := by intro h; subst h; simp at hq
       have hqa : q ≠ a := by intro h; subst h; omega
       have hden : 0 < us a - us q := sub_pos.mpr (hhigh q hqa hqπ)
-      have hrw : Λ G t us π a π (n + 1) q / (-t) ^ (n + 1) =
-          (∑ r, (if G.Adj q r ∧ G.dist π r = n then Λ G t us π a π n r / (-t) ^ n else 0)) /
+      have hrw : Λ G t us π a π (n + 1) q * (-s) ^ (n + 1) =
+          (∑ r, (if G.Adj q r ∧ G.dist π r = n then (s * t q r) * (Λ G t us π a π n r * (-s) ^ n) else 0)) /
             (us a - us q) := by
         simp only [Λ, if_pos hq, if_neg hqπ]
-        rw [div_div, mul_comm, ← div_div, Finset.sum_div, Finset.sum_div, Finset.sum_div]
+        rw [div_mul_eq_mul_div, Finset.sum_mul]
         congr 1
-        funext r
+        apply Finset.sum_congr rfl; intro r _
         split_ifs
-        · rw [pow_succ]; field_simp
+        · rw [pow_succ]; ring
         · simp
       rw [hrw]
       apply div_pos _ hden
       obtain ⟨r0, hr0, hdr0⟩ := exists_pred hG hq
       apply Finset.sum_pos' (fun r _ => by
         split_ifs with hr
-        · exact (ih r hr.2 (by omega)).le
+        · exact (mul_pos (hts q r hr.1) (ih r hr.2 (by omega))).le
         · exact le_refl 0)
-      exact ⟨r0, Finset.mem_univ _, by rw [if_pos ⟨hr0, hdr0⟩]; exact ih r0 hdr0 (by omega)⟩
+      exact ⟨r0, Finset.mem_univ _, by
+        rw [if_pos ⟨hr0, hdr0⟩]; exact mul_pos (hts q r0 hr0) (ih r0 hdr0 (by omega))⟩
   have hda : 0 < G.dist π a := by
     by_contra h0; push Not at h0
     exact hπa ((dist_eq_zero_iff hG).mp (by omega)).symm
   obtain ⟨p0, hp0, hdp0⟩ := exists_pred hG (n := G.dist π a - 1) (by omega : G.dist π a = G.dist π a - 1 + 1)
   intro h0
   have hsum : 0 < ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
-      Λ G t us π a π (G.dist π p) p / (-t) ^ (G.dist π p) else 0) := by
+      (s * t a p) * (Λ G t us π a π (G.dist π p) p * (-s) ^ (G.dist π p)) else 0) := by
     apply Finset.sum_pos' (fun p _ => by
       split_ifs with hp
-      · exact (hpos _ p rfl (by omega)).le
+      · exact (mul_pos (hts a p hp.1) (hpos _ p rfl (by omega))).le
       · exact le_refl 0)
-    exact ⟨p0, Finset.mem_univ _, by rw [if_pos ⟨hp0, by omega⟩]; exact hpos _ p0 rfl (by omega)⟩
-  have : Lval G t us π a π = (-t) ^ (G.dist π a) * ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
-      Λ G t us π a π (G.dist π p) p / (-t) ^ (G.dist π p) else 0) := by
+    exact ⟨p0, Finset.mem_univ _, by
+      rw [if_pos ⟨hp0, by omega⟩]; exact mul_pos (hts a p0 hp0) (hpos _ p0 rfl (by omega))⟩
+  have : Lval G t us π a π * (-s) ^ (G.dist π a) = ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
+      (s * t a p) * (Λ G t us π a π (G.dist π p) p * (-s) ^ (G.dist π p)) else 0) := by
     unfold Lval
-    rw [Finset.mul_sum]
+    rw [Finset.sum_mul]
     apply Finset.sum_congr rfl; intro p _
     split_ifs with hp
-    · rw [← hp.2, pow_succ]; field_simp
+    · rw [← hp.2, pow_succ]; ring
     · simp
-  rw [this] at h0
-  exact (mul_ne_zero (pow_ne_zero _ hs) hsum.ne') h0
+  rw [h0, zero_mul] at this
+  exact hsum.ne' this.symm
 
 end
 
@@ -180,8 +183,9 @@ lemma rep_eq_target {l : Fin N} {z : Fin M} (h : rep c y σ0 z = τs y l) :
 
 end
 
-theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) {t : ℝ}
-    (ht : t ≠ 0) (c y : Conf M N) : ∃ u : Fin M → ℝ, Function.Injective u ∧ DExp G t u c y ≠ 0 := by
+theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) {t : Fin M → Fin M → ℝ}
+    {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c y : Conf M N) :
+    ∃ u : Fin M → ℝ, Function.Injective u ∧ DExp G t u c y ≠ 0 := by
   classical
   obtain ⟨σ0, h0, hfix⟩ := exists_opt_fixing hG c y
   set R := rep c y σ0
@@ -202,7 +206,7 @@ theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Co
     · have hπa : partner c σ0 l.1 ≠ a := fun h => l.2 (by
         have hm : partner c σ0 l.1 ∈ c.1 := τs_mem c _
         rw [h] at hm; exact hm)
-      apply Lval_ne_zero hG ht _ _ _ hπa
+      apply Lval_ne_zero hG hts _ _ _ hπa
       intro q hqa hqπ
       have hRa : R a = a := rep_target c y σ0 hfix l.1
       have hRq : R q ≠ a := by

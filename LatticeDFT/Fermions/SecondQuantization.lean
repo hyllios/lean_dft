@@ -258,11 +258,43 @@ theorem gamma_isSymm {h : Matrix (Fin M) (Fin M) ℝ} (hS : h.IsSymm) :
   · have : σ j ≠ σ j0 := fun h' => hj (σ.injective h')
     simp [hj, this, eq_comm]
 
+/-- Hopping amplitudes `t a b` on the edges of `G` (zero elsewhere). -/
+def hopM (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ) : Matrix (Fin M) (Fin M) ℝ :=
+  fun a b => if G.Adj a b then t a b else 0
+
+lemma hopM_const (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) :
+    hopM G (fun _ _ => t) = t • G.adjMatrix ℝ := by
+  ext a b; simp [hopM, SimpleGraph.adjMatrix_apply]
+
+lemma hopM_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] {t : Fin M → Fin M → ℝ}
+    (ht : ∀ a b, t a b = t b a) : (hopM G t).IsSymm := by
+  ext a b
+  simp only [hopM, Matrix.transpose_apply]
+  rw [ht b a]
+  by_cases h : G.Adj a b
+  · rw [if_pos h.symm, if_pos h]
+  · rw [if_neg (fun h' => h h'.symm), if_neg h]
+
+/-- The lattice-DFT Hamiltonian of spinless fermions with edge-dependent hopping `t a b`. -/
+noncomputable def H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
+    (Vint : Conf M N → ℝ) : Matrix (Conf M N) (Conf M N) ℝ :=
+  Γ (-hopM G t) + Matrix.diagonal Vint
+
+lemma H0Fw_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] {t : Fin M → Fin M → ℝ}
+    (ht : ∀ a b, t a b = t b a) (Vint : Conf M N → ℝ) : (H0Fw G t Vint).IsSymm := by
+  unfold H0Fw
+  refine Matrix.IsSymm.add (gamma_isSymm ?_) (Matrix.isSymm_diagonal Vint)
+  exact (hopM_isSymm G ht).neg
+
 /-- The lattice-DFT Hamiltonian of spinless fermions: hopping `t` on the edges of `G`, configuration-diagonal
 interaction `Vint`, external potential coupled to the occupations. -/
 noncomputable def H0F (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ) :
     Matrix (Conf M N) (Conf M N) ℝ :=
   Γ (-t • G.adjMatrix ℝ) + Matrix.diagonal Vint
+
+lemma H0F_eq_H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ) :
+    H0F G t Vint = H0Fw G (fun _ _ => t) Vint := by
+  unfold H0F H0Fw; rw [hopM_const, neg_smul]
 
 lemma H0F_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ) :
     (H0F G t Vint).IsSymm := by
@@ -276,6 +308,13 @@ theorem hamN_H0F (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint 
     (v : Fin M → ℝ) :
     hamN (H0F G t Vint) occF v = Γ (-t • G.adjMatrix ℝ + Matrix.diagonal v) + Matrix.diagonal Vint := by
   unfold hamN H0F
+  rw [gamma_add, gamma_diagonal]
+  abel
+
+theorem hamN_H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
+    (Vint : Conf M N → ℝ) (v : Fin M → ℝ) :
+    hamN (H0Fw G t Vint) occF v = Γ (-hopM G t + Matrix.diagonal v) + Matrix.diagonal Vint := by
+  unfold hamN H0Fw
   rw [gamma_add, gamma_diagonal]
   abel
 
