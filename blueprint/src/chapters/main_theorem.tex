@@ -1,0 +1,55 @@
+\chapter{The generic Hohenberg--Kohn theorem}
+\label{chap:main}
+
+\begin{theorem}[Rigidity of fermionic occupations]
+  \label{thm:rigid_occF}
+  \lean{LatticeDFT.rigid_occF}
+  \leanok
+  \uses{def:NonUV, def:Conf}
+  For $0<N<M$, the occupations of $N$-particle configurations are rigid.
+\end{theorem}
+\begin{proof}
+  \leanok
+  For $i\ne j$ pick $s\ni i$ with $j\notin s$, and compare $s$ with $s\setminus\{i\}\cup\{j\}$: this gives
+  $w_i=w_j$.
+\end{proof}
+
+\begin{lemma}[Genericity conditions as polynomials]
+  \label{lem:forms}
+  \lean{LatticeDFT.formZ, LatticeDFT.formW, LatticeDFT.eval_formZ, LatticeDFT.eval_formW, LatticeDFT.formW_ne_zero, LatticeDFT.formZ_ne_zero}
+  \leanok
+  \uses{def:Conf}
+  Distinct configuration energies, and the condition ``$\sum_lu_{z_l}=w_y$ only if $\vec z$ is a permutation
+  of $y$'', are non-vanishing conditions on nonzero linear forms.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Evaluate each form at suitable unit vectors.
+\end{proof}
+
+\begin{theorem}[(H$^*$) for spinless lattice fermions]
+  \label{thm:hstar_lattice_fermions}
+  \lean{LatticeDFT.hstar_lattice_fermions}
+  \leanok
+  \uses{thm:exists_common_ne, thm:exists_DExp_ne, lem:forms, thm:alpha_eq_D, thm:alphaRep_eq_alphaExp, thm:hstar_of_alpha, def:H0F}
+  For a connected graph, $t\ne0$ and any interaction, every Krylov polynomial is nonzero.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A common generic $u$ makes all $D_y(u)\ne0$. Then all $\alpha_y(y)\ne0$, and
+  Theorem~\ref{thm:hstar_of_alpha} applies.
+\end{proof}
+
+\begin{theorem}[Generic Hohenberg--Kohn theorem]
+  \label{thm:generic_hk_lattice_fermions}
+  \lean{LatticeDFT.generic_hk_lattice_fermions}
+  \leanok
+  \uses{thm:generic_hk_ae, thm:rigid_occF, thm:hstar_lattice_fermions, def:H0F}
+  For $N$ spinless fermions ($0<N<M$) on any connected graph with hopping $t\ne0$ and any density--density
+  interaction, the potentials at which some ground state is shared with a potential differing by more than a
+  constant lie in a closed, nowhere dense, Lebesgue-null set.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Theorem~\ref{thm:generic_hk_ae} with Theorems~\ref{thm:rigid_occF} and~\ref{thm:hstar_lattice_fermions}.
+\end{proof}

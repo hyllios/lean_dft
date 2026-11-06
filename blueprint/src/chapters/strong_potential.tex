@@ -1,0 +1,144 @@
+\chapter{The strong-potential limit}
+\label{chap:strong}
+
+Along a line of potentials $v=\lambda u$ the Hamiltonian $A+\diag V+\lambda\diag w$, with
+$w(y)=\sum_iu_in_i(y)$, is a matrix of polynomials in $\lambda$. Let $d:\Conf\to\N$ satisfy $d(c)=0$ and
+$d(y)\le d(z)+1$ whenever $A_{yz}\neq0$, $y\ne z$ (a ``distance from $c$'').
+
+\section{Interaction independence}
+
+\begin{definition}
+  \label{def:Hl}
+  \lean{LatticeDFT.Hl, LatticeDFT.Lip, LatticeDFT.Hl_apply}
+  \leanok
+  $H_\lambda=A+\diag(V+\lambda w)$ as a polynomial matrix; $\mathrm{Lip}(A,d)$ is the growth condition above.
+\end{definition}
+
+\begin{theorem}[Degree bound and leading coefficient]
+  \label{thm:entry_top}
+  \lean{LatticeDFT.pow_succ_coeff, LatticeDFT.entry_bound, LatticeDFT.entry_top, LatticeDFT.entry_natDegree, LatticeDFT.entry_zero}
+  \leanok
+  \uses{def:Hl}
+  $(H_\lambda^k)_{yc}$ has degree at most $k-d(y)$, and vanishes if $k<d(y)$. Its coefficient of degree
+  $k-d(y)$ does not depend on $V$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Induction on $k$. An interaction factor always replaces a factor $\lambda$, so it only contributes below
+  the top degree.
+\end{proof}
+
+\begin{theorem}[Interaction independence of the Krylov determinant]
+  \label{thm:det_top}
+  \lean{LatticeDFT.prod_top, LatticeDFT.det_top}
+  \leanok
+  \uses{thm:entry_top, def:kry}
+  The coefficient of degree $\sum_j\mathrm{ord}(j)-\sum_yd(y)$ of $\det\Kry(H_\lambda,c)$ does not depend on $V$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Leibniz expansion; each term is a product of entries whose top coefficients are $V$-independent.
+\end{proof}
+
+\begin{theorem}[Reduction to free fermions]
+  \label{thm:krylovPoly_ne_zero_of_top}
+  \lean{LatticeDFT.Hl_eval, LatticeDFT.det_kry_eval, LatticeDFT.krylovPoly_ne_zero_of_top}
+  \leanok
+  \uses{thm:det_top, lem:eval_krylovPoly}
+  If that coefficient is nonzero for $V=0$, then $P_c\neq0$ for every interaction $V$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A nonzero coefficient means a nonzero polynomial in $\lambda$, which has a non-root $\lambda_0$; evaluate
+  $P_c$ at $\lambda_0u$.
+\end{proof}
+
+\section{Power sums}
+
+\begin{definition}[Leading coefficients]
+  \label{def:T}
+  \lean{LatticeDFT.T, LatticeDFT.T_zero, LatticeDFT.T_succ}
+  \leanok
+  \uses{thm:entry_top}
+  $T_k(y)$ is the coefficient of degree $k-d(y)$ of $(H_\lambda^k)_{yc}$ at $V=0$. It obeys
+  $T_0(y)=[y=c]$ and $T_{k+1}(y)=w_yT_k(y)+\sum_{z:\,d(z)+1=d(y)}A_{yz}T_k(z)$.
+\end{definition}
+
+\begin{theorem}[Divided-difference representation]
+  \label{thm:power_sum}
+  \lean{LatticeDFT.power_sum, LatticeDFT.alphaRep, LatticeDFT.alphaRep_supp, LatticeDFT.alphaRep_rep}
+  \leanok
+  \uses{def:T}
+  If the energies $w$ are pairwise distinct, then $T_k(y)=\sum_z\alpha_y(z)w_z^k$ for all $k$, with
+  $\alpha_y$ supported on $\{y\}\cup\{z: d(z)<d(y)\}$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Strong induction on $d(y)$. The recursion prescribes $\alpha_y(z)$ for $z\ne y$, and $\alpha_y(y)$ is
+  fixed by $T_0$.
+\end{proof}
+
+\begin{theorem}[Factorisation]
+  \label{thm:top_coeff_factor}
+  \lean{LatticeDFT.det_triangular_d, LatticeDFT.prod_coeff_top, LatticeDFT.top_coeff_factor, LatticeDFT.vandermonde_factor_ne_zero}
+  \leanok
+  \uses{thm:power_sum, thm:det_top}
+  The leading coefficient of the free Krylov determinant equals $\big(\prod_y\alpha_y(y)\big)\det[w_z^{\mathrm{ord}(j)}]$.
+  The Vandermonde factor is nonzero for distinct energies.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $N=\alpha\cdot\mathrm{Vand}$, and $\alpha$ is triangular with respect to $d$. A permutation with all
+  factors nonzero would strictly increase $\sum d$, so only the identity contributes.
+\end{proof}
+
+\begin{theorem}[(H$^*$) from the diagonal coefficients]
+  \label{thm:hstar_of_alpha}
+  \lean{LatticeDFT.hstar_of_alpha}
+  \leanok
+  \uses{thm:top_coeff_factor, thm:krylovPoly_ne_zero_of_top}
+  If along some $u$ the energies are distinct and all $\alpha_y(y)\ne0$, then $P_c\neq0$ for every interaction.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Combine the factorisation with Theorem~\ref{thm:krylovPoly_ne_zero_of_top}.
+\end{proof}
+
+\begin{theorem}[Uniqueness of power-sum coefficients]
+  \label{thm:ps_unique}
+  \lean{LatticeDFT.eval_weighted_sum, LatticeDFT.ps_unique}
+  \leanok
+  If $\sum_ia_ix_i^k=\sum_jb_jy_j^k$ for all $k$, then for every value $v$,
+  $\sum_{x_i=v}a_i=\sum_{y_j=v}b_j$. Repeated nodes are allowed.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Apply both sides to the Lagrange basis polynomial that equals $1$ at $v$ and $0$ at all other nodes.
+\end{proof}
+
+\section{Explicit coefficients}
+
+\begin{theorem}[Recursion for the coefficients]
+  \label{thm:alpha_rec}
+  \lean{LatticeDFT.Ssrc, LatticeDFT.alpha_rec, LatticeDFT.alpha_sum, LatticeDFT.Ssrc_self}
+  \leanok
+  \uses{thm:power_sum, thm:ps_unique}
+  $\alpha_y(z)(w_z-w_y)=\sum_{p:\,d(p)+1=d(y)}A_{yp}\alpha_p(z)$ and $\sum_z\alpha_y(z)=[y=c]$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Compare power-sum coefficients in $T_{k+1}=w_yT_k+\sum_pA_{yp}T_k(p)$.
+\end{proof}
+
+\begin{theorem}[Explicit diagonal coefficient]
+  \label{thm:alpha_diag}
+  \lean{LatticeDFT.Fres, LatticeDFT.alpha_diag, LatticeDFT.Fres_rec}
+  \leanok
+  \uses{thm:alpha_rec}
+  With the resolvent route sum $F_y(x)=\sum_z\alpha_y(z)/(x-w_z)$:
+  $\alpha_y(y)=[y=c]+\sum_pA_{yp}F_p(w_y)$, and $(x-w_y)F_y(x)=[y=c]+\sum_pA_{yp}F_p(x)$ away from poles.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Partial fractions applied to the recursion of Theorem~\ref{thm:alpha_rec}.
+\end{proof}

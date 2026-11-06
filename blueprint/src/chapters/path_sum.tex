@@ -1,0 +1,205 @@
+\chapter{Path sums and the resonance argument}
+\label{chap:pathsum}
+
+Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (target).
+
+\section{Optimal particle assignments}
+
+\begin{definition}[Assignment distance]
+  \label{def:mopt}
+  \lean{LatticeDFT.acost, LatticeDFT.Mopt, LatticeDFT.mopt, LatticeDFT.Mopt_le, LatticeDFT.Mopt_exists, LatticeDFT.mopt_self}
+  \leanok
+  \uses{def:Conf, def:amp}
+  The cost of assigning start positions to target positions is $\sum_l\dist(\tau_c(\sigma l),\tau_l)$, and
+  $\Mopt(y)$ is the minimal cost. It is attained, and $\Mopt(c)=0$.
+\end{definition}
+
+\begin{theorem}[One hop changes $\Mopt$ by at most one]
+  \label{thm:lip_mopt}
+  \lean{LatticeDFT.Mopt_perm, LatticeDFT.Mopt_update, LatticeDFT.lip_mopt}
+  \leanok
+  \uses{def:mopt, def:Hl, lem:amp_props, def:Gamma}
+  $\Mopt$ is invariant under reordering, moving one particle along one bond changes it by at most one, and
+  hence it satisfies $\mathrm{Lip}(\Gamma(-tA_G),\Mopt)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Triangle inequality. A nonzero matrix element of $\Gamma$ comes from a single hop along an edge.
+\end{proof}
+
+\begin{theorem}[An optimal assignment fixing common sites]
+  \label{thm:exists_opt_fixing}
+  \lean{LatticeDFT.isOpt, LatticeDFT.nfix, LatticeDFT.exists_opt_fixing}
+  \leanok
+  \uses{def:mopt}
+  Some optimal assignment $\sigma_0$ sends every site of $c\cap y$ to itself.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Take an optimal assignment fixing the maximal number of common sites. If one is still unfixed, swapping
+  two targets fixes one more without increasing the cost.
+\end{proof}
+
+\begin{theorem}[Uniqueness through partners]
+  \label{thm:opt_unique_of_through}
+  \lean{LatticeDFT.opt_unique_of_through}
+  \leanok
+  \uses{thm:exists_opt_fixing}
+  Suppose $\sigma$ is optimal and, for every moved target $a$, the start used by $\sigma$ lies on a shortest
+  route through the $\sigma_0$-partner of $a$. Then $\sigma=\sigma_0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Termwise, the cost of $\sigma$ dominates that of $\sigma_0$ plus the distances between the two starts.
+  Optimality forces those distances to vanish.
+\end{proof}
+
+\section{Free fermions}
+
+\begin{lemma}[Polynomial bookkeeping]
+  \label{lem:ff_tools}
+  \lean{LatticeDFT.Hl_map_eval, LatticeDFT.eval_pow_entry, LatticeDFT.lip_dist, LatticeDFT.sum_cnt, LatticeDFT.wC, LatticeDFT.gamma_pow_poly}
+  \leanok
+  \uses{thm:gamma_pow_formula, def:Hl}
+  The graph distance from a site is a valid $d$ for the single-particle hopping. The power formula of
+  Theorem~\ref{thm:gamma_pow_formula} holds as an identity of polynomials in $\lambda$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Two polynomials with equal evaluations everywhere are equal.
+\end{proof}
+
+\begin{theorem}[Only optimal assignments reach the top degree]
+  \label{thm:T_MB_formula}
+  \lean{LatticeDFT.term_coeff, LatticeDFT.T_MB_formula}
+  \leanok
+  \uses{lem:ff_tools, thm:lip_mopt, def:T, thm:top_coeff_factor}
+  With $d=\Mopt$, the leading coefficient $T_k(y)$ of the free many-body problem equals
+  $\sum_{\sigma\text{ optimal}}\sgn\sigma\sum_\iota\prod_lT^{(1)}_{\#\iota^{-1}(l)}(y_l\leftarrow c_{\sigma^{-1}l})$,
+  where $T^{(1)}$ are single-particle leading coefficients.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Each word term has degree at most $k-\mathrm{cost}(\sigma)$, so non-optimal assignments are suppressed.
+\end{proof}
+
+\begin{theorem}[Power-sum form]
+  \label{thm:T_MB_powersum}
+  \lean{LatticeDFT.words_pow, LatticeDFT.βsp, LatticeDFT.T_MB_powersum}
+  \leanok
+  \uses{thm:T_MB_formula, thm:power_sum}
+  $T_k(y)=\sum_{\sigma\text{ opt}}\sgn\sigma\sum_{\vec z}\big(\prod_l\beta_{\sigma,l}(z_l)\big)\big(\sum_lu_{z_l}\big)^k$,
+  where $\beta_{\sigma,l}$ are the single-particle coefficients.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Uses $\sum_\iota\prod_lx_l^{\#\iota^{-1}(l)}=(\sum_lx_l)^k$.
+\end{proof}
+
+\begin{theorem}[$\alpha_y(y)$ is a Slater-type sum]
+  \label{thm:alpha_eq_D}
+  \lean{LatticeDFT.assign_rigid, LatticeDFT.alpha_eq_D}
+  \leanok
+  \uses{thm:T_MB_powersum, thm:ps_unique, thm:power_sum}
+  For generic $u$, $\alpha_y(y)=D(u):=\sum_{\sigma\text{ opt}}\sgn\sigma\prod_l\beta_{\sigma,l}(y_l)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Extract the coefficient of $w_y^k$ (Theorem~\ref{thm:ps_unique}). A cross term in which a particle lands
+  on another particle's target would give a cheaper assignment, so only the identity term survives.
+\end{proof}
+
+\section{Explicit route sums}
+
+\begin{definition}[Route sums]
+  \label{def:Gr}
+  \lean{LatticeDFT.Gr, LatticeDFT.alphaExp, LatticeDFT.dist_eq_zero_iff}
+  \leanok
+  For a particle hopping from $b$ to $a$, define layer by layer
+  $G_p=([p=b]+\sum_{q\text{ pred }p}(-t)G_q)/(u_a-u_p)$ and $\alpha^{\exp}_{b\to a}=[a=b]+\sum_{p\text{ pred }a}(-t)G_p$.
+  These are defined for every $u$.
+\end{definition}
+
+\begin{theorem}
+  \label{thm:alphaRep_eq_alphaExp}
+  \lean{LatticeDFT.Fres_eq_Gr, LatticeDFT.alphaRep_eq_alphaExp, LatticeDFT.DExp, LatticeDFT.D_eq_DExp}
+  \leanok
+  \uses{def:Gr, thm:alpha_diag, thm:alpha_eq_D}
+  For injective $u$, the single-particle diagonal coefficient equals $\alpha^{\exp}$, and hence $D(u)=D^{\exp}(u)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Layer induction using the resolvent recursion.
+\end{proof}
+
+\section{Resonance}
+
+\begin{theorem}[Limits of route sums]
+  \label{thm:gr_tendsto}
+  \lean{LatticeDFT.uline, LatticeDFT.uline_tendsto, LatticeDFT.gr_tendsto_plain, LatticeDFT.Λ, LatticeDFT.gr_tendsto_hat, LatticeDFT.Λ_supp}
+  \leanok
+  \uses{def:Gr}
+  Along $u^*+\varepsilon\delta$: below the layer of a partner $\pi$ with $u^*_a=u^*_\pi$, the route sums
+  are continuous. Above it, $(u_a-u_\pi)G_q\to\Lambda_q$ as $\varepsilon\to0$, and $\Lambda_q\ne0$ only if
+  $\pi$ lies on a shortest route to $q$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Layer induction. The singular denominator cancels exactly at $q=\pi$.
+\end{proof}
+
+\begin{theorem}[Resonance argument]
+  \label{thm:DExp_eventually_ne}
+  \lean{LatticeDFT.Lval, LatticeDFT.alphaExp_self, LatticeDFT.factor_moved_tendsto, LatticeDFT.Lval_through, LatticeDFT.factor_common_tendsto, LatticeDFT.DExp_eventually_ne}
+  \leanok
+  \uses{thm:gr_tendsto, thm:opt_unique_of_through, thm:alphaRep_eq_alphaExp}
+  Suppose, at $u^*$, every moved target is degenerate with its $\sigma_0$-partner and otherwise generic,
+  and the partner route sums $S_l$ are nonzero. Then $D^{\exp}(u^*+\varepsilon\delta)\neq0$ for all small
+  $\varepsilon\ne0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  After multiplying out the resonant denominators, the sum tends to $\sgn\sigma_0\prod_lS_l$. Every other
+  optimal assignment has a vanishing limit (Theorem~\ref{thm:opt_unique_of_through}).
+\end{proof}
+
+\section{The resonant point}
+
+\begin{lemma}[Rationality of route sums]
+  \label{lem:ratOn_routes}
+  \lean{LatticeDFT.ratOn_Gr, LatticeDFT.ratOn_Λ, LatticeDFT.ratOn_Lval, LatticeDFT.ratOn_alphaExp, LatticeDFT.ratOn_DExp}
+  \leanok
+  \uses{lem:RatOn_closure, def:Gr, thm:gr_tendsto, thm:DExp_eventually_ne}
+  All route sums are rational on generic points, also after identifying sites through a map.
+\end{lemma}
+\begin{proof}
+  \leanok
+  They are built from constants, sums, products and divisions by energy differences.
+\end{proof}
+
+\begin{theorem}[Positivity at the highest site]
+  \label{thm:Lval_ne_zero}
+  \lean{LatticeDFT.exists_pred, LatticeDFT.Lval_ne_zero}
+  \leanok
+  \uses{thm:DExp_eventually_ne}
+  If the target $a$ has the highest energy among all other sites except its partner, and $t\ne0$, then the
+  partner route sum is nonzero.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Every route contributes with the sign of $(-t)^{\dist}$, and at least one route exists.
+\end{proof}
+
+\begin{theorem}[A generic potential with $D\neq0$]
+  \label{thm:exists_DExp_ne}
+  \lean{LatticeDFT.partner, LatticeDFT.rep, LatticeDFT.partner_inj, LatticeDFT.rep_partner, LatticeDFT.rep_target, LatticeDFT.rep_eq_target, LatticeDFT.exists_DExp_ne}
+  \leanok
+  \uses{thm:exists_common_ne, lem:ratOn_routes, thm:Lval_ne_zero, thm:DExp_eventually_ne, thm:exists_opt_fixing}
+  For every pair $c,y$ there is an injective $u$ with $D^{\exp}(u)\ne0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Identify each moved partner with its target and choose $\theta$ with all partner route sums nonzero
+  (Theorem~\ref{thm:exists_common_ne}). Then apply the resonance argument along a line, which is eventually
+  injective.
+\end{proof}

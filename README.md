@@ -45,6 +45,11 @@ The proof uses only the standard axioms (`propext`, `Classical.choice`, `Quot.so
 | `PathSum/*` | optimal assignments, free-fermion leading coefficients, route sums, resonance argument |
 | `GenericHK` | the main theorem |
 
+**Blueprint.** A human-readable description of every definition, lemma and theorem, with proofs and links to
+the Lean declarations, is in `blueprint/` (LaTeX, built by CI into a website with a dependency graph and a PDF:
+<https://hyllios.github.io/lean_dft/blueprint/>). To build it locally: `pip install leanblueprint`, then
+`leanblueprint web` or `leanblueprint pdf`.
+
 `docs/generic-hk-paper-proof.md` contains the informal proof (with the literature context and an independent
 review); `docs/formalization-log.md` documents how the formal proof was assembled.
 

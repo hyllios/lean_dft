@@ -1,0 +1,137 @@
+\chapter{Ground states and the single-particle problem}
+\label{chap:ground_states}
+
+Throughout, $V$ is a finite set and $M\in\R^{V\times V}$ a real matrix; vectors are functions $V\to\R$.
+
+\section{Ground states}
+
+\begin{definition}[Quadratic form]
+  \label{def:qf}
+  \lean{LatticeDFT.qf}
+  \leanok
+  $\qf(M,\psi) = \ip{\psi}{M\psi}$.
+\end{definition}
+
+\begin{definition}[Ground state]
+  \label{def:IsGroundState}
+  \lean{LatticeDFT.IsGroundState}
+  \leanok
+  \uses{def:qf}
+  $\psi$ is a ground state of $M$ if $\psi\neq 0$ and
+  $\qf(M,\psi)\,\|\varphi\|^2 \le \qf(M,\varphi)\,\|\psi\|^2$ for all $\varphi$, i.e.\ $\psi$ minimises the
+  Rayleigh quotient (the formulation avoids division).
+\end{definition}
+
+\begin{lemma}
+  \label{lem:lin_coeff_zero}
+  \lean{LatticeDFT.lin_coeff_zero}
+  \leanok
+  If $a s + b s^2\ge 0$ for all $s\in\R$, then $a=0$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Evaluate at $s=-a/(2(|b|+1))$, where the expression is negative unless $a=0$.
+\end{proof}
+
+\begin{theorem}[Ground states are eigenvectors]
+  \label{thm:isGroundState_eigen}
+  \lean{LatticeDFT.isGroundState_eigen}
+  \leanok
+  \uses{def:IsGroundState, lem:lin_coeff_zero}
+  If $M$ is symmetric and $\psi$ is a ground state, then $M\psi = E\psi$ with
+  $E=\qf(M,\psi)/\|\psi\|^2$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Compare the Rayleigh quotient at $\psi$ and at $\psi+s\,\delta$ for an arbitrary direction $\delta$. The
+  resulting inequality is of the form $as+bs^2\ge0$ for all $s$, so the linear coefficient
+  $2\ip{\delta}{(M-E)\psi}$ vanishes for every $\delta$ (Lemma~\ref{lem:lin_coeff_zero}).
+\end{proof}
+
+\section{A single particle on a graph}
+
+Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in\R^V$.
+
+\begin{definition}[Single-particle Hamiltonian]
+  \label{def:ham}
+  \lean{LatticeDFT.ham}
+  \leanok
+  $H(v) = \diag(v) - t\,A_G$.
+\end{definition}
+
+\begin{lemma}[Elementary properties]
+  \label{lem:ham_basic}
+  \lean{LatticeDFT.adj_nonneg, LatticeDFT.ham_mulVec_apply, LatticeDFT.ham_isSymm, LatticeDFT.qf_ham}
+  \leanok
+  \uses{def:ham, def:qf}
+  The adjacency entries are nonnegative; $(H\psi)_i = v_i\psi_i - t\sum_{j\sim i}\psi_j$; $H$ is symmetric;
+  $\qf(H,\varphi) = \sum_i v_i\varphi_i^2 - t\sum_{i,j}(A_G)_{ij}\varphi_i\varphi_j$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Direct computation.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:qf_ham_abs_le}
+  \lean{LatticeDFT.qf_ham_abs_le}
+  \leanok
+  \uses{lem:ham_basic}
+  For $t\ge 0$, $\qf(H,|\varphi|)\le\qf(H,\varphi)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Only the hopping term changes, and $\varphi_i\varphi_j\le|\varphi_i||\varphi_j|$.
+\end{proof}
+
+\begin{theorem}
+  \label{thm:abs_isGroundState}
+  \lean{LatticeDFT.abs_isGroundState}
+  \leanok
+  \uses{lem:qf_ham_abs_le, def:IsGroundState}
+  For $t>0$: if $\psi$ is a ground state of $H(v)$, so is $|\psi|$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $|\psi|$ has the same norm and no larger energy (Lemma~\ref{lem:qf_ham_abs_le}).
+\end{proof}
+
+\begin{theorem}[Positivity]
+  \label{thm:pos_of_nonneg}
+  \lean{LatticeDFT.pos_of_nonneg}
+  \leanok
+  \uses{thm:isGroundState_eigen, lem:ham_basic}
+  On a connected graph with $t>0$, a nonnegative ground state is strictly positive.
+\end{theorem}
+\begin{proof}
+  \leanok
+  If $\psi_i=0$, the eigenvalue equation at $i$ gives $\sum_{j\sim i}\psi_j=0$, so all neighbours vanish.
+  By connectivity $\psi=0$, a contradiction.
+\end{proof}
+
+\begin{theorem}[Single-particle Hohenberg--Kohn]
+  \label{thm:hk_single_particle}
+  \lean{LatticeDFT.hk_single_particle}
+  \leanok
+  \uses{thm:abs_isGroundState, thm:pos_of_nonneg, thm:isGroundState_eigen}
+  Let $G$ be connected and $t>0$. If $\psi,\psi'$ are ground states of $H(v)$ and $H(v')$ with
+  $\psi_i^2=\psi_i'^2$ for all $i$, then $v-v'$ is constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\varphi=|\psi|=|\psi'|$ is a common, strictly positive ground state
+  (Theorems~\ref{thm:abs_isGroundState}, \ref{thm:pos_of_nonneg}). Subtracting the eigenvalue equations
+  gives $(v_i-v_i')\varphi_i=(E-E')\varphi_i$ for every $i$.
+\end{proof}
+
+\begin{theorem}[Failure for frustrated hopping]
+  \label{thm:hk_fails_frustrated}
+  \lean{LatticeDFT.qf_triangle, LatticeDFT.hk_fails_frustrated}
+  \leanok
+  \uses{def:ham, def:IsGroundState}
+  On the triangle with $t=-1$, the potentials $(0,0,1)$ and $(0,0,2)$ share the ground state $(1,-1,0)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Explicit sum-of-squares decomposition of $\qf(H,\varphi)-E\|\varphi\|^2$.
+\end{proof}

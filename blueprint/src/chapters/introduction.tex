@@ -1,0 +1,46 @@
+\chapter{Introduction}
+
+Density-functional theory (DFT) rests on the Hohenberg--Kohn (HK) theorem: the ground-state density of an
+electronic system determines the external potential up to an additive constant. In the continuum this was
+proved rigorously only recently (via unique continuation). On finite lattices, which underlie the Hubbard
+model, lattice DFT and every discretised calculation, the theorem is \emph{false} in general: Penz and van
+Leeuwen exhibited lattice systems in which different potentials share a ground state
+[J.\ Chem.\ Phys.\ 155, 244111 (2021)].
+
+This blueprint describes a Lean~4/Mathlib formalization of lattice DFT. Its main result is that the
+failures are exceptional:
+
+\begin{quote}
+\textbf{Generic Hohenberg--Kohn theorem} (Theorem~\ref{thm:generic_hk_lattice_fermions}).
+For $N$ spinless fermions ($0<N<M$) on any connected graph with $M$ sites, hopping $t\neq 0$ and any
+density--density interaction, the set of potentials $v\in\R^M$ for which some ground state of $H(v)$ is also
+a ground state of a potential differing from $v$ by more than a constant is contained in a closed, nowhere
+dense set of Lebesgue measure zero.
+\end{quote}
+
+The statement about potentials was left open by Penz and van Leeuwen [Quantum 7, 918 (2023)].
+
+\section*{Structure of the proof}
+
+\begin{enumerate}
+  \item \textbf{Ground states and HK on configuration spaces} (Chapters~\ref{chap:ground_states},
+  \ref{chap:hk}). Ground states are defined variationally. Weak HK (equal densities imply shared ground
+  states) always holds. Strong HK can fail only if the ground state vanishes on some configurations.
+  \item \textbf{Krylov criterion} (Chapter~\ref{chap:generic}). If an eigenvector vanishes on a
+  configuration $c$, the Krylov matrix $[e_c, He_c, H^2e_c,\dots]$ is singular. Its determinant is a
+  polynomial in $v$. So if all these \emph{Krylov polynomials} are nonzero (hypothesis (H$^*$)), HK fails
+  only on the zero set of a nonzero polynomial, which is closed, nowhere dense and null.
+  \item \textbf{Lattice fermions} (Chapter~\ref{chap:fermions}). Second quantisation is built from
+  determinants, so fermionic signs are correct by construction; Slater determinants of single-particle
+  eigenvectors are many-body eigenvectors.
+  \item \textbf{Strong-potential limit} (Chapter~\ref{chap:strong}). Along $v=\lambda u$ the leading
+  coefficient in $\lambda$ of a Krylov determinant does not depend on the interaction. It factorises as a
+  Vandermonde determinant times diagonal coefficients $\alpha_y(y)$.
+  \item \textbf{Path sums and resonance} (Chapter~\ref{chap:pathsum}). For free fermions,
+  $\alpha_y(y)$ equals a signed sum over optimal particle assignments of products of single-particle route
+  sums. Near a potential at which every moving particle is degenerate with its target, a single assignment
+  dominates, so $\alpha_y(y)\not\equiv 0$.
+  \item \textbf{Assembly} (Chapter~\ref{chap:main}).
+\end{enumerate}
+
+Each statement is linked to its Lean declaration; the dependency graph shows which results use which.

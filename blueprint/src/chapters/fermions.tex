@@ -1,0 +1,179 @@
+\chapter{Spinless lattice fermions}
+\label{chap:fermions}
+
+\section{Configurations and Slater determinants}
+
+\begin{definition}[Configurations]
+  \label{def:Conf}
+  \lean{LatticeDFT.Conf, LatticeDFT.occF}
+  \leanok
+  $\Conf_{M,N}$ is the set of $N$-element subsets of $\{0,\dots,M-1\}$. The occupation $n_i(s)$ is $1$ if
+  $i\in s$ and $0$ otherwise.
+\end{definition}
+
+\begin{definition}[Slater amplitude]
+  \label{def:slater}
+  \lean{LatticeDFT.slater, LatticeDFT.slater_eq_sum}
+  \leanok
+  For orbitals $\varphi_1,\dots,\varphi_N$ and a position tuple $\tau$,
+  $\Psi(\tau)=\det[\varphi_j(\tau_k)]=\sum_\sigma\sgn\sigma\prod_j\varphi_j(\tau_{\sigma j})$.
+\end{definition}
+
+\begin{theorem}[Slater determinants solve the first-quantised equation]
+  \label{thm:slater_eigen}
+  \lean{LatticeDFT.sum_update_prod, LatticeDFT.slater_eigen}
+  \leanok
+  \uses{def:slater}
+  If $h\varphi_j=\varepsilon_j\varphi_j$, then
+  $\sum_k\sum_b h(\tau_k,b)\,\Psi(\tau\text{ with }\tau_k:=b)=(\sum_j\varepsilon_j)\Psi(\tau)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  In each Leibniz term, the sum over $b$ in slot $k$ produces $\varepsilon_{\sigma^{-1}k}$.
+  Summing over $k$ gives $\sum_j\varepsilon_j$.
+\end{proof}
+
+\section{Second quantisation}
+
+\begin{definition}[Sorted tuples and overlaps]
+  \label{def:amp}
+  \lean{LatticeDFT.τs, LatticeDFT.τs_mem, LatticeDFT.τs_injective, LatticeDFT.τs_surj, LatticeDFT.slaterC, LatticeDFT.amp}
+  \leanok
+  \uses{def:Conf, def:slater}
+  $\tau_s$ is the increasing enumeration of $s$. The Slater amplitude on configurations is
+  $\Psi(s)=\Psi(\tau_s)$. The antisymmetrised overlap $\ip{s}{\tau}$ is the Slater amplitude of $\tau$ for
+  the indicator orbitals of $s$.
+\end{definition}
+
+\begin{lemma}[Overlap properties]
+  \label{lem:amp_props}
+  \lean{LatticeDFT.slater_of_not_injective, LatticeDFT.slater_perm, LatticeDFT.exists_perm_of_injective, LatticeDFT.amp_self, LatticeDFT.amp_of_not_mem, LatticeDFT.amp_tau_eq, LatticeDFT.sum_tau}
+  \leanok
+  \uses{def:amp}
+  Slater amplitudes vanish on non-injective tuples and change by $\sgn\sigma$ under permutations.
+  $\ip{s}{\tau_{s'}}=\delta_{ss'}$, and $\ip{s}{\tau}=0$ if some entry of $\tau$ lies outside $s$.
+  Moreover $\sum_kv(\tau_s(k))=\sum_iv_in_i(s)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Repeated rows, permuted rows, and a zero row in the defining determinant.
+\end{proof}
+
+\begin{theorem}[Configuration expansion]
+  \label{thm:slater_expand}
+  \lean{LatticeDFT.slater_expand}
+  \leanok
+  \uses{lem:amp_props}
+  $\Psi(\tau)=\sum_s\ip{s}{\tau}\Psi(s)$. This is a special case of the Cauchy--Binet formula.
+\end{theorem}
+\begin{proof}
+  \leanok
+  An injective $\tau$ is a permutation of a unique sorted tuple. A non-injective $\tau$ gives zero on both
+  sides.
+\end{proof}
+
+\begin{definition}[Second quantisation]
+  \label{def:Gamma}
+  \lean{LatticeDFT.Γ}
+  \leanok
+  \uses{def:amp}
+  For a single-particle matrix $h$,
+  $\Gamma(h)_{ss'}=\sum_k\sum_bh(\tau_s(k),b)\ip{s'}{\tau_s\text{ with }\tau_s(k):=b}$.
+  The fermionic signs are produced by the determinant; they are never counted by hand.
+\end{definition}
+
+\begin{theorem}[Slater determinants are many-body eigenvectors]
+  \label{thm:gamma_slater}
+  \lean{LatticeDFT.gamma_slater}
+  \leanok
+  \uses{def:Gamma, thm:slater_eigen, thm:slater_expand}
+  If $h\varphi_j=\varepsilon_j\varphi_j$, then $\Gamma(h)\Psi=(\sum_j\varepsilon_j)\Psi$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Combine Theorem~\ref{thm:slater_eigen} with the expansion of Theorem~\ref{thm:slater_expand}.
+\end{proof}
+
+\begin{lemma}[Structure of $\Gamma$]
+  \label{lem:gamma_structure}
+  \lean{LatticeDFT.gamma_add, LatticeDFT.gamma_smul, LatticeDFT.gamma_diagonal, LatticeDFT.prod_update_split, LatticeDFT.gamma_leibniz, LatticeDFT.gamma_isSymm}
+  \leanok
+  \uses{def:Gamma, lem:amp_props}
+  $\Gamma$ is linear and $\Gamma(\diag v)=\diag(\sum_iv_in_i)$. In Leibniz form,
+  $\Gamma(h)_{ss'}=\sum_\sigma\sgn\sigma\sum_{j_0}h(\tau_s(\sigma j_0),\tau_{s'}(j_0))\prod_{j\ne j_0}[\tau_s(\sigma j)=\tau_{s'}(j)]$,
+  and $\Gamma(h)$ is symmetric when $h$ is.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Symmetry follows by reindexing the Leibniz form with $\sigma\mapsto\sigma^{-1}$.
+\end{proof}
+
+\begin{definition}[Lattice fermion Hamiltonian]
+  \label{def:H0F}
+  \lean{LatticeDFT.H0F, LatticeDFT.H0F_isSymm, LatticeDFT.hamN_H0F}
+  \leanok
+  \uses{lem:gamma_structure, def:hamN}
+  $H_0=\Gamma(-tA_G)+\diag(V_{\mathrm{int}})$ with any configuration-diagonal interaction $V_{\mathrm{int}}$.
+  It is symmetric, and $H(v)=\Gamma(-tA_G+\diag v)+\diag V_{\mathrm{int}}$.
+\end{definition}
+
+\section{First quantisation and powers}
+
+\begin{definition}[First-quantised one-body operator]
+  \label{def:H1}
+  \lean{LatticeDFT.H1, LatticeDFT.Antisym}
+  \leanok
+  $(H_1f)(\tau)=\sum_k\sum_bh(\tau_k,b)f(\tau\text{ with }\tau_k:=b)$, acting on functions of position tuples.
+  $f$ is antisymmetric if $f(\tau\circ\sigma)=\sgn\sigma\, f(\tau)$.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:H1_props}
+  \lean{LatticeDFT.antisym_zero_of_not_injective, LatticeDFT.antisym_expand, LatticeDFT.amp_antisym, LatticeDFT.H1_antisym, LatticeDFT.H1_conf, LatticeDFT.H1_sum, LatticeDFT.H1_smul, LatticeDFT.H1_iter_lin}
+  \leanok
+  \uses{def:H1, thm:slater_expand, def:Gamma}
+  Antisymmetric functions are determined by their values on sorted tuples. $H_1$ is linear and preserves
+  antisymmetry, and on configuration amplitudes it acts as $\Gamma(h)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  As in Theorem~\ref{thm:slater_expand}.
+\end{proof}
+
+\begin{theorem}
+  \label{thm:gamma_pow_apply}
+  \lean{LatticeDFT.gamma_pow_apply}
+  \leanok
+  \uses{lem:H1_props}
+  $(\Gamma(h)^k)_{sc}=(H_1^k\ip{c}{\cdot})(\tau_s)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Induction on $k$.
+\end{proof}
+
+\begin{theorem}[Word expansion]
+  \label{thm:H1_iter_prod}
+  \lean{LatticeDFT.prodFun, LatticeDFT.cnt, LatticeDFT.H1_prodFun, LatticeDFT.cnt_snoc, LatticeDFT.H1_iter_prod}
+  \leanok
+  \uses{def:H1}
+  On product functions $\prod_lg_l(\tau_l)$,
+  $H_1^k$ equals $\sum_{\iota:\{1..k\}\to\{1..N\}}\prod_l(h^{\#\iota^{-1}(l)}g_l)(\tau_l)$: a sum over words
+  recording which particle receives each application of $h$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Induction on $k$, appending one letter to the word.
+\end{proof}
+
+\begin{theorem}[Many-body powers]
+  \label{thm:gamma_pow_formula}
+  \lean{LatticeDFT.amp_as_prod, LatticeDFT.gamma_pow_formula}
+  \leanok
+  \uses{thm:gamma_pow_apply, thm:H1_iter_prod, lem:H1_props}
+  $(\Gamma(h)^k)_{sc}=\sum_\sigma\sgn\sigma\sum_\iota\prod_l(h^{\#\iota^{-1}(l)})_{\tau_s(l),\tau_c(\sigma^{-1}l)}$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Write $\ip{c}{\cdot}$ as a signed sum of product functions and apply the word expansion.
+\end{proof}

@@ -1,0 +1,177 @@
+\chapter{Hohenberg--Kohn theorems on configuration spaces}
+\label{chap:hk}
+
+Let $\Conf$ be a finite set of configurations (the many-body basis), $V$ a finite set of sites, $H_0$ a real
+matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation of site $i$ in configuration $c$.
+
+\section{Weak and strong Hohenberg--Kohn}
+
+\begin{definition}[Many-body Hamiltonian and density]
+  \label{def:hamN}
+  \lean{LatticeDFT.hamN, LatticeDFT.dens}
+  \leanok
+  $H(v) = H_0 + \diag\big(c\mapsto \sum_i v_i n_i(c)\big)$ and
+  $\dens(\psi)_i = \sum_c n_i(c)\,\psi_c^2$.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:hamN_basic}
+  \lean{LatticeDFT.qf_hamN, LatticeDFT.hamN_mulVec_apply, LatticeDFT.hamN_isSymm, LatticeDFT.dens_weighted}
+  \leanok
+  \uses{def:hamN, def:qf}
+  $\qf(H(v),\varphi) = \qf(H_0,\varphi) + \sum_i v_i\,\dens(\varphi)_i$;
+  $(H(v)\psi)_c = (H_0\psi)_c + (\sum_i v_in_i(c))\psi_c$; $H(v)$ is symmetric if $H_0$ is; and
+  $\sum_i w_i\dens(\varphi)_i = \sum_c W(c)\varphi_c^2$ with $W(c)=\sum_i w_in_i(c)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Direct computation.
+\end{proof}
+
+\begin{theorem}[Weak Hohenberg--Kohn]
+  \label{thm:weak_hk}
+  \lean{LatticeDFT.weak_hk}
+  \leanok
+  \uses{lem:hamN_basic, def:IsGroundState}
+  If normalised ground states $\psi$ of $H(v)$ and $\psi'$ of $H(v')$ have the same density, then $\psi$ is
+  also a ground state of $H(v')$ and $\psi'$ of $H(v)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Add the two variational inequalities. Since the densities agree, the potential terms cancel, so both
+  inequalities are equalities.
+\end{proof}
+
+\begin{theorem}[Strong Hohenberg--Kohn criterion]
+  \label{thm:strong_hk}
+  \lean{LatticeDFT.strong_hk}
+  \leanok
+  \uses{thm:weak_hk, thm:isGroundState_eigen, lem:hamN_basic}
+  Assume $H_0$ symmetric, ground states $\psi,\psi'$ of $H(v),H(v')$ with equal densities, and assume that every
+  $w$ for which $\sum_i w_in_i(c)$ is constant on the support of $\psi$ is itself constant. Then $v-v'$ is
+  constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  By weak HK, $\psi$ is a common ground state, hence a common eigenvector. On the support of $\psi$ the
+  difference of the eigenvalue equations gives $\sum_i(v_i-v'_i)n_i(c)=E-E'$.
+\end{proof}
+
+\begin{theorem}[Non-uniqueness from a minimising observable]
+  \label{thm:nonunique_of_minimiser}
+  \lean{LatticeDFT.nonunique_of_minimiser}
+  \leanok
+  \uses{lem:hamN_basic}
+  Let $W(c)=\sum_iw_in_i(c)\ge\kappa$ for all $c$, with equality on the support of a ground state $\psi$ of
+  $H(v)$. Then $\psi$ is a ground state of $H(v+\varepsilon w)$ for every $\varepsilon\ge0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\psi$ minimises both $\ip{\cdot}{H(v)\cdot}$ and $\ip{\cdot}{W\cdot}$. This is the lattice version of the
+  spin-DFT non-uniqueness of Capelle--Vignale and Eschrig--Pickett: a fully polarised state minimises the
+  Zeeman term.
+\end{proof}
+
+\section{Counterexamples}
+
+\begin{theorem}[Two fermions on a triangle]
+  \label{thm:hk_fails_triangle}
+  \lean{LatticeDFT.occ3, LatticeDFT.H0tri, LatticeDFT.qf_tri, LatticeDFT.ground_tri, LatticeDFT.hk_fails_triangle}
+  \leanok
+  \uses{def:hamN, def:IsGroundState}
+  For two spinless fermions on a triangle, the potentials $(0,-1,0)$ and $(0,-2,0)$ share the ground state
+  $(1,0,-1)$ in the configuration basis $\{12,13,23\}$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Explicit sum of squares:
+  $\qf(H,\varphi)-(3-t)\|\varphi\|^2 = (\varphi_0-\varphi_1+\varphi_2)^2+t\varphi_1^2$.
+\end{proof}
+
+\begin{theorem}[Two fermions on a square]
+  \label{thm:hk_fails_square}
+  \lean{LatticeDFT.occ4, LatticeDFT.H0sq, LatticeDFT.qf_sq, LatticeDFT.ground_sq0, LatticeDFT.ground_sq1, LatticeDFT.hk_fails_square}
+  \leanok
+  \uses{def:hamN, def:IsGroundState}
+  For two spinless fermions on a square, the potentials $(\tfrac34,-\tfrac34,-\tfrac34,\tfrac34)$ and
+  $(\tfrac54,-\tfrac14,-\tfrac54,\tfrac14)$ share a non-degenerate ground state with fractional occupations.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Sum-of-squares certificates obtained from $LDL^T$ decompositions.
+\end{proof}
+
+\section{Gapped ground states}
+
+\begin{lemma}[Orthogonal decomposition]
+  \label{lem:decomp}
+  \lean{LatticeDFT.decomp, LatticeDFT.dot_self_nonneg}
+  \leanok
+  \uses{def:qf}
+  If $H$ is symmetric, $\|\psi\|=1$ and $H\psi=E\psi$, then every $\varphi$ splits as
+  $\varphi=a\psi+\chi$ with $\chi\perp\psi$, $\|\varphi\|^2=a^2+\|\chi\|^2$ and
+  $\qf(H,\varphi)=a^2E+\qf(H,\chi)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Take $a=\ip{\psi}{\varphi}$. The cross terms vanish by symmetry of $H$.
+\end{proof}
+
+\begin{theorem}[Uniqueness of gapped ground states]
+  \label{thm:unique_of_gap}
+  \lean{LatticeDFT.unique_of_gap}
+  \leanok
+  \uses{lem:decomp, thm:isGroundState_eigen}
+  If $\qf(H,\chi)\ge(E+g)\|\chi\|^2$ for all $\chi\perp\psi$ with $g>0$, every ground state is a multiple of
+  $\psi$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  For a ground state $\varphi=a\psi+\chi$, minimality forces $g\|\chi\|^2\le0$.
+\end{proof}
+
+\begin{theorem}[Invisible potential directions]
+  \label{thm:persist_of_gap}
+  \lean{LatticeDFT.persist_of_gap}
+  \leanok
+  \uses{lem:decomp, lem:hamN_basic}
+  Let $\psi$ be a normalised ground state of $H(v)$ with gap $g$, and let $W(c)=\sum_iw_in_i(c)$ equal
+  $\kappa$ on the support of $\psi$, with $|W(c)-\kappa|\le m$ everywhere. Then $\psi$ is a ground state of
+  $H(v+\varepsilon w)$ whenever $|\varepsilon|m\le g$, for both signs of $\varepsilon$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $(W-\kappa)\psi=0$ pointwise, so the perturbation only acts on the component $\chi\perp\psi$, where it is
+  bounded by $|\varepsilon|m\|\chi\|^2\le g\|\chi\|^2$.
+\end{proof}
+
+\section{The wall of the two-fermion square}
+
+\begin{lemma}[Hidden involution]
+  \label{lem:Qsq}
+  \lean{LatticeDFT.Qsq, LatticeDFT.H0sq_isSymm, LatticeDFT.qf_Qsq, LatticeDFT.dot_Qsq}
+  \leanok
+  \uses{thm:hk_fails_square}
+  Let $Q$ swap the configurations $02\leftrightarrow13$, act as $+1$ on $\{03,12\}$ and as $-1$ on
+  $\{01,23\}$. If $v_0+v_2=v_1+v_3$, then $Q$ preserves the energy and the norm of every state.
+\end{lemma}
+\begin{proof}
+  \leanok
+  On this plane the two diagonal configurations are degenerate. Each bond configuration then couples to
+  exactly one of $02\pm13$. This is not a lattice symmetry.
+\end{proof}
+
+\begin{theorem}[HK fails on a whole plane]
+  \label{thm:square_wall}
+  \lean{LatticeDFT.square_wall}
+  \leanok
+  \uses{lem:Qsq, thm:unique_of_gap, thm:persist_of_gap}
+  For every potential with $v_0+v_2=v_1+v_3$ and a gapped ground state $\psi$, there is a non-constant $w$
+  with $\psi$ a ground state of $H(v+\varepsilon w)$ for all $|\varepsilon|\le g/2$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $Q\psi$ is again a ground state, so $Q\psi=\pm\psi$ by uniqueness. This forces two vanishing amplitudes,
+  and the invisible direction $w=(1,1,-1,-1)$ or $(1,-1,-1,1)$ then follows from
+  Theorem~\ref{thm:persist_of_gap}.
+\end{proof}
