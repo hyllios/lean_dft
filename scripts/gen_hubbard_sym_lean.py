@@ -1,4 +1,4 @@
-"""Generate LatticeDFT/Spin/HubbardCertificates.lean.
+"""Generate DFT/Lattice/Spin/HubbardCertificates.lean.
 
 Exact certificates of the sector-wise Krylov condition for small Hubbard models with one spin-up and one
 spin-down electron (total density, spin-independent potential).
@@ -288,7 +288,7 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import LatticeDFT.Spin.Symmetric
+import DFT.Lattice.Spin.Symmetric
 
 /-!
 # Total-density Hohenberg–Kohn for small Hubbard models (exact certificates)
@@ -312,7 +312,7 @@ set_option linter.unreachableTactic false
 set_option linter.style.longLine false
 set_option linter.unnecessarySeqFocus false
 
-namespace LatticeDFT
+namespace DFT
 
 open Matrix MvPolynomial MeasureTheory
 
@@ -322,7 +322,7 @@ noncomputable section
 FOOTER = """
 end
 
-end LatticeDFT
+end DFT
 """
-open('../LatticeDFT/Spin/HubbardCertificates.lean', 'w').write(
+open('../DFT/Lattice/Spin/HubbardCertificates.lean', 'w').write(
     HEADER + code_d + MANUAL_D + chr(10) + code_t + MANUAL_T + FOOTER)

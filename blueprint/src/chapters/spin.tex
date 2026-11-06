@@ -15,7 +15,7 @@ for almost every potential, this is the only non-uniqueness.
 
 \begin{definition}[Rigidity and non-uniqueness modulo trivial shifts]
   \label{def:RigidMod}
-  \lean{LatticeDFT.RigidMod, LatticeDFT.NonUVMod}
+  \lean{DFT.RigidMod, DFT.NonUVMod}
   \leanok
   \uses{def:NonUV}
   Let $T$ be a set of potentials (the trivial shifts). The occupations are \emph{rigid modulo $T$} if
@@ -26,7 +26,7 @@ for almost every potential, this is the only non-uniqueness.
 
 \begin{theorem}[Generic HK modulo trivial shifts]
   \label{thm:generic_hk_ae_mod}
-  \lean{LatticeDFT.nonUVMod_imp_krylov_zero, LatticeDFT.generic_hk_mod, LatticeDFT.generic_hk_ae_mod}
+  \lean{DFT.nonUVMod_imp_krylov_zero, DFT.generic_hk_mod, DFT.generic_hk_ae_mod}
   \leanok
   \uses{def:RigidMod, thm:nonUV_imp_krylov_zero, thm:generic_hk_ae}
   If the occupations are rigid modulo $T$ and (H$^*$) holds, the potentials that are non-uniquely
@@ -42,7 +42,7 @@ for almost every potential, this is the only non-uniqueness.
 
 \begin{definition}[Spinful configurations and Hamiltonian]
   \label{def:H0S}
-  \lean{LatticeDFT.occS, LatticeDFT.kronSum, LatticeDFT.H0S}
+  \lean{DFT.occS, DFT.kronSum, DFT.H0S}
   \leanok
   \uses{def:Conf, def:H0Fw}
   A configuration is a pair $(x_\uparrow,x_\downarrow)$ of an $N_\uparrow$- and an $N_\downarrow$-particle
@@ -54,7 +54,7 @@ for almost every potential, this is the only non-uniqueness.
 
 \begin{theorem}[Rigidity for two species]
   \label{thm:rigid_occS}
-  \lean{LatticeDFT.rigid_occS}
+  \lean{DFT.rigid_occS}
   \leanok
   \uses{def:H0S, def:RigidMod, thm:rigid_occF}
   For $0<N_\sigma<M$, the spin occupations are rigid modulo the shifts $(k_\uparrow,k_\downarrow)$, constant
@@ -70,7 +70,7 @@ for almost every potential, this is the only non-uniqueness.
 
 \begin{lemma}[Hop distance for two species]
   \label{lem:lip_kronSum}
-  \lean{LatticeDFT.lip_kronSum}
+  \lean{DFT.lip_kronSum}
   \leanok
   \uses{def:Hl, def:H0S}
   If $d_\uparrow,d_\downarrow$ grow by at most one along the off-diagonal entries of $A_\uparrow,A_\downarrow$,
@@ -83,7 +83,7 @@ for almost every potential, this is the only non-uniqueness.
 
 \begin{theorem}[Top coefficients of a Kronecker sum]
   \label{thm:T_kronSum}
-  \lean{LatticeDFT.layerMat, LatticeDFT.T_eq_layer_pow, LatticeDFT.kronSum_pow_apply, LatticeDFT.T_kronSum}
+  \lean{DFT.layerMat, DFT.T_eq_layer_pow, DFT.kronSum_pow_apply, DFT.T_kronSum}
   \leanok
   \uses{def:T, lem:lip_kronSum}
   With $w(y_\uparrow,y_\downarrow)=w_\uparrow(y_\uparrow)+w_\downarrow(y_\downarrow)$,
@@ -102,7 +102,7 @@ for almost every potential, this is the only non-uniqueness.
 
 \begin{theorem}[The leading coefficient factorises]
   \label{thm:alpha_kronSum}
-  \lean{LatticeDFT.alpha_kronSum}
+  \lean{DFT.alpha_kronSum}
   \leanok
   \uses{thm:T_kronSum, thm:power_sum, thm:ps_unique}
   If $w_\uparrow$, $w_\downarrow$ and $w$ are injective, then
@@ -125,7 +125,7 @@ amplitude for moving both of them is the product of the two separate amplitudes.
 
 \begin{lemma}[Generic single-species potentials]
   \label{lem:exists_good_u}
-  \lean{LatticeDFT.exists_good_u}
+  \lean{DFT.exists_good_u}
   \leanok
   \uses{thm:exists_common_ne, thm:exists_DExp_ne, lem:forms, thm:alpha_eq_D, thm:alphaRep_eq_alphaExp}
   For spinless fermions with hopping of a common sign, and any finite family of nonzero polynomials $R_k$,
@@ -138,7 +138,7 @@ amplitude for moving both of them is the product of the two separate amplitudes.
 
 \begin{theorem}[(H$^*$) for two spin species]
   \label{thm:hstar_spin}
-  \lean{LatticeDFT.hstar_spin}
+  \lean{DFT.hstar_spin}
   \leanok
   \uses{lem:exists_good_u, thm:alpha_kronSum, lem:lip_kronSum, thm:hstar_of_alpha, def:H0S}
   On a connected graph with hopping of a common sign and any diagonal interaction, every Krylov polynomial of
@@ -155,7 +155,7 @@ amplitude for moving both of them is the product of the two separate amplitudes.
 
 \begin{theorem}[Spin-resolved generic Hohenberg--Kohn theorem]
   \label{thm:generic_hk_spin}
-  \lean{LatticeDFT.generic_hk_spin}
+  \lean{DFT.generic_hk_spin}
   \leanok
   \uses{thm:generic_hk_ae_mod, thm:rigid_occS, thm:hstar_spin}
   Take $N_\uparrow$ spin-up and $N_\downarrow$ spin-down electrons ($0<N_\sigma<M$) on a connected graph,
@@ -176,7 +176,7 @@ Write $v_\uparrow=v-B$, $v_\downarrow=v+B$: a scalar potential $v$ and a colline
 
 \begin{theorem}[A uniform field is not determined by the ground state]
   \label{thm:groundState_field_shift}
-  \lean{LatticeDFT.isGroundState_add_const, LatticeDFT.groundState_field_shift}
+  \lean{DFT.isGroundState_add_const, DFT.groundState_field_shift}
   \leanok
   \uses{def:H0S, def:IsGroundState}
   A potential change that is constant on every configuration does not change the ground states. In
@@ -190,7 +190,7 @@ Write $v_\uparrow=v-B$, $v_\downarrow=v+B$: a scalar potential $v$ and a colline
 
 \begin{theorem}[Generic Hohenberg--Kohn theorem in spin-DFT language]
   \label{thm:generic_hk_spin_field}
-  \lean{LatticeDFT.zeeman, LatticeDFT.zeemanEquiv, LatticeDFT.NonUVField, LatticeDFT.generic_hk_spin_field}
+  \lean{DFT.zeeman, DFT.zeemanEquiv, DFT.NonUVField, DFT.generic_hk_spin_field}
   \leanok
   \uses{thm:generic_hk_spin, thm:groundState_field_shift}
   Under the hypotheses of Theorem~\ref{thm:generic_hk_spin}, for almost every $(v,B)$ a ground state
@@ -217,7 +217,7 @@ applied sector by sector.
 
 \begin{definition}[Sectors]
   \label{def:RigidOn}
-  \lean{LatticeDFT.RigidOn, LatticeDFT.NoGS}
+  \lean{DFT.RigidOn, DFT.NoGS}
   \leanok
   \uses{def:NonUV}
   The symmetry is a family of orthogonal projections $P_s$ (symmetric, idempotent, $\sum_sP_s=1$), each
@@ -228,7 +228,7 @@ applied sector by sector.
 
 \begin{definition}[Sector Krylov polynomial]
   \label{def:symKrylovPoly}
-  \lean{LatticeDFT.symKry, LatticeDFT.symKrylovPoly, LatticeDFT.eval_symKrylovPoly}
+  \lean{DFT.symKry, DFT.symKrylovPoly, DFT.eval_symKrylovPoly}
   \leanok
   \uses{def:RigidOn, def:krylovPoly}
   Let the columns of $B_s$ span sector $s$, $P_s=B_sG_sB_s^T$, with $d_s$ columns. For a configuration $c$, the
@@ -237,7 +237,7 @@ applied sector by sector.
 
 \begin{lemma}
   \label{lem:det_symKry_eq_zero}
-  \lean{LatticeDFT.det_symKry_eq_zero, LatticeDFT.hamN_comm}
+  \lean{DFT.det_symKry_eq_zero, DFT.hamN_comm}
   \leanok
   \uses{def:symKrylovPoly}
   If a nonzero $\varphi$ with $P_s\varphi=\varphi$ is orthogonal to every column of $K_c$, then
@@ -251,7 +251,7 @@ applied sector by sector.
 
 \begin{theorem}[Generic HK with a symmetry]
   \label{thm:generic_hk_sym}
-  \lean{LatticeDFT.nonUV_sym_imp, LatticeDFT.generic_hk_sym}
+  \lean{DFT.nonUV_sym_imp, DFT.generic_hk_sym}
   \leanok
   \uses{lem:det_symKry_eq_zero, def:RigidOn, thm:zeroSet_closed_nowhere, thm:volume_zeroSet}
   Assume every sector is rigid or never carries a ground state, and every sector Krylov polynomial (for
@@ -268,7 +268,7 @@ applied sector by sector.
 
 \begin{theorem}[Small Hubbard models, exact certificates]
   \label{thm:hubbard_certificates}
-  \lean{LatticeDFT.noGS_D, LatticeDFT.hubbard_dimer_generic_hk_ae, LatticeDFT.hubbard_triangle_generic_hk_ae}
+  \lean{DFT.noGS_D, DFT.hubbard_dimer_generic_hk_ae, DFT.hubbard_triangle_generic_hk_ae}
   \leanok
   \uses{thm:generic_hk_sym}
   One spin-up and one spin-down electron, $t=1$, $U=4$, spin-independent potential. On the dimer (half

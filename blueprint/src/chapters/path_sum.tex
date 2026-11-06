@@ -7,7 +7,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{definition}[Assignment distance]
   \label{def:mopt}
-  \lean{LatticeDFT.acost, LatticeDFT.Mopt, LatticeDFT.mopt, LatticeDFT.Mopt_le, LatticeDFT.Mopt_exists, LatticeDFT.mopt_self}
+  \lean{DFT.acost, DFT.Mopt, DFT.mopt, DFT.Mopt_le, DFT.Mopt_exists, DFT.mopt_self}
   \leanok
   \uses{def:Conf, def:amp}
   The cost of assigning start positions to target positions is $\sum_l\dist(\tau_c(\sigma l),\tau_l)$, and
@@ -16,7 +16,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[One hop changes $\Mopt$ by at most one]
   \label{thm:lip_mopt}
-  \lean{LatticeDFT.Mopt_perm, LatticeDFT.Mopt_update, LatticeDFT.lip_mopt}
+  \lean{DFT.Mopt_perm, DFT.Mopt_update, DFT.lip_mopt}
   \leanok
   \uses{def:mopt, def:Hl, lem:amp_props, def:Gamma}
   $\Mopt$ is invariant under reordering, moving one particle along one bond changes it by at most one, and
@@ -29,7 +29,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[An optimal assignment fixing common sites]
   \label{thm:exists_opt_fixing}
-  \lean{LatticeDFT.isOpt, LatticeDFT.nfix, LatticeDFT.exists_opt_fixing}
+  \lean{DFT.isOpt, DFT.nfix, DFT.exists_opt_fixing}
   \leanok
   \uses{def:mopt}
   Some optimal assignment $\sigma_0$ sends every site of $c\cap y$ to itself.
@@ -42,7 +42,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[Uniqueness through partners]
   \label{thm:opt_unique_of_through}
-  \lean{LatticeDFT.opt_unique_of_through}
+  \lean{DFT.opt_unique_of_through}
   \leanok
   \uses{thm:exists_opt_fixing}
   Suppose $\sigma$ is optimal and, for every moved target $a$, the start used by $\sigma$ lies on a shortest
@@ -58,7 +58,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{lemma}[Polynomial bookkeeping]
   \label{lem:ff_tools}
-  \lean{LatticeDFT.Hl_map_eval, LatticeDFT.eval_pow_entry, LatticeDFT.lip_dist, LatticeDFT.sum_cnt, LatticeDFT.wC, LatticeDFT.gamma_pow_poly}
+  \lean{DFT.Hl_map_eval, DFT.eval_pow_entry, DFT.lip_dist, DFT.sum_cnt, DFT.wC, DFT.gamma_pow_poly}
   \leanok
   \uses{thm:gamma_pow_formula, def:Hl}
   The graph distance from a site is a valid $d$ for the single-particle hopping. The power formula of
@@ -71,7 +71,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[Only optimal assignments reach the top degree]
   \label{thm:T_MB_formula}
-  \lean{LatticeDFT.term_coeff, LatticeDFT.T_MB_formula}
+  \lean{DFT.term_coeff, DFT.T_MB_formula}
   \leanok
   \uses{lem:ff_tools, thm:lip_mopt, def:T, thm:top_coeff_factor}
   With $d=\Mopt$, the leading coefficient $T_k(y)$ of the free many-body problem equals
@@ -85,7 +85,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[Power-sum form]
   \label{thm:T_MB_powersum}
-  \lean{LatticeDFT.words_pow, LatticeDFT.βsp, LatticeDFT.T_MB_powersum}
+  \lean{DFT.words_pow, DFT.βsp, DFT.T_MB_powersum}
   \leanok
   \uses{thm:T_MB_formula, thm:power_sum}
   $T_k(y)=\sum_{\sigma\text{ opt}}\sgn\sigma\sum_{\vec z}\big(\prod_l\beta_{\sigma,l}(z_l)\big)\big(\sum_lu_{z_l}\big)^k$,
@@ -98,7 +98,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[$\alpha_y(y)$ is a Slater-type sum]
   \label{thm:alpha_eq_D}
-  \lean{LatticeDFT.assign_rigid, LatticeDFT.alpha_eq_D}
+  \lean{DFT.assign_rigid, DFT.alpha_eq_D}
   \leanok
   \uses{thm:T_MB_powersum, thm:ps_unique, thm:power_sum}
   For generic $u$, $\alpha_y(y)=D(u):=\sum_{\sigma\text{ opt}}\sgn\sigma\prod_l\beta_{\sigma,l}(y_l)$.
@@ -113,7 +113,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{definition}[Route sums]
   \label{def:Gr}
-  \lean{LatticeDFT.Gr, LatticeDFT.alphaExp, LatticeDFT.dist_eq_zero_iff}
+  \lean{DFT.Gr, DFT.alphaExp, DFT.dist_eq_zero_iff}
   \leanok
   For a particle hopping from $b$ to $a$, define layer by layer
   $G_p=([p=b]+\sum_{q\text{ pred }p}(-t)G_q)/(u_a-u_p)$ and $\alpha^{\exp}_{b\to a}=[a=b]+\sum_{p\text{ pred }a}(-t)G_p$.
@@ -122,7 +122,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}
   \label{thm:alphaRep_eq_alphaExp}
-  \lean{LatticeDFT.Fres_eq_Gr, LatticeDFT.alphaRep_eq_alphaExp, LatticeDFT.DExp, LatticeDFT.D_eq_DExp}
+  \lean{DFT.Fres_eq_Gr, DFT.alphaRep_eq_alphaExp, DFT.DExp, DFT.D_eq_DExp}
   \leanok
   \uses{def:Gr, thm:alpha_diag, thm:alpha_eq_D}
   For injective $u$, the single-particle diagonal coefficient equals $\alpha^{\exp}$, and hence $D(u)=D^{\exp}(u)$.
@@ -136,7 +136,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[Limits of route sums]
   \label{thm:gr_tendsto}
-  \lean{LatticeDFT.uline, LatticeDFT.uline_tendsto, LatticeDFT.gr_tendsto_plain, LatticeDFT.Λ, LatticeDFT.gr_tendsto_hat, LatticeDFT.Λ_supp}
+  \lean{DFT.uline, DFT.uline_tendsto, DFT.gr_tendsto_plain, DFT.Λ, DFT.gr_tendsto_hat, DFT.Λ_supp}
   \leanok
   \uses{def:Gr}
   Along $u^*+\varepsilon\delta$: below the layer of a partner $\pi$ with $u^*_a=u^*_\pi$, the route sums
@@ -150,7 +150,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[Resonance argument]
   \label{thm:DExp_eventually_ne}
-  \lean{LatticeDFT.Lval, LatticeDFT.alphaExp_self, LatticeDFT.factor_moved_tendsto, LatticeDFT.Lval_through, LatticeDFT.factor_common_tendsto, LatticeDFT.DExp_eventually_ne}
+  \lean{DFT.Lval, DFT.alphaExp_self, DFT.factor_moved_tendsto, DFT.Lval_through, DFT.factor_common_tendsto, DFT.DExp_eventually_ne}
   \leanok
   \uses{thm:gr_tendsto, thm:opt_unique_of_through, thm:alphaRep_eq_alphaExp}
   Suppose, at $u^*$, every moved target is degenerate with its $\sigma_0$-partner and otherwise generic,
@@ -167,7 +167,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{lemma}[Rationality of route sums]
   \label{lem:ratOn_routes}
-  \lean{LatticeDFT.ratOn_Gr, LatticeDFT.ratOn_Λ, LatticeDFT.ratOn_Lval, LatticeDFT.ratOn_alphaExp, LatticeDFT.ratOn_DExp}
+  \lean{DFT.ratOn_Gr, DFT.ratOn_Λ, DFT.ratOn_Lval, DFT.ratOn_alphaExp, DFT.ratOn_DExp}
   \leanok
   \uses{lem:RatOn_closure, def:Gr, thm:gr_tendsto, thm:DExp_eventually_ne}
   All route sums are rational on generic points, also after identifying sites through a map.
@@ -179,7 +179,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[Positivity at the highest site]
   \label{thm:Lval_ne_zero}
-  \lean{LatticeDFT.exists_pred, LatticeDFT.Lval_ne_zero}
+  \lean{DFT.exists_pred, DFT.Lval_ne_zero}
   \leanok
   \uses{thm:DExp_eventually_ne}
   Suppose the target $a$ has the highest energy among all sites except its partner. Suppose also that the
@@ -193,7 +193,7 @@ Fix a connected graph $G$, hopping $t$, and configurations $c$ (start) and $y$ (
 
 \begin{theorem}[A generic potential with $D\neq0$]
   \label{thm:exists_DExp_ne}
-  \lean{LatticeDFT.partner, LatticeDFT.rep, LatticeDFT.partner_inj, LatticeDFT.rep_partner, LatticeDFT.rep_target, LatticeDFT.rep_eq_target, LatticeDFT.exists_DExp_ne}
+  \lean{DFT.partner, DFT.rep, DFT.partner_inj, DFT.rep_partner, DFT.rep_target, DFT.rep_eq_target, DFT.exists_DExp_ne}
   \leanok
   \uses{thm:exists_common_ne, lem:ratOn_routes, thm:Lval_ne_zero, thm:DExp_eventually_ne, thm:exists_opt_fixing}
   For every pair $c,y$ there is an injective $u$ with $D^{\exp}(u)\ne0$.

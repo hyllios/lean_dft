@@ -3,7 +3,7 @@
 
 \begin{theorem}[Rigidity of fermionic occupations]
   \label{thm:rigid_occF}
-  \lean{LatticeDFT.rigid_occF}
+  \lean{DFT.rigid_occF}
   \leanok
   \uses{def:NonUV, def:Conf}
   For $0<N<M$, the occupations of $N$-particle configurations are rigid.
@@ -16,7 +16,7 @@
 
 \begin{lemma}[Genericity conditions as polynomials]
   \label{lem:forms}
-  \lean{LatticeDFT.formZ, LatticeDFT.formW, LatticeDFT.eval_formZ, LatticeDFT.eval_formW, LatticeDFT.formW_ne_zero, LatticeDFT.formZ_ne_zero}
+  \lean{DFT.formZ, DFT.formW, DFT.eval_formZ, DFT.eval_formW, DFT.formW_ne_zero, DFT.formZ_ne_zero}
   \leanok
   \uses{def:Conf}
   Distinct configuration energies, and the condition ``$\sum_lu_{z_l}=w_y$ only if $\vec z$ is a permutation
@@ -29,7 +29,7 @@
 
 \begin{theorem}[(H$^*$) for spinless lattice fermions]
   \label{thm:hstar_lattice_fermions}
-  \lean{LatticeDFT.hstar_lattice_fermions_w, LatticeDFT.hstar_lattice_fermions}
+  \lean{DFT.hstar_lattice_fermions_w, DFT.hstar_lattice_fermions}
   \leanok
   \uses{thm:exists_common_ne, thm:exists_DExp_ne, lem:forms, thm:alpha_eq_D, thm:alphaRep_eq_alphaExp, thm:hstar_of_alpha, def:H0F, def:H0Fw}
   Take a connected graph and any interaction, with hopping amplitudes $t_{ab}$ of a common sign (in
@@ -43,7 +43,7 @@
 
 \begin{theorem}[Generic Hohenberg--Kohn theorem]
   \label{thm:generic_hk_lattice_fermions}
-  \lean{LatticeDFT.generic_hk_lattice_fermions, LatticeDFT.generic_hk_lattice_fermions_w}
+  \lean{DFT.generic_hk_lattice_fermions, DFT.generic_hk_lattice_fermions_w}
   \leanok
   \uses{thm:generic_hk_ae, thm:rigid_occF, thm:hstar_lattice_fermions, def:H0F, def:H0Fw}
   Consider $N$ spinless fermions ($0<N<M$) on any connected graph, with any density--density interaction.

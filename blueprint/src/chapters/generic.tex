@@ -5,7 +5,7 @@
 
 \begin{definition}[Krylov matrix]
   \label{def:kry}
-  \lean{LatticeDFT.kry}
+  \lean{DFT.kry}
   \leanok
   For a matrix $H$ on $\Conf$, a configuration $c$ and an enumeration $\mathrm{ord}:\Conf\to\N$, the matrix
   $\Kry(H,c)$ has columns $H^{\mathrm{ord}(j)}e_c$.
@@ -13,7 +13,7 @@
 
 \begin{lemma}[Vanishing amplitudes make the Krylov matrix singular]
   \label{lem:det_kry_eq_zero}
-  \lean{LatticeDFT.det_kry_eq_zero}
+  \lean{DFT.det_kry_eq_zero}
   \leanok
   \uses{def:kry}
   If $H$ is symmetric, $H\psi=E\psi$, $\psi\neq0$ and $\psi_c=0$, then $\det\Kry(H,c)=0$.
@@ -25,7 +25,7 @@
 
 \begin{definition}[Krylov polynomial]
   \label{def:krylovPoly}
-  \lean{LatticeDFT.hamP, LatticeDFT.krylovPoly}
+  \lean{DFT.hamP, DFT.krylovPoly}
   \leanok
   \uses{def:kry, def:hamN}
   Treating the potential as polynomial variables,
@@ -34,7 +34,7 @@
 
 \begin{lemma}
   \label{lem:eval_krylovPoly}
-  \lean{LatticeDFT.hamP_eval, LatticeDFT.eval_krylovPoly}
+  \lean{DFT.hamP_eval, DFT.eval_krylovPoly}
   \leanok
   \uses{def:krylovPoly}
   Evaluating $P_c$ at $v$ gives $\det\Kry(H(v),c)$.
@@ -46,7 +46,7 @@
 
 \begin{definition}[Rigidity and non-unique $v$-representability]
   \label{def:NonUV}
-  \lean{LatticeDFT.Rigid, LatticeDFT.NonUV}
+  \lean{DFT.Rigid, DFT.NonUV}
   \leanok
   \uses{def:hamN, def:IsGroundState}
   The occupations are \emph{rigid} if $\sum_iw_in_i(c)$ constant in $c$ forces $w$ constant.
@@ -56,7 +56,7 @@
 
 \begin{theorem}
   \label{thm:nonUV_imp_krylov_zero}
-  \lean{LatticeDFT.nonUV_imp_krylov_zero}
+  \lean{DFT.nonUV_imp_krylov_zero}
   \leanok
   \uses{def:NonUV, lem:det_kry_eq_zero, lem:eval_krylovPoly, thm:isGroundState_eigen}
   With rigid occupations, a non-uniquely $v$-representable $v$ is a zero of some Krylov polynomial $P_c$.
@@ -71,7 +71,7 @@
 
 \begin{theorem}[Identity theorem for polynomials]
   \label{thm:zeroSet_closed_nowhere}
-  \lean{LatticeDFT.eq_zero_of_vanish_on_open, LatticeDFT.zeroSet_closed_nowhere}
+  \lean{DFT.eq_zero_of_vanish_on_open, DFT.zeroSet_closed_nowhere}
   \leanok
   A real polynomial vanishing on a nonempty open set is zero. Hence the zero set of a nonzero polynomial is
   closed with empty interior.
@@ -83,7 +83,7 @@
 
 \begin{theorem}[Generic HK, topological form]
   \label{thm:generic_hk}
-  \lean{LatticeDFT.generic_hk}
+  \lean{DFT.generic_hk}
   \leanok
   \uses{thm:nonUV_imp_krylov_zero, thm:zeroSet_closed_nowhere}
   Assume (H$^*$): every Krylov polynomial $P_c$ is nonzero. Then the non-uniquely $v$-representable
@@ -96,7 +96,7 @@
 
 \begin{theorem}[Zero sets are null]
   \label{thm:volume_zeroSet}
-  \lean{LatticeDFT.volume_zeroSet_fin, LatticeDFT.volume_zeroSet}
+  \lean{DFT.volume_zeroSet_fin, DFT.volume_zeroSet}
   \leanok
   The zero set of a nonzero real polynomial in finitely many variables has Lebesgue measure zero.
 \end{theorem}
@@ -109,7 +109,7 @@
 
 \begin{theorem}[Generic HK, measure form]
   \label{thm:generic_hk_ae}
-  \lean{LatticeDFT.generic_hk_ae}
+  \lean{DFT.generic_hk_ae}
   \leanok
   \uses{thm:generic_hk, thm:volume_zeroSet}
   Under (H$^*$), the non-uniquely $v$-representable potentials lie in a closed, nowhere dense, Lebesgue-null set.
@@ -123,7 +123,7 @@
 
 \begin{definition}[Rational on generic points]
   \label{def:RatOn}
-  \lean{LatticeDFT.RatOn}
+  \lean{DFT.RatOn}
   \leanok
   $f:\R^M\to\R$ is \emph{rational on generic points} if there are polynomials $P,Q$ with $Q(\theta)\ne0$ and
   $f(\theta)Q(\theta)=P(\theta)$ for every injective $\theta$.
@@ -131,7 +131,7 @@
 
 \begin{lemma}[Closure properties]
   \label{lem:RatOn_closure}
-  \lean{LatticeDFT.RatOn.const, LatticeDFT.RatOn.add, LatticeDFT.RatOn.mul, LatticeDFT.RatOn.div_sub, LatticeDFT.RatOn.sum, LatticeDFT.RatOn.prod, LatticeDFT.RatOn.ite, LatticeDFT.RatOn.congr}
+  \lean{DFT.RatOn.const, DFT.RatOn.add, DFT.RatOn.mul, DFT.RatOn.div_sub, DFT.RatOn.sum, DFT.RatOn.prod, DFT.RatOn.ite, DFT.RatOn.congr}
   \leanok
   \uses{def:RatOn}
   The class is closed under constants, sums, products, finite sums and products, case distinctions with
@@ -144,7 +144,7 @@
 
 \begin{lemma}[Discriminant]
   \label{lem:discPoly}
-  \lean{LatticeDFT.discPoly, LatticeDFT.discPoly_ne_zero, LatticeDFT.injective_of_disc}
+  \lean{DFT.discPoly, DFT.discPoly_ne_zero, DFT.injective_of_disc}
   \leanok
   $D=\prod_{i\neq j}(X_i-X_j)$ is a nonzero polynomial, and $D(\theta)\neq0$ implies that $\theta$ is injective.
 \end{lemma}
@@ -155,7 +155,7 @@
 
 \begin{theorem}[Simultaneous non-vanishing]
   \label{thm:exists_common_ne}
-  \lean{LatticeDFT.exists_common_ne}
+  \lean{DFT.exists_common_ne}
   \leanok
   \uses{lem:RatOn_closure, lem:discPoly}
   Finitely many functions that are rational on generic points, each nonzero at some injective point, are
@@ -172,7 +172,7 @@
 
 \begin{theorem}[(H$^*$) for the square]
   \label{thm:square_generic_hk}
-  \lean{LatticeDFT.vsq, LatticeDFT.Hsq1, LatticeDFT.hamN_vsq, LatticeDFT.Hsq2, LatticeDFT.Hsq_pow2, LatticeDFT.Hsq3, LatticeDFT.Hsq_pow3, LatticeDFT.Hsq4, LatticeDFT.Hsq_pow4, LatticeDFT.Hsq5, LatticeDFT.Hsq_pow5, LatticeDFT.pow_cases, LatticeDFT.Ksq0, LatticeDFT.kry_sq0, LatticeDFT.det_Ksq0, LatticeDFT.Ksq1, LatticeDFT.kry_sq1, LatticeDFT.det_Ksq1, LatticeDFT.Ksq2, LatticeDFT.kry_sq2, LatticeDFT.det_Ksq2, LatticeDFT.Ksq3, LatticeDFT.kry_sq3, LatticeDFT.det_Ksq3, LatticeDFT.Ksq4, LatticeDFT.kry_sq4, LatticeDFT.det_Ksq4, LatticeDFT.Ksq5, LatticeDFT.kry_sq5, LatticeDFT.det_Ksq5, LatticeDFT.rigid_occ4, LatticeDFT.hstar_sq, LatticeDFT.square_generic_hk, LatticeDFT.square_generic_hk_ae}
+  \lean{DFT.vsq, DFT.Hsq1, DFT.hamN_vsq, DFT.Hsq2, DFT.Hsq_pow2, DFT.Hsq3, DFT.Hsq_pow3, DFT.Hsq4, DFT.Hsq_pow4, DFT.Hsq5, DFT.Hsq_pow5, DFT.pow_cases, DFT.Ksq0, DFT.kry_sq0, DFT.det_Ksq0, DFT.Ksq1, DFT.kry_sq1, DFT.det_Ksq1, DFT.Ksq2, DFT.kry_sq2, DFT.det_Ksq2, DFT.Ksq3, DFT.kry_sq3, DFT.det_Ksq3, DFT.Ksq4, DFT.kry_sq4, DFT.det_Ksq4, DFT.Ksq5, DFT.kry_sq5, DFT.det_Ksq5, DFT.rigid_occ4, DFT.hstar_sq, DFT.square_generic_hk, DFT.square_generic_hk_ae}
   \leanok
   \uses{thm:generic_hk_ae, thm:hk_fails_square, lem:Qsq}
   For two fermions on the square, every Krylov polynomial is nonzero. Hence HK holds for Lebesgue-almost

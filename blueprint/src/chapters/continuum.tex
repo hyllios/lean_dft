@@ -11,17 +11,17 @@ continuation ($\psi\neq0$ almost everywhere).
 
 \begin{definition}[Setting]
   \label{def:continuum_setting}
-  \lean{LatticeDFT.Continuum.Setting, LatticeDFT.Continuum.ip, LatticeDFT.Continuum.pf, LatticeDFT.Continuum.Q,
-    LatticeDFT.Continuum.dens, LatticeDFT.Continuum.IsGS, LatticeDFT.Continuum.Sep, LatticeDFT.Continuum.RigidL}
+  \lean{DFT.Continuum.Setting, DFT.Continuum.ip, DFT.Continuum.pf, DFT.Continuum.Q,
+    DFT.Continuum.dens, DFT.Continuum.IsGS, DFT.Continuum.Sep, DFT.Continuum.RigidL}
   \leanok
   Form domain, energy form, coupling, ground states as minimisers of the Rayleigh quotient, separation and rigidity.
 \end{definition}
 
 \begin{lemma}[Euler--Lagrange equation]
   \label{lem:euler_lagrange}
-  \lean{LatticeDFT.Continuum.integral_expand, LatticeDFT.Continuum.ip_comm, LatticeDFT.Continuum.pf_comm,
-    LatticeDFT.Continuum.ip_expand, LatticeDFT.Continuum.pf_expand, LatticeDFT.Continuum.h0_expand,
-    LatticeDFT.Continuum.euler_lagrange}
+  \lean{DFT.Continuum.integral_expand, DFT.Continuum.ip_comm, DFT.Continuum.pf_comm,
+    DFT.Continuum.ip_expand, DFT.Continuum.pf_expand, DFT.Continuum.h0_expand,
+    DFT.Continuum.euler_lagrange}
   \leanok
   \uses{def:continuum_setting}
   A ground state satisfies the weak Schr\"odinger equation $h_0(\psi,\varphi)+\langle w\psi,\varphi\rangle
@@ -34,7 +34,7 @@ continuation ($\psi\neq0$ almost everywhere).
 
 \begin{theorem}[Hohenberg--Kohn, conditional on unique continuation]
   \label{thm:hk_continuum}
-  \lean{LatticeDFT.Continuum.weak_hk, LatticeDFT.Continuum.strong_hk_of_ucp, LatticeDFT.Continuum.hk_of_ucp}
+  \lean{DFT.Continuum.weak_hk, DFT.Continuum.strong_hk_of_ucp, DFT.Continuum.hk_of_ucp}
   \leanok
   \uses{lem:euler_lagrange}
   If ground states of $v$ and $v'$ have the same norm and density, they are ground states of both potentials; if one
@@ -49,10 +49,10 @@ continuation ($\psi\neq0$ almost everywhere).
 
 \begin{theorem}[The lattice as an instance]
   \label{thm:hk_lattice_instance}
-  \lean{LatticeDFT.Continuum.matForm, LatticeDFT.Continuum.latticeL, LatticeDFT.Continuum.latticeSetting,
-    LatticeDFT.Continuum.ip_lattice, LatticeDFT.Continuum.Q_lattice, LatticeDFT.Continuum.isGS_lattice_iff,
-    LatticeDFT.Continuum.sep_lattice, LatticeDFT.Continuum.rigidL_lattice, LatticeDFT.Continuum.ucp_lattice_iff,
-    LatticeDFT.Continuum.lattice_hk_of_hstar}
+  \lean{DFT.Continuum.matForm, DFT.Continuum.latticeL, DFT.Continuum.latticeSetting,
+    DFT.Continuum.ip_lattice, DFT.Continuum.Q_lattice, DFT.Continuum.isGS_lattice_iff,
+    DFT.Continuum.sep_lattice, DFT.Continuum.rigidL_lattice, DFT.Continuum.ucp_lattice_iff,
+    DFT.Continuum.lattice_hk_of_hstar}
   \leanok
   \uses{thm:hk_continuum}
   With counting measure on the configurations, separation is automatic, rigidity of the coupling is lattice rigidity,
@@ -71,13 +71,13 @@ $0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\
 
 \begin{lemma}[The box setting]
   \label{lem:box_setting}
-  \lean{LatticeDFT.Continuum.Box.μ1, LatticeDFT.Continuum.Box.Dom, LatticeDFT.Continuum.Box.mem_Dom,
-    LatticeDFT.Continuum.Box.Pot, LatticeDFT.Continuum.Box.ext, LatticeDFT.Continuum.Box.continuous_ext,
-    LatticeDFT.Continuum.Box.Lbox, LatticeDFT.Continuum.Box.integrable_of_continuous, LatticeDFT.Continuum.Box.kin,
-    LatticeDFT.Continuum.Box.two_ge_one, LatticeDFT.Continuum.Box.diff_of_mem,
-    LatticeDFT.Continuum.Box.cont_deriv_of_mem, LatticeDFT.Continuum.Box.setting,
-    LatticeDFT.Continuum.Box.eq_zero_of_integral, LatticeDFT.Continuum.Box.sep_box, LatticeDFT.Continuum.Box.one,
-    LatticeDFT.Continuum.Box.rigidL_box}
+  \lean{DFT.Continuum.Box.μ1, DFT.Continuum.Box.Dom, DFT.Continuum.Box.mem_Dom,
+    DFT.Continuum.Box.Pot, DFT.Continuum.Box.ext, DFT.Continuum.Box.continuous_ext,
+    DFT.Continuum.Box.Lbox, DFT.Continuum.Box.integrable_of_continuous, DFT.Continuum.Box.kin,
+    DFT.Continuum.Box.two_ge_one, DFT.Continuum.Box.diff_of_mem,
+    DFT.Continuum.Box.cont_deriv_of_mem, DFT.Continuum.Box.setting,
+    DFT.Continuum.Box.eq_zero_of_integral, DFT.Continuum.Box.sep_box, DFT.Continuum.Box.one,
+    DFT.Continuum.Box.rigidL_box}
   \leanok
   \uses{def:continuum_setting}
   The box is a setting in which separation (fundamental lemma of the calculus of variations, with smooth test
@@ -90,7 +90,7 @@ $0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\
 
 \begin{lemma}[Ground states solve the Schr\"odinger equation]
   \label{lem:box_ode}
-  \lean{LatticeDFT.Continuum.Box.energy, LatticeDFT.Continuum.Box.ode_of_isGS}
+  \lean{DFT.Continuum.Box.energy, DFT.Continuum.Box.ode_of_isGS}
   \leanok
   \uses{lem:box_setting, lem:euler_lagrange}
   A ground state satisfies $\psi''=(v-E)\psi$ on $(0,1)$.
@@ -102,9 +102,9 @@ $0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\
 
 \begin{theorem}[Unique continuation in the box]
   \label{thm:box_ucp}
-  \lean{LatticeDFT.Continuum.Box.deriv_eq_zero_of_accPt, LatticeDFT.Continuum.Box.field,
-    LatticeDFT.Continuum.Box.lipschitz_field, LatticeDFT.Continuum.Box.eq_zero_of_accPt,
-    LatticeDFT.Continuum.Box.ucp_of_isGS}
+  \lean{DFT.Continuum.Box.deriv_eq_zero_of_accPt, DFT.Continuum.Box.field,
+    DFT.Continuum.Box.lipschitz_field, DFT.Continuum.Box.eq_zero_of_accPt,
+    DFT.Continuum.Box.ucp_of_isGS}
   \leanok
   \uses{lem:box_ode}
   A ground state vanishes only on a null set.
@@ -118,7 +118,7 @@ $0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\
 
 \begin{theorem}[Hohenberg--Kohn for one particle in a box]
   \label{thm:hk_box}
-  \lean{LatticeDFT.Continuum.Box.hk_box}
+  \lean{DFT.Continuum.Box.hk_box}
   \leanok
   \uses{thm:hk_continuum, lem:box_setting, thm:box_ucp}
   If ground states of continuous potentials $v$ and $v'$ have the same density $\psi^2=\psi'^2$, then $v-v'$ is

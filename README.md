@@ -1,10 +1,12 @@
-# LatticeDFT — density-functional theory on lattices, formalized in Lean 4
+# lean_dft — density-functional theory formalized in Lean 4: lattices, and first steps to the continuum
 
 A Lean 4 / Mathlib formalization of the foundations of density-functional theory (DFT) for finite lattice
 systems. It covers ground states, the Hohenberg–Kohn (HK) theorem and its failures, second-quantized lattice
 fermions, a **generic Hohenberg–Kohn theorem** (spinless, and spin-resolved for spinful electrons), and
 **Kohn–Sham theory**: existence and generic uniqueness of Kohn–Sham potentials, and convergence of the
-regularised Kohn–Sham iteration.
+regularised Kohn–Sham iteration. It then treats time-dependent DFT on lattices and takes first steps to
+the continuum: Hohenberg–Kohn on a general configuration space, conditional on unique continuation, and an
+unconditional case (one particle in a box).
 
 All proofs use only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`), and there is no `sorry`.
 
@@ -18,7 +20,7 @@ definition and theorem with links to the Lean code ([web](https://hyllios.github
 ### Generic Hohenberg–Kohn theorem
 
 ```lean
-theorem LatticeDFT.generic_hk_lattice_fermions
+theorem DFT.generic_hk_lattice_fermions
     {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
     {t : ℝ} (ht : t ≠ 0) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
     ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
@@ -100,7 +102,7 @@ Schrödinger equation.
   assuming separation (fundamental lemma), rigidity of the coupling, and unique continuation of the
   ground state. `lattice_hk_of_hstar` recovers the lattice theorem: there, unique continuation is
   "no zero amplitude", supplied by (H\*).
-  `hk_box` (`Continuum/OneD`) is an unconditional continuum case: one particle on `[0, 1]` with hard
+  `hk_box` (`Continuum/Box`) is an unconditional continuum case: one particle on `[0, 1]` with hard
   walls and a continuous potential. A ground state solves `ψ'' = (v - E)ψ`, its zeros cannot
   accumulate (ODE uniqueness), so it vanishes only on a null set, and equal densities `ψ² = ψ'²` force
   `v - v'` to be constant.
@@ -136,6 +138,12 @@ Schrödinger equation.
 proof is wrong.
 
 ## Structure
+
+The library `DFT` has two parts. `DFT/Lattice/` holds everything on finite lattices (namespace `DFT`);
+`DFT/Continuum/` holds the general configuration-space theory (namespace `DFT.Continuum`), which takes
+the lattice results as a special case. Module paths below are relative to these two folders.
+
+### `DFT/Lattice/`
 
 | Module | Content |
 |---|---|
@@ -177,12 +185,17 @@ proof is wrong.
 | `TDDFT/Dimer` | reality check: one particle on two sites; `Ω = {bond order ≠ 0}`, speed limit, closed-form TD potential, Rabi oscillation outside `Ω` (numerical check in `scripts/dimer_check.py`) |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
-| `Continuum/OneD` | one particle in a box with a continuous potential: unique continuation proved (ODE uniqueness), unconditional continuum Hohenberg–Kohn `hk_box` |
-| `Continuum/HK`, `Continuum/Lattice` | Hohenberg–Kohn on a general configuration space `(X, μ)`, conditional on unique continuation; the lattice as the counting-measure instance, with (H\*) supplying unique continuation |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
 | `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
 
-About 6,000 lines of Lean in total.
+### `DFT/Continuum/`
+
+| Module | Content |
+|---|---|
+| `HK`, `FromLattice` | Hohenberg–Kohn on a general configuration space `(X, μ)`, conditional on unique continuation; the lattice as the counting-measure instance, with (H\*) supplying unique continuation |
+| `Box` | one particle in a box with a continuous potential: unique continuation proved (ODE uniqueness), unconditional continuum Hohenberg–Kohn `hk_box` |
+
+About 13,000 lines of Lean in total.
 
 ## Further material
 

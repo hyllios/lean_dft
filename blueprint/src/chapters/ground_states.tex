@@ -7,14 +7,14 @@ Throughout, $V$ is a finite set and $M\in\R^{V\times V}$ a real matrix; vectors 
 
 \begin{definition}[Quadratic form]
   \label{def:qf}
-  \lean{LatticeDFT.qf}
+  \lean{DFT.qf}
   \leanok
   $\qf(M,\psi) = \ip{\psi}{M\psi}$.
 \end{definition}
 
 \begin{definition}[Ground state]
   \label{def:IsGroundState}
-  \lean{LatticeDFT.IsGroundState}
+  \lean{DFT.IsGroundState}
   \leanok
   \uses{def:qf}
   $\psi$ is a ground state of $M$ if $\psi\neq 0$ and
@@ -24,7 +24,7 @@ Throughout, $V$ is a finite set and $M\in\R^{V\times V}$ a real matrix; vectors 
 
 \begin{lemma}
   \label{lem:lin_coeff_zero}
-  \lean{LatticeDFT.lin_coeff_zero}
+  \lean{DFT.lin_coeff_zero}
   \leanok
   If $a s + b s^2\ge 0$ for all $s\in\R$, then $a=0$.
 \end{lemma}
@@ -35,7 +35,7 @@ Throughout, $V$ is a finite set and $M\in\R^{V\times V}$ a real matrix; vectors 
 
 \begin{theorem}[Ground states are eigenvectors]
   \label{thm:isGroundState_eigen}
-  \lean{LatticeDFT.isGroundState_eigen}
+  \lean{DFT.isGroundState_eigen}
   \leanok
   \uses{def:IsGroundState, lem:lin_coeff_zero}
   If $M$ is symmetric and $\psi$ is a ground state, then $M\psi = E\psi$ with
@@ -54,14 +54,14 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
 
 \begin{definition}[Single-particle Hamiltonian]
   \label{def:ham}
-  \lean{LatticeDFT.ham}
+  \lean{DFT.ham}
   \leanok
   $H(v) = \diag(v) - t\,A_G$.
 \end{definition}
 
 \begin{lemma}[Elementary properties]
   \label{lem:ham_basic}
-  \lean{LatticeDFT.adj_nonneg, LatticeDFT.ham_mulVec_apply, LatticeDFT.ham_isSymm, LatticeDFT.qf_ham}
+  \lean{DFT.adj_nonneg, DFT.ham_mulVec_apply, DFT.ham_isSymm, DFT.qf_ham}
   \leanok
   \uses{def:ham, def:qf}
   The adjacency entries are nonnegative; $(H\psi)_i = v_i\psi_i - t\sum_{j\sim i}\psi_j$; $H$ is symmetric;
@@ -74,7 +74,7 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
 
 \begin{lemma}
   \label{lem:qf_ham_abs_le}
-  \lean{LatticeDFT.qf_ham_abs_le}
+  \lean{DFT.qf_ham_abs_le}
   \leanok
   \uses{lem:ham_basic}
   For $t\ge 0$, $\qf(H,|\varphi|)\le\qf(H,\varphi)$.
@@ -86,7 +86,7 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
 
 \begin{theorem}
   \label{thm:abs_isGroundState}
-  \lean{LatticeDFT.abs_isGroundState}
+  \lean{DFT.abs_isGroundState}
   \leanok
   \uses{lem:qf_ham_abs_le, def:IsGroundState}
   For $t>0$: if $\psi$ is a ground state of $H(v)$, so is $|\psi|$.
@@ -98,7 +98,7 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
 
 \begin{theorem}[Positivity]
   \label{thm:pos_of_nonneg}
-  \lean{LatticeDFT.pos_of_nonneg}
+  \lean{DFT.pos_of_nonneg}
   \leanok
   \uses{thm:isGroundState_eigen, lem:ham_basic}
   On a connected graph with $t>0$, a nonnegative ground state is strictly positive.
@@ -111,7 +111,7 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
 
 \begin{theorem}[Single-particle Hohenberg--Kohn]
   \label{thm:hk_single_particle}
-  \lean{LatticeDFT.hk_single_particle}
+  \lean{DFT.hk_single_particle}
   \leanok
   \uses{thm:abs_isGroundState, thm:pos_of_nonneg, thm:isGroundState_eigen}
   Let $G$ be connected and $t>0$. If $\psi,\psi'$ are ground states of $H(v)$ and $H(v')$ with
@@ -126,7 +126,7 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
 
 \begin{theorem}[Failure for frustrated hopping]
   \label{thm:hk_fails_frustrated}
-  \lean{LatticeDFT.qf_triangle, LatticeDFT.hk_fails_frustrated}
+  \lean{DFT.qf_triangle, DFT.hk_fails_frustrated}
   \leanok
   \uses{def:ham, def:IsGroundState}
   On the triangle with $t=-1$, the potentials $(0,0,1)$ and $(0,0,2)$ share the ground state $(1,-1,0)$.
@@ -140,7 +140,7 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
 
 \begin{theorem}[Spectral lower bound]
   \label{thm:qf_ge_of_diagonalisation}
-  \lean{LatticeDFT.qf_ge_of_diagonalisation, LatticeDFT.exists_diagonalisation}
+  \lean{DFT.qf_ge_of_diagonalisation, DFT.exists_diagonalisation}
   \leanok
   \uses{def:qf}
   A symmetric real matrix is diagonalised by an orthogonal matrix, $HP=P\diag(\lambda)$ (spectral
@@ -153,7 +153,7 @@ Let $G$ be a simple graph on $V$ with adjacency matrix $A_G$, $t\in\R$ and $v\in
 
 \begin{theorem}[Ground states exist; ground-state energy]
   \label{thm:exists_groundState}
-  \lean{LatticeDFT.exists_groundState, LatticeDFT.gsEnergy, LatticeDFT.gsEnergy_le, LatticeDFT.qf_groundState_eq, LatticeDFT.isGroundState_of_qf_eq}
+  \lean{DFT.exists_groundState, DFT.gsEnergy, DFT.gsEnergy_le, DFT.qf_groundState_eq, DFT.isGroundState_of_qf_eq}
   \leanok
   \uses{thm:qf_ge_of_diagonalisation, def:IsGroundState}
   Every symmetric matrix on a nonempty finite set has a normalised ground state. The ground-state energy

@@ -5,8 +5,8 @@ v = [-3,-3,-2,0]
 H = H0 + sp.diag(*[sum(v[i]*occ[i][c] for i in range(4)) for c in range(6)])
 def lm(M): return "!![" + "; ".join(", ".join(str(x) for x in M.row(i)) for i in range(M.rows)) + "]"
 P = [sp.eye(6)] + [H**k for k in range(1,6)]
-out = ["-- generated snippet; the checked version lives in LatticeDFT/Generic/SquareCertificate.lean", "",
-       "namespace LatticeDFT", "", "open Matrix MvPolynomial", ""]
+out = ["-- generated snippet; the checked version lives in DFT/Lattice/Generic/SquareCertificate.lean", "",
+       "namespace DFT", "", "open Matrix MvPolynomial", ""]
 out.append("def vsq : Fin 4 → ℝ := ![-3, -3, -2, 0]")
 out.append(f"def Hsq1 : Matrix (Fin 6) (Fin 6) ℝ := {lm(H)}")
 out.append("lemma hamN_vsq : hamN H0sq occ4 vsq = Hsq1 := by\n  ext i j; fin_cases i <;> fin_cases j <;> simp [hamN, H0sq, occ4, vsq, Hsq1, Fin.sum_univ_succ] <;> norm_num")

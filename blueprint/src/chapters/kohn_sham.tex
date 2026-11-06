@@ -10,14 +10,14 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
 
 \begin{definition}[Orbital energies]
   \label{def:orbEnergy}
-  \lean{LatticeDFT.orbEnergy}
+  \lean{DFT.orbEnergy}
   \leanok
   For orbital energies $\varepsilon_a$ and an orbital subset $S$ of size $N$, $E_S=\sum_{a\in S}\varepsilon_a$.
 \end{definition}
 
 \begin{lemma}[Slater determinants of eigen-orbitals]
   \label{lem:slaterSub_eigen}
-  \lean{LatticeDFT.slaterSub_eigen}
+  \lean{DFT.slaterSub_eigen}
   \leanok
   \uses{thm:gamma_slater, def:orbEnergy}
   If $h\varphi_a=\varepsilon_a\varphi_a$, then $\Gamma(h)\Psi_S=E_S\Psi_S$.
@@ -29,7 +29,7 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
 
 \begin{theorem}[Variational lower bound]
   \label{thm:qf_gamma_ge}
-  \lean{LatticeDFT.slaterMat, LatticeDFT.slaterMat_orth, LatticeDFT.dot_slaterMat, LatticeDFT.qf_gamma_ge}
+  \lean{DFT.slaterMat, DFT.slaterMat_orth, DFT.dot_slaterMat, DFT.qf_gamma_ge}
   \leanok
   \uses{thm:slater_orthonormal, lem:slaterSub_eigen}
   For an orthonormal eigenbasis of $h$ and every many-body state $\Psi$,
@@ -43,7 +43,7 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
 
 \begin{theorem}[Aufbau]
   \label{thm:aufbau}
-  \lean{LatticeDFT.exists_eigenbasis, LatticeDFT.conf_nonempty, LatticeDFT.aufbau}
+  \lean{DFT.exists_eigenbasis, DFT.conf_nonempty, DFT.aufbau}
   \leanok
   \uses{thm:qf_gamma_ge, def:IsGroundState}
   For a symmetric $h$ and $N\le M$, the ground-state energy of $\Gamma(h)$ is the smallest sum of $N$
@@ -56,7 +56,7 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
 
 \begin{theorem}[Lowest orbitals]
   \label{thm:aufbau_lowest}
-  \lean{LatticeDFT.orbEnergy_eq_sum, LatticeDFT.sum_le_sum_of_forall_le, LatticeDFT.aufbau_lowest}
+  \lean{DFT.orbEnergy_eq_sum, DFT.sum_le_sum_of_forall_le, DFT.aufbau_lowest}
   \leanok
   \uses{thm:aufbau}
   A set $S$ minimises $E_S$ if and only if it consists of $N$ orbitals of lowest energy (with arbitrary
@@ -73,7 +73,7 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
 
 \begin{theorem}[Generic uniqueness]
   \label{thm:ks_potential_generic_unique}
-  \lean{LatticeDFT.ks_potential_generic_unique_w, LatticeDFT.ks_potential_generic_unique}
+  \lean{DFT.ks_potential_generic_unique_w, DFT.ks_potential_generic_unique}
   \leanok
   \uses{thm:generic_hk_lattice_fermions}
   For spinless fermions on a connected graph, with symmetric hopping amplitudes of a common sign (in
@@ -95,7 +95,7 @@ $\mathcal{D}=\{\sum_c\lambda_cn(c):\lambda\ \text{a probability vector}\}$.
 
 \begin{definition}[Lieb's functional]
   \label{def:lieb}
-  \lean{LatticeDFT.Egs, LatticeDFT.DensDomain, LatticeDFT.lieb}
+  \lean{DFT.Egs, DFT.DensDomain, DFT.lieb}
   \leanok
   \uses{def:hamN, thm:exists_groundState}
   $F(\rho)=\sup_v\,[E(v)-v\cdot\rho]$, the Legendre transform of $E$.
@@ -103,7 +103,7 @@ $\mathcal{D}=\{\sum_c\lambda_cn(c):\lambda\ \text{a probability vector}\}$.
 
 \begin{lemma}
   \label{lem:lieb_basic}
-  \lean{LatticeDFT.Egs_le_config, LatticeDFT.lieb_bdd, LatticeDFT.le_lieb, LatticeDFT.dens_mem_domain}
+  \lean{DFT.Egs_le_config, DFT.lieb_bdd, DFT.le_lieb, DFT.dens_mem_domain}
   \leanok
   \uses{def:lieb}
   $E(v)\le (H_0)_{cc}+\sum_iv_in_i(c)$ for every configuration $c$. Hence $F$ is finite on $\mathcal{D}$, and
@@ -116,7 +116,7 @@ $\mathcal{D}=\{\sum_c\lambda_cn(c):\lambda\ \text{a probability vector}\}$.
 
 \begin{theorem}[Lieb duality]
   \label{thm:lieb_duality}
-  \lean{LatticeDFT.lieb_duality}
+  \lean{DFT.lieb_duality}
   \leanok
   \uses{lem:lieb_basic, thm:exists_groundState}
   $E(v)=\min_{\rho\in\mathcal{D}}\,[F(\rho)+v\cdot\rho]$, the minimum being attained at the density of any
@@ -130,7 +130,7 @@ $\mathcal{D}=\{\sum_c\lambda_cn(c):\lambda\ \text{a probability vector}\}$.
 
 \begin{theorem}[Convexity]
   \label{thm:lieb_convexOn}
-  \lean{LatticeDFT.lieb_convexOn}
+  \lean{DFT.lieb_convexOn}
   \leanok
   \uses{lem:lieb_basic}
   $F$ is convex on the (convex) density domain.
@@ -147,7 +147,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{lemma}[Regularity of $E$]
   \label{lem:Egs_regular}
-  \lean{LatticeDFT.sum_dens, LatticeDFT.qf_hamN_shift, LatticeDFT.Egs_shift, LatticeDFT.Nr_nonneg, LatticeDFT.qf_hamN_diff_le, LatticeDFT.Egs_lipschitz, LatticeDFT.continuous_Egs}
+  \lean{DFT.sum_dens, DFT.qf_hamN_shift, DFT.Egs_shift, DFT.Nr_nonneg, DFT.qf_hamN_diff_le, DFT.Egs_lipschitz, DFT.continuous_Egs}
   \leanok
   \uses{lem:lieb_basic}
   $E(v+k)=E(v)+kN$, and $|E(v)-E(v')|\le N\|v-v'\|_\infty$. In particular $E$ is continuous.
@@ -159,7 +159,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{theorem}[Coercivity and a maximiser]
   \label{thm:exists_maximiser}
-  \lean{LatticeDFT.aval, LatticeDFT.mval, LatticeDFT.mval_le, LatticeDFT.continuous_mval, LatticeDFT.mval_smul, LatticeDFT.weighted_aval, LatticeDFT.mval_nonpos, LatticeDFT.const_of_mval_eq_zero, LatticeDFT.coercive, LatticeDFT.sum_rho, LatticeDFT.exists_maximiser}
+  \lean{DFT.aval, DFT.mval, DFT.mval_le, DFT.continuous_mval, DFT.mval_smul, DFT.weighted_aval, DFT.mval_nonpos, DFT.const_of_mval_eq_zero, DFT.coercive, DFT.sum_rho, DFT.exists_maximiser}
   \leanok
   \uses{lem:Egs_regular, def:NonUV}
   There is $\delta>0$ with $E(v)-v\cdot\rho\le K-\delta\|v\|$ whenever $\sum_iv_i=0$. Consequently
@@ -174,7 +174,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{theorem}[Ground states below the target]
   \label{thm:exists_gs_below}
-  \lean{LatticeDFT.qf_hamN_add, LatticeDFT.continuous_qf, LatticeDFT.continuous_dens, LatticeDFT.isCompact_sphere1, LatticeDFT.exists_gs_below}
+  \lean{DFT.qf_hamN_add, DFT.continuous_qf, DFT.continuous_dens, DFT.isCompact_sphere1, DFT.exists_gs_below}
   \leanok
   \uses{thm:exists_maximiser, thm:exists_groundState}
   At a maximiser $v^*$, for every direction $w$ some normalised ground state $\psi$ of $H(v^*)$ satisfies
@@ -188,7 +188,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{definition}[Ground-state ensembles]
   \label{def:Ens}
-  \lean{LatticeDFT.Ens, LatticeDFT.ensDens, LatticeDFT.ensDens_vecMulVec, LatticeDFT.pure_mem_Ens}
+  \lean{DFT.Ens, DFT.ensDens, DFT.ensDens_vecMulVec, DFT.pure_mem_Ens}
   \leanok
   \uses{thm:exists_groundState}
   $\mathrm{Ens}(v)$ is the set of density matrices $\Gamma$ (symmetric, positive semidefinite, trace one)
@@ -198,7 +198,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{lemma}[Ensembles form a compact convex set]
   \label{lem:Ens_compact}
-  \lean{LatticeDFT.quad_single, LatticeDFT.Ens_bound, LatticeDFT.convex_Ens, LatticeDFT.isCompact_Ens, LatticeDFT.continuous_ensDens}
+  \lean{DFT.quad_single, DFT.Ens_bound, DFT.convex_Ens, DFT.isCompact_Ens, DFT.continuous_ensDens}
   \leanok
   \uses{def:Ens}
   $\mathrm{Ens}(v)$ is convex and compact (closed, with entries in $[-1,1]$).
@@ -210,7 +210,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{theorem}[Ensemble $v$-representability]
   \label{thm:ensemble_vrep}
-  \lean{LatticeDFT.ensemble_v_representable}
+  \lean{DFT.ensemble_v_representable}
   \leanok
   \uses{thm:exists_gs_below, lem:Ens_compact}
   Every strictly positive mixture $\rho$ of configuration densities is the density of a ground-state ensemble
@@ -225,7 +225,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{theorem}[Kohn--Sham potentials exist]
   \label{thm:ks_potential_exists}
-  \lean{LatticeDFT.sum_occF, LatticeDFT.v_representable_lattice_fermions, LatticeDFT.ks_potential_exists}
+  \lean{DFT.sum_occF, DFT.v_representable_lattice_fermions, DFT.ks_potential_exists}
   \leanok
   \uses{thm:ensemble_vrep, thm:rigid_occF, def:H0F}
   For $N$ spinless fermions ($0<N<M$) on any graph and any density--density interaction, every strictly
@@ -239,7 +239,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{lemma}[Vertex description of the hypersimplex]
   \label{lem:hypersimplex_mixture}
-  \lean{LatticeDFT.IsMixture, LatticeDFT.nfrac, LatticeDFT.mixture_combo, LatticeDFT.hypersimplex_mixture}
+  \lean{DFT.IsMixture, DFT.nfrac, DFT.mixture_combo, DFT.hypersimplex_mixture}
   \leanok
   Every $\rho\in[0,1]^M$ with $\sum_i\rho_i=N$ is a mixture (convex combination) of $N$-particle
   configuration densities.
@@ -255,7 +255,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{theorem}[Interior densities]
   \label{thm:interior_positive_mixture}
-  \lean{LatticeDFT.interior_positive_mixture}
+  \lean{DFT.interior_positive_mixture}
   \leanok
   \uses{lem:hypersimplex_mixture}
   A density with $0<\rho_i<1$ and $\sum_i\rho_i=N$ is a strictly positive mixture of the $N$-particle
@@ -271,7 +271,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
 
 \begin{theorem}[Existence of Kohn--Sham potentials, textbook form]
   \label{thm:ks_potential_exists_interior}
-  \lean{LatticeDFT.v_representable_interior, LatticeDFT.ks_potential_exists_interior}
+  \lean{DFT.v_representable_interior, DFT.ks_potential_exists_interior}
   \leanok
   \uses{thm:interior_positive_mixture, thm:ks_potential_exists}
   For $N$ spinless fermions with $0<N<M$ on any graph, any hopping $t$ and any configuration-diagonal
@@ -298,7 +298,7 @@ the regularisation parameter.
 
 \begin{definition}[Moreau--Yosida smoothness]
   \label{def:IsMYSmooth}
-  \lean{LatticeDFT.IsMYSmooth}
+  \lean{DFT.IsMYSmooth}
   \leanok
   $g:X\to X$ is an $\varepsilon$-gradient of $F:X\to\R$ if, for all $x,y$,
   \[F(x)+\ip{g(x)}{y-x}\le F(y)\le F(x)+\ip{g(x)}{y-x}+\tfrac1{2\varepsilon}\|y-x\|^2 .\]
@@ -306,7 +306,7 @@ the regularisation parameter.
 
 \begin{lemma}[Co-coercivity]
   \label{lem:cocoercive}
-  \lean{LatticeDFT.IsMYSmooth.add_linear, LatticeDFT.IsMYSmooth.lower_strong, LatticeDFT.IsMYSmooth.cocoercive, LatticeDFT.IsMYSmooth.norm_sub_le, LatticeDFT.IsMYSmooth.continuous, LatticeDFT.IsMYSmooth.norm_le, LatticeDFT.IsMYSmooth.continuous_fun}
+  \lean{DFT.IsMYSmooth.add_linear, DFT.IsMYSmooth.lower_strong, DFT.IsMYSmooth.cocoercive, DFT.IsMYSmooth.norm_sub_le, DFT.IsMYSmooth.continuous, DFT.IsMYSmooth.norm_le, DFT.IsMYSmooth.continuous_fun}
   \leanok
   \uses{def:IsMYSmooth}
   The structure is preserved by adding a linear term. Moreover
@@ -320,7 +320,7 @@ the regularisation parameter.
 
 \begin{lemma}[Regularised ground states exist]
   \label{lem:exists_stationary}
-  \lean{LatticeDFT.IsMYSmooth.exists_stationary}
+  \lean{DFT.IsMYSmooth.exists_stationary}
   \leanok
   \uses{lem:cocoercive}
   If the sublevel sets of $F+\ip{w}{\cdot}$ are bounded, then there is a $y$ with $g(y)+w=0$.
@@ -333,7 +333,7 @@ the regularisation parameter.
 
 \begin{definition}[MYKSODA]
   \label{def:myksoda}
-  \lean{LatticeDFT.ksStep, LatticeDFT.ksStep_mul}
+  \lean{DFT.ksStep, DFT.ksStep_mul}
   \leanok
   Let $F$ (interacting) and $T$ (non-interacting reference) have $\varepsilon$-gradients $g_F$, $g_T$, and let
   $v$ be the external potential. The iteration is:
@@ -345,7 +345,7 @@ the regularisation parameter.
 
 \begin{lemma}[One step]
   \label{lem:step_descent}
-  \lean{LatticeDFT.step_descent, LatticeDFT.step_lower}
+  \lean{DFT.step_descent, DFT.step_lower}
   \leanok
   \uses{def:myksoda, def:IsMYSmooth}
   With $G=F+\ip{v}{\cdot}$ and $h_i=x_{i+1}-x_i$: $G(x_{i+1})\le G(x_i)-\|h_i\|^2/(2\varepsilon)$. If
@@ -358,7 +358,7 @@ the regularisation parameter.
 
 \begin{theorem}[Convergence of MYKSODA, abstract form]
   \label{thm:myksoda_converges}
-  \lean{LatticeDFT.myksoda_converges, LatticeDFT.myksoda_exists}
+  \lean{DFT.myksoda_converges, DFT.myksoda_exists}
   \leanok
   \uses{lem:step_descent, lem:cocoercive, lem:exists_stationary}
   Assume that the proximal points $y-\varepsilon g_T(y)$ are bounded and the sublevel sets of $G$ are
@@ -388,7 +388,7 @@ the regularisation parameter.
 
 \begin{definition}[Moreau envelope]
   \label{def:myEnv}
-  \lean{LatticeDFT.prox, LatticeDFT.myEnv, LatticeDFT.myGrad}
+  \lean{DFT.prox, DFT.myEnv, DFT.myGrad}
   \leanok
   For $f$ convex and lower semicontinuous on a nonempty compact convex $D\subset X$ (and $+\infty$ outside):
   \begin{itemize}
@@ -400,7 +400,7 @@ the regularisation parameter.
 
 \begin{lemma}[Proximal point]
   \label{lem:prox}
-  \lean{LatticeDFT.prox_spec, LatticeDFT.nonneg_of_forall_small, LatticeDFT.prox_vi}
+  \lean{DFT.prox_spec, DFT.nonneg_of_forall_small, DFT.prox_vi}
   \leanok
   \uses{def:myEnv}
   The proximal point exists and lies in $D$. It satisfies the variational inequality
@@ -414,7 +414,7 @@ the regularisation parameter.
 
 \begin{theorem}[Moreau envelopes are MY-smooth]
   \label{thm:isMYSmooth_myEnv}
-  \lean{LatticeDFT.isMYSmooth_myEnv, LatticeDFT.sub_smul_myGrad, LatticeDFT.myEnv_prox_bounded, LatticeDFT.myEnv_sublevel_bounded}
+  \lean{DFT.isMYSmooth_myEnv, DFT.sub_smul_myGrad, DFT.myEnv_prox_bounded, DFT.myEnv_sublevel_bounded}
   \leanok
   \uses{lem:prox, def:IsMYSmooth}
   $\nabla f_\varepsilon$ is an $\varepsilon$-gradient of $f_\varepsilon$. The proximal points are bounded,
@@ -430,7 +430,7 @@ the regularisation parameter.
 
 \begin{lemma}[Lieb's functional on $\ell^2$]
   \label{lem:liebE}
-  \lean{LatticeDFT.densDomE, LatticeDFT.liebE, LatticeDFT.Freg, LatticeDFT.gFreg, LatticeDFT.inner_eq_dot, LatticeDFT.densDomain_eq, LatticeDFT.isCompact_densDomain, LatticeDFT.isCompact_densDomE, LatticeDFT.densDomE_nonempty, LatticeDFT.convexOn_liebE, LatticeDFT.convex_densDomE, LatticeDFT.liebE_lsc, LatticeDFT.isMYSmooth_Freg}
+  \lean{DFT.densDomE, DFT.liebE, DFT.Freg, DFT.gFreg, DFT.inner_eq_dot, DFT.densDomain_eq, DFT.isCompact_densDomain, DFT.isCompact_densDomE, DFT.densDomE_nonempty, DFT.convexOn_liebE, DFT.convex_densDomE, DFT.liebE_lsc, DFT.isMYSmooth_Freg}
   \leanok
   \uses{thm:lieb_duality, thm:isMYSmooth_myEnv}
   The density domain is a nonempty compact convex set: the image of the standard simplex. Lieb's functional
@@ -444,7 +444,7 @@ the regularisation parameter.
 
 \begin{theorem}[Back to densities]
   \label{thm:density_of_quasi}
-  \lean{LatticeDFT.density_of_quasi}
+  \lean{DFT.density_of_quasi}
   \leanok
   \uses{lem:liebE, lem:prox}
   If $\nabla F_\varepsilon(z)=-v$, then $\rho=z+\varepsilon v$ is an ensemble density and
@@ -459,7 +459,7 @@ the regularisation parameter.
 
 \begin{theorem}[Convergence of the regularised Kohn--Sham iteration on a lattice]
   \label{thm:ks_iteration}
-  \lean{LatticeDFT.lattice_myksoda, LatticeDFT.lattice_myksoda_exists}
+  \lean{DFT.lattice_myksoda, DFT.lattice_myksoda_exists}
   \leanok
   \uses{thm:myksoda_converges, thm:density_of_quasi, lem:liebE}
   Let $H_0$ (interacting) and $H_0'$ (reference) be symmetric, $v\in\ell^2(V)$ and $\varepsilon>0$. The

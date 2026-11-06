@@ -5,7 +5,7 @@
 
 \begin{definition}[Configurations]
   \label{def:Conf}
-  \lean{LatticeDFT.Conf, LatticeDFT.occF}
+  \lean{DFT.Conf, DFT.occF}
   \leanok
   $\Conf_{M,N}$ is the set of $N$-element subsets of $\{0,\dots,M-1\}$. The occupation $n_i(s)$ is $1$ if
   $i\in s$ and $0$ otherwise.
@@ -13,7 +13,7 @@
 
 \begin{definition}[Slater amplitude]
   \label{def:slater}
-  \lean{LatticeDFT.slater, LatticeDFT.slater_eq_sum}
+  \lean{DFT.slater, DFT.slater_eq_sum}
   \leanok
   For orbitals $\varphi_1,\dots,\varphi_N$ and a position tuple $\tau$,
   $\Psi(\tau)=\det[\varphi_j(\tau_k)]=\sum_\sigma\sgn\sigma\prod_j\varphi_j(\tau_{\sigma j})$.
@@ -21,7 +21,7 @@
 
 \begin{theorem}[Slater determinants solve the first-quantised equation]
   \label{thm:slater_eigen}
-  \lean{LatticeDFT.sum_update_prod, LatticeDFT.slater_eigen}
+  \lean{DFT.sum_update_prod, DFT.slater_eigen}
   \leanok
   \uses{def:slater}
   If $h\varphi_j=\varepsilon_j\varphi_j$, then
@@ -37,7 +37,7 @@
 
 \begin{definition}[Sorted tuples and overlaps]
   \label{def:amp}
-  \lean{LatticeDFT.τs, LatticeDFT.τs_mem, LatticeDFT.τs_injective, LatticeDFT.τs_surj, LatticeDFT.slaterC, LatticeDFT.amp}
+  \lean{DFT.τs, DFT.τs_mem, DFT.τs_injective, DFT.τs_surj, DFT.slaterC, DFT.amp}
   \leanok
   \uses{def:Conf, def:slater}
   $\tau_s$ is the increasing enumeration of $s$. The Slater amplitude on configurations is
@@ -47,7 +47,7 @@
 
 \begin{lemma}[Overlap properties]
   \label{lem:amp_props}
-  \lean{LatticeDFT.slater_of_not_injective, LatticeDFT.slater_perm, LatticeDFT.exists_perm_of_injective, LatticeDFT.amp_self, LatticeDFT.amp_of_not_mem, LatticeDFT.amp_tau_eq, LatticeDFT.sum_tau}
+  \lean{DFT.slater_of_not_injective, DFT.slater_perm, DFT.exists_perm_of_injective, DFT.amp_self, DFT.amp_of_not_mem, DFT.amp_tau_eq, DFT.sum_tau}
   \leanok
   \uses{def:amp}
   Slater amplitudes vanish on non-injective tuples and change by $\sgn\sigma$ under permutations.
@@ -61,7 +61,7 @@
 
 \begin{theorem}[Configuration expansion]
   \label{thm:slater_expand}
-  \lean{LatticeDFT.slater_expand}
+  \lean{DFT.slater_expand}
   \leanok
   \uses{lem:amp_props}
   $\Psi(\tau)=\sum_s\ip{s}{\tau}\Psi(s)$. This is a special case of the Cauchy--Binet formula.
@@ -74,7 +74,7 @@
 
 \begin{definition}[Second quantisation]
   \label{def:Gamma}
-  \lean{LatticeDFT.Γ}
+  \lean{DFT.Γ}
   \leanok
   \uses{def:amp}
   For a single-particle matrix $h$,
@@ -84,7 +84,7 @@
 
 \begin{theorem}[Slater determinants are many-body eigenvectors]
   \label{thm:gamma_slater}
-  \lean{LatticeDFT.gamma_slater}
+  \lean{DFT.gamma_slater}
   \leanok
   \uses{def:Gamma, thm:slater_eigen, thm:slater_expand}
   If $h\varphi_j=\varepsilon_j\varphi_j$, then $\Gamma(h)\Psi=(\sum_j\varepsilon_j)\Psi$.
@@ -96,7 +96,7 @@
 
 \begin{lemma}[Structure of $\Gamma$]
   \label{lem:gamma_structure}
-  \lean{LatticeDFT.gamma_add, LatticeDFT.gamma_smul, LatticeDFT.gamma_diagonal, LatticeDFT.prod_update_split, LatticeDFT.gamma_leibniz, LatticeDFT.gamma_isSymm}
+  \lean{DFT.gamma_add, DFT.gamma_smul, DFT.gamma_diagonal, DFT.prod_update_split, DFT.gamma_leibniz, DFT.gamma_isSymm}
   \leanok
   \uses{def:Gamma, lem:amp_props}
   $\Gamma$ is linear and $\Gamma(\diag v)=\diag(\sum_iv_in_i)$. In Leibniz form,
@@ -110,7 +110,7 @@
 
 \begin{definition}[Lattice fermion Hamiltonian]
   \label{def:H0F}
-  \lean{LatticeDFT.H0F, LatticeDFT.H0F_isSymm, LatticeDFT.hamN_H0F}
+  \lean{DFT.H0F, DFT.H0F_isSymm, DFT.hamN_H0F}
   \leanok
   \uses{lem:gamma_structure, def:hamN}
   $H_0=\Gamma(-tA_G)+\diag(V_{\mathrm{int}})$ with any configuration-diagonal interaction $V_{\mathrm{int}}$.
@@ -119,7 +119,7 @@
 
 \begin{definition}[Edge-dependent hopping]
   \label{def:H0Fw}
-  \lean{LatticeDFT.hopM, LatticeDFT.hopM_const, LatticeDFT.hopM_isSymm, LatticeDFT.H0Fw, LatticeDFT.H0Fw_isSymm, LatticeDFT.H0F_eq_H0Fw, LatticeDFT.hamN_H0Fw}
+  \lean{DFT.hopM, DFT.hopM_const, DFT.hopM_isSymm, DFT.H0Fw, DFT.H0Fw_isSymm, DFT.H0F_eq_H0Fw, DFT.hamN_H0Fw}
   \leanok
   \uses{def:H0F}
   More generally, let $t_{ab}$ be hopping amplitudes on the edges, and let $T_{ab}=t_{ab}$ if $a\sim b$ and
@@ -131,7 +131,7 @@
 
 \begin{definition}[First-quantised one-body operator]
   \label{def:H1}
-  \lean{LatticeDFT.H1, LatticeDFT.Antisym}
+  \lean{DFT.H1, DFT.Antisym}
   \leanok
   $(H_1f)(\tau)=\sum_k\sum_bh(\tau_k,b)f(\tau\text{ with }\tau_k:=b)$, acting on functions of position tuples.
   $f$ is antisymmetric if $f(\tau\circ\sigma)=\sgn\sigma\, f(\tau)$.
@@ -139,7 +139,7 @@
 
 \begin{lemma}
   \label{lem:H1_props}
-  \lean{LatticeDFT.antisym_zero_of_not_injective, LatticeDFT.antisym_expand, LatticeDFT.amp_antisym, LatticeDFT.H1_antisym, LatticeDFT.H1_conf, LatticeDFT.H1_sum, LatticeDFT.H1_smul, LatticeDFT.H1_iter_lin}
+  \lean{DFT.antisym_zero_of_not_injective, DFT.antisym_expand, DFT.amp_antisym, DFT.H1_antisym, DFT.H1_conf, DFT.H1_sum, DFT.H1_smul, DFT.H1_iter_lin}
   \leanok
   \uses{def:H1, thm:slater_expand, def:Gamma}
   Antisymmetric functions are determined by their values on sorted tuples. $H_1$ is linear and preserves
@@ -152,7 +152,7 @@
 
 \begin{theorem}
   \label{thm:gamma_pow_apply}
-  \lean{LatticeDFT.gamma_pow_apply}
+  \lean{DFT.gamma_pow_apply}
   \leanok
   \uses{lem:H1_props}
   $(\Gamma(h)^k)_{sc}=(H_1^k\ip{c}{\cdot})(\tau_s)$.
@@ -164,7 +164,7 @@
 
 \begin{theorem}[Word expansion]
   \label{thm:H1_iter_prod}
-  \lean{LatticeDFT.prodFun, LatticeDFT.cnt, LatticeDFT.H1_prodFun, LatticeDFT.cnt_snoc, LatticeDFT.H1_iter_prod}
+  \lean{DFT.prodFun, DFT.cnt, DFT.H1_prodFun, DFT.cnt_snoc, DFT.H1_iter_prod}
   \leanok
   \uses{def:H1}
   On product functions $\prod_lg_l(\tau_l)$,
@@ -178,7 +178,7 @@
 
 \begin{theorem}[Many-body powers]
   \label{thm:gamma_pow_formula}
-  \lean{LatticeDFT.amp_as_prod, LatticeDFT.gamma_pow_formula}
+  \lean{DFT.amp_as_prod, DFT.gamma_pow_formula}
   \leanok
   \uses{thm:gamma_pow_apply, thm:H1_iter_prod, lem:H1_props}
   $(\Gamma(h)^k)_{sc}=\sum_\sigma\sgn\sigma\sum_\iota\prod_l(h^{\#\iota^{-1}(l)})_{\tau_s(l),\tau_c(\sigma^{-1}l)}$.
@@ -192,7 +192,7 @@
 
 \begin{lemma}[Overlap determinant]
   \label{lem:det_gram}
-  \lean{LatticeDFT.gram, LatticeDFT.det_gram}
+  \lean{DFT.gram, DFT.det_gram}
   \leanok
   \uses{def:slater}
   For two families of orbitals with overlap matrix $G_{ij}=\sum_x\varphi_i(x)\psi_j(x)$,
@@ -205,7 +205,7 @@
 
 \begin{theorem}[Cauchy--Binet]
   \label{thm:cauchy_binet}
-  \lean{LatticeDFT.cauchy_binet}
+  \lean{DFT.cauchy_binet}
   \leanok
   \uses{lem:det_gram, thm:slater_expand}
   $\sum_s\Psi_\varphi(s)\Psi_\psi(s)=\det G$, summed over configurations.
@@ -218,7 +218,7 @@
 
 \begin{theorem}[Orthonormality of Slater determinants]
   \label{thm:slater_orthonormal}
-  \lean{LatticeDFT.slaterSub, LatticeDFT.slater_orthonormal}
+  \lean{DFT.slaterSub, DFT.slater_orthonormal}
   \leanok
   \uses{thm:cauchy_binet, lem:amp_props}
   For orthonormal orbitals $\varphi_a$, the Slater determinants $\Psi_S$ of the orbital subsets $S$ are

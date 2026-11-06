@@ -17,7 +17,7 @@ almost every static potential.
 
 \begin{definition}[Force-balance matrix]
   \label{def:kMat}
-  \lean{LatticeDFT.potW, LatticeDFT.kMat, LatticeDFT.kMat_mulVec, LatticeDFT.kMat_form, LatticeDFT.kMat_hamN}
+  \lean{DFT.potW, DFT.kMat, DFT.kMat_mulVec, DFT.kMat_form, DFT.kMat_hamN}
   \leanok
   \uses{def:hamN}
   For a real state $\psi$ and a potential $w$ with $d_c=\sum_iw_in_i(c)$,
@@ -29,7 +29,7 @@ almost every static potential.
 
 \begin{theorem}[f-sum rule; ground states give $K\le0$]
   \label{thm:kMat_nonpos}
-  \lean{LatticeDFT.sum_sq_eigen, LatticeDFT.kMat_form_eigen, LatticeDFT.kMat_nonpos}
+  \lean{DFT.sum_sq_eigen, DFT.kMat_form_eigen, DFT.kMat_nonpos}
   \leanok
   \uses{def:kMat, thm:isGroundState_eigen}
   For an eigenvector $H(v)\psi=E\psi$, $w^TK(\psi)w=2\big(E\,|d\psi|^2-\langle d\psi,H(v)\,d\psi\rangle\big)$.
@@ -43,7 +43,7 @@ almost every static potential.
 
 \begin{theorem}[Shared ground states are outside $\Omega$]
   \label{thm:kMat_shared}
-  \lean{LatticeDFT.kMat_mulVec_eq_zero, LatticeDFT.kMat_shared, LatticeDFT.kMat_degenerate_of_nonUV}
+  \lean{DFT.kMat_mulVec_eq_zero, DFT.kMat_shared, DFT.kMat_degenerate_of_nonUV}
   \leanok
   \uses{def:kMat, def:NonUV}
   If $d$ is constant on the support of $\psi$, then $K(\psi)w=0$. In particular a ground state shared by $v$
@@ -57,7 +57,7 @@ almost every static potential.
 
 \begin{theorem}[Counterexample to Theorem~2 of Farzanehpour--Tokatly]
   \label{thm:square_kMat_degenerate}
-  \lean{LatticeDFT.square_kMat_degenerate}
+  \lean{DFT.square_kMat_degenerate}
   \leanok
   \uses{thm:kMat_shared, thm:hk_fails_square}
   Two fermions on the square at $v=(3/4,-3/4,-3/4,3/4)$: the ground state $(0,2,1,4,2,0)$ has a non-constant
@@ -76,7 +76,7 @@ fails.
 
 \begin{theorem}[Corrected Theorem~2, conditional form]
   \label{thm:kMat_definite_of_hstar}
-  \lean{LatticeDFT.eigen_unique_of_hstar, LatticeDFT.kMat_definite_of_hstar}
+  \lean{DFT.eigen_unique_of_hstar, DFT.kMat_definite_of_hstar}
   \leanok
   \uses{thm:kMat_nonpos, lem:det_kry_eq_zero, def:NonUV}
   If every Krylov determinant is nonzero at $v$ and the occupations are rigid, then every ground state of
@@ -91,7 +91,7 @@ fails.
 
 \begin{theorem}[Lattice TDDFT from the ground state, for almost every potential]
   \label{thm:generic_td_vrep}
-  \lean{LatticeDFT.generic_td_vrep}
+  \lean{DFT.generic_td_vrep}
   \leanok
   \uses{thm:kMat_definite_of_hstar, thm:hstar_lattice_fermions, thm:rigid_occF, thm:volume_zeroSet}
   For spinless lattice fermions on a connected graph with hopping of a common sign and any interaction,
@@ -111,7 +111,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{definition}[Density, current, force balance]
   \label{def:schr}
-  \lean{LatticeDFT.Nmat, LatticeDFT.Qf, LatticeDFT.Wf, LatticeDFT.schr, LatticeDFT.tdens, LatticeDFT.tcur, LatticeDFT.qsrc, LatticeDFT.kfb}
+  \lean{DFT.Nmat, DFT.Qf, DFT.Wf, DFT.schr, DFT.tdens, DFT.tcur, DFT.qsrc, DFT.kfb}
   \leanok
   \uses{def:hamN}
   $\rho_i=Q(N_i)$, $j_i=2\,W(H_0N_i)$, $q_i=2\,Q(H_0N_iH_0-H_0H_0N_i)$ and
@@ -120,7 +120,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{theorem}[Continuity and force balance]
   \label{thm:force_balance}
-  \lean{LatticeDFT.Qf_hasDerivAt, LatticeDFT.Wf_hasDerivAt, LatticeDFT.tdens_hasDerivAt, LatticeDFT.tcur_hasDerivAt}
+  \lean{DFT.Qf_hasDerivAt, DFT.Wf_hasDerivAt, DFT.tdens_hasDerivAt, DFT.tcur_hasDerivAt}
   \leanok
   \uses{def:schr}
   Along any trajectory, $\frac{d}{dt}Q(A)=W(HA-AH)$ and $\frac{d}{dt}W(M)=Q(MH-HM)$. Hence $\dot\rho_i=j_i$
@@ -134,7 +134,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{lemma}[Gauge identities]
   \label{lem:gauge}
-  \lean{LatticeDFT.sum_Nmat, LatticeDFT.kfb_sum_right, LatticeDFT.kfb_sum_left, LatticeDFT.qsrc_sum}
+  \lean{DFT.sum_Nmat, DFT.kfb_sum_right, DFT.kfb_sum_left, DFT.qsrc_sum}
   \leanok
   \uses{def:schr}
   If every configuration has the same particle number, $K$ annihilates constants, the column sums of $K$
@@ -147,7 +147,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{theorem}[The force balance determines the potential]
   \label{thm:vfb}
-  \lean{LatticeDFT.onesM, LatticeDFT.kJ, LatticeDFT.vfb, LatticeDFT.vfb_spec, LatticeDFT.vfb_unique}
+  \lean{DFT.onesM, DFT.kJ, DFT.vfb, DFT.vfb_spec, DFT.vfb_unique}
   \leanok
   \uses{lem:gauge}
   If $\det(K(\psi)+\mathbf 1\mathbf 1^T)\ne0$ and $\sum_is_i=0$, then $v=(K+\mathbf 1\mathbf 1^T)^{-1}(q-s)$
@@ -161,7 +161,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{theorem}[The NLSE vector field is smooth on $\Omega$]
   \label{thm:smooth_field}
-  \lean{LatticeDFT.vfb_cramer, LatticeDFT.contDiffAt_vfb, LatticeDFT.field, LatticeDFT.contDiffAt_field, LatticeDFT.omega, LatticeDFT.isOpen_omega}
+  \lean{DFT.vfb_cramer, DFT.contDiffAt_vfb, DFT.field, DFT.contDiffAt_field, DFT.omega, DFT.isOpen_omega}
   \leanok
   \uses{thm:vfb}
   $\Omega=\{\psi:\det(K(\psi)+\mathbf 1\mathbf 1^T)\ne0\}$ is open, and
@@ -175,7 +175,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{theorem}[Local solution of the NLSE]
   \label{thm:exists_local}
-  \lean{LatticeDFT.nlse, LatticeDFT.exists_local}
+  \lean{DFT.nlse, DFT.exists_local}
   \leanok
   \uses{thm:smooth_field}
   For continuous $\ddot n$ and $\psi_0\in\Omega$ the NLSE has a solution on an interval around $t_0$, and its
@@ -189,7 +189,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{theorem}[Lattice TDDFT: existence]
   \label{thm:td_existence}
-  \lean{LatticeDFT.const_of_hasDerivAt_zero, LatticeDFT.td_existence}
+  \lean{DFT.const_of_hasDerivAt_zero, DFT.td_existence}
   \leanok
   \uses{thm:exists_local, thm:force_balance, thm:vfb}
   Let $n(t)$ have continuous $\ddot n$ with $\sum_i\ddot n_i=0$, and let $\psi_0\in\Omega$ reproduce $n(t_0)$ and
@@ -204,7 +204,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{theorem}[Lattice TDDFT: uniqueness]
   \label{thm:td_uniqueness}
-  \lean{LatticeDFT.pot_eq_vfb, LatticeDFT.td_uniqueness}
+  \lean{DFT.pot_eq_vfb, DFT.td_uniqueness}
   \leanok
   \uses{thm:exists_local, thm:force_balance, thm:vfb}
   Two trajectories from the same $\psi_0\in\Omega$ with the same density $n(t)$ (potentials with
@@ -218,7 +218,7 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
 
 \begin{theorem}[TDDFT from the ground state, almost every potential]
   \label{thm:generic_ground_mem_omega}
-  \lean{LatticeDFT.kfb_quad_real, LatticeDFT.mem_omega_of_definite, LatticeDFT.generic_ground_mem_omega}
+  \lean{DFT.kfb_quad_real, DFT.mem_omega_of_definite, DFT.generic_ground_mem_omega}
   \leanok
   \uses{thm:generic_td_vrep, thm:kMat_nonpos, thm:td_existence, thm:td_uniqueness}
   For a real state, $w^TK(\psi_0,0)w=-w^T\mathrm{kMat}(\psi_0)w$. Hence, for spinless lattice fermions,
@@ -238,8 +238,8 @@ to continuing a solution is the boundary $\det(K+\mathbf 1\mathbf 1^T)=0$ of $\O
 
 \begin{lemma}[Uniform local solutions]
   \label{lem:exists_unif_step}
-  \lean{LatticeDFT.exists_mem_closedBall_of_isPicardLindelof, LatticeDFT.exists_local_unif,
-    LatticeDFT.exists_unif_step}
+  \lean{DFT.exists_mem_closedBall_of_isPicardLindelof, DFT.exists_local_unif,
+    DFT.exists_unif_step}
   \leanok
   \uses{thm:exists_local}
   For a compact set $S\subseteq\Omega$ and a compact time interval $[a,b]$ there is $\varepsilon>0$ such that from
@@ -254,9 +254,9 @@ to continuing a solution is the boundary $\det(K+\mathbf 1\mathbf 1^T)=0$ of $\O
 
 \begin{lemma}[Norm conservation, compactness, gluing]
   \label{lem:march_tools}
-  \lean{LatticeDFT.continuous_det_kJ, LatticeDFT.detSet, LatticeDFT.detSet_subset, LatticeDFT.Qf_one_eq,
-    LatticeDFT.isCompact_detSet, LatticeDFT.Qf_one_hasDerivAt, LatticeDFT.const_on_Icc, LatticeDFT.GoodOn,
-    LatticeDFT.goodOn_glue}
+  \lean{DFT.continuous_det_kJ, DFT.detSet, DFT.detSet_subset, DFT.Qf_one_eq,
+    DFT.isCompact_detSet, DFT.Qf_one_hasDerivAt, DFT.const_on_Icc, DFT.GoodOn,
+    DFT.goodOn_glue}
   \leanok
   \uses{thm:force_balance}
   The norm is constant along the NLSE; for $\delta>0$ the states of a given norm with $|\det(K+\mathbf 1\mathbf 1^T)|
@@ -270,7 +270,7 @@ to continuing a solution is the boundary $\det(K+\mathbf 1\mathbf 1^T)=0$ of $\O
 
 \begin{theorem}[Blow-up alternative for the NLSE]
   \label{thm:nlse_global}
-  \lean{LatticeDFT.nlse_march, LatticeDFT.nlse_global, LatticeDFT.goodOn_unique}
+  \lean{DFT.nlse_march, DFT.nlse_global, DFT.goodOn_unique}
   \leanok
   \uses{lem:exists_unif_step, lem:march_tools}
   The NLSE solution from $\psi_0\in\Omega$ either exists, inside $\Omega$, on all of $[t_0,T]$, or for every $\delta>0$
@@ -286,7 +286,7 @@ to continuing a solution is the boundary $\det(K+\mathbf 1\mathbf 1^T)=0$ of $\O
 
 \begin{theorem}[Lattice TDDFT: blow-up alternative]
   \label{thm:td_global}
-  \lean{LatticeDFT.tdsol_of_goodOn, LatticeDFT.td_global}
+  \lean{DFT.tdsol_of_goodOn, DFT.td_global}
   \leanok
   \uses{thm:nlse_global, thm:td_existence}
   Under the hypotheses of Theorem~\ref{thm:td_existence}, for every $T\ge t_0$: either the potential exists on all of
@@ -307,13 +307,13 @@ embedding $\psi\mapsto((x,y),(y,-x))$, which doubles densities.
 
 \begin{lemma}[Doubling]
   \label{lem:doubling}
-  \lean{LatticeDFT.dblH, LatticeDFT.dblN, LatticeDFT.dbl, LatticeDFT.blk, LatticeDFT.proj, LatticeDFT.anti,
-    LatticeDFT.schrC, LatticeDFT.dblH_isSymm, LatticeDFT.hamN_dbl, LatticeDFT.dblH_mulVec_false,
-    LatticeDFT.dblH_mulVec_true, LatticeDFT.blk_dblH_mulVec, LatticeDFT.dbl_schrC, LatticeDFT.proj_schr,
-    LatticeDFT.proj_dbl, LatticeDFT.anti_dbl, LatticeDFT.dbl_proj_of_anti, LatticeDFT.tdens_dbl,
-    LatticeDFT.anti_schr, LatticeDFT.projL, LatticeDFT.antiL, LatticeDFT.dblL, LatticeDFT.proj_hasDerivAt,
-    LatticeDFT.anti_hasDerivAt, LatticeDFT.dbl_hasDerivAt, LatticeDFT.dot_sym, LatticeDFT.dot_antisym,
-    LatticeDFT.anti_norm_hasDerivAt, LatticeDFT.eq_zero_of_Qf_one}
+  \lean{DFT.dblH, DFT.dblN, DFT.dbl, DFT.blk, DFT.proj, DFT.anti,
+    DFT.schrC, DFT.dblH_isSymm, DFT.hamN_dbl, DFT.dblH_mulVec_false,
+    DFT.dblH_mulVec_true, DFT.blk_dblH_mulVec, DFT.dbl_schrC, DFT.proj_schr,
+    DFT.proj_dbl, DFT.anti_dbl, DFT.dbl_proj_of_anti, DFT.tdens_dbl,
+    DFT.anti_schr, DFT.projL, DFT.antiL, DFT.dblL, DFT.proj_hasDerivAt,
+    DFT.anti_hasDerivAt, DFT.dbl_hasDerivAt, DFT.dot_sym, DFT.dot_antisym,
+    DFT.anti_norm_hasDerivAt, DFT.eq_zero_of_Qf_one}
   \leanok
   \uses{thm:force_balance}
   The embedding maps complex-hopping trajectories to doubled ones, and the linear projection maps doubled
@@ -327,9 +327,9 @@ embedding $\psi\mapsto((x,y),(y,-x))$, which doubles densities.
 
 \begin{theorem}[Lattice TDDFT with complex hopping]
   \label{thm:td_complex}
-  \lean{LatticeDFT.omegaC, LatticeDFT.tcurC, LatticeDFT.vC, LatticeDFT.hnd2, LatticeDFT.hsum2,
-    LatticeDFT.tdens_eq_of_dbl, LatticeDFT.td_existence_complex, LatticeDFT.td_uniqueness_complex,
-    LatticeDFT.complex_of_dbl, LatticeDFT.td_global_complex}
+  \lean{DFT.omegaC, DFT.tcurC, DFT.vC, DFT.hnd2, DFT.hsum2,
+    DFT.tdens_eq_of_dbl, DFT.td_existence_complex, DFT.td_uniqueness_complex,
+    DFT.complex_of_dbl, DFT.td_global_complex}
   \leanok
   \uses{lem:doubling, thm:td_existence, thm:td_uniqueness, thm:td_global}
   Theorems~\ref{thm:td_existence}, \ref{thm:td_uniqueness} and~\ref{thm:td_global} hold for Hermitian hopping, with
@@ -342,8 +342,8 @@ embedding $\psi\mapsto((x,y),(y,-x))$, which doubles densities.
 
 \begin{theorem}[Zero flux]
   \label{thm:omegaC_zero}
-  \lean{LatticeDFT.dblH_mul_zero, LatticeDFT.dblH_sub_zero, LatticeDFT.Nmat_dbl, LatticeDFT.Qf_dbl_zero,
-    LatticeDFT.kfb_dbl_zero, LatticeDFT.kJ_ker_iff, LatticeDFT.omegaC_zero}
+  \lean{DFT.dblH_mul_zero, DFT.dblH_sub_zero, DFT.Nmat_dbl, DFT.Qf_dbl_zero,
+    DFT.kfb_dbl_zero, DFT.kJ_ker_iff, DFT.omegaC_zero}
   \leanok
   \uses{thm:td_complex}
   For $B=0$ the set $\Omega$ of the doubled description is the original one.
@@ -363,10 +363,10 @@ both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
 
 \begin{lemma}[Splitting and the doubled Krylov criterion]
   \label{lem:flux_tools}
-  \lean{LatticeDFT.Jop, LatticeDFT.Jop_false, LatticeDFT.Jop_true, LatticeDFT.dbl_eq_Jop, LatticeDFT.dot_Jop,
-    LatticeDFT.dot_Jop_self, LatticeDFT.dblH_mulVec_Jop, LatticeDFT.qf_Jop, LatticeDFT.isGroundState_Jop,
-    LatticeDFT.Qf_split, LatticeDFT.kfb_split, LatticeDFT.mem_omega_of_definite_pair, LatticeDFT.IsGroundStateC,
-    LatticeDFT.kryC, LatticeDFT.det_kryC_eq_zero, LatticeDFT.Jop_smul, LatticeDFT.eigen_unique_of_hstarC}
+  \lean{DFT.Jop, DFT.Jop_false, DFT.Jop_true, DFT.dbl_eq_Jop, DFT.dot_Jop,
+    DFT.dot_Jop_self, DFT.dblH_mulVec_Jop, DFT.qf_Jop, DFT.isGroundState_Jop,
+    DFT.Qf_split, DFT.kfb_split, DFT.mem_omega_of_definite_pair, DFT.IsGroundStateC,
+    DFT.kryC, DFT.det_kryC_eq_zero, DFT.Jop_smul, DFT.eigen_unique_of_hstarC}
   \leanok
   \uses{thm:generic_ground_mem_omega, lem:doubling}
   The force-balance form of $\mathrm{dbl}\,\psi$ is $-w^T\mathrm{kMat}(X)w-w^T\mathrm{kMat}(JX)w$. If all doubled Krylov
@@ -380,8 +380,8 @@ both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
 
 \begin{theorem}[Ground states with flux lie in $\Omega$, conditional]
   \label{thm:mem_omegaC_of_hstarC}
-  \lean{LatticeDFT.kMat_definite_of_hstarC, LatticeDFT.mem_omegaC_of_hstarC, LatticeDFT.krylovPolyC,
-    LatticeDFT.eval_krylovPolyC, LatticeDFT.generic_ground_mem_omegaC}
+  \lean{DFT.kMat_definite_of_hstarC, DFT.mem_omegaC_of_hstarC, DFT.krylovPolyC,
+    DFT.eval_krylovPolyC, DFT.generic_ground_mem_omegaC}
   \leanok
   \uses{lem:flux_tools}
   Under the doubled Krylov criterion and rigidity, every complex ground state lies in $\Omega$; if the doubled Krylov
@@ -395,8 +395,8 @@ both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
 
 \begin{theorem}[TDDFT with flux from the ground state, generic flux]
   \label{thm:generic_flux}
-  \lean{LatticeDFT.dblH_zero_eq, LatticeDFT.det_kryC_zero, LatticeDFT.dblH_smul_split, LatticeDFT.exists_poly_flux,
-    LatticeDFT.hstarC_of_hstar, LatticeDFT.generic_flux_ground_mem_omegaC}
+  \lean{DFT.dblH_zero_eq, DFT.det_kryC_zero, DFT.dblH_smul_split, DFT.exists_poly_flux,
+    DFT.hstarC_of_hstar, DFT.generic_flux_ground_mem_omegaC}
   \leanok
   \uses{thm:mem_omegaC_of_hstarC, thm:generic_td_vrep}
   Spinless lattice fermions on a connected graph, common-sign hopping $A$, any interaction and any flux pattern $B$:
@@ -412,11 +412,11 @@ both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
 
 \begin{theorem}[TDDFT with Peierls phases from the ground state]
   \label{thm:generic_peierls}
-  \lean{LatticeDFT.analyticAt_pow_apply, LatticeDFT.analyticAt_det, LatticeDFT.finite_inter_Icc_of_discrete,
-    LatticeDFT.hstarC_of_hstar_analytic, LatticeDFT.gamma_neg, LatticeDFT.gamma_transpose,
-    LatticeDFT.analyticAt_gamma_apply, LatticeDFT.peierlsRe, LatticeDFT.peierlsIm, LatticeDFT.peierlsRe_zero,
-    LatticeDFT.peierlsIm_zero, LatticeDFT.peierlsRe_isSymm, LatticeDFT.peierlsIm_antisymm,
-    LatticeDFT.analyticAt_peierlsRe, LatticeDFT.analyticAt_peierlsIm, LatticeDFT.generic_peierls_ground_mem_omegaC}
+  \lean{DFT.analyticAt_pow_apply, DFT.analyticAt_det, DFT.finite_inter_Icc_of_discrete,
+    DFT.hstarC_of_hstar_analytic, DFT.gamma_neg, DFT.gamma_transpose,
+    DFT.analyticAt_gamma_apply, DFT.peierlsRe, DFT.peierlsIm, DFT.peierlsRe_zero,
+    DFT.peierlsIm_zero, DFT.peierlsRe_isSymm, DFT.peierlsIm_antisymm,
+    DFT.analyticAt_peierlsRe, DFT.analyticAt_peierlsIm, DFT.generic_peierls_ground_mem_omegaC}
   \leanok
   \uses{thm:generic_flux}
   Spinless lattice fermions on a connected graph, symmetric hopping $t$ of a common sign, any interaction, and
@@ -442,9 +442,9 @@ $o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only thei
 
 \begin{lemma}[Reduced spin observables]
   \label{lem:spin_obs}
-  \lean{LatticeDFT.SpinIdx, LatticeDFT.SConf, LatticeDFT.occR, LatticeDFT.spinPot, LatticeDFT.potW_occR,
-    LatticeDFT.sum_occR, LatticeDFT.rigid_occR, LatticeDFT.hamN_occR, LatticeDFT.exists_spinPot,
-    LatticeDFT.hamN_occS_shift, LatticeDFT.exists_spinPot_gauge}
+  \lean{DFT.SpinIdx, DFT.SConf, DFT.occR, DFT.spinPot, DFT.potW_occR,
+    DFT.sum_occR, DFT.rigid_occR, DFT.hamN_occR, DFT.exists_spinPot,
+    DFT.hamN_occS_shift, DFT.exists_spinPot_gauge}
   \leanok
   \uses{thm:generic_hk_spin}
   A reduced potential $w$ couples as the spin potential $v_\uparrow=w$, $v_{0\downarrow}=0$,
@@ -459,8 +459,8 @@ $o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only thei
 
 \begin{lemma}[Constant energy shifts]
   \label{lem:kry_shift}
-  \lean{LatticeDFT.binU, LatticeDFT.det_binU, LatticeDFT.add_smul_one_pow_apply, LatticeDFT.det_kry_add_smul_one,
-    LatticeDFT.isGroundState_add_smul_one}
+  \lean{DFT.binU, DFT.det_binU, DFT.add_smul_one_pow_apply, DFT.det_kry_add_smul_one,
+    DFT.isGroundState_add_smul_one}
   \leanok
   Krylov determinants and ground states are unchanged by $H\mapsto H+\lambda$.
 \end{lemma}
@@ -472,7 +472,7 @@ $o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only thei
 
 \begin{theorem}[Spin-resolved TDDFT from the ground state]
   \label{thm:generic_ground_spin}
-  \lean{LatticeDFT.generic_ground_mem_omega_spin}
+  \lean{DFT.generic_ground_mem_omega_spin}
   \leanok
   \uses{lem:spin_obs, lem:kry_shift, thm:generic_td_vrep}
   Two spin species on a connected graph, spin-conserving hopping of a common sign, any diagonal interaction: outside
@@ -487,11 +487,11 @@ $o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only thei
 
 \begin{theorem}[Spin-resolved TDDFT]
   \label{thm:td_spin}
-  \lean{LatticeDFT.tdens_eq_sum, LatticeDFT.tcur_eq_sum, LatticeDFT.tdens_lin, LatticeDFT.tcur_lin, LatticeDFT.Lr,
-    LatticeDFT.redDens, LatticeDFT.redDens_inl, LatticeDFT.redDens_inr, LatticeDFT.occR_eq, LatticeDFT.tdens_occR,
-    LatticeDFT.tcur_occR, LatticeDFT.sum_redDens, LatticeDFT.hasDerivAt_redDens, LatticeDFT.continuous_redDens,
-    LatticeDFT.schr_occR, LatticeDFT.sum_tdens_dn, LatticeDFT.spin_of_red, LatticeDFT.td_spin_existence,
-    LatticeDFT.td_spin_uniqueness}
+  \lean{DFT.tdens_eq_sum, DFT.tcur_eq_sum, DFT.tdens_lin, DFT.tcur_lin, DFT.Lr,
+    DFT.redDens, DFT.redDens_inl, DFT.redDens_inr, DFT.occR_eq, DFT.tdens_occR,
+    DFT.tcur_occR, DFT.sum_redDens, DFT.hasDerivAt_redDens, DFT.continuous_redDens,
+    DFT.schr_occR, DFT.sum_tdens_dn, DFT.spin_of_red, DFT.td_spin_existence,
+    DFT.td_spin_uniqueness}
   \leanok
   \uses{lem:spin_obs, thm:td_existence, thm:td_uniqueness}
   Let the target spin densities have continuous second derivatives with conserved particle numbers, and let
@@ -508,9 +508,9 @@ $o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only thei
 
 \begin{theorem}[Frozen states]
   \label{thm:frozen}
-  \lean{LatticeDFT.hamN_mulVec_frozen, LatticeDFT.frozenPhase, LatticeDFT.frozenPath,
-    LatticeDFT.frozenPath_hasDerivAt, LatticeDFT.tdens_frozenPath, LatticeDFT.frozenPath_zero,
-    LatticeDFT.frozenPhase_self, LatticeDFT.not_mem_omega_of_frozen}
+  \lean{DFT.hamN_mulVec_frozen, DFT.frozenPhase, DFT.frozenPath,
+    DFT.frozenPath_hasDerivAt, DFT.tdens_frozenPath, DFT.frozenPath_zero,
+    DFT.frozenPhase_self, DFT.not_mem_omega_of_frozen}
   \leanok
   \uses{thm:td_uniqueness}
   Let $H_0x=Ex$ and let every configuration in the support of $x$ have the same occupations $\nu$. Then for every
@@ -525,8 +525,8 @@ $o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only thei
 
 \begin{theorem}[The frozen Hubbard triplet]
   \label{thm:frozen_triplet}
-  \lean{LatticeDFT.hubD, LatticeDFT.tripD, LatticeDFT.hubD_isSymm, LatticeDFT.hubD_triplet, LatticeDFT.triplet_occ,
-    LatticeDFT.hubbard_triplet_frozen, LatticeDFT.hubbard_triplet_not_mem_omega}
+  \lean{DFT.hubD, DFT.tripD, DFT.hubD_isSymm, DFT.hubD_triplet, DFT.triplet_occ,
+    DFT.hubbard_triplet_frozen, DFT.hubbard_triplet_not_mem_omega}
   \leanok
   \uses{thm:frozen}
   For the Hubbard dimer with one up and one down electron, any $t$ and $U$, the $S_z=0$ triplet has density $(1,1)$
@@ -544,11 +544,11 @@ $f=-\mathrm{Im}(\bar\psi_0\psi_1)$.
 
 \begin{lemma}[The dimer force balance]
   \label{lem:dimer_fb}
-  \lean{LatticeDFT.Dimer.H, LatticeDFT.Dimer.occ, LatticeDFT.Dimer.bond, LatticeDFT.Dimer.flow,
-    LatticeDFT.Dimer.H_apply, LatticeDFT.Dimer.H_mulVec, LatticeDFT.Dimer.hamN_zero_dimer, LatticeDFT.Dimer.H_isSymm,
-    LatticeDFT.Dimer.tdens_dimer, LatticeDFT.Dimer.tcur_dimer, LatticeDFT.Dimer.kfb_dimer,
-    LatticeDFT.Dimer.qsrc_dimer, LatticeDFT.Dimer.det_kJ_dimer, LatticeDFT.Dimer.bond_sq_add_flow_sq,
-    LatticeDFT.Dimer.mem_omega_dimer_iff}
+  \lean{DFT.Dimer.H, DFT.Dimer.occ, DFT.Dimer.bond, DFT.Dimer.flow,
+    DFT.Dimer.H_apply, DFT.Dimer.H_mulVec, DFT.Dimer.hamN_zero_dimer, DFT.Dimer.H_isSymm,
+    DFT.Dimer.tdens_dimer, DFT.Dimer.tcur_dimer, DFT.Dimer.kfb_dimer,
+    DFT.Dimer.qsrc_dimer, DFT.Dimer.det_kJ_dimer, DFT.Dimer.bond_sq_add_flow_sq,
+    DFT.Dimer.mem_omega_dimer_iff}
   \leanok
   \uses{thm:force_balance}
   $\dot n_0=2Tf$, $K=2Tb\begin{psmallmatrix}1&-1\\-1&1\end{psmallmatrix}$, $q_0=2T^2(n_1-n_0)$,
@@ -561,10 +561,10 @@ $f=-\mathrm{Im}(\bar\psi_0\psi_1)$.
 
 \begin{theorem}[Speed limit and closed-form potential]
   \label{thm:dimer}
-  \lean{LatticeDFT.Dimer.speed_limit, LatticeDFT.Dimer.speed_limit_eq_iff, LatticeDFT.Dimer.ddens_dimer,
-    LatticeDFT.Dimer.dimer_td_potential, LatticeDFT.Dimer.vfb_dimer, LatticeDFT.Dimer.dimer_eigen_mem_omega,
-    LatticeDFT.Dimer.rabi, LatticeDFT.Dimer.rabi_hasDerivAt, LatticeDFT.Dimer.tdens_rabi,
-    LatticeDFT.Dimer.rabi_not_mem_omega}
+  \lean{DFT.Dimer.speed_limit, DFT.Dimer.speed_limit_eq_iff, DFT.Dimer.ddens_dimer,
+    DFT.Dimer.dimer_td_potential, DFT.Dimer.vfb_dimer, DFT.Dimer.dimer_eigen_mem_omega,
+    DFT.Dimer.rabi, DFT.Dimer.rabi_hasDerivAt, DFT.Dimer.tdens_rabi,
+    DFT.Dimer.rabi_not_mem_omega}
   \leanok
   \uses{lem:dimer_fb}
   Every state obeys $\dot n_0^2\le 4T^2n_0n_1$, with equality exactly outside $\Omega$. Along any trajectory
@@ -583,8 +583,8 @@ $f=-\mathrm{Im}(\bar\psi_0\psi_1)$.
 
 \begin{lemma}[The density of a trajectory is $C^2$]
   \label{lem:density_c2}
-  \lean{LatticeDFT.tcur_real, LatticeDFT.ddens, LatticeDFT.dens_hasDerivAt, LatticeDFT.ddens_hasDerivAt,
-    LatticeDFT.continuous_ddens, LatticeDFT.ddens_sum}
+  \lean{DFT.tcur_real, DFT.ddens, DFT.dens_hasDerivAt, DFT.ddens_hasDerivAt,
+    DFT.continuous_ddens, DFT.ddens_sum}
   \leanok
   \uses{thm:force_balance}
   Along a trajectory driven by a continuous potential $v(t)$ the density has $\dot\rho=j$ and
@@ -597,7 +597,7 @@ $f=-\mathrm{Im}(\bar\psi_0\psi_1)$.
 
 \begin{theorem}[van Leeuwen's theorem on the lattice]
   \label{thm:van_leeuwen}
-  \lean{LatticeDFT.van_leeuwen, LatticeDFT.van_leeuwen_unique, LatticeDFT.van_leeuwen_unique'}
+  \lean{DFT.van_leeuwen, DFT.van_leeuwen_unique, DFT.van_leeuwen_unique'}
   \leanok
   \uses{lem:density_c2, thm:td_existence, thm:td_uniqueness}
   Let $\psi(t)$ be a trajectory of one system (any interaction) driven by a continuous potential. Let
@@ -613,7 +613,7 @@ $f=-\mathrm{Im}(\bar\psi_0\psi_1)$.
 
 \begin{theorem}[Time-dependent Kohn--Sham]
   \label{thm:td_kohn_sham}
-  \lean{LatticeDFT.td_kohn_sham}
+  \lean{DFT.td_kohn_sham}
   \leanok
   \uses{thm:van_leeuwen, thm:generic_ground_mem_omega}
   Spinless lattice fermions on a connected graph. Outside a closed, nowhere dense, null set of potentials $v_s$:
@@ -635,10 +635,10 @@ and densities and currents add up over $k$.
 
 \begin{lemma}[Purification of the dynamics]
   \label{lem:lift}
-  \lean{LatticeDFT.liftM, LatticeDFT.liftN, LatticeDFT.slice, LatticeDFT.glue, LatticeDFT.liftM_isSymm,
-    LatticeDFT.liftM_mulVec, LatticeDFT.dot_lift, LatticeDFT.liftM_mul, LatticeDFT.liftM_diagonal,
-    LatticeDFT.Nmat_lift, LatticeDFT.hamN_lift, LatticeDFT.Qf_lift, LatticeDFT.schr_slice, LatticeDFT.schr_glue,
-    LatticeDFT.tdens_lift, LatticeDFT.tcur_lift, LatticeDFT.slice_hasDerivAt, LatticeDFT.glue_hasDerivAt}
+  \lean{DFT.liftM, DFT.liftN, DFT.slice, DFT.glue, DFT.liftM_isSymm,
+    DFT.liftM_mulVec, DFT.dot_lift, DFT.liftM_mul, DFT.liftM_diagonal,
+    DFT.Nmat_lift, DFT.hamN_lift, DFT.Qf_lift, DFT.schr_slice, DFT.schr_glue,
+    DFT.tdens_lift, DFT.tcur_lift, DFT.slice_hasDerivAt, DFT.glue_hasDerivAt}
   \leanok
   A trajectory of the enlarged system is the same as a family of trajectories $\varphi_k(t)$ driven by the same
   potential; its density and current are $\sum_k\rho[\varphi_k]$ and $\sum_kj[\varphi_k]$.
@@ -650,7 +650,7 @@ and densities and currents add up over $k$.
 
 \begin{lemma}[$\Omega$ for real ensembles]
   \label{lem:mem_omega_glue}
-  \lean{LatticeDFT.form_lift, LatticeDFT.mem_omega_glue}
+  \lean{DFT.form_lift, DFT.mem_omega_glue}
   \leanok
   \uses{lem:lift, thm:generic_ground_mem_omega}
   For a real ensemble, $w^T\mathrm{kMat}\,w=\sum_kw^T\mathrm{kMat}(b_k)\,w$. If every member's form is negative
@@ -664,7 +664,7 @@ and densities and currents add up over $k$.
 
 \begin{theorem}[van Leeuwen's theorem for ensembles]
   \label{thm:van_leeuwen_ens}
-  \lean{LatticeDFT.van_leeuwen_ens}
+  \lean{DFT.van_leeuwen_ens}
   \leanok
   \uses{lem:lift, thm:van_leeuwen}
   The density of a trajectory $\psi(t)$ of any system is reproduced near $t_0$ by an ensemble $\{\varphi_k(t)\}$ of a
@@ -678,8 +678,8 @@ and densities and currents add up over $k$.
 
 \begin{lemma}[Purification of a ground-state ensemble]
   \label{lem:ens_purify}
-  \lean{LatticeDFT.exists_eq_mul_transpose, LatticeDFT.gsEnergy_mul_le, LatticeDFT.isGroundState_of_eigen_gs,
-    LatticeDFT.ens_purify}
+  \lean{DFT.exists_eq_mul_transpose, DFT.gsEnergy_mul_le, DFT.isGroundState_of_eigen_gs,
+    DFT.ens_purify}
   \leanok
   A ground-state density matrix is $\Gamma=\sum_kb_kb_k^T$ with every $b_k$ zero or a ground state and not all zero;
   the densities add up to that of $\Gamma$.
@@ -692,7 +692,7 @@ and densities and currents add up over $k$.
 
 \begin{theorem}[Time-dependent Kohn--Sham from a ground-state ensemble]
   \label{thm:td_kohn_sham_ensemble}
-  \lean{LatticeDFT.td_kohn_sham_ensemble}
+  \lean{DFT.td_kohn_sham_ensemble}
   \leanok
   \uses{lem:ens_purify, lem:mem_omega_glue, thm:van_leeuwen_ens, thm:generic_td_vrep}
   Spinless lattice fermions on a connected graph. Outside a closed, nowhere dense, null set of potentials $v_s$:

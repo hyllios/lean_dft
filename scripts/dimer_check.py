@@ -1,4 +1,4 @@
-"""Numerical reality check of LatticeDFT/TDDFT/Dimer.lean.
+"""Numerical reality check of DFT/Lattice/TDDFT/Dimer.lean.
 
 Integrate i psi' = (-T sigma_x + diag(v0, v1)) psi for a driven dimer, keep only the density
 n0(t), and reconstruct the potential difference from the closed form of `dimer_td_potential`:

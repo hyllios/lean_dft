@@ -8,7 +8,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{definition}[Many-body Hamiltonian and density]
   \label{def:hamN}
-  \lean{LatticeDFT.hamN, LatticeDFT.dens}
+  \lean{DFT.hamN, DFT.dens}
   \leanok
   $H(v) = H_0 + \diag\big(c\mapsto \sum_i v_i n_i(c)\big)$ and
   $\dens(\psi)_i = \sum_c n_i(c)\,\psi_c^2$.
@@ -16,7 +16,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{lemma}
   \label{lem:hamN_basic}
-  \lean{LatticeDFT.qf_hamN, LatticeDFT.hamN_mulVec_apply, LatticeDFT.hamN_isSymm, LatticeDFT.dens_weighted}
+  \lean{DFT.qf_hamN, DFT.hamN_mulVec_apply, DFT.hamN_isSymm, DFT.dens_weighted}
   \leanok
   \uses{def:hamN, def:qf}
   $\qf(H(v),\varphi) = \qf(H_0,\varphi) + \sum_i v_i\,\dens(\varphi)_i$;
@@ -30,7 +30,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{theorem}[Weak Hohenberg--Kohn]
   \label{thm:weak_hk}
-  \lean{LatticeDFT.weak_hk}
+  \lean{DFT.weak_hk}
   \leanok
   \uses{lem:hamN_basic, def:IsGroundState}
   If normalised ground states $\psi$ of $H(v)$ and $\psi'$ of $H(v')$ have the same density, then $\psi$ is
@@ -44,7 +44,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{theorem}[Strong Hohenberg--Kohn criterion]
   \label{thm:strong_hk}
-  \lean{LatticeDFT.strong_hk}
+  \lean{DFT.strong_hk}
   \leanok
   \uses{thm:weak_hk, thm:isGroundState_eigen, lem:hamN_basic}
   Assume $H_0$ symmetric, ground states $\psi,\psi'$ of $H(v),H(v')$ with equal densities, and assume that every
@@ -59,7 +59,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{theorem}[Non-uniqueness from a minimising observable]
   \label{thm:nonunique_of_minimiser}
-  \lean{LatticeDFT.nonunique_of_minimiser}
+  \lean{DFT.nonunique_of_minimiser}
   \leanok
   \uses{lem:hamN_basic}
   Let $W(c)=\sum_iw_in_i(c)\ge\kappa$ for all $c$, with equality on the support of a ground state $\psi$ of
@@ -76,7 +76,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{theorem}[Two fermions on a triangle]
   \label{thm:hk_fails_triangle}
-  \lean{LatticeDFT.occ3, LatticeDFT.H0tri, LatticeDFT.qf_tri, LatticeDFT.ground_tri, LatticeDFT.hk_fails_triangle}
+  \lean{DFT.occ3, DFT.H0tri, DFT.qf_tri, DFT.ground_tri, DFT.hk_fails_triangle}
   \leanok
   \uses{def:hamN, def:IsGroundState}
   For two spinless fermions on a triangle, the potentials $(0,-1,0)$ and $(0,-2,0)$ share the ground state
@@ -90,7 +90,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{theorem}[Two fermions on a square]
   \label{thm:hk_fails_square}
-  \lean{LatticeDFT.occ4, LatticeDFT.H0sq, LatticeDFT.qf_sq, LatticeDFT.ground_sq0, LatticeDFT.ground_sq1, LatticeDFT.hk_fails_square}
+  \lean{DFT.occ4, DFT.H0sq, DFT.qf_sq, DFT.ground_sq0, DFT.ground_sq1, DFT.hk_fails_square}
   \leanok
   \uses{def:hamN, def:IsGroundState}
   For two spinless fermions on a square, the potentials $(\tfrac34,-\tfrac34,-\tfrac34,\tfrac34)$ and
@@ -105,7 +105,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{lemma}[Orthogonal decomposition]
   \label{lem:decomp}
-  \lean{LatticeDFT.decomp, LatticeDFT.dot_self_nonneg}
+  \lean{DFT.decomp, DFT.dot_self_nonneg}
   \leanok
   \uses{def:qf}
   If $H$ is symmetric, $\|\psi\|=1$ and $H\psi=E\psi$, then every $\varphi$ splits as
@@ -119,7 +119,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{theorem}[Uniqueness of gapped ground states]
   \label{thm:unique_of_gap}
-  \lean{LatticeDFT.unique_of_gap}
+  \lean{DFT.unique_of_gap}
   \leanok
   \uses{lem:decomp, thm:isGroundState_eigen}
   If $\qf(H,\chi)\ge(E+g)\|\chi\|^2$ for all $\chi\perp\psi$ with $g>0$, every ground state is a multiple of
@@ -132,7 +132,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{theorem}[Invisible potential directions]
   \label{thm:persist_of_gap}
-  \lean{LatticeDFT.persist_of_gap}
+  \lean{DFT.persist_of_gap}
   \leanok
   \uses{lem:decomp, lem:hamN_basic}
   Let $\psi$ be a normalised ground state of $H(v)$ with gap $g$, and let $W(c)=\sum_iw_in_i(c)$ equal
@@ -149,7 +149,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{lemma}[Hidden involution]
   \label{lem:Qsq}
-  \lean{LatticeDFT.Qsq, LatticeDFT.H0sq_isSymm, LatticeDFT.qf_Qsq, LatticeDFT.dot_Qsq}
+  \lean{DFT.Qsq, DFT.H0sq_isSymm, DFT.qf_Qsq, DFT.dot_Qsq}
   \leanok
   \uses{thm:hk_fails_square}
   Let $Q$ swap the configurations $02\leftrightarrow13$, act as $+1$ on $\{03,12\}$ and as $-1$ on
@@ -163,7 +163,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
 
 \begin{theorem}[HK fails on a whole plane]
   \label{thm:square_wall}
-  \lean{LatticeDFT.square_wall}
+  \lean{DFT.square_wall}
   \leanok
   \uses{lem:Qsq, thm:unique_of_gap, thm:persist_of_gap}
   For every potential with $v_0+v_2=v_1+v_3$ and a gapped ground state $\psi$, there is a non-constant $w$

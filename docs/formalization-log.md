@@ -10,6 +10,9 @@
 
 # Blueprint: formal proof of (H*) for spinless fermions on any connected graph (2026-11-06)
 
+> Note (2026-11-06): the library was renamed from `LatticeDFT` to `DFT`; lattice files now live in
+> `DFT/Lattice/` and the namespace is `DFT`. Older entries below use the old names.
+
 Goal (Lean): for G connected (V = Fin M), 1 ≤ N ≤ M−1, uniform hopping t ≠ 0, any configuration-diagonal
 interaction Vint, and every configuration c: `krylovPoly (Tf + Vint) occ c Fin.val ≠ 0`.
 Combined with J4/J5 this gives: HK holds for Lebesgue-a.e. potential on every such lattice.
