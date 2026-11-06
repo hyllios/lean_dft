@@ -354,6 +354,62 @@ embedding $\psi\mapsto((x,y),(y,-x))$, which doubles densities.
   $\sum_iw_i=0$, for any $c\ne0$.
 \end{proof}
 
+\subsection{Starting from a ground state with flux}
+
+With flux the ground states are genuinely complex. In the doubled description $\psi=x+iy$ is the pair $X=(x,y)$,
+$JX=(y,-x)$ ($J$ = multiplication by $i$); $J$ commutes with $\tilde H$, so both are ground states, and every level of
+$\tilde H$ is at least doubly degenerate, which makes the real Krylov criterion useless. The doubled Krylov matrix uses
+both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
+
+\begin{lemma}[Splitting and the doubled Krylov criterion]
+  \label{lem:flux_tools}
+  \lean{LatticeDFT.Jop, LatticeDFT.Jop_false, LatticeDFT.Jop_true, LatticeDFT.dbl_eq_Jop, LatticeDFT.dot_Jop,
+    LatticeDFT.dot_Jop_self, LatticeDFT.dblH_mulVec_Jop, LatticeDFT.qf_Jop, LatticeDFT.isGroundState_Jop,
+    LatticeDFT.Qf_split, LatticeDFT.kfb_split, LatticeDFT.mem_omega_of_definite_pair, LatticeDFT.IsGroundStateC,
+    LatticeDFT.kryC, LatticeDFT.det_kryC_eq_zero, LatticeDFT.Jop_smul, LatticeDFT.eigen_unique_of_hstarC}
+  \leanok
+  \uses{thm:generic_ground_mem_omega, lem:doubling}
+  The force-balance form of $\mathrm{dbl}\,\psi$ is $-w^T\mathrm{kMat}(X)w-w^T\mathrm{kMat}(JX)w$. If all doubled Krylov
+  determinants are nonzero, eigenvectors have no complex zeros and eigenvalues are simple over $\mathbb C$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $Q$ is additive in the two real parts. An eigenvector vanishing at $(c,0)$ and $(c,1)$ is orthogonal to all columns;
+  a second eigenvector minus a suitable $\mu X+\nu JX$ vanishes at both components of some $c$.
+\end{proof}
+
+\begin{theorem}[Ground states with flux lie in $\Omega$, conditional]
+  \label{thm:mem_omegaC_of_hstarC}
+  \lean{LatticeDFT.kMat_definite_of_hstarC, LatticeDFT.mem_omegaC_of_hstarC, LatticeDFT.krylovPolyC,
+    LatticeDFT.eval_krylovPolyC, LatticeDFT.generic_ground_mem_omegaC}
+  \leanok
+  \uses{lem:flux_tools}
+  Under the doubled Krylov criterion and rigidity, every complex ground state lies in $\Omega$; if the doubled Krylov
+  polynomials are nonzero, this holds outside a closed, nowhere dense, null set of potentials.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A zero mode makes $d\,X$ ($d=\sum_iw_in_i$) a ground state, so $dX=\mu X+\nu JX$; pairing with $X$ at each $c$ gives
+  $d(c)=\mu$, and rigidity gives a constant $w$.
+\end{proof}
+
+\begin{theorem}[TDDFT with flux from the ground state, generic flux]
+  \label{thm:generic_flux}
+  \lean{LatticeDFT.dblH_zero_eq, LatticeDFT.det_kryC_zero, LatticeDFT.dblH_smul_split, LatticeDFT.exists_poly_flux,
+    LatticeDFT.hstarC_of_hstar, LatticeDFT.generic_flux_ground_mem_omegaC}
+  \leanok
+  \uses{thm:mem_omegaC_of_hstarC, thm:generic_td_vrep}
+  Spinless lattice fermions on a connected graph, common-sign hopping $A$, any interaction and any flux pattern $B$:
+  for all but finitely many flux strengths $r$ (hopping $A+irB$), outside a closed, nowhere dense, null set of
+  potentials every ground state lies in $\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Without flux the doubled Krylov determinant is the square of the real one (block diagonal). At a potential where all
+  real determinants are nonzero, the doubled determinant is a polynomial in $r$, nonzero at $r=0$, so it has finitely
+  many roots; off them the doubled Krylov polynomials are nonzero.
+\end{proof}
+
 \section{Time-dependent Kohn--Sham}
 
 \begin{lemma}[The density of a trajectory is $C^2$]

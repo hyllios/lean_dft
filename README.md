@@ -70,6 +70,12 @@ Schrödinger equation.
   `td_global_complex`. A Hermitian hopping `A + iB` is the real symmetric hopping
   `[[A, -B], [B, A]]` on a doubled lattice; the unphysical half has conserved norm, so it stays
   zero. Without flux nothing changes (`omegaC_zero`).
+* `generic_flux_ground_mem_omegaC`: TDDFT with flux from the ground state. For common-sign hopping
+  `A` and any flux pattern `B`, for all but finitely many flux strengths `r` (hopping `A + irB`),
+  almost every potential has all its (complex) ground states in `Ω`. The proof uses a doubled
+  Krylov criterion (both real components of each configuration); without flux its determinant is
+  the square of the real one, so along the flux family it is a polynomial in `r` that is nonzero
+  at `r = 0`.
 * `van_leeuwen` (van Leeuwen's theorem on the lattice): the density of any trajectory of any system,
   driven by a continuous potential, is reproduced locally in time by any other system on the same
   sites, starting from a state in its own `Ω` with the same initial density and current. The
@@ -131,6 +137,7 @@ proof is wrong.
 | `TDDFT/Dynamics`, `TDDFT/Existence`, `TDDFT/GroundStart` | continuity and force-balance equations, local existence and uniqueness of the TDDFT potential, TDDFT from generic ground states |
 | `TDDFT/Global` | uniform Picard–Lindelöf steps, norm conservation, blow-up alternative and global uniqueness for lattice TDDFT |
 | `TDDFT/ComplexHopping` | lattice TDDFT with complex (Peierls) hopping via a doubled real system |
+| `TDDFT/FluxGround` | ground states with flux: doubled Krylov criterion, generic flux strengths |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
