@@ -1,0 +1,101 @@
+\chapter{Time-dependent DFT: the initial state}
+\label{chap:tddft}
+
+On a lattice, time-dependent DFT reduces to ordinary differential equations (Farzanehpour and Tokatly,
+Phys.\ Rev.\ B 86, 125130 (2012)). Differentiating the continuity equation gives the \emph{force-balance
+equation} $K(\psi)\,v=\ddot n+q(\psi)$: the second time derivative of the density fixes the potential,
+through a matrix $K(\psi)$ built from the link densities of the instantaneous state. If $K(\psi_0)$ has no
+zero eigenvalue besides the constant potentials, Picard--Lindel\"of gives a unique potential, locally in
+time, for every density with continuous $\ddot n$ consistent with $\psi_0$. Such initial states form the
+\emph{$v$-representability set} $\Omega$.
+
+Their Theorem~2 states that every ground state on a connected lattice is in $\Omega$. This chapter shows
+that the statement is false, and proves it for almost every static potential.
+
+\begin{definition}[Force-balance matrix]
+  \label{def:kMat}
+  \lean{LatticeDFT.potW, LatticeDFT.kMat, LatticeDFT.kMat_mulVec, LatticeDFT.kMat_form, LatticeDFT.kMat_hamN}
+  \leanok
+  \uses{def:hamN}
+  For a real state $\psi$ and a potential $w$ with $d_c=\sum_iw_in_i(c)$,
+  \[
+    w^TK(\psi)w=\sum_{c,c'}(H_0)_{cc'}\,\psi_c\psi_{c'}\,(d_c-d_{c'})^2 .
+  \]
+  Diagonal parts of $H_0$ (such as the interaction) drop out.
+\end{definition}
+
+\begin{theorem}[f-sum rule; ground states give $K\le0$]
+  \label{thm:kMat_nonpos}
+  \lean{LatticeDFT.sum_sq_eigen, LatticeDFT.kMat_form_eigen, LatticeDFT.kMat_nonpos}
+  \leanok
+  \uses{def:kMat, thm:isGroundState_eigen}
+  For an eigenvector $H(v)\psi=E\psi$, $w^TK(\psi)w=2\big(E\,|d\psi|^2-\langle d\psi,H(v)\,d\psi\rangle\big)$.
+  At a ground state this is $\le0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Expand the square and use the eigenvalue equation in rows and columns. The variational principle gives
+  $\langle d\psi,H\,d\psi\rangle\ge E|d\psi|^2$.
+\end{proof}
+
+\begin{theorem}[Shared ground states are outside $\Omega$]
+  \label{thm:kMat_shared}
+  \lean{LatticeDFT.kMat_mulVec_eq_zero, LatticeDFT.kMat_shared, LatticeDFT.kMat_degenerate_of_nonUV}
+  \leanok
+  \uses{def:kMat, def:NonUV}
+  If $d$ is constant on the support of $\psi$, then $K(\psi)w=0$. In particular a ground state shared by $v$
+  and $v'$ has $K(\psi)(v-v')=0$, and if $v-v'$ is not constant, $\psi\notin\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Every term with $\psi_c\psi_{c'}\ne0$ has $d_c=d_{c'}$. For a shared ground state, the two eigenvalue
+  equations give $\sum_i(v_i-v'_i)n_i(c)=E-E'$ wherever $\psi_c\ne0$.
+\end{proof}
+
+\begin{theorem}[Counterexample to Theorem~2 of Farzanehpour--Tokatly]
+  \label{thm:square_kMat_degenerate}
+  \lean{LatticeDFT.square_kMat_degenerate}
+  \leanok
+  \uses{thm:kMat_shared, thm:hk_fails_square}
+  Two fermions on the square at $v=(3/4,-3/4,-3/4,3/4)$: the ground state $(0,2,1,4,2,0)$ has a non-constant
+  zero mode of $K$, although the lattice is connected.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The ground state is shared with $(5/4,-1/4,-5/4,1/4)$ (Theorem~\ref{thm:hk_fails_square}); apply
+  Theorem~\ref{thm:kMat_shared}.
+\end{proof}
+
+The published proof shows correctly that $w^TK(\psi_0)w=0$ only when $\hat w\psi_0=\lambda\psi_0$ (for a
+non-degenerate ground state), and then asserts that this forces $w$ to be constant. That holds when
+$\psi_0$ has no zero amplitudes, but not in general: the zeros of $\psi_0$ are exactly where Hohenberg--Kohn
+fails.
+
+\begin{theorem}[Corrected Theorem~2, conditional form]
+  \label{thm:kMat_definite_of_hstar}
+  \lean{LatticeDFT.eigen_unique_of_hstar, LatticeDFT.kMat_definite_of_hstar}
+  \leanok
+  \uses{thm:kMat_nonpos, lem:det_kry_eq_zero, def:NonUV}
+  If every Krylov determinant is nonzero at $v$ and the occupations are rigid, then every ground state of
+  $H(v)$ has $K(\psi)$ negative definite modulo constants.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Nonzero Krylov determinants force every eigenvector to have full support and every eigenvalue to be simple.
+  If $w^TKw=0$, then $d\psi$ attains the ground-state energy, so it is a multiple of $\psi$; with full support,
+  $d$ is constant, and rigidity makes $w$ constant.
+\end{proof}
+
+\begin{theorem}[Lattice TDDFT from the ground state, for almost every potential]
+  \label{thm:generic_td_vrep}
+  \lean{LatticeDFT.generic_td_vrep}
+  \leanok
+  \uses{thm:kMat_definite_of_hstar, thm:hstar_lattice_fermions, thm:rigid_occF, thm:volume_zeroSet}
+  For spinless lattice fermions on a connected graph with hopping of a common sign and any interaction,
+  outside a closed, nowhere dense, Lebesgue-null set of static potentials, every ground state lies in
+  $\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Take the zero set of $\prod_cP_c$ and apply Theorem~\ref{thm:kMat_definite_of_hstar}.
+\end{proof}

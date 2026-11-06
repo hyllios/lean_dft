@@ -100,6 +100,7 @@ theorem gsEnergy_le [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {φ : C �
   rw [hn, mul_one, hφ, mul_one] at this
   simpa [gsEnergy, hS] using this
 
+omit [DecidableEq C] in
 theorem qf_groundState_eq [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ}
     (hψ : IsGroundState H ψ) (hn : ψ ⬝ᵥ ψ = 1) : qf H ψ = gsEnergy H := by
   apply le_antisymm
@@ -109,6 +110,7 @@ theorem qf_groundState_eq [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ 
     simpa [gsEnergy, hS] using this
   · exact gsEnergy_le hS hn
 
+omit [DecidableEq C] in
 theorem isGroundState_of_qf_eq [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ}
     (hn : ψ ⬝ᵥ ψ = 1) (hq : qf H ψ = gsEnergy H) : IsGroundState H ψ := by
   refine ⟨fun h0 => by rw [h0] at hn; simp at hn, fun φ => ?_⟩
