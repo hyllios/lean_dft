@@ -39,6 +39,7 @@ import LatticeDFT.StrongPotential.LeadingCoefficient
 import LatticeDFT.StrongPotential.PowerSums
 import LatticeDFT.StrongPotential.Resolvent
 import LatticeDFT.TDDFT.Dynamics
+import LatticeDFT.TDDFT.Ensemble
 import LatticeDFT.TDDFT.Existence
 import LatticeDFT.TDDFT.ForceBalance
 import LatticeDFT.TDDFT.GroundStart

@@ -70,6 +70,11 @@ Schrödinger equation.
   (e.g. its ground state). If the initial density is that of a pure non-interacting ground state of
   `H_s(v_s)`, with `v_s` outside a closed, nowhere dense, null set, then a unique time-dependent
   Kohn–Sham potential reproduces the interacting density near `t₀`.
+* `td_kohn_sham_ensemble`: the same without the pure-state assumption. Any ground-state ensemble
+  `Γ` of `H_s(v_s)` (as produced by `ks_potential_exists`) works: `Γ = Σ_k b_k b_kᵀ` (`ens_purify`),
+  and the ensemble members evolve under one common, unique Kohn–Sham potential. The proof
+  purifies the ensemble into one state on configurations `C × κ` and reuses van Leeuwen's theorem
+  (`van_leeuwen_ens`).
 
 ### Kohn–Sham theory
 
@@ -117,6 +122,7 @@ proof is wrong.
 | `TDDFT/ForceBalance` | force-balance matrix at a ground state: f-sum rule, counterexample to Farzanehpour–Tokatly Theorem 2, generic v-representability of ground states |
 | `TDDFT/Dynamics`, `TDDFT/Existence`, `TDDFT/GroundStart` | continuity and force-balance equations, local existence and uniqueness of the TDDFT potential, TDDFT from generic ground states |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
+| `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
 | `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
 

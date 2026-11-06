@@ -278,3 +278,84 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
   $\varphi_0\in\Omega_s$ by Theorem~\ref{thm:generic_ground_mem_omega} with zero interaction; both currents
   vanish for real states; apply Theorem~\ref{thm:van_leeuwen}.
 \end{proof}
+
+\subsection{Ensembles}
+
+A finite ensemble $\{b_k\}_{k\in\kappa}$ evolving under one common potential is a single state of an enlarged system
+on configurations $C\times\kappa$ (\emph{purification}): the Hamiltonian is block diagonal, the occupations ignore $k$,
+and densities and currents add up over $k$.
+
+\begin{lemma}[Purification of the dynamics]
+  \label{lem:lift}
+  \lean{LatticeDFT.liftM, LatticeDFT.liftN, LatticeDFT.slice, LatticeDFT.glue, LatticeDFT.liftM_isSymm,
+    LatticeDFT.liftM_mulVec, LatticeDFT.dot_lift, LatticeDFT.liftM_mul, LatticeDFT.liftM_diagonal,
+    LatticeDFT.Nmat_lift, LatticeDFT.hamN_lift, LatticeDFT.Qf_lift, LatticeDFT.schr_slice, LatticeDFT.schr_glue,
+    LatticeDFT.tdens_lift, LatticeDFT.tcur_lift, LatticeDFT.slice_hasDerivAt, LatticeDFT.glue_hasDerivAt}
+  \leanok
+  A trajectory of the enlarged system is the same as a family of trajectories $\varphi_k(t)$ driven by the same
+  potential; its density and current are $\sum_k\rho[\varphi_k]$ and $\sum_kj[\varphi_k]$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $H(v)$ of the enlarged system is the block-diagonal copy of $H(v)$; slicing and gluing are continuous linear maps.
+\end{proof}
+
+\begin{lemma}[$\Omega$ for real ensembles]
+  \label{lem:mem_omega_glue}
+  \lean{LatticeDFT.form_lift, LatticeDFT.mem_omega_glue}
+  \leanok
+  \uses{lem:lift, thm:generic_ground_mem_omega}
+  For a real ensemble, $w^T\mathrm{kMat}\,w=\sum_kw^T\mathrm{kMat}(b_k)\,w$. If every member's form is negative
+  semidefinite and one member has only constant zero modes, the ensemble lies in $\Omega$ of the enlarged system.
+\end{lemma}
+\begin{proof}
+  \leanok
+  A sum of non-positive terms vanishes only if each does; then apply Theorem~\ref{thm:generic_ground_mem_omega}'s
+  criterion.
+\end{proof}
+
+\begin{theorem}[van Leeuwen's theorem for ensembles]
+  \label{thm:van_leeuwen_ens}
+  \lean{LatticeDFT.van_leeuwen_ens}
+  \leanok
+  \uses{lem:lift, thm:van_leeuwen}
+  The density of a trajectory $\psi(t)$ of any system is reproduced near $t_0$ by an ensemble $\{\varphi_k(t)\}$ of a
+  second system, all driven by one unique potential with $\sum_iv_i=0$, provided the initial ensemble has the initial
+  density and current of $\psi$ and lies in $\Omega$ of the enlarged system.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Theorem~\ref{thm:van_leeuwen} for the enlarged system, translated with Lemma~\ref{lem:lift}.
+\end{proof}
+
+\begin{lemma}[Purification of a ground-state ensemble]
+  \label{lem:ens_purify}
+  \lean{LatticeDFT.exists_eq_mul_transpose, LatticeDFT.gsEnergy_mul_le, LatticeDFT.isGroundState_of_eigen_gs,
+    LatticeDFT.ens_purify}
+  \leanok
+  A ground-state density matrix is $\Gamma=\sum_kb_kb_k^T$ with every $b_k$ zero or a ground state and not all zero;
+  the densities add up to that of $\Gamma$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $\Gamma=BB^T$ by the spectral theorem. With $A=(H-E)B$: $AA^T=(H-E)\Gamma(H-E)=0$, so $A=0$ and the columns of $B$
+  are eigenvectors at the ground-state energy. $\operatorname{tr}\Gamma=1$ forces $B\neq0$.
+\end{proof}
+
+\begin{theorem}[Time-dependent Kohn--Sham from a ground-state ensemble]
+  \label{thm:td_kohn_sham_ensemble}
+  \lean{LatticeDFT.td_kohn_sham_ensemble}
+  \leanok
+  \uses{lem:ens_purify, lem:mem_omega_glue, thm:van_leeuwen_ens, thm:generic_td_vrep}
+  Spinless lattice fermions on a connected graph. Outside a closed, nowhere dense, null set of potentials $v_s$:
+  for every ground-state ensemble $\Gamma$ of $H_s(v_s)$ with the density of a real state $\psi(t_0)$ of any trajectory
+  driven by a continuous potential, a unique time-dependent Kohn--Sham potential, acting on the purified ensemble,
+  reproduces the density of $\psi(t)$ near $t_0$. No pure-state assumption is needed, so this applies directly to the
+  ensemble Kohn--Sham potentials of Theorem~\ref{thm:ks_potential_exists}.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Purify $\Gamma$ (Lemma~\ref{lem:ens_purify}); each nonzero member is a ground state, so its form is negative
+  semidefinite, with constant zero modes only for generic $v_s$; Lemma~\ref{lem:mem_omega_glue} and
+  Theorem~\ref{thm:van_leeuwen_ens}.
+\end{proof}
