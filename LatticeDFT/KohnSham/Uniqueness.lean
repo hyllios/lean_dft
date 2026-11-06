@@ -21,4 +21,13 @@ theorem ks_potential_generic_unique {G : SimpleGraph (Fin M)} [DecidableRel G.Ad
       {v | NonUV (H0F G t (0 : Conf M N → ℝ)) occF v} ⊆ Z :=
   generic_hk_lattice_fermions hG ht hN0 hNM 0
 
+/-- **Generic uniqueness of the Kohn–Sham potential, edge-dependent hopping.** The same statement for
+symmetric hopping amplitudes `t a b` of a common sign on the edges. -/
+theorem ks_potential_generic_unique_w {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a) {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b)
+    (hN0 : 0 < N) (hNM : N < M) :
+    ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
+      {v | NonUV (H0Fw G t (0 : Conf M N → ℝ)) occF v} ⊆ Z :=
+  generic_hk_lattice_fermions_w hG htsym hts hN0 hNM 0
+
 end LatticeDFT

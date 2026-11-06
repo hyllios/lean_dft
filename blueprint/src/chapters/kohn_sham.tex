@@ -86,6 +86,18 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
   Theorem~\ref{thm:generic_hk_lattice_fermions} with vanishing interaction.
 \end{proof}
 
+\begin{theorem}[Generic uniqueness, edge-dependent hopping]
+  \label{thm:ks_potential_generic_unique_w}
+  \lean{LatticeDFT.ks_potential_generic_unique_w}
+  \leanok
+  \uses{thm:generic_hk_lattice_fermions}
+  The same holds for symmetric hopping amplitudes $t_{ab}$ on the edges, all of the same sign.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The weighted generic Hohenberg--Kohn theorem with vanishing interaction.
+\end{proof}
+
 \section{Lieb's functional and convex duality}
 
 Let $E(v)$ be the ground-state energy of $H(v)$. Ensemble densities of configurations form the density domain

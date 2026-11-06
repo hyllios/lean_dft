@@ -39,7 +39,7 @@ that all have the same sign.
 | Theorem | Statement |
 |---|---|
 | `ks_potential_exists_interior` | every density with `0 < ρ_i < 1` and `Σ ρ_i = N` is the ground-state (ensemble) density of a non-interacting system in some potential |
-| `ks_potential_generic_unique` | for almost every potential, the non-interacting ground state determines the Kohn–Sham potential up to a constant (the generic HK theorem with no interaction) |
+| `ks_potential_generic_unique` | for almost every potential, the non-interacting ground state determines the Kohn–Sham potential up to a constant (the generic HK theorem with no interaction); `_w`: edge-dependent hopping |
 | `aufbau_lowest` | a set of orbitals minimises the non-interacting energy exactly when it consists of the lowest orbitals |
 | `lattice_myksoda` | the regularised KS iteration (MYKSODA; Penz, Laestadius, Tellgren, Ruggenthaler, *PRL* **123**, 037401 (2019)): energies decrease, limit points exist and are regularised ground states, and the KS potentials converge along subsequences |
 
