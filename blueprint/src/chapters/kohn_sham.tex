@@ -56,12 +56,17 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
 
 \begin{theorem}[Lowest orbitals]
   \label{thm:aufbau_lowest}
+  \lean{LatticeDFT.orbEnergy_eq_sum, LatticeDFT.sum_le_sum_of_forall_le, LatticeDFT.aufbau_lowest}
+  \leanok
   \uses{thm:aufbau}
   A set $S$ minimises $E_S$ if and only if it consists of $N$ orbitals of lowest energy (with arbitrary
   choices among degenerate ones at the Fermi level).
 \end{theorem}
 \begin{proof}
-  Exchange argument: replacing an orbital by a lower unused one does not increase $E_S$.
+  \leanok
+  If an occupied $a$ lies above an unoccupied $b$, swapping them lowers $E_S$. Conversely, compare $S$ with
+  any $T$. The orbitals $S\setminus T$ and $T\setminus S$ are equally many, and each element of the first lies
+  below each element of the second, so $\sum_{S\setminus T}\varepsilon\le\sum_{T\setminus S}\varepsilon$.
 \end{proof}
 
 \section{Uniqueness of the Kohn--Sham potential}

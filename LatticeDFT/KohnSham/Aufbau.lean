@@ -117,3 +117,63 @@ theorem aufbau (h : Matrix (Fin M) (Fin M) ℝ) (hS : h.IsSymm) (hN : N ≤ M) :
     exact hlow w
 
 end LatticeDFT
+
+namespace LatticeDFT
+
+variable {M N : ℕ}
+
+lemma orbEnergy_eq_sum (ε : Fin M → ℝ) (S : Conf M N) : orbEnergy ε S = ∑ a ∈ S.1, ε a := by
+  unfold orbEnergy τs
+  have hmap : Finset.univ.map (S.1.orderEmbOfFin S.2).toEmbedding = S.1 := by
+    ext a; simp [Finset.range_orderEmbOfFin]
+  conv_rhs => rw [← hmap]
+  rw [Finset.sum_map]; rfl
+
+/-- Exchange inequality: if every element of `A` is below every element of `B` and `|A| = |B|`, then
+`Σ_A ε ≤ Σ_B ε`. -/
+lemma sum_le_sum_of_forall_le {A B : Finset (Fin M)} (ε : Fin M → ℝ) (hc : A.card = B.card)
+    (h : ∀ a ∈ A, ∀ b ∈ B, ε a ≤ ε b) : ∑ a ∈ A, ε a ≤ ∑ b ∈ B, ε b := by
+  rcases A.eq_empty_or_nonempty with rfl | hA
+  · rw [Finset.card_empty, eq_comm, Finset.card_eq_zero] at hc; simp [hc]
+  · set m := A.sup' hA ε
+    obtain ⟨a0, ha0, hm⟩ := Finset.exists_mem_eq_sup' hA ε
+    calc ∑ a ∈ A, ε a ≤ ∑ _a ∈ A, m := Finset.sum_le_sum fun a ha => Finset.le_sup' ε ha
+      _ = ∑ _b ∈ B, m := by simp [hc]
+      _ ≤ ∑ b ∈ B, ε b := Finset.sum_le_sum fun b hb => by rw [show m = ε a0 from hm]; exact h a0 ha0 b hb
+
+/-- **Aufbau: the minimising orbital sets are exactly the sets of lowest orbitals.** A set `S` of `N`
+orbitals minimises the total orbital energy iff no unoccupied orbital lies strictly below an occupied
+one (arbitrary choices among degenerate orbitals at the Fermi level are allowed). -/
+theorem aufbau_lowest (ε : Fin M → ℝ) (S : Conf M N) :
+    (∀ T : Conf M N, orbEnergy ε S ≤ orbEnergy ε T) ↔ ∀ a ∈ S.1, ∀ b ∉ S.1, ε a ≤ ε b := by
+  simp only [orbEnergy_eq_sum]
+  constructor
+  · intro hmin a ha b hb
+    by_contra hlt
+    push Not at hlt
+    have hcard : (insert b (S.1.erase a)).card = N := by
+      rw [Finset.card_insert_of_notMem (fun h => hb (Finset.mem_of_mem_erase h)),
+        Finset.card_erase_of_mem ha, S.2]
+      have : 0 < N := S.2 ▸ Finset.card_pos.mpr ⟨a, ha⟩
+      omega
+    have h1 := hmin ⟨_, hcard⟩
+    simp only at h1
+    rw [Finset.sum_insert (fun h => hb (Finset.mem_of_mem_erase h))] at h1
+    have h2 := Finset.add_sum_erase S.1 ε ha
+    linarith
+  · intro hlow T
+    have hS := Finset.sum_sdiff (Finset.inter_subset_left : S.1 ∩ T.1 ⊆ S.1) (f := ε)
+    have hT := Finset.sum_sdiff (Finset.inter_subset_right : S.1 ∩ T.1 ⊆ T.1) (f := ε)
+    rw [Finset.sdiff_inter_self_left] at hS
+    rw [Finset.sdiff_inter_self_right] at hT
+    have hc : (S.1 \ T.1).card = (T.1 \ S.1).card := by
+      have h1 := Finset.card_sdiff_add_card_inter S.1 T.1
+      have h2 := Finset.card_sdiff_add_card_inter T.1 S.1
+      rw [Finset.inter_comm] at h2
+      rw [S.2] at h1; rw [T.2] at h2
+      omega
+    have := sum_le_sum_of_forall_le ε hc fun a ha b hb =>
+      hlow a (Finset.mem_sdiff.mp ha).1 b (Finset.mem_sdiff.mp hb).2
+    linarith
+
+end LatticeDFT
