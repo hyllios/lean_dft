@@ -292,8 +292,12 @@ lemma Q_sub_eq (v : Pot) (E : ℝ) {φ : ℝ → ℝ} (hφ : φ ∈ Dom) :
     integral_const_mul]
   rfl
 
-/-- **Every continuous potential in the box has a ground state** (in the `C²` form domain). -/
-theorem exists_isGS (v : Pot) : ∃ ψ, IsGS setting v ψ := by
+/-- The ground state built by shooting, with its properties: it agrees with the shooting solution
+near `[0, 1]`, has energy `E*`, and no state has energy below `E*`. -/
+theorem gs_data (v : Pot) : ∃ ψ, ψ ∈ Dom ∧
+    (∀ x ∈ Ioo (-1 / 2 : ℝ) (3 / 2), ψ x = (sol v (Estar v) x).1) ∧
+    Q setting v ψ = Estar v * ip (μ := μ1) ψ ψ ∧ 0 < ip (μ := μ1) ψ ψ ∧
+    ∀ φ ∈ Dom, Estar v * ip (μ := μ1) φ φ ≤ Q setting v φ := by
   set E := Estar v
   set α := sol v E
   obtain ⟨ψe, hψe, hψeq⟩ :=
@@ -362,11 +366,14 @@ theorem exists_isGS (v : Pot) : ∃ ψ, IsGS setting v ψ := by
       exact (mul_pos this this).ne'
     refine lt_of_lt_of_le ?_ (measure_mono hsub)
     simp
-  refine ⟨ψe, hD, hpos, fun φ hφ => ?_⟩
-  have h1 := hlow φ hφ
-  have hQ : Q setting v ψe = E * ip (μ := μ1) ψe ψe := by linarith
+  exact ⟨ψe, hD, hψeq, by linarith, hpos, hlow⟩
+
+/-- **Every continuous potential in the box has a ground state** (in the `C²` form domain). -/
+theorem exists_isGS (v : Pot) : ∃ ψ, IsGS setting v ψ := by
+  obtain ⟨ψ, hD, -, hQ, hpos, hlow⟩ := gs_data v
+  refine ⟨ψ, hD, hpos, fun φ hφ => ?_⟩
   rw [hQ]
-  nlinarith [mul_le_mul_of_nonneg_left h1 hpos.le]
+  nlinarith [mul_le_mul_of_nonneg_left (hlow φ hφ) hpos.le]
 
 /-- **Hohenberg–Kohn for one particle in a box, unconditional.** Every continuous potential on
 `[0, 1]` has a ground state, and ground states of two continuous potentials with the same density

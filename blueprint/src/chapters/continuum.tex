@@ -223,5 +223,35 @@ antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\
   $2v(x)=c$. Densities: Fubini, and exchange symmetry turns $\int v(x_2)\psi^2$ into $\int v(x_1)\psi^2$.
 \end{proof}
 
-The one assumption left, unique continuation for ground states of $-\Delta+V$ in two dimensions, is a genuine PDE
+\begin{lemma}[Equality in the Picone inequality]
+  \label{lem:picone_eq}
+  \lean{DFT.Continuum.Box.picone_interior_eq, DFT.Continuum.Box.picone_tendsto, DFT.Continuum.Box.picone_eq}
+  \leanok
+  \uses{lem:box_picone}
+  Under the hypotheses of the Picone inequality, $\int_0^1(\varphi'^2+W\varphi^2)=0$ forces $\varphi=c\,\psi$ on
+  $(0,1)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The exact identity $\int_a^b G=F(b)-F(a)+\int_a^b\psi^2((\varphi/\psi)')^2$ and the vanishing of the boundary
+  terms give $(\varphi/\psi)'=0$.
+\end{proof}
+
+\begin{theorem}[Two free bosons: Hohenberg--Kohn, unconditional]
+  \label{thm:hk_free_bosons}
+  \lean{DFT.Continuum.Pair.free, DFT.Continuum.Pair.hprod, DFT.Continuum.Pair.fub1, DFT.Continuum.Pair.fub2, DFT.Continuum.Pair.slice1_mem, DFT.Continuum.Pair.slice2_mem, DFT.Continuum.Pair.deriv_slice1, DFT.Continuum.Pair.deriv_slice2, DFT.Continuum.Pair.sA, DFT.Continuum.Pair.sB, DFT.Continuum.Pair.continuous_sA, DFT.Continuum.Pair.continuous_sB, DFT.Continuum.Pair.Q_free_sub, DFT.Continuum.Pair.slice_A, DFT.Continuum.Pair.slice_B, DFT.Continuum.Pair.lower_bound, DFT.Continuum.Pair.prodState, DFT.Continuum.Pair.prodState_mem, DFT.Continuum.Pair.ip_prodState, DFT.Continuum.Pair.prod_isGS, DFT.Continuum.Pair.eq_zero_of_integral_zero, DFT.Continuum.Pair.continuous_sliceA, DFT.Continuum.Pair.ucp_free, DFT.Continuum.Pair.hk_free_bosons}
+  \leanok
+  \uses{thm:hk_pair, thm:box_exists, lem:picone_eq}
+  For two non-interacting bosons in the box, every continuous potential has a ground state, and ground states with
+  the same one-body density force the potentials to differ by a constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The energy splits into one-particle energies of horizontal and vertical slices (Fubini), each at least $E_0$, so
+  every state has energy $\ge2E_0$, attained by $\psi_0\otimes\psi_0$. A ground state therefore has all slice
+  energies equal to $E_0$; by the equality case of Picone each slice is a multiple of $\psi_0$, and exchange symmetry
+  gives $k\,\psi_0\otimes\psi_0$ with $k\neq0$, which has no zeros in the square. Theorem~\ref{thm:hk_pair} applies.
+\end{proof}
+
+For interacting particles, or fermions, the one assumption left, unique continuation for ground states of $-\Delta+V$ in two dimensions, is a genuine PDE
 fact (Carleman/Aronszajn-type unique continuation); in one dimension it reduced to ODE uniqueness.

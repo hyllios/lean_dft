@@ -110,6 +110,8 @@ Schrödinger equation.
   `hk_pair_of_ucp` (`Continuum/Pair`): two particles on `[0, 1]` (bosons or fermions, continuous
   interaction). Everything is proved except unique continuation of the ground state on the square,
   which in two dimensions is genuine PDE theory.
+  For two non-interacting bosons it is proved (`hk_free_bosons`, `Continuum/PairFree`): every ground
+  state is `k ψ₀(x₁)ψ₀(x₂)` (slicing + equality case of Picone), so the theorem is unconditional.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -200,6 +202,7 @@ the lattice results as a special case. Module paths below are relative to these 
 | `Box` | one particle in a box with a continuous potential: unique continuation proved (ODE uniqueness), unconditional continuum Hohenberg–Kohn `hk_box` |
 | `BoxSolve`, `BoxSturm`, `BoxPicone`, `BoxExtend`, `BoxGround` | existence of ground states in the box by shooting (truncated Picard–Lindelöf + Grönwall, Sturm comparison, Picone inequality, cutoff extension); `hk_box_complete`: Hohenberg–Kohn in the box with no assumption on ground states |
 | `Pair` | two particles in a box (bosons or fermions, any continuous interaction): separation, rigidity and the one-body density proved; `hk_pair_of_ucp` is Hohenberg–Kohn conditional only on unique continuation of the ground state in 2D |
+| `BoxPiconeEq`, `PairFree` | equality case of Picone; two free bosons in a box: lower bound `2E₀` by slicing, product ground state, every ground state is `k ψ₀⊗ψ₀`; `hk_free_bosons` is an unconditional two-particle Hohenberg–Kohn theorem |
 
 About 13,000 lines of Lean in total.
 
