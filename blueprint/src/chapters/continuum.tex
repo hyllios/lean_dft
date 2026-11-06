@@ -1,0 +1,65 @@
+\chapter{Towards the continuum}
+\label{chap:continuum}
+
+The lattice arguments, written for a configuration space $(X,\mu)$ that may be continuous. States are real functions
+in a form domain $D$, the potential-free energy (kinetic energy plus interaction) is a symmetric bilinear form $h_0$ on
+$D$, and a one-body potential $w$ acts by multiplication with $Lw$; for $N$ particles in $\mathbb R^3$,
+$Lw(x_1,\dots,x_N)=\sum_iw(x_i)$, and on the lattice $Lw(c)=\sum_iw_in_i(c)$. The density is the functional
+$w\mapsto\int(Lw)\psi^2$. Analysis enters through three named hypotheses: the form domain separates functions
+(fundamental lemma of the calculus of variations), the coupling is rigid, and the ground state satisfies unique
+continuation ($\psi\neq0$ almost everywhere).
+
+\begin{definition}[Setting]
+  \label{def:continuum_setting}
+  \lean{LatticeDFT.Continuum.Setting, LatticeDFT.Continuum.ip, LatticeDFT.Continuum.pf, LatticeDFT.Continuum.Q,
+    LatticeDFT.Continuum.dens, LatticeDFT.Continuum.IsGS, LatticeDFT.Continuum.Sep, LatticeDFT.Continuum.RigidL}
+  \leanok
+  Form domain, energy form, coupling, ground states as minimisers of the Rayleigh quotient, separation and rigidity.
+\end{definition}
+
+\begin{lemma}[Euler--Lagrange equation]
+  \label{lem:euler_lagrange}
+  \lean{LatticeDFT.Continuum.integral_expand, LatticeDFT.Continuum.ip_comm, LatticeDFT.Continuum.pf_comm,
+    LatticeDFT.Continuum.ip_expand, LatticeDFT.Continuum.pf_expand, LatticeDFT.Continuum.h0_expand,
+    LatticeDFT.Continuum.euler_lagrange}
+  \leanok
+  \uses{def:continuum_setting}
+  A ground state satisfies the weak Schr\"odinger equation $h_0(\psi,\varphi)+\langle w\psi,\varphi\rangle
+  =E\langle\psi,\varphi\rangle$ for all $\varphi\in D$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The Rayleigh quotient along $\psi+s\varphi$ has a minimum at $s=0$, so its linear coefficient vanishes.
+\end{proof}
+
+\begin{theorem}[Hohenberg--Kohn, conditional on unique continuation]
+  \label{thm:hk_continuum}
+  \lean{LatticeDFT.Continuum.weak_hk, LatticeDFT.Continuum.strong_hk_of_ucp, LatticeDFT.Continuum.hk_of_ucp}
+  \leanok
+  \uses{lem:euler_lagrange}
+  If ground states of $v$ and $v'$ have the same norm and density, they are ground states of both potentials; if one
+  of them vanishes only on a null set, then $v-v'$ is constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The usual variational argument gives the weak statement. Subtracting the two Euler--Lagrange equations,
+  $\int(L(v-v')-c)\psi\varphi=0$ for every $\varphi\in D$; separation gives $(L(v-v')-c)\psi=0$ a.e., unique
+  continuation gives $L(v-v')=c$ a.e., and rigidity gives a constant.
+\end{proof}
+
+\begin{theorem}[The lattice as an instance]
+  \label{thm:hk_lattice_instance}
+  \lean{LatticeDFT.Continuum.matForm, LatticeDFT.Continuum.latticeL, LatticeDFT.Continuum.latticeSetting,
+    LatticeDFT.Continuum.ip_lattice, LatticeDFT.Continuum.Q_lattice, LatticeDFT.Continuum.isGS_lattice_iff,
+    LatticeDFT.Continuum.sep_lattice, LatticeDFT.Continuum.rigidL_lattice, LatticeDFT.Continuum.ucp_lattice_iff,
+    LatticeDFT.Continuum.lattice_hk_of_hstar}
+  \leanok
+  \uses{thm:hk_continuum}
+  With counting measure on the configurations, separation is automatic, rigidity of the coupling is lattice rigidity,
+  and unique continuation means no zero amplitude, which the Krylov condition (H*) guarantees. Hence Hohenberg--Kohn
+  holds at every potential satisfying (H*).
+\end{theorem}
+\begin{proof}
+  \leanok
+  Test with indicator functions; (H*) gives full support of ground states.
+\end{proof}

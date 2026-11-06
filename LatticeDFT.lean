@@ -1,6 +1,8 @@
 import LatticeDFT.Basic.GroundState
 import LatticeDFT.Basic.SingleParticle
 import LatticeDFT.Basic.Spectral
+import LatticeDFT.Continuum.HK
+import LatticeDFT.Continuum.Lattice
 import LatticeDFT.Convex.MoreauYosida
 import LatticeDFT.Fermions.CauchyBinet
 import LatticeDFT.Fermions.Configurations
