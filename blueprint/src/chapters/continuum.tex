@@ -255,3 +255,39 @@ antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\
 
 For interacting particles, or fermions, the one assumption left, unique continuation for ground states of $-\Delta+V$ in two dimensions, is a genuine PDE
 fact (Carleman/Aronszajn-type unique continuation); in one dimension it reduced to ODE uniqueness.
+
+\section{The Lieb functional}
+
+Densities are linear functionals on one-body potentials, $\rho_\psi(w)=\int(Lw)\psi^2$. With values in the extended
+reals, $E(v)=\inf\{\langle\psi,H(v)\psi\rangle:\|\psi\|=1\}$ and $F(\rho)=\sup_v\,(E(v)-\rho(v))$.
+
+\begin{theorem}[Lieb's formulation]
+  \label{thm:lieb}
+  \lean{DFT.Continuum.Nst, DFT.Continuum.IsNGS, DFT.Continuum.gsE, DFT.Continuum.liebF, DFT.Continuum.sub_coe_le, DFT.Continuum.coe_le_sub_coe, DFT.Continuum.le_add_coe_of_sub_le, DFT.Continuum.Q_eq, DFT.Continuum.gsE_le, DFT.Continuum.gsE_of_isNGS, DFT.Continuum.le_liebF, DFT.Continuum.liebF_le_h0, DFT.Continuum.gsE_le_liebF_add, DFT.Continuum.gsE_eq_iInf, DFT.Continuum.liebF_convex, DFT.Continuum.liebF_of_isNGS, DFT.Continuum.subgrad_of_isNGS, DFT.Continuum.isNGS_of_subgrad, DFT.Continuum.ip_smul_self, DFT.Continuum.Q_smul_self, DFT.Continuum.isGS_of_isNGS, DFT.Continuum.subgrad_unique}
+  \leanok
+  \uses{thm:hk_continuum}
+  $F(\rho_\psi)\le h_0(\psi,\psi)$; $E(v)=\inf_\psi(F(\rho_\psi)+\rho_\psi(v))$; $F$ is convex. At the density of a
+  ground state of $v$, $F$ equals the constrained search and $-v$ is a subgradient; conversely a subgradient at a
+  constrained-search minimiser gives a ground state. Under separation, rigidity and unique continuation the
+  subgradients at a ground-state density are $-v$ up to constants (Hohenberg--Kohn in Lieb's form).
+\end{theorem}
+\begin{proof}
+  \leanok
+  $F$ is a supremum of affine functions of $\rho$, and $\langle\psi,H(v)\psi\rangle=h_0(\psi,\psi)+\rho_\psi(v)$.
+  A subgradient $-v'$ at $\rho_\psi$ makes $\psi$ a ground state of $v'$, and Theorem~\ref{thm:hk_continuum}
+  applies.
+\end{proof}
+
+\begin{theorem}[The Lieb functional in the box]
+  \label{thm:lieb_box}
+  \lean{DFT.Continuum.Box.kin_nonneg, DFT.Continuum.Box.exists_isNGS, DFT.Continuum.Box.lieb_box}
+  \leanok
+  \uses{thm:lieb, thm:box_exists, thm:box_ucp}
+  For one particle in a box, every continuous potential has a normalised ground state; at its density the Lieb
+  functional equals the kinetic energy, and its subgradient is unique up to constants.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Normalise the ground state of Theorem~\ref{thm:box_exists}; unique continuation and separation are proved in the
+  box.
+\end{proof}
