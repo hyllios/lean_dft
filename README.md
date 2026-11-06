@@ -100,6 +100,10 @@ Schrödinger equation.
   assuming separation (fundamental lemma), rigidity of the coupling, and unique continuation of the
   ground state. `lattice_hk_of_hstar` recovers the lattice theorem: there, unique continuation is
   "no zero amplitude", supplied by (H\*).
+  `hk_box` (`Continuum/OneD`) is an unconditional continuum case: one particle on `[0, 1]` with hard
+  walls and a continuous potential. A ground state solves `ψ'' = (v - E)ψ`, its zeros cannot
+  accumulate (ODE uniqueness), so it vanishes only on a null set, and equal densities `ψ² = ψ'²` force
+  `v - v'` to be constant.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -173,6 +177,7 @@ proof is wrong.
 | `TDDFT/Dimer` | reality check: one particle on two sites; `Ω = {bond order ≠ 0}`, speed limit, closed-form TD potential, Rabi oscillation outside `Ω` (numerical check in `scripts/dimer_check.py`) |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
+| `Continuum/OneD` | one particle in a box with a continuous potential: unique continuation proved (ODE uniqueness), unconditional continuum Hohenberg–Kohn `hk_box` |
 | `Continuum/HK`, `Continuum/Lattice` | Hohenberg–Kohn on a general configuration space `(X, μ)`, conditional on unique continuation; the lattice as the counting-measure instance, with (H\*) supplying unique continuation |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
 | `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |

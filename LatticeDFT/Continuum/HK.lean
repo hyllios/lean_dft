@@ -43,8 +43,10 @@ variable {X : Type*} [MeasurableSpace X] {μ : Measure X} {P : Type*} [AddCommGr
 structure Setting (μ : Measure X) (P : Type*) [AddCommGroup P] [Module ℝ P] where
   /-- The form domain. -/
   D : Submodule ℝ (X → ℝ)
-  /-- The potential-free energy form (kinetic energy plus interaction). -/
-  h0 : (X → ℝ) →ₗ[ℝ] (X → ℝ) →ₗ[ℝ] ℝ
+  /-- The potential-free energy form (kinetic energy plus interaction), bilinear on `D`. -/
+  h0 : (X → ℝ) → (X → ℝ) → ℝ
+  h0_add : ∀ a ∈ D, ∀ b ∈ D, ∀ c ∈ D, h0 (a + b) c = h0 a c + h0 b c
+  h0_smul : ∀ r : ℝ, ∀ a ∈ D, ∀ c ∈ D, h0 (r • a) c = r * h0 a c
   h0_symm : ∀ ψ ∈ D, ∀ φ ∈ D, h0 ψ φ = h0 φ ψ
   /-- The coupling of one-body potentials to configurations. -/
   L : P →ₗ[ℝ] (X → ℝ)
@@ -70,10 +72,12 @@ def IsGS (w : P) (ψ : X → ℝ) : Prop :=
   ψ ∈ S.D ∧ 0 < ip (μ := μ) ψ ψ ∧
     ∀ φ ∈ S.D, Q S w ψ * ip (μ := μ) φ φ ≤ Q S w φ * ip (μ := μ) ψ ψ
 
-/-- The form domain separates functions (fundamental lemma of the calculus of variations). -/
+/-- The form domain separates the functions `(L w - c) ψ` (fundamental lemma of the calculus of
+variations). -/
 def Sep : Prop :=
-  ∀ g : X → ℝ, (∀ φ ∈ S.D, Integrable (fun x => g x * φ x) μ) →
-    (∀ φ ∈ S.D, ∫ x, g x * φ x ∂μ = 0) → g =ᵐ[μ] 0
+  ∀ (w : P) (c : ℝ) (ψ : X → ℝ), ψ ∈ S.D →
+    (∀ φ ∈ S.D, ∫ x, (S.L w x - c) * ψ x * φ x ∂μ = 0) →
+      (fun x => (S.L w x - c) * ψ x) =ᵐ[μ] 0
 
 /-- Rigidity: a one-body potential whose coupling is a.e. constant is a multiple of `one`. -/
 def RigidL (one : P) : Prop :=
@@ -124,8 +128,11 @@ lemma pf_expand (w : P) {ψ φ : X → ℝ} (hψ : ψ ∈ S.D) (hφ : φ ∈ S.D
 
 lemma h0_expand {ψ φ : X → ℝ} (hψ : ψ ∈ S.D) (hφ : φ ∈ S.D) (s : ℝ) :
     S.h0 (ψ + s • φ) (ψ + s • φ) = S.h0 ψ ψ + 2 * s * S.h0 ψ φ + s ^ 2 * S.h0 φ φ := by
-  simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
-    S.h0_symm φ hφ ψ hψ]
+  have hsφ : s • φ ∈ S.D := S.D.smul_mem s hφ
+  have hψs : ψ + s • φ ∈ S.D := S.D.add_mem hψ hsφ
+  rw [S.h0_add ψ hψ (s • φ) hsφ _ hψs, S.h0_smul s φ hφ _ hψs, S.h0_symm ψ hψ _ hψs,
+    S.h0_symm φ hφ _ hψs, S.h0_add ψ hψ (s • φ) hsφ _ hψ, S.h0_smul s φ hφ _ hψ,
+    S.h0_add ψ hψ (s • φ) hsφ _ hφ, S.h0_smul s φ hφ _ hφ, S.h0_symm φ hφ ψ hψ]
   ring
 
 /-- **Euler–Lagrange equation.** A ground state of `H(w)` with energy `E = ⟨ψ,Hψ⟩/⟨ψ,ψ⟩` satisfies
@@ -177,20 +184,15 @@ theorem strong_hk_of_ucp (hsep : Sep S) {one : P} (hrig : RigidL S one) {v v' : 
   have hD := hψ.1
   set c := Q S v ψ / ip (μ := μ) ψ ψ - Q S v' ψ / ip (μ := μ) ψ ψ
   set g : X → ℝ := fun x => (S.L (v - v') x - c) * ψ x
-  have hint : ∀ φ ∈ S.D, Integrable (fun x => g x * φ x) μ := by
-    intro φ hφ
-    have := (S.int_L (v - v') ψ φ hD hφ).sub ((S.int_sq ψ φ hD hφ).const_mul c)
-    refine this.congr (Filter.Eventually.of_forall fun x => ?_)
-    simp only [g, Pi.sub_apply]; ring
-  have hzero : ∀ φ ∈ S.D, ∫ x, g x * φ x ∂μ = 0 := by
+  have hzero : ∀ φ ∈ S.D, ∫ x, (S.L (v - v') x - c) * ψ x * φ x ∂μ = 0 := by
     intro φ hφ
     have e1 := euler_lagrange hψ hφ
     have e2 := euler_lagrange hψ' hφ
-    have hsplit : ∫ x, g x * φ x ∂μ =
+    have hsplit : ∫ x, (S.L (v - v') x - c) * ψ x * φ x ∂μ =
         (pf S v ψ φ - pf S v' ψ φ) - c * ip (μ := μ) ψ φ := by
-      have hpt : (fun x => g x * φ x) = fun x =>
+      have hpt : (fun x => (S.L (v - v') x - c) * ψ x * φ x) = fun x =>
           (S.L v x * (ψ x * φ x) - S.L v' x * (ψ x * φ x)) - c * (ψ x * φ x) := by
-        funext x; simp only [g, map_sub, Pi.sub_apply]; ring
+        funext x; simp only [map_sub, Pi.sub_apply]; ring
       rw [hpt, integral_sub (f := fun x => S.L v x * (ψ x * φ x) - S.L v' x * (ψ x * φ x))
         ((S.int_L v ψ φ hD hφ).sub (S.int_L v' ψ φ hD hφ))
         ((S.int_sq ψ φ hD hφ).const_mul c), integral_sub (f := fun x => S.L v x * (ψ x * φ x))
@@ -199,7 +201,7 @@ theorem strong_hk_of_ucp (hsep : Sep S) {one : P} (hrig : RigidL S one) {v v' : 
     rw [hsplit]
     simp only [c]
     linarith
-  have hg := hsep g hint hzero
+  have hg : g =ᵐ[μ] 0 := hsep (v - v') c ψ hD hzero
   have hL : S.L (v - v') =ᵐ[μ] fun _ => c := by
     filter_upwards [hg, hucp] with x hx hx0
     simp only [g, Pi.zero_apply, mul_eq_zero] at hx

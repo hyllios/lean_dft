@@ -31,12 +31,7 @@ variable {C V : Type*} [Fintype C] [DecidableEq C] [MeasurableSpace C]
   [MeasurableSingletonClass C] [Fintype V]
 
 /-- The energy form of a matrix. -/
-def matForm (H0 : Matrix C C ℝ) : (C → ℝ) →ₗ[ℝ] (C → ℝ) →ₗ[ℝ] ℝ :=
-  LinearMap.mk₂ ℝ (fun ψ φ => ψ ⬝ᵥ (H0 *ᵥ φ))
-    (fun a b c => by simp [add_dotProduct])
-    (fun r a b => by simp [smul_dotProduct])
-    (fun a b c => by simp [mulVec_add, dotProduct_add])
-    (fun r a b => by simp [mulVec_smul, dotProduct_smul])
+def matForm (H0 : Matrix C C ℝ) (ψ φ : C → ℝ) : ℝ := ψ ⬝ᵥ (H0 *ᵥ φ)
 
 /-- The coupling `L w (c) = Σᵢ wᵢ nᵢ(c)`. -/
 def latticeL (n : V → C → ℝ) : (V → ℝ) →ₗ[ℝ] (C → ℝ) where
@@ -49,8 +44,10 @@ noncomputable def latticeSetting (H0 : Matrix C C ℝ) (hH0 : H0.IsSymm) (n : V 
     Setting (Measure.count : Measure C) (V → ℝ) where
   D := ⊤
   h0 := matForm H0
+  h0_add a _ b _ c _ := by simp [matForm, add_dotProduct]
+  h0_smul r a _ c _ := by simp [matForm, smul_dotProduct]
   h0_symm ψ _ φ _ := by
-    simp only [matForm, LinearMap.mk₂_apply]
+    simp only [matForm]
     rw [dotProduct_mulVec, ← mulVec_transpose, hH0.eq, dotProduct_comm]
   L := latticeL n
   int_L _ _ _ _ _ := Integrable.of_finite
@@ -65,7 +62,7 @@ lemma ip_lattice (ψ φ : C → ℝ) : ip (μ := Measure.count) ψ φ = ψ ⬝�
 include hH0 in
 lemma Q_lattice (w : V → ℝ) (ψ : C → ℝ) :
     Q (latticeSetting H0 hH0 n) w ψ = qf (hamN H0 n w) ψ := by
-  simp only [Q, pf, latticeSetting, matForm, LinearMap.mk₂_apply, latticeL, LinearMap.coe_mk,
+  simp only [Q, pf, latticeSetting, matForm, latticeL, LinearMap.coe_mk,
     AddHom.coe_mk, integral_count, qf, hamN, add_mulVec, dotProduct]
   rw [← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl; intro c _
@@ -90,10 +87,10 @@ theorem isGS_lattice_iff (w : V → ℝ) (ψ : C → ℝ) :
 include hH0 in
 /-- Separation holds on a finite configuration space. -/
 theorem sep_lattice : Sep (latticeSetting H0 hH0 n) := by
-  intro g _ h
+  intro w c ψ _ h
   rw [Filter.EventuallyEq, Measure.ae_count_iff]
-  intro c
-  have := h (Pi.single c 1) (Submodule.mem_top)
+  intro x
+  have := h (Pi.single x 1) (Submodule.mem_top)
   simpa [integral_count, Pi.single_apply] using this
 
 omit [DecidableEq C] in
@@ -113,8 +110,8 @@ lemma ucp_lattice_iff (ψ : C → ℝ) :
 
 include hH0 in
 /-- **Lattice Hohenberg–Kohn from the general theorem.** At a potential `v` satisfying (H*) (all
-Krylov determinants nonzero), with rigid occupations: if a ground state of `v'` has the same norm and
-density as a ground state of `v`, then `v - v'` is constant. Unique continuation is supplied by
+Krylov determinants nonzero), with rigid occupations: if a ground state of `v'` has the same norm
+and density as a ground state of `v`, then `v - v'` is constant. Unique continuation is supplied by
 (H*): ground states have no zero amplitude. -/
 theorem lattice_hk_of_hstar (hR : Rigid n) {v v' : V → ℝ} {ord : C → ℕ}
     (hv : ∀ c, (kry (hamN H0 n v) c ord).det ≠ 0) {ψ ψ' : C → ℝ}

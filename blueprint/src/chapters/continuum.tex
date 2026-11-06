@@ -63,3 +63,68 @@ continuation ($\psi\neq0$ almost everywhere).
   \leanok
   Test with indicator functions; (H*) gives full support of ground states.
 \end{proof}
+
+\section{One particle in a box: an unconditional theorem}
+
+One particle on $[0,1]$ with hard walls, kinetic energy $\int\psi'^2$, form domain the $C^2$ functions vanishing at
+$0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\ref{thm:hk_continuum} is proved.
+
+\begin{lemma}[The box setting]
+  \label{lem:box_setting}
+  \lean{LatticeDFT.Continuum.Box.μ1, LatticeDFT.Continuum.Box.Dom, LatticeDFT.Continuum.Box.mem_Dom,
+    LatticeDFT.Continuum.Box.Pot, LatticeDFT.Continuum.Box.ext, LatticeDFT.Continuum.Box.continuous_ext,
+    LatticeDFT.Continuum.Box.Lbox, LatticeDFT.Continuum.Box.integrable_of_continuous, LatticeDFT.Continuum.Box.kin,
+    LatticeDFT.Continuum.Box.two_ge_one, LatticeDFT.Continuum.Box.diff_of_mem,
+    LatticeDFT.Continuum.Box.cont_deriv_of_mem, LatticeDFT.Continuum.Box.setting,
+    LatticeDFT.Continuum.Box.eq_zero_of_integral, LatticeDFT.Continuum.Box.sep_box, LatticeDFT.Continuum.Box.one,
+    LatticeDFT.Continuum.Box.rigidL_box}
+  \leanok
+  \uses{def:continuum_setting}
+  The box is a setting in which separation (fundamental lemma of the calculus of variations, with smooth test
+  functions supported in $(0,1)$) and rigidity (a continuous potential that is a.e.\ constant is constant) hold.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Mathlib's fundamental lemma on open sets; continuity and density of $(0,1)$ in $[0,1]$.
+\end{proof}
+
+\begin{lemma}[Ground states solve the Schr\"odinger equation]
+  \label{lem:box_ode}
+  \lean{LatticeDFT.Continuum.Box.energy, LatticeDFT.Continuum.Box.ode_of_isGS}
+  \leanok
+  \uses{lem:box_setting, lem:euler_lagrange}
+  A ground state satisfies $\psi''=(v-E)\psi$ on $(0,1)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Integrate the weak equation by parts (the boundary terms vanish) and apply the fundamental lemma.
+\end{proof}
+
+\begin{theorem}[Unique continuation in the box]
+  \label{thm:box_ucp}
+  \lean{LatticeDFT.Continuum.Box.deriv_eq_zero_of_accPt, LatticeDFT.Continuum.Box.field,
+    LatticeDFT.Continuum.Box.lipschitz_field, LatticeDFT.Continuum.Box.eq_zero_of_accPt,
+    LatticeDFT.Continuum.Box.ucp_of_isGS}
+  \leanok
+  \uses{lem:box_ode}
+  A ground state vanishes only on a null set.
+\end{theorem}
+\begin{proof}
+  \leanok
+  If the zeros accumulated at $x_0\in(0,1)$, then $\psi(x_0)=\psi'(x_0)=0$, and uniqueness for the linear ODE
+  $(\psi,\psi')'=(\psi',(v-E)\psi)$ gives $\psi\equiv0$ on $(0,1)$, contradicting $\langle\psi,\psi\rangle>0$. So the
+  zeros in each $[1/(k+2),1-1/(k+2)]$ are finite, and all zeros in $(0,1)$ are countable.
+\end{proof}
+
+\begin{theorem}[Hohenberg--Kohn for one particle in a box]
+  \label{thm:hk_box}
+  \lean{LatticeDFT.Continuum.Box.hk_box}
+  \leanok
+  \uses{thm:hk_continuum, lem:box_setting, thm:box_ucp}
+  If ground states of continuous potentials $v$ and $v'$ have the same density $\psi^2=\psi'^2$, then $v-v'$ is
+  constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  All hypotheses of Theorem~\ref{thm:hk_continuum} hold.
+\end{proof}
