@@ -128,3 +128,75 @@ $0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\
   \leanok
   All hypotheses of Theorem~\ref{thm:hk_continuum} hold.
 \end{proof}
+
+\section{Ground states in the box exist}
+
+Hohenberg--Kohn presupposes ground states. In the box they exist for every continuous potential, so
+Theorem~\ref{thm:hk_box} holds without that assumption. The argument is by shooting: solve
+$\psi''=(v-E)\psi$, $\psi(0)=0$, $\psi'(0)=1$, and take the largest $E$ for which $\psi$ stays positive.
+
+\begin{lemma}[The shooting solution]
+  \label{lem:box_solve}
+  \lean{DFT.Continuum.Box.lipschitz_field', DFT.Continuum.Box.exists_bound_W, DFT.Continuum.Box.cl, DFT.Continuum.Box.cl_lip, DFT.Continuum.Box.cl_abs_le, DFT.Continuum.Box.cl_abs_le_R, DFT.Continuum.Box.cl_eq, DFT.Continuum.Box.clamp, DFT.Continuum.Box.lipschitz_clamp, DFT.Continuum.Box.tfield, DFT.Continuum.Box.norm_tfield_le_R, DFT.Continuum.Box.norm_tfield_le, DFT.Continuum.Box.lipschitz_tfield, DFT.Continuum.Box.exists_sol, DFT.Continuum.Box.sol_eq_zero_of_eq_zero, DFT.Continuum.Box.sol_dist_le}
+  \leanok
+  For continuous $W$, $\psi''=W\psi$ with $\psi(0)=0$, $\psi'(0)=1$ has a solution on $(-1,2)$; a solution with
+  $(\psi,\psi')(z)=0$ vanishes identically; and solutions depend continuously on $W$ (a Gr\"onwall bound).
+\end{lemma}
+\begin{proof}
+  \leanok
+  Picard--Lindel\"of for the vector field truncated outside a large ball (globally bounded and Lipschitz), and a
+  Gr\"onwall bound, forward and backward in time, showing that the solution never reaches the truncation.
+\end{proof}
+
+\begin{lemma}[Comparison]
+  \label{lem:box_sturm}
+  \lean{DFT.Continuum.Box.hasDerivAt_fst_of, DFT.Continuum.Box.hasDerivAt_snd_of, DFT.Continuum.Box.continuousOn_of_hd, DFT.Continuum.Box.pos_near_zero, DFT.Continuum.Box.exists_zero_of_nonpos, DFT.Continuum.Box.exists_first_zero, DFT.Continuum.Box.pos_of_nonneg, DFT.Continuum.Box.exists_zero_of_le}
+  \leanok
+  If $W\ge0$ on $[0,1]$, the solution is positive on $(0,1]$; if $W\le-16$, it has a zero in $(0,1)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Up to its first zero $\psi'$ is nondecreasing when $W\ge0$. For $W\le-16$ the Wronskian with $\sin4t$ is
+  nondecreasing on $(0,\pi/4)$, starts at $0$ and would end negative.
+\end{proof}
+
+\begin{lemma}[Picone inequality]
+  \label{lem:box_picone}
+  \lean{DFT.Continuum.Box.tendsto_zero_of_abs_le_mul, DFT.Continuum.Box.picone_interior, DFT.Continuum.Box.picone}
+  \leanok
+  If $\psi''=W\psi$, $\psi>0$ on $(0,1)$, $\psi(0)=\psi(1)=0$, $\psi'(0)>0>\psi'(1)$, then
+  $\int_0^1(\varphi'^2+W\varphi^2)\ge0$ for every $\varphi$ in the form domain.
+\end{lemma}
+\begin{proof}
+  \leanok
+  On $[a,b]\subset(0,1)$, $\varphi'^2+W\varphi^2-(\varphi^2\psi'/\psi)'=(\varphi'-\varphi\psi'/\psi)^2\ge0$; the
+  boundary terms are $O(a)$ and $O(1-b)$.
+\end{proof}
+
+\begin{lemma}[Regularity and extension]
+  \label{lem:box_extend}
+  \lean{DFT.Continuum.Box.two_eq_one_add_one, DFT.Continuum.Box.one_eq_zero_add_one, DFT.Continuum.Box.contDiffOn_sol, DFT.Continuum.Box.exists_contDiff_ext}
+  \leanok
+  The solution is $C^2$ on $(-1,2)$, and agrees on $(-\frac12,\frac32)$ with a $C^2$ function on $\mathbb R$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Bootstrap the derivatives; multiply by a smooth bump.
+\end{proof}
+
+\begin{theorem}[Ground states exist; Hohenberg--Kohn in the box, unconditional]
+  \label{thm:box_exists}
+  \lean{DFT.Continuum.Box.Wof, DFT.Continuum.Box.continuous_Wof, DFT.Continuum.Box.sol, DFT.Continuum.Box.sol_zero, DFT.Continuum.Box.sol_deriv, DFT.Continuum.Box.abs_ext_le, DFT.Continuum.Box.Icc01_sub, DFT.Continuum.Box.continuousOn_sol, DFT.Continuum.Box.sol_close, DFT.Continuum.Box.Pos, DFT.Continuum.Box.pos_low, DFT.Continuum.Box.not_pos_high, DFT.Continuum.Box.bdd, DFT.Continuum.Box.Estar, DFT.Continuum.Box.fst_le_norm, DFT.Continuum.Box.snd_le_norm, DFT.Continuum.Box.star_nonneg, DFT.Continuum.Box.Icc01_mem, DFT.Continuum.Box.star_pos, DFT.Continuum.Box.star_one, DFT.Continuum.Box.star_d1, DFT.Continuum.Box.Q_sub_eq, DFT.Continuum.Box.exists_isGS, DFT.Continuum.Box.hk_box_complete}
+  \leanok
+  \uses{lem:box_solve, lem:box_sturm, lem:box_picone, lem:box_extend, thm:hk_box}
+  Every continuous potential on $[0,1]$ has a ground state in the form domain, and ground states of two continuous
+  potentials with the same density force the potentials to differ by a constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Let $E^*=\sup\{E:\psi_E>0\text{ on }(0,1]\}$; the set is nonempty and bounded by the comparison lemmas. By
+  continuous dependence, $\psi_{E^*}\ge0$ on $[0,1]$; an interior zero would be a double zero, so
+  $\psi_{E^*}>0$ on $(0,1)$; if $\psi_{E^*}(1)>0$, slightly larger $E$ would still be positive, so $\psi_{E^*}(1)=0$, and
+  $\psi_{E^*}'(1)<0$. By Picone no state has energy below $E^*$, while $\psi_{E^*}$ has energy exactly $E^*$
+  (integration by parts). A cutoff puts it in the form domain.
+\end{proof}

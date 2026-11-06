@@ -105,7 +105,8 @@ Schrödinger equation.
   `hk_box` (`Continuum/Box`) is an unconditional continuum case: one particle on `[0, 1]` with hard
   walls and a continuous potential. A ground state solves `ψ'' = (v - E)ψ`, its zeros cannot
   accumulate (ODE uniqueness), so it vanishes only on a null set, and equal densities `ψ² = ψ'²` force
-  `v - v'` to be constant.
+  `v - v'` to be constant. Ground states exist for every continuous potential (`exists_isGS`, by
+  shooting and the Picone inequality), so `hk_box_complete` needs no assumption at all.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -194,6 +195,7 @@ the lattice results as a special case. Module paths below are relative to these 
 |---|---|
 | `HK`, `FromLattice` | Hohenberg–Kohn on a general configuration space `(X, μ)`, conditional on unique continuation; the lattice as the counting-measure instance, with (H\*) supplying unique continuation |
 | `Box` | one particle in a box with a continuous potential: unique continuation proved (ODE uniqueness), unconditional continuum Hohenberg–Kohn `hk_box` |
+| `BoxSolve`, `BoxSturm`, `BoxPicone`, `BoxExtend`, `BoxGround` | existence of ground states in the box by shooting (truncated Picard–Lindelöf + Grönwall, Sturm comparison, Picone inequality, cutoff extension); `hk_box_complete`: Hohenberg–Kohn in the box with no assumption on ground states |
 
 About 13,000 lines of Lean in total.
 
