@@ -109,6 +109,10 @@ Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Ma
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
 * Time-dependent DFT: planned.
 
+## License
+
+Apache 2.0 (see `LICENSE`), the same license as Mathlib.
+
 ## Authors
 
 Miguel A. L. Marques. The formalization was developed with the assistance of Claude (Anthropic).
