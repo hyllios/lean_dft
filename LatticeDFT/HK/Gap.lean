@@ -4,8 +4,9 @@ import LatticeDFT.HK.Basic
 # Gapped ground states and invisible potential directions
 
 * `unique_of_gap`: a gapped ground state is unique up to scale.
-* `persist_of_gap`: if `W = Σ_i w_i n_i` is constant on the support of a gapped ground state, the state remains
-  the ground state of `H(v + ε w)` for all `|ε| · max|W − κ| ≤ gap` (both signs of `ε`).
+* `persist_of_gap`: if `W = Σ_i w_i n_i` is constant on the support of a gapped ground state, the
+  state remains the ground state of `H(v + ε w)` for all `|ε| · max|W − κ| ≤ gap` (both signs of
+  `ε`).
 -/
 
 namespace LatticeDFT
@@ -16,6 +17,7 @@ open Matrix
 
 variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V]
 
+omit [DecidableEq C] in
 lemma decomp {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ} (hN : ψ ⬝ᵥ ψ = 1)
     (hE : H *ᵥ ψ = (qf H ψ) • ψ) (φ : C → ℝ) :
     ψ ⬝ᵥ (φ - (ψ ⬝ᵥ φ) • ψ) = 0 ∧
@@ -31,7 +33,8 @@ lemma decomp {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ} (hN : ψ ⬝�
     rw [dotProduct_mulVec, ← mulVec_transpose, hS.eq]
   refine ⟨h0, ?_, ?_⟩
   · conv_lhs => rw [hφ]
-    simp only [add_dotProduct, dotProduct_add, smul_dotProduct, dotProduct_smul, smul_eq_mul, hN, h0,
+    simp only [add_dotProduct, dotProduct_add, smul_dotProduct, dotProduct_smul, smul_eq_mul, hN,
+        h0,
       dotProduct_comm χ ψ]
     ring
   · have hχψ : χ ⬝ᵥ (H *ᵥ ψ) = 0 := by rw [hE, dotProduct_smul, dotProduct_comm, h0, smul_zero]
@@ -43,14 +46,17 @@ lemma decomp {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ} (hN : ψ ⬝�
       dotProduct_smul, smul_eq_mul, hχψ, hψχ, ← hq]
     ring
 
+omit [DecidableEq C] in
 lemma dot_self_nonneg (χ : C → ℝ) : 0 ≤ χ ⬝ᵥ χ := by
   simp only [dotProduct]; exact Finset.sum_nonneg (fun i _ => mul_self_nonneg _)
 
+omit [DecidableEq C] in
 /-- A ground state with a spectral gap `g > 0` (in the variational sense) is unique up to scale. -/
 theorem unique_of_gap {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ} (hψ : IsGroundState H ψ)
     (hN : ψ ⬝ᵥ ψ = 1) {g : ℝ} (hg : 0 < g)
     (hgap : ∀ χ, ψ ⬝ᵥ χ = 0 → (qf H ψ + g) * (χ ⬝ᵥ χ) ≤ qf H χ)
     {φ : C → ℝ} (hφ : IsGroundState H φ) : φ = (ψ ⬝ᵥ φ) • ψ := by
+  classical
   have hE : H *ᵥ ψ = (qf H ψ) • ψ := by
     have := isGroundState_eigen hS hψ; rwa [hN, div_one] at this
   obtain ⟨h0, hn, hq⟩ := decomp hS hN hE φ
@@ -82,7 +88,8 @@ theorem persist_of_gap {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → 
       simp only [dotProduct, Finset.mul_sum, ← Finset.sum_add_distrib]
       apply Finset.sum_congr rfl; intro c _; ring
     rw [qf_hamN, qf_hamN, ← e2, ← e1]
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib, Finset.mul_sum]
+    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib,
+        Finset.mul_sum]
     ring_nf
   -- pointwise: (W c - κ) ψ c = 0
   have hz : ∀ c, (W c - κ) * ψ c = 0 := by

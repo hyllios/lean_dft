@@ -3,8 +3,9 @@ import LatticeDFT.Fermions.Configurations
 /-!
 # Slater determinants in first quantisation
 
-`slater_eigen`: for orbitals with `h φ_j = ε_j φ_j`, the Slater amplitude `Ψ(τ) = det[φ_j(τ_k)]` satisfies
-`Σ_k Σ_b h(τ_k, b) Ψ(τ with τ_k := b) = (Σ_j ε_j) Ψ(τ)`; signs and Pauli exclusion come from the determinant.
+`slater_eigen`: for orbitals with `h φ_j = ε_j φ_j`, the Slater amplitude `Ψ(τ) = det[φ_j(τ_k)]`
+satisfies `Σ_k Σ_b h(τ_k, b) Ψ(τ with τ_k := b) = (Σ_j ε_j) Ψ(τ)`; signs and Pauli exclusion come
+from the determinant.
 -/
 
 namespace LatticeDFT
@@ -23,7 +24,8 @@ lemma slater_eq_sum (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) :
     slater φ τ = ∑ σ : Equiv.Perm (Fin N), (Equiv.Perm.sign σ : ℝ) * ∏ j, φ j (τ (σ j)) := by
   simp [slater, Matrix.det_apply, Units.smul_def]
 
-/-- One term of the Leibniz expansion, summed against `h` in the slot occupied by orbital `σ⁻¹ i`. -/
+/-- One term of the Leibniz expansion, summed against `h` in the slot occupied by orbital `σ⁻¹ i`.
+-/
 lemma sum_update_prod (h : Matrix (Fin M) (Fin M) ℝ) (φ : Fin N → Fin M → ℝ) (ε : Fin N → ℝ)
     (hφ : ∀ j, h *ᵥ φ j = ε j • φ j) (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N)) (i : Fin N) :
     ∑ b, h (τ i) b * ∏ j, φ j (Function.update τ i b (σ j)) =
@@ -60,7 +62,8 @@ theorem slater_eigen (h : Matrix (Fin M) (Fin M) ℝ) (φ : Fin N → Fin M → 
   rw [Finset.sum_congr rfl (fun i _ => Finset.sum_comm), Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro σ _
-  have key : ∀ i, ∑ b, h (τ i) b * ((Equiv.Perm.sign σ : ℝ) * ∏ j, φ j (Function.update τ i b (σ j))) =
+  have key : ∀ i, ∑ b, h (τ i) b *
+      ((Equiv.Perm.sign σ : ℝ) * ∏ j, φ j (Function.update τ i b (σ j))) =
       (Equiv.Perm.sign σ : ℝ) * (ε (σ.symm i) * ∏ j, φ j (τ (σ j))) := by
     intro i
     rw [← sum_update_prod h φ ε hφ τ σ i, Finset.mul_sum]

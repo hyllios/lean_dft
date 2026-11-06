@@ -3,7 +3,8 @@ import LatticeDFT.Fermions.SecondQuantization
 /-!
 # Powers of the many-body Hamiltonian via first quantisation
 
-* `H1 h`: first-quantised one-body operator on functions of position tuples; `H1_conf` (it acts as `Γ h`).
+* `H1 h`: first-quantised one-body operator on functions of position tuples; `H1_conf` (it acts as
+  `Γ h`).
 * `gamma_pow_apply`, `H1_iter_prod` (word expansion on product states),
 * `gamma_pow_formula`: `(Γ h ^ k)_{s c} = Σ_σ sign σ Σ_ι Π_l (h ^ cnt ι l)_{s_l, c_{σ⁻¹ l}}`.
 -/
@@ -21,7 +22,8 @@ def H1 (h : Matrix (Fin M) (Fin M) ℝ) (f : (Fin N → Fin M) → ℝ) : (Fin N
   fun τ => ∑ i, ∑ b, h (τ i) b * f (Function.update τ i b)
 
 def Antisym (f : (Fin N → Fin M) → ℝ) : Prop :=
-  ∀ (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N)), f (fun k => τ (σ k)) = (Equiv.Perm.sign σ : ℝ) * f τ
+  ∀ (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N)), f (fun k => τ (σ k)) =
+      (Equiv.Perm.sign σ : ℝ) * f τ
 
 lemma antisym_zero_of_not_injective {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) {τ : Fin N → Fin M}
     (h : ¬ Function.Injective τ) : f τ = 0 := by
@@ -95,7 +97,8 @@ lemma H1_antisym (h : Matrix (Fin M) (Fin M) ℝ) {f : (Fin N → Fin M) → ℝ
   simp only [Equiv.apply_symm_apply]
   rw [hupd, hf]; ring
 
-lemma H1_conf (h : Matrix (Fin M) (Fin M) ℝ) {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) (s : Conf M N) :
+lemma H1_conf (h : Matrix (Fin M) (Fin M) ℝ) {f : (Fin N → Fin M) → ℝ} (hf : Antisym f)
+    (s : Conf M N) :
     H1 h f (τs s) = ((Γ h : Matrix (Conf M N) (Conf M N) ℝ) *ᵥ (fun s' => f (τs s'))) s := by
   simp only [H1, Matrix.mulVec, dotProduct, Γ]
   have e : ∀ k b, h (τs s k) b * f (Function.update (τs s) k b) =
@@ -129,7 +132,8 @@ def prodFun (g : Fin N → Fin M → ℝ) : (Fin N → Fin M) → ℝ := fun τ 
 /-- Number of times particle `l` occurs in a word. -/
 def cnt {k : ℕ} (ι : Fin k → Fin N) (l : Fin N) : ℕ := (Finset.univ.filter (fun j => ι j = l)).card
 
-lemma H1_sum (h : Matrix (Fin M) (Fin M) ℝ) {α : Type*} (S : Finset α) (F : α → (Fin N → Fin M) → ℝ) :
+lemma H1_sum (h : Matrix (Fin M) (Fin M) ℝ) {α : Type*} (S : Finset α)
+    (F : α → (Fin N → Fin M) → ℝ) :
     H1 h (fun τ => ∑ a ∈ S, F a τ) = fun τ => ∑ a ∈ S, H1 h (F a) τ := by
   funext τ
   simp only [H1]

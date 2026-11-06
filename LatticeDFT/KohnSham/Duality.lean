@@ -5,13 +5,13 @@ import Mathlib.Analysis.Convex.Function
 /-!
 # Lieb's functional and convex duality
 
-Setting: configurations `C`, sites `V`, symmetric `H0`, occupations `n`; `E(v)` is the ground-state energy of
-`H(v) = hamN H0 n v`.
+Setting: configurations `C`, sites `V`, symmetric `H0`, occupations `n`; `E(v)` is the ground-state
+energy of `H(v) = hamN H0 n v`.
 * `DensDomain n`: densities `ρ = Σ_c λ_c n(c)` with `λ` a probability vector (ensemble densities of
   configurations).
 * `lieb ρ = sup_v [E(v) − v·ρ]`: Lieb's universal functional (Legendre transform of `E`).
-* `lieb_duality`: `E(v) = min_{ρ ∈ DensDomain} [F(ρ) + v·ρ]`, the minimum being attained at the density of any
-  ground state of `H(v)`.
+* `lieb_duality`: `E(v) = min_{ρ ∈ DensDomain} [F(ρ) + v·ρ]`, the minimum being attained at the
+  density of any ground state of `H(v)`.
 * `lieb_convexOn`: `F` is convex on the density domain.
 -/
 
@@ -59,11 +59,13 @@ lemma le_lieb {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) {ρ 
     (hρ : ρ ∈ DensDomain n) (v : V → ℝ) : Egs H0 n v - v ⬝ᵥ ρ ≤ lieb H0 n ρ :=
   le_csSup (lieb_bdd hH0 n hρ) ⟨v, rfl⟩
 
+omit [DecidableEq C] [Fintype V] [Nonempty C] in
 lemma dens_mem_domain (n : V → C → ℝ) {ψ : C → ℝ} (hn : ψ ⬝ᵥ ψ = 1) : dens n ψ ∈ DensDomain n := by
   refine ⟨fun c => ψ c ^ 2, fun c => sq_nonneg _, by simpa [dotProduct, sq] using hn, ?_⟩
   funext i; simp [dens, mul_comm]
 
-/-- **Lieb duality.** `E(v) ≤ F(ρ) + v·ρ` on the density domain, with equality at ground-state densities. -/
+/-- **Lieb duality.** `E(v) ≤ F(ρ) + v·ρ` on the density domain, with equality at ground-state
+densities. -/
 theorem lieb_duality {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) (v : V → ℝ) :
     (∀ ρ ∈ DensDomain n, Egs H0 n v ≤ lieb H0 n ρ + v ⬝ᵥ ρ) ∧
     ∀ ψ, IsGroundState (hamN H0 n v) ψ → ψ ⬝ᵥ ψ = 1 →

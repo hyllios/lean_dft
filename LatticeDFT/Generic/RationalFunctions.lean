@@ -3,10 +3,10 @@ import LatticeDFT.Generic.Krylov
 /-!
 # Rational functions on generic points and simultaneous non-vanishing
 
-`RatOn f`: on every injective `θ`, `f θ = P(θ)/Q(θ)` with `Q(θ) ≠ 0`. Closed under constants, `+`, `*`, finite
-sums/products and division by `θ i − θ j`.
-`exists_common_ne`: finitely many `RatOn` functions, each nonzero at some injective point, are simultaneously
-nonzero at a common injective point, which can also avoid finitely many nonzero polynomials.
+`RatOn f`: on every injective `θ`, `f θ = P(θ)/Q(θ)` with `Q(θ) ≠ 0`. Closed under constants, `+`,
+`*`, finite sums/products and division by `θ i − θ j`. `exists_common_ne`: finitely many `RatOn`
+functions, each nonzero at some injective point, are simultaneously nonzero at a common injective
+point, which can also avoid finitely many nonzero polynomials.
 -/
 
 namespace LatticeDFT
@@ -24,14 +24,16 @@ def RatOn (f : (Fin M → ℝ) → ℝ) : Prop :=
 lemma RatOn.const (a : ℝ) : RatOn (M := M) (fun _ => a) :=
   ⟨C a, 1, fun θ _ => ⟨by simp, by simp⟩⟩
 
-lemma RatOn.add {f g : (Fin M → ℝ) → ℝ} (hf : RatOn f) (hg : RatOn g) : RatOn (fun θ => f θ + g θ) := by
+lemma RatOn.add {f g : (Fin M → ℝ) → ℝ} (hf : RatOn f) (hg : RatOn g) : RatOn
+    (fun θ => f θ + g θ) := by
   obtain ⟨P1, Q1, h1⟩ := hf; obtain ⟨P2, Q2, h2⟩ := hg
   refine ⟨P1 * Q2 + P2 * Q1, Q1 * Q2, fun θ hθ => ?_⟩
   obtain ⟨n1, e1⟩ := h1 θ hθ; obtain ⟨n2, e2⟩ := h2 θ hθ
   refine ⟨by simp [n1, n2], ?_⟩
   simp only [map_add, map_mul]; rw [← e1, ← e2]; ring
 
-lemma RatOn.mul {f g : (Fin M → ℝ) → ℝ} (hf : RatOn f) (hg : RatOn g) : RatOn (fun θ => f θ * g θ) := by
+lemma RatOn.mul {f g : (Fin M → ℝ) → ℝ} (hf : RatOn f) (hg : RatOn g) : RatOn
+    (fun θ => f θ * g θ) := by
   obtain ⟨P1, Q1, h1⟩ := hf; obtain ⟨P2, Q2, h2⟩ := hg
   refine ⟨P1 * P2, Q1 * Q2, fun θ hθ => ?_⟩
   obtain ⟨n1, e1⟩ := h1 θ hθ; obtain ⟨n2, e2⟩ := h2 θ hθ
@@ -56,7 +58,8 @@ lemma RatOn.sum {ι : Type*} (s : Finset ι) {f : ι → (Fin M → ℝ) → ℝ
   | empty => simpa using RatOn.const (M := M) 0
   | insert a s ha ih =>
     simp only [Finset.sum_insert ha]
-    exact (hf a (Finset.mem_insert_self a s)).add (ih (fun i hi => hf i (Finset.mem_insert_of_mem hi)))
+    exact (hf a (Finset.mem_insert_self a s)).add
+        (ih (fun i hi => hf i (Finset.mem_insert_of_mem hi)))
 
 lemma RatOn.prod {ι : Type*} (s : Finset ι) {f : ι → (Fin M → ℝ) → ℝ} (hf : ∀ i ∈ s, RatOn (f i)) :
     RatOn (fun θ => ∏ i ∈ s, f i θ) := by
@@ -65,7 +68,8 @@ lemma RatOn.prod {ι : Type*} (s : Finset ι) {f : ι → (Fin M → ℝ) → �
   | empty => simpa using RatOn.const (M := M) 1
   | insert a s ha ih =>
     simp only [Finset.prod_insert ha]
-    exact (hf a (Finset.mem_insert_self a s)).mul (ih (fun i hi => hf i (Finset.mem_insert_of_mem hi)))
+    exact (hf a (Finset.mem_insert_self a s)).mul
+        (ih (fun i hi => hf i (Finset.mem_insert_of_mem hi)))
 
 lemma RatOn.ite (p : Prop) [Decidable p] {f g : (Fin M → ℝ) → ℝ} (hf : RatOn f) (hg : RatOn g) :
     RatOn (fun θ => if p then f θ else g θ) := by
@@ -73,7 +77,8 @@ lemma RatOn.ite (p : Prop) [Decidable p] {f g : (Fin M → ℝ) → ℝ} (hf : R
   · simpa [hp] using hf
   · simpa [hp] using hg
 
-lemma RatOn.congr {f g : (Fin M → ℝ) → ℝ} (hf : RatOn f) (h : ∀ θ, Function.Injective θ → f θ = g θ) :
+lemma RatOn.congr {f g : (Fin M → ℝ) → ℝ} (hf : RatOn f)
+    (h : ∀ θ, Function.Injective θ → f θ = g θ) :
     RatOn g := by
   obtain ⟨P, Q, hPQ⟩ := hf
   exact ⟨P, Q, fun θ hθ => by rw [← h θ hθ]; exact hPQ θ hθ⟩

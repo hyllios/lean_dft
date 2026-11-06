@@ -3,19 +3,20 @@ import Mathlib
 /-!
 # Convergence of the regularised Kohn–Sham iteration (MYKSODA), abstract form
 
-Penz, Laestadius, Tellgren, Ruggenthaler, PRL 123, 037401 (2019), with the erratum (and P. E. Lammert)
-correcting the convergence claim: the iterates need not converge, but they are bounded and every
-accumulation point is a ground-state quasi-density, with the Kohn–Sham potentials converging along the
-same subsequence.
+Penz, Laestadius, Tellgren, Ruggenthaler, PRL 123, 037401 (2019), with the erratum (and P. E.
+Lammert) correcting the convergence claim: the iterates need not converge, but they are bounded and
+every accumulation point is a ground-state quasi-density, with the Kohn–Sham potentials converging
+along the same subsequence.
 
-The setting is a finite-dimensional real inner-product space `E` and two functionals `F` (interacting,
-regularised) and `T` (non-interacting reference, regularised) with "gradients" `gF`, `gT` satisfying the two
-inequalities characteristic of Moreau–Yosida envelopes (`IsMYSmooth`): a supporting hyperplane below and a
-parabola of curvature `1/ε` above. No differentiability is used.
+The setting is a finite-dimensional real inner-product space `E` and two functionals `F`
+(interacting, regularised) and `T` (non-interacting reference, regularised) with "gradients" `gF`,
+`gT` satisfying the two inequalities characteristic of Moreau–Yosida envelopes (`IsMYSmooth`): a
+supporting hyperplane below and a parabola of curvature `1/ε` above. No differentiability is used.
 
 The iteration, for an external potential `v`:
 * (a) `w i = v + gF (x i) - gT (x i)` (Kohn–Sham potential);
-* (b) `x' i` is a regularised ground-state quasi-density of the reference system: `gT (x' i) = - w i`;
+* (b) `x' i` is a regularised ground-state quasi-density of the reference system:
+  `gT (x' i) = - w i`;
 * (c) `x (i+1) = x i + s i • (x' i - x i)` with the step `s i = -ε ⟪gF (x i) + v, d⟫ / ‖d‖²`.
 -/
 
@@ -25,8 +26,8 @@ namespace LatticeDFT
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
-/-- `g` is a gradient of `F` in the Moreau–Yosida sense: supporting hyperplanes from below, curvature at
-most `1/ε` from above. -/
+/-- `g` is a gradient of `F` in the Moreau–Yosida sense: supporting hyperplanes from below,
+curvature at most `1/ε` from above. -/
 structure IsMYSmooth (ε : ℝ) (F : E → ℝ) (g : E → E) : Prop where
   lower : ∀ x y, F x + ⟪g x, y - x⟫ ≤ F y
   upper : ∀ x y, F y ≤ F x + ⟪g x, y - x⟫ + ‖y - x‖ ^ 2 / (2 * ε)
@@ -87,7 +88,7 @@ lemma norm_sub_le (h : IsMYSmooth ε F g) (hε : 0 < ε) (x y : E) :
 lemma continuous (h : IsMYSmooth ε F g) (hε : 0 < ε) : Continuous g := by
   refine (LipschitzWith.of_dist_le_mul (K := ⟨1 / ε, by positivity⟩) fun x y => ?_).continuous
   rw [dist_eq_norm, dist_eq_norm]
-  show _ ≤ (1 / ε) * _
+  change _ ≤ (1 / ε) * _
   rw [div_mul_eq_mul_div, one_mul, le_div_iff₀ hε, mul_comm]
   exact h.norm_sub_le hε x y
 
@@ -152,10 +153,11 @@ lemma continuous_fun (h : IsMYSmooth ε F g) : Continuous F := by
   have h2 := hu.tendsto x
   simp only [sub_self, inner_zero_right, add_zero, norm_zero] at h1 h2
   simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_div, add_zero] at h2
-  exact tendsto_of_tendsto_of_tendsto_of_le_of_le h1 h2 (fun y => h.lower x y) (fun y => h.upper x y)
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le h1 h2 (fun y => h.lower x y)
+      (fun y => h.upper x y)
 
-/-- **Existence of regularised ground-state quasi-densities.** If the sublevel sets of `F + ⟪w,·⟫` are
-bounded, then `F + ⟪w,·⟫` has a minimiser `y`, and `g y + w = 0`. -/
+/-- **Existence of regularised ground-state quasi-densities.** If the sublevel sets of `F + ⟪w,·⟫`
+are bounded, then `F + ⟪w,·⟫` has a minimiser `y`, and `g y + w = 0`. -/
 lemma exists_stationary [ProperSpace E] (h : IsMYSmooth ε F g) (hε : 0 < ε) (w : E)
     (hsub : ∀ c, ∃ R, ∀ y, F y + ⟪w, y⟫ ≤ c → ‖y‖ ≤ R) : ∃ y, g y + w = 0 := by
   have hG := h.add_linear w
@@ -186,8 +188,8 @@ lemma exists_stationary [ProperSpace E] (h : IsMYSmooth ε F g) (hε : 0 < ε) (
 
 end IsMYSmooth
 
-/-- **The MYKSODA iteration is well defined**: from any starting quasi-density, step (b) can always be
-carried out, so iterates satisfying (b), (c) exist. -/
+/-- **The MYKSODA iteration is well defined**: from any starting quasi-density, step (b) can always
+be carried out, so iterates satisfying (b), (c) exist. -/
 theorem myksoda_exists [ProperSpace E] {ε : ℝ} (hε : 0 < ε) {T : E → ℝ} {gF gT : E → E}
     (hT : IsMYSmooth ε T gT) (hsubT : ∀ w c, ∃ R, ∀ y, T y + ⟪w, y⟫ ≤ c → ‖y‖ ≤ R) (v x0 : E) :
     ∃ x x' : ℕ → E, x 0 = x0 ∧ (∀ i, gT (x' i) = -(v + gF (x i) - gT (x i))) ∧
@@ -195,7 +197,8 @@ theorem myksoda_exists [ProperSpace E] {ε : ℝ} (hε : 0 < ε) {T : E → ℝ}
   have hsel : ∀ y : E, ∃ y', gT y' + (v + gF y - gT y) = 0 :=
     fun y => hT.exists_stationary hε _ (hsubT _)
   choose sel hsel using hsel
-  let x : ℕ → E := fun i => Nat.rec x0 (fun _ y => y + ksStep ε (gF y + v) (sel y - y) • (sel y - y)) i
+  let x : ℕ → E :=
+      fun i => Nat.rec x0 (fun _ y => y + ksStep ε (gF y + v) (sel y - y) • (sel y - y)) i
   refine ⟨x, fun i => sel (x i), rfl, fun i => ?_, fun i => rfl⟩
   exact eq_neg_of_add_eq_zero_left (hsel (x i))
 
@@ -205,16 +208,17 @@ variable {ε : ℝ} {F T : E → ℝ} {gF gT : E → E} {v : E} {x x' : ℕ → 
 
 /-- **Convergence of the regularised Kohn–Sham iteration (MYKSODA).**
 
-Hypotheses: `F`, `T` are Moreau–Yosida-smooth with parameter `ε` (`hF`, `hT`); the reference proximal
-points `y - ε gT y` are bounded (`hB`, a bounded density domain); sublevel sets of `F + ⟪v,·⟫` are bounded
-(`hsub`); and `x`, `x'` follow the iteration (b), (c).
+Hypotheses: `F`, `T` are Moreau–Yosida-smooth with parameter `ε` (`hF`, `hT`); the reference
+proximal points `y - ε gT y` are bounded (`hB`, a bounded density domain); sublevel sets of
+`F + ⟪v,·⟫` are bounded (`hsub`); and `x`, `x'` follow the iteration (b), (c).
 
-Conclusions: (1) the energies `F (x i) + ⟪v, x i⟫` decrease; (2) the gradient `gF (x i) + v` tends to `0`;
-(3) there is an accumulation point; (4) every accumulation point `z` (along `φ`) is a ground-state
-quasi-density, `gF z + v = 0`, it minimises `F + ⟪v,·⟫`, the energies converge to its energy, and the
-Kohn–Sham potentials `w (φ i)` converge to `-gT z`, the potential that reproduces `z` in the reference
-system. -/
-theorem myksoda_converges [ProperSpace E] (hε : 0 < ε) (hF : IsMYSmooth ε F gF) (hT : IsMYSmooth ε T gT)
+Conclusions: (1) the energies `F (x i) + ⟪v, x i⟫` decrease; (2) the gradient `gF (x i) + v` tends
+to `0`; (3) there is an accumulation point; (4) every accumulation point `z` (along `φ`) is a
+ground-state quasi-density, `gF z + v = 0`, it minimises `F + ⟪v,·⟫`, the energies converge to its
+energy, and the Kohn–Sham potentials `w (φ i)` converge to `-gT z`, the potential that reproduces
+`z` in the reference system. -/
+theorem myksoda_converges [ProperSpace E] (hε : 0 < ε) (hF : IsMYSmooth ε F gF)
+    (hT : IsMYSmooth ε T gT)
     (hB : ∃ B, ∀ y, ‖y - ε • gT y‖ ≤ B)
     (hsub : ∀ c, ∃ R, ∀ y, F y + ⟪v, y⟫ ≤ c → ‖y‖ ≤ R)
     (hb : ∀ i, gT (x' i) = -(v + gF (x i) - gT (x i)))
@@ -299,7 +303,8 @@ theorem myksoda_converges [ProperSpace E] (hε : 0 < ε) (hF : IsMYSmooth ε F g
         _ ≤ _ := by rw [mul_div_assoc] at *; linarith
     have h3 : ε * ‖gT (x' i)‖ ≤ ε * (‖v‖ + ‖gF 0‖ + ‖gT 0‖) + 2 * R := by
       have := mul_le_mul_of_nonneg_left h2 hε.le
-      rw [mul_add, mul_div_assoc', mul_comm ε (2 * R), mul_div_assoc, div_self hε.ne', mul_one] at this
+      rw [mul_add, mul_div_assoc', mul_comm ε (2 * R), mul_div_assoc, div_self hε.ne',
+          mul_one] at this
       exact this
     calc ‖d i‖ ≤ ‖x' i‖ + ‖x i‖ := norm_sub_le _ _
       _ ≤ _ := by simp only [D]; linarith [hxR i]
@@ -313,7 +318,7 @@ theorem myksoda_converges [ProperSpace E] (hε : 0 < ε) (hF : IsMYSmooth ε F g
       fun i => ?_
     have := step_lower hε (h17 i)
     have h' : ‖h i‖ * ‖d i‖ ≤ ‖h i‖ * D := mul_le_mul_of_nonneg_left (hd i) (norm_nonneg _)
-    show ‖gG (x i)‖ ^ 2 ≤ ‖h i‖ * D / ε ^ 2
+    change ‖gG (x i)‖ ^ 2 ≤ ‖h i‖ * D / ε ^ 2
     rw [le_div_iff₀ (by positivity)]
     simp only [h] at h' ⊢; linarith
   have hg : Tendsto (fun i => gG (x i)) atTop (𝓝 0) := by
@@ -354,11 +359,12 @@ theorem myksoda_converges [ProperSpace E] (hε : 0 < ε) (hF : IsMYSmooth ε F g
           _ ≤ _ := by linarith [hxR i]
       have h4 : ‖gG (x i)‖ * ‖z - x i‖ ≤ ‖gG (x i)‖ * (2 * R) :=
         mul_le_mul_of_nonneg_left h3 (norm_nonneg _)
-      show G (x i) ≤ G z + ‖gG (x i)‖ * (2 * R)
+      change G (x i) ≤ G z + ‖gG (x i)‖ * (2 * R)
       linarith [neg_abs_le ⟪gG (x i), z - x i⟫]
     · -- Kohn–Sham potentials converge
       have h1 : Tendsto (fun i => gG (x (φ i)) - gT (x (φ i))) atTop (𝓝 (gG z - gT z)) :=
-        (((hF.continuous hε).add continuous_const).sub (hT.continuous hε)).continuousAt.tendsto.comp hlim
+        (((hF.continuous hε).add continuous_const).sub (hT.continuous hε)).continuousAt.tendsto.comp
+            hlim
       rw [hgz, zero_sub] at h1
       refine h1.congr fun i => ?_
       simp only [gG]; abel

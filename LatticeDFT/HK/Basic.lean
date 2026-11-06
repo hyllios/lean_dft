@@ -3,12 +3,14 @@ import LatticeDFT.Basic.GroundState
 /-!
 # Hohenberg–Kohn theorems on a finite configuration space
 
-Many-body Hamiltonian `hamN H0 n v = H0 + diag(Σ_i v_i n_i)` on configurations `C`, density `dens n ψ`.
-* `weak_hk`: equal ground-state densities ⇒ each ground state is a ground state of both Hamiltonians.
-* `strong_hk`: if no non-constant `w` makes `Σ_i w_i n_i` constant on the support of the ground state, the
-  potential is determined up to a constant.
-* `nonunique_of_minimiser`: ground states living on the minimum set of `W = Σ_i w_i n_i` are shared by the whole
-  half-line `v + ε w`, `ε ≥ 0` (spin-DFT non-uniqueness mechanism).
+Many-body Hamiltonian `hamN H0 n v = H0 + diag(Σ_i v_i n_i)` on configurations `C`, density
+`dens n ψ`.
+* `weak_hk`: equal ground-state densities ⇒ each ground state is a ground state of both
+  Hamiltonians.
+* `strong_hk`: if no non-constant `w` makes `Σ_i w_i n_i` constant on the support of the ground
+  state, the potential is determined up to a constant.
+* `nonunique_of_minimiser`: ground states living on the minimum set of `W = Σ_i w_i n_i` are shared
+  by the whole half-line `v + ε w`, `ε ≥ 0` (spin-DFT non-uniqueness mechanism).
 -/
 
 namespace LatticeDFT
@@ -34,8 +36,8 @@ lemma qf_hamN (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) (φ : 
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl; intro c _; apply Finset.sum_congr rfl; intro i _; ring
 
-/-- PvL Theorem 7 (weak HK): a shared ground-state density makes each ground state a ground state of the
-other Hamiltonian. -/
+/-- PvL Theorem 7 (weak HK): a shared ground-state density makes each ground state a ground state of
+the other Hamiltonian. -/
 theorem weak_hk {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v v' : V → ℝ} {ψ ψ' : C → ℝ}
     (hψ : IsGroundState (hamN H0 n v) ψ) (hψ' : IsGroundState (hamN H0 n v') ψ')
     (hN : ψ ⬝ᵥ ψ = 1) (hN' : ψ' ⬝ᵥ ψ' = 1) (hd : dens n ψ = dens n ψ') :
@@ -56,6 +58,7 @@ lemma hamN_mulVec_apply (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → �
     (hamN H0 n v *ᵥ ψ) c = (H0 *ᵥ ψ) c + (∑ i, v i * n i c) * ψ c := by
   simp [hamN, Matrix.add_mulVec, Matrix.mulVec_diagonal]
 
+omit [Fintype C] in
 lemma hamN_isSymm {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) (v : V → ℝ) :
     (hamN H0 n v).IsSymm :=
   hH0.add (Matrix.isSymm_diagonal _)
@@ -84,12 +87,14 @@ theorem strong_hk {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} 
 
 
 /-! ### Global (symmetry) mechanism of non-uniqueness — spin-DFT corollary
-If the ground state ψ of H(v) lives only on configurations where W(c) = Σ_i w_i n_i(c) attains its minimum κ,
-then ψ minimises both ⟨H(v)⟩ and ⟨W⟩, hence remains a ground state of H(v + ε w) for every ε ≥ 0: a whole
-half-line of potentials shares ψ (and its density).  No commutation and no spectral gap are needed.
-Spin-DFT reading (Capelle–Vignale / Eschrig–Pickett): sites = (site, spin), w = Zeeman coupling (+1 on ↓, −1 on ↑);
-a fully polarised ground state minimises W, so increasing the field B never changes it — B is not unique. -/
+If the ground state ψ of H(v) lives only on configurations where W(c) = Σ_i w_i n_i(c) attains its
+minimum κ, then ψ minimises both ⟨H(v)⟩ and ⟨W⟩, hence remains a ground state of H(v + ε w) for
+every ε ≥ 0: a whole half-line of potentials shares ψ (and its density). No commutation and no
+spectral gap are needed. Spin-DFT reading (Capelle–Vignale / Eschrig–Pickett): sites = (site, spin),
+w = Zeeman coupling (+1 on ↓, −1 on ↑); a fully polarised ground state minimises W, so increasing
+the field B never changes it — B is not unique. -/
 
+omit [DecidableEq C] in
 lemma dens_weighted (n : V → C → ℝ) (w : V → ℝ) (φ : C → ℝ) :
     ∑ i, w i * dens n φ i = ∑ c, (∑ i, w i * n i c) * φ c ^ 2 := by
   simp only [dens, Finset.mul_sum, Finset.sum_mul]
@@ -103,10 +108,12 @@ theorem nonunique_of_minimiser {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v w 
     {ε : ℝ} (hε : 0 ≤ ε) :
     IsGroundState (hamN H0 n (v + ε • w)) ψ := by
   -- the potential term of v + ε w splits
-  have hsplit : ∀ φ : C → ℝ, qf (hamN H0 n (v + ε • w)) φ = qf (hamN H0 n v) φ + ε * ∑ i, w i * dens n φ i := by
+  have hsplit : ∀ φ : C → ℝ, qf (hamN H0 n (v + ε • w)) φ =
+      qf (hamN H0 n v) φ + ε * ∑ i, w i * dens n φ i := by
     intro φ
     rw [qf_hamN, qf_hamN]
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib, Finset.mul_sum]
+    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib,
+        Finset.mul_sum]
     ring_nf
   -- ⟨W⟩ ≥ κ |φ|², with equality for ψ
   have hW : ∀ φ : C → ℝ, κ * (φ ⬝ᵥ φ) ≤ ∑ i, w i * dens n φ i := by

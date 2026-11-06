@@ -4,8 +4,9 @@ import LatticeDFT.Generic.Krylov
 /-!
 # A maximiser of `E(v) − v·ρ`
 
-Assume nonnegative occupations with a fixed particle number (`Σ_i n_i(c) = N` for all `c`) and a density
-`ρ = Σ_c λ_c n(c)` that is a strictly positive mixture of configuration densities, with rigid occupations.
+Assume nonnegative occupations with a fixed particle number (`Σ_i n_i(c) = N` for all `c`) and a
+density `ρ = Σ_c λ_c n(c)` that is a strictly positive mixture of configuration densities, with
+rigid occupations.
 * `Egs_shift`: `E(v + k) = E(v) + kN`;
 * `Egs_lipschitz`, `continuous_Egs`: `E` is Lipschitz;
 * `coercive`: `E(v) − v·ρ ≤ K − δ‖v‖` on potentials with `Σ_i v_i = 0`;
@@ -23,18 +24,21 @@ variable {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hn0 : �
   (hN : ∀ c, ∑ i, n i c = Nr)
 include hH0 hn0 hN
 
+omit [DecidableEq C] [DecidableEq V] [Nonempty C] in
 lemma sum_dens (φ : C → ℝ) : ∑ i, dens n φ i = Nr * (φ ⬝ᵥ φ) := by
   simp only [dens, dotProduct]
   rw [Finset.sum_comm, Finset.mul_sum]
   apply Finset.sum_congr rfl; intro c _
   rw [← Finset.sum_mul, hN c]; ring
 
+omit [DecidableEq V] [Nonempty C] in
 lemma qf_hamN_shift (v : V → ℝ) (k : ℝ) (φ : C → ℝ) :
     qf (hamN H0 n (v + fun _ => k)) φ = qf (hamN H0 n v) φ + k * Nr * (φ ⬝ᵥ φ) := by
   rw [qf_hamN, qf_hamN]
   simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, ← Finset.mul_sum, sum_dens hH0 hn0 hN]
   ring
 
+omit [DecidableEq V] in
 lemma Egs_shift (v : V → ℝ) (k : ℝ) : Egs H0 n (v + fun _ => k) = Egs H0 n v + k * Nr := by
   obtain ⟨ψ, hψ, hn⟩ := exists_groundState (hamN_isSymm hH0 n v)
   obtain ⟨ψ', hψ', hn'⟩ := exists_groundState (hamN_isSymm hH0 n (v + fun _ => k))
@@ -47,14 +51,17 @@ lemma Egs_shift (v : V → ℝ) (k : ℝ) : Egs H0 n (v + fun _ => k) = Egs H0 n
     rw [qf_hamN_shift hH0 hn0 hN, hn'] at h2
     unfold Egs; linarith
 
+omit [Fintype C] [DecidableEq C] [DecidableEq V] in
 lemma Nr_nonneg : 0 ≤ Nr := by
   obtain ⟨c⟩ := (inferInstance : Nonempty C)
   rw [← hN c]; exact Finset.sum_nonneg fun i _ => hn0 i c
 
+omit [DecidableEq V] [Nonempty C] in
 lemma qf_hamN_diff_le (v v' : V → ℝ) {φ : C → ℝ} (hφ : φ ⬝ᵥ φ = 1) :
     qf (hamN H0 n v) φ ≤ qf (hamN H0 n v') φ + Nr * ‖v - v'‖ := by
   rw [qf_hamN, qf_hamN]
-  have hd : ∀ i, 0 ≤ dens n φ i := fun i => Finset.sum_nonneg fun c _ => mul_nonneg (hn0 i c) (sq_nonneg _)
+  have hd : ∀ i, 0 ≤ dens n φ i :=
+      fun i => Finset.sum_nonneg fun c _ => mul_nonneg (hn0 i c) (sq_nonneg _)
   have : ∑ i, v i * dens n φ i ≤ ∑ i, v' i * dens n φ i + ‖v - v'‖ * ∑ i, dens n φ i := by
     rw [Finset.mul_sum, ← Finset.sum_add_distrib]
     apply Finset.sum_le_sum; intro i _
@@ -64,6 +71,7 @@ lemma qf_hamN_diff_le (v v' : V → ℝ) {φ : C → ℝ} (hφ : φ ⬝ᵥ φ = 
   rw [sum_dens hH0 hn0 hN, hφ, mul_one] at this
   linarith
 
+omit [DecidableEq V] in
 lemma Egs_lipschitz (v v' : V → ℝ) : Egs H0 n v ≤ Egs H0 n v' + Nr * ‖v - v'‖ := by
   obtain ⟨ψ', hψ', hn'⟩ := exists_groundState (hamN_isSymm hH0 n v')
   have h1 := gsEnergy_le (hamN_isSymm hH0 n v) hn'
@@ -71,6 +79,7 @@ lemma Egs_lipschitz (v v' : V → ℝ) : Egs H0 n v ≤ Egs H0 n v' + Nr * ‖v 
   rw [qf_groundState_eq (hamN_isSymm hH0 n v') hψ' hn'] at h2
   unfold Egs; linarith
 
+omit [DecidableEq V] in
 theorem continuous_Egs : Continuous (Egs H0 n) := by
   rw [Metric.continuous_iff]
   intro b ε hε
@@ -102,17 +111,22 @@ noncomputable def mval (v : V → ℝ) : ℝ := Finset.univ.inf' Finset.univ_non
 
 variable {ρ}
 
-lemma mval_le (v : V → ℝ) (c : C) : mval (n := n) ρ v ≤ aval (n := n) ρ v c := Finset.inf'_le _ (Finset.mem_univ c)
+omit [DecidableEq C] [DecidableEq V] in
+lemma mval_le (v : V → ℝ) (c : C) : mval (n := n) ρ v ≤ aval (n := n) ρ v c :=
+    Finset.inf'_le _ (Finset.mem_univ c)
 
+omit [DecidableEq C] [DecidableEq V] in
 lemma continuous_mval : Continuous (mval (n := n) ρ) := by
   apply Continuous.finset_inf'_apply
   intro c _
   unfold aval dotProduct
   fun_prop
 
-lemma mval_smul {t : ℝ} (ht : 0 ≤ t) (v : V → ℝ) : mval (n := n) ρ (t • v) = t * mval (n := n) ρ v := by
+omit [DecidableEq C] [DecidableEq V] in
+lemma mval_smul {t : ℝ} (ht : 0 ≤ t) (v : V → ℝ) : mval (n := n) ρ (t • v) =
+    t * mval (n := n) ρ v := by
   have ha : ∀ c, aval (n := n) ρ (t • v) c = t * aval (n := n) ρ v c := by
-    intro c; simp only [aval, Pi.smul_apply, smul_eq_mul, dotProduct, Finset.mul_sum]
+    intro c; simp only [aval, Pi.smul_apply, smul_eq_mul, dotProduct]
     rw [mul_sub, Finset.mul_sum, Finset.mul_sum]
     congr 1 <;> apply Finset.sum_congr rfl <;> intro i _ <;> ring
   apply le_antisymm
@@ -126,6 +140,7 @@ variable {lam : C → ℝ} (hlam : ∀ c, 0 < lam c) (hsum : ∑ c, lam c = 1)
   (hρ : ρ = fun i => ∑ c, lam c * n i c)
 include hlam hsum hρ
 
+omit [DecidableEq C] [DecidableEq V] [Nonempty C] in
 lemma weighted_aval (v : V → ℝ) : ∑ c, lam c * aval (n := n) ρ v c = 0 := by
   simp only [aval, mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul, hsum, one_mul]
   rw [sub_eq_zero, hρ]
@@ -133,6 +148,7 @@ lemma weighted_aval (v : V → ℝ) : ∑ c, lam c * aval (n := n) ρ v c = 0 :=
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl; intro i _; apply Finset.sum_congr rfl; intro c _; ring
 
+omit [DecidableEq C] [DecidableEq V] in
 lemma mval_nonpos (v : V → ℝ) : mval (n := n) ρ v ≤ 0 := by
   have h := weighted_aval hlam hsum hρ v
   have : ∑ c, lam c * mval (n := n) ρ v ≤ ∑ c, lam c * aval ρ v c :=
@@ -140,6 +156,7 @@ lemma mval_nonpos (v : V → ℝ) : mval (n := n) ρ v ≤ 0 := by
   rw [← Finset.sum_mul, hsum, one_mul, h] at this
   exact this
 
+omit [DecidableEq C] [DecidableEq V] in
 lemma const_of_mval_eq_zero (hR : Rigid n) {v : V → ℝ} (h0 : mval (n := n) ρ v = 0) :
     ∃ k, ∀ i, v i = k := by
   have hge : ∀ c, 0 ≤ aval (n := n) ρ v c := fun c => h0 ▸ mval_le v c
@@ -152,8 +169,10 @@ lemma const_of_mval_eq_zero (hR : Rigid n) {v : V → ℝ} (h0 : mval (n := n) �
   · exact absurd h (hlam c).ne'
   · unfold aval at h; linarith
 
+omit [DecidableEq C] [DecidableEq V] in
 /-- **Coercivity of `m` on potentials with zero sum.** -/
-theorem coercive (hR : Rigid n) : ∃ δ > 0, ∀ v : V → ℝ, ∑ i, v i = 0 → mval (n := n) ρ v ≤ -δ * ‖v‖ := by
+theorem coercive (hR : Rigid n) : ∃ δ > 0, ∀ v : V → ℝ, ∑ i, v i = 0 →
+    mval (n := n) ρ v ≤ -δ * ‖v‖ := by
   set S1 : Set (V → ℝ) := {v | ∑ i, v i = 0 ∧ ‖v‖ = 1}
   have hzero_of : ∀ v : V → ℝ, ∑ i, v i = 0 → (∃ k, ∀ i, v i = k) → v = 0 := by
     intro v hs ⟨k, hk⟩
@@ -186,7 +205,8 @@ theorem coercive (hR : Rigid n) : ∃ δ > 0, ∀ v : V → ℝ, ∑ i, v i = 0 
           (isClosed_eq continuous_norm continuous_const)
       · exact (Metric.isBounded_closedBall (x := (0 : V → ℝ)) (r := 1)).subset fun v hv => by
           simp [hv.2]
-    obtain ⟨v1, hv1, hmax⟩ := hcomp.exists_isMaxOn hS (continuous_mval (n := n) (ρ := ρ)).continuousOn
+    obtain ⟨v1, hv1, hmax⟩ :=
+        hcomp.exists_isMaxOn hS (continuous_mval (n := n) (ρ := ρ)).continuousOn
     have hneg : mval (n := n) ρ v1 < 0 := by
       rcases (mval_nonpos hlam hsum hρ v1).lt_or_eq with h | h
       · exact h
@@ -209,7 +229,7 @@ theorem coercive (hR : Rigid n) : ∃ δ > 0, ∀ v : V → ℝ, ∑ i, v i = 0 
       rw [h2, mval_smul (norm_nonneg _)]
       have : ‖(‖v‖ • (‖v‖⁻¹ • v))‖ = ‖v‖ := by rw [← h2]
       rw [this]
-      simp only [Set.mem_setOf_eq] at h1
+      simp only [Set.mem_ofPred_eq] at h1
       nlinarith
 
 end
@@ -220,11 +240,13 @@ variable {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hn0 : �
   (hsum : ∑ c, lam c = 1) (hρ : ρ = fun i => ∑ c, lam c * n i c) (hR : Rigid n)
 include hH0 hn0 hN hlam hsum hρ hR
 
+omit [DecidableEq C] [DecidableEq V] [Nonempty C] in
 lemma sum_rho : ∑ i, ρ i = Nr := by
   rw [hρ]; simp only
   rw [Finset.sum_comm]
   simp_rw [← Finset.mul_sum, hN, ← Finset.sum_mul, hsum, one_mul]
 
+omit [DecidableEq V] in
 /-- **Existence of a maximiser of `E(v) − v·ρ`.** -/
 theorem exists_maximiser : ∃ vs : V → ℝ, ∀ v, Egs H0 n v - v ⬝ᵥ ρ ≤ Egs H0 n vs - vs ⬝ᵥ ρ := by
   set G : (V → ℝ) → ℝ := fun v => Egs H0 n v - v ⬝ᵥ ρ
@@ -264,7 +286,7 @@ theorem exists_maximiser : ∃ vs : V → ℝ, ∀ v, Egs H0 n v - v ⬝ᵥ ρ �
       simp [this]
     · field_simp; ring
   have hGv : G v = G v0 := (hshift v (-m)).symm
-  show G v ≤ G vs
+  change G v ≤ G vs
   rw [hGv]
   by_cases hin : ‖v0‖ ≤ R
   · exact hmax ⟨hv0, hin⟩

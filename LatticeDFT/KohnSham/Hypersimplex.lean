@@ -3,11 +3,14 @@ import LatticeDFT.KohnSham.Existence
 /-!
 # Interior densities are strictly positive mixtures of configurations
 
-* `hypersimplex_mixture`: every `ρ ∈ [0,1]^M` with `Σ_i ρ_i = N` is a mixture of `N`-particle configuration
-  densities (vertex description of the hypersimplex; induction on the number of fractional sites).
-* `interior_positive_mixture`: if moreover `0 < ρ_i < 1`, the mixture can be chosen with all weights positive.
-* `ks_potential_exists_interior`: every density with `0 < ρ_i < 1`, `Σ_i ρ_i = N` is the density of a
-  ground-state ensemble of a (non-)interacting lattice Hamiltonian — the textbook form of Kohn–Sham existence.
+* `hypersimplex_mixture`: every `ρ ∈ [0,1]^M` with `Σ_i ρ_i = N` is a mixture of `N`-particle
+  configuration densities (vertex description of the hypersimplex; induction on the number of
+  fractional sites).
+* `interior_positive_mixture`: if moreover `0 < ρ_i < 1`, the mixture can be chosen with all weights
+  positive.
+* `ks_potential_exists_interior`: every density with `0 < ρ_i < 1`, `Σ_i ρ_i = N` is the density of
+  a ground-state ensemble of a (non-)interacting lattice Hamiltonian — the textbook form of
+  Kohn–Sham existence.
 -/
 
 namespace LatticeDFT
@@ -21,7 +24,8 @@ def IsMixture (ρ : Fin M → ℝ) (μ : Conf M N → ℝ) : Prop :=
 /-- Number of fractional sites. -/
 noncomputable def nfrac (ρ : Fin M → ℝ) : ℕ := (Finset.univ.filter fun i => 0 < ρ i ∧ ρ i < 1).card
 
-lemma mixture_combo {ρ1 ρ2 : Fin M → ℝ} {μ1 μ2 : Conf M N → ℝ} (h1 : IsMixture ρ1 μ1) (h2 : IsMixture ρ2 μ2)
+lemma mixture_combo {ρ1 ρ2 : Fin M → ℝ} {μ1 μ2 : Conf M N → ℝ} (h1 : IsMixture ρ1 μ1)
+    (h2 : IsMixture ρ2 μ2)
     {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) :
     IsMixture (fun i => θ * ρ1 i + (1 - θ) * ρ2 i) (fun s => θ * μ1 s + (1 - θ) * μ2 s) := by
   obtain ⟨p1, s1, e1⟩ := h1; obtain ⟨p2, s2, e2⟩ := h2
@@ -56,10 +60,12 @@ theorem hypersimplex_mixture : ∀ (k : ℕ) (ρ : Fin M → ℝ), nfrac ρ = k 
         rcases hint l (Finset.mem_erase.mp hl).1 with h | h <;> simp [h]
       rw [hsum] at hs
       have : ρ i = (N : ℝ) - T.card := by linarith
-      have hz : ((N : ℤ) - T.card : ℤ) = 0 ∨ ((N : ℤ) - T.card : ℤ) ≥ 1 ∨ ((N : ℤ) - T.card : ℤ) ≤ -1 := by
+      have hz : ((N : ℤ) - T.card : ℤ) = 0 ∨ ((N : ℤ) - T.card : ℤ) ≥ 1 ∨
+          ((N : ℤ) - T.card : ℤ) ≤ -1 := by
         omega
       rcases hz with h | h | h
-      · have : ρ i = 0 := by rw [this]; exact_mod_cast (by exact_mod_cast h : ((N : ℤ) - T.card : ℝ) = 0)
+      · have : ρ i = 0 := by rw [this]; exact_mod_cast
+          (by exact_mod_cast h : ((N : ℤ) - T.card : ℝ) = 0)
         linarith [hi.1]
       · have : (1 : ℝ) ≤ ρ i := by rw [this]; exact_mod_cast h
         linarith [hi.2]
@@ -153,16 +159,20 @@ theorem hypersimplex_mixture : ∀ (k : ℕ) (ρ : Fin M → ℝ), nfrac ρ = k 
         rcases h01 l with h | h <;> simp [h]
       rw [hsum] at this; exact_mod_cast this
     set s0 : Conf M N := ⟨S, hcard⟩
-    refine ⟨fun s => if s = s0 then 1 else 0, fun s => by dsimp only; split_ifs <;> norm_num, by simp, ?_⟩
+    refine ⟨fun s => if s = s0 then
+        1 else 0, fun s => by dsimp only; split_ifs <;> norm_num, by simp, ?_⟩
     funext l
-    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, occF, s0, S,
+    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, occF, s0,
+        S,
       Finset.mem_filter, true_and]
     rcases h01 l with h | h <;> simp [h]
 
 /-- **Interior densities are strictly positive mixtures.** -/
-theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
+theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ}
+    (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
     (hsum : ∑ i, ρ i = N) :
-    ∃ lam : Conf M N → ℝ, (∀ s, 0 < lam s) ∧ ∑ s, lam s = 1 ∧ ρ = fun i => ∑ s, lam s * occF i s := by
+    ∃ lam : Conf M N → ℝ, (∀ s, 0 < lam s) ∧ ∑ s, lam s = 1 ∧
+        ρ = fun i => ∑ s, lam s * occF i s := by
   classical
   obtain ⟨L, hLdef⟩ : ∃ L : ℝ, ((Finset.univ : Finset (Conf M N)).card : ℝ) = L := ⟨_, rfl⟩
   have hL : 0 < L := by
@@ -171,9 +181,11 @@ theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ} (h�
   have hbar : ∀ i, 0 ≤ ρbar i ∧ ρbar i ≤ 1 := by
     intro i
     constructor
-    · exact Finset.sum_nonneg fun s _ => mul_nonneg (by positivity) (by unfold occF; split_ifs <;> norm_num)
+    · exact Finset.sum_nonneg fun s _ => mul_nonneg (by positivity)
+        (by unfold occF; split_ifs <;> norm_num)
     · calc ρbar i ≤ ∑ s : Conf M N, (1 / L) * 1 :=
-            Finset.sum_le_sum fun s _ => mul_le_mul_of_nonneg_left (by unfold occF; split_ifs <;> norm_num)
+            Finset.sum_le_sum fun s _ => mul_le_mul_of_nonneg_left
+                (by unfold occF; split_ifs <;> norm_num)
               (by positivity)
         _ = 1 := by rw [Finset.sum_const, nsmul_eq_mul, hLdef]; field_simp
   have hbarsum : ∑ i, ρbar i = N := by
@@ -204,7 +216,8 @@ theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ} (h�
       field_simp
     obtain ⟨μ, hμ0, hμ1, hμρ⟩ := hypersimplex_mixture _ ρ' rfl hbox' hsum'
     refine ⟨fun s => (1 - ε) * μ s + ε / L, fun s => by nlinarith [hμ0 s, div_pos hε hL], ?_, ?_⟩
-    · rw [Finset.sum_add_distrib, ← Finset.mul_sum, hμ1, Finset.sum_const, nsmul_eq_mul, hLdef]; field_simp; ring
+    · rw [Finset.sum_add_distrib, ← Finset.mul_sum, hμ1, Finset.sum_const, nsmul_eq_mul, hLdef];
+        field_simp; ring
     · funext i
       have hρi : ρ i = (1 - ε) * ρ' i + ε * ρbar i := by
         simp only [ρ']; have : (1 - ε) ≠ 0 := by linarith
@@ -217,10 +230,12 @@ theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ} (h�
     · rw [Finset.sum_const, nsmul_eq_mul, hLdef]; field_simp
     · funext i; exact absurd ⟨i, Finset.mem_univ i⟩ hM
 
-/-- **v-representability of interior densities.** For `N` spinless fermions (`0 < N < M`) on any graph, with
-any hopping `t` and any configuration-diagonal interaction, every density with `0 < ρ_i < 1` and
-`Σ_i ρ_i = N` is the density of a ground-state ensemble of `H(v)` for some potential `v`. -/
-theorem v_representable_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ)
+/-- **v-representability of interior densities.** For `N` spinless fermions (`0 < N < M`) on any
+graph, with any hopping `t` and any configuration-diagonal interaction, every density with
+`0 < ρ_i < 1` and `Σ_i ρ_i = N` is the density of a ground-state ensemble of `H(v)` for some
+potential `v`. -/
+theorem v_representable_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M))
+    [DecidableRel G.Adj] (t : ℝ)
     (Vint : Conf M N → ℝ) (hN0 : 0 < N) (hNM : N < M) {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
     (hsum : ∑ i, ρ i = N) :
     ∃ v : Fin M → ℝ, ∃ Γ ∈ Ens (H0F G t Vint) occF v, ensDens occF Γ = ρ := by
@@ -228,9 +243,12 @@ theorem v_representable_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M))
   exact v_representable_lattice_fermions G t Vint hN0 hNM hlam hl1 hlρ
 
 /-- **Existence of Kohn–Sham potentials (textbook form).** Every density with `0 < ρ_i < 1`,
-`Σ_i ρ_i = N` is the ground-state ensemble density of a non-interacting system in some potential `vs`. -/
-theorem ks_potential_exists_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ)
-    (hN0 : 0 < N) (hNM : N < M) {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1) (hsum : ∑ i, ρ i = N) :
+`Σ_i ρ_i = N` is the ground-state ensemble density of a non-interacting system in some potential
+`vs`. -/
+theorem ks_potential_exists_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M))
+    [DecidableRel G.Adj] (t : ℝ)
+    (hN0 : 0 < N) (hNM : N < M) {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
+        (hsum : ∑ i, ρ i = N) :
     ∃ vs : Fin M → ℝ, ∃ Γ ∈ Ens (H0F G t (0 : Conf M N → ℝ)) occF vs, ensDens occF Γ = ρ :=
   v_representable_interior G t 0 hN0 hNM hρ hsum
 

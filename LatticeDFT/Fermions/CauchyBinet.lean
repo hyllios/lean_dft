@@ -6,7 +6,8 @@ import LatticeDFT.Fermions.SecondQuantization
 * `gram φ ψ`: the overlap matrix `G_{ij} = Σ_x φ_i(x) ψ_j(x)` of two families of `N` orbitals.
 * `det_gram`: `det G = Σ_τ Ψ_φ(τ) Π_j ψ_j(τ_j)` (sum over all position tuples).
 * `cauchy_binet`: `Σ_s Ψ_φ(s) Ψ_ψ(s) = det G` (sum over configurations).
-* `slater_orthonormal`: Slater determinants of orthonormal orbitals, indexed by orbital subsets, are orthonormal.
+* `slater_orthonormal`: Slater determinants of orthonormal orbitals, indexed by orbital subsets, are
+  orthonormal.
 -/
 
 namespace LatticeDFT
@@ -48,7 +49,8 @@ theorem cauchy_binet (φ ψ : Fin N → Fin M → ℝ) :
   intro s _
   -- Σ_τ amp s τ Π ψ_j(τ_j) = Ψ_ψ(s), via `det_gram` for the indicator orbitals of `s`
   have hind := det_gram (fun j x => if x = τs s j then (1 : ℝ) else 0) ψ
-  have hG : gram (fun j x => if x = τs s j then (1 : ℝ) else 0) ψ = Matrix.of fun k j => ψ j (τs s k) := by
+  have hG : gram (fun j x => if x = τs s j then (1 : ℝ) else 0) ψ =
+      Matrix.of fun k j => ψ j (τs s k) := by
     ext k j; simp [gram]
   rw [hG] at hind
   have hamp : ∑ τ : Fin N → Fin M, amp s τ * slaterC φ s * ∏ j, ψ j (τ j) =

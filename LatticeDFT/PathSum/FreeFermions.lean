@@ -3,10 +3,10 @@ import LatticeDFT.PathSum.Assignment
 /-!
 # Leading coefficients of free fermions
 
-* `T_MB_formula`: the many-body leading coefficient is a signed sum over optimal assignments of products of
-  single-particle leading coefficients.
-* `T_MB_powersum`, `assign_rigid`, and `alpha_eq_D`: `α_y(y) = D(u)`, the Slater-type sum over optimal
-  assignments.
+* `T_MB_formula`: the many-body leading coefficient is a signed sum over optimal assignments of
+  products of single-particle leading coefficients.
+* `T_MB_powersum`, `assign_rigid`, and `alpha_eq_D`: `α_y(y) = D(u)`, the Slater-type sum over
+  optimal assignments.
 -/
 
 namespace LatticeDFT
@@ -21,15 +21,16 @@ lemma Hl_map_eval {C : Type*} [Fintype C] [DecidableEq C] (B : Matrix C C ℝ) (
     (Hl B 0 x).map (Polynomial.eval lam) = B + Matrix.diagonal (lam • x) := by
   ext a b
   by_cases h : a = b
-  · subst h; simp [Hl, Matrix.diagonal_apply]; ring
-  · simp [Hl, Matrix.diagonal_apply, h]
+  · subst h; simp [Hl]; ring
+  · simp [Hl, h]
 
 lemma eval_pow_entry {C : Type*} [Fintype C] [DecidableEq C] (P : Matrix C C ℝ[X]) (n : ℕ) (a b : C)
     (lam : ℝ) : ((P ^ n) a b).eval lam = ((P.map (Polynomial.eval lam)) ^ n) a b := by
   rw [← Polynomial.coe_evalRingHom, ← RingHom.mapMatrix_apply, ← map_pow, RingHom.mapMatrix_apply]
   rfl
 
-lemma lip_dist {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ) (b : Fin M) :
+lemma lip_dist {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    (t : Fin M → Fin M → ℝ) (b : Fin M) :
     Lip (-hopM G t) (fun a => G.dist b a) := by
   intro a z _ haz
   have hadj : G.Adj a z := by
@@ -47,7 +48,8 @@ lemma sum_cnt {k : ℕ} (ι : Fin k → Fin N) : ∑ l, cnt ι l = k := by
 def wC (u : Fin M → ℝ) (s : Conf M N) : ℝ := ∑ i, u i * occF i s
 
 /-- Polynomial version of `gamma_pow_formula`. -/
-lemma gamma_pow_poly (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ) (u : Fin M → ℝ)
+lemma gamma_pow_poly (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
+    (u : Fin M → ℝ)
     (y c : Conf M N) (k : ℕ) :
     (Hl (Γ (-hopM G t)) 0 (wC u) ^ k) y c =
       ∑ σ : Equiv.Perm (Fin N), Polynomial.C (Equiv.Perm.sign σ : ℝ) *
@@ -72,13 +74,15 @@ lemma gamma_pow_poly (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M �
   rw [Polynomial.coe_evalRingHom, eval_pow_entry, Hl_map_eval]
 
 /-- One term: only optimal assignments reach the top degree. -/
-lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ) (u : Fin M → ℝ)
+lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    (t : Fin M → Fin M → ℝ) (u : Fin M → ℝ)
     (c y : Conf M N) {k : ℕ} (σ : Equiv.Perm (Fin N)) (ι : Fin k → Fin N) :
     (if mopt G c y ≤ k then
       (∏ l, (Hl (-hopM G t) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))).coeff (k - mopt G c y)
       else 0) =
     if acost G c (τs y) σ.symm = mopt G c y then
-      ∏ l, T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l)) (cnt ι l) (τs y l)
+      ∏ l, T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l)) (cnt ι l)
+          (τs y l)
     else 0 := by
   set m := mopt G c y
   set P : Fin N → ℝ[X] := fun l => (Hl (-hopM G t) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))
@@ -89,17 +93,19 @@ lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connecte
   have hdeg : ∀ l, (P l).natDegree ≤ cnt ι l - dd l := fun l =>
     entry_natDegree (lip_dist hG t _) (SimpleGraph.dist_self) 0 u (cnt ι l) (τs y l)
   have hT : ∀ l, T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l))
-      (cnt ι l) (τs y l) = if dd l ≤ cnt ι l then (P l).coeff (cnt ι l - dd l) else 0 := fun l => rfl
+      (cnt ι l) (τs y l) = if dd l ≤ cnt ι l then (P l).coeff (cnt ι l - dd l) else 0 :=
+          fun l => rfl
   by_cases hall : ∀ l, dd l ≤ cnt ι l
   · have hle : acost G c (τs y) σ.symm ≤ k := by
       rw [← hsumd, ← hsumn]; exact Finset.sum_le_sum (fun l _ => hall l)
     have hsub : ∑ l, (cnt ι l - dd l) = k - acost G c (τs y) σ.symm := by
       rw [Finset.sum_tsub_distrib _ (fun l _ => hall l), hsumn, hsumd]
     by_cases hopt : acost G c (τs y) σ.symm = m
-    · rw [if_pos (by omega), if_pos hopt, ← hopt, ← hsub, prod_coeff_top _ _ _ (fun l _ => hdeg l)]
+    · rw [ite_eq_left (by omega), ite_eq_left hopt, ← hopt, ← hsub,
+        prod_coeff_top _ _ _ (fun l _ => hdeg l)]
       apply Finset.prod_congr rfl; intro l _
-      rw [hT l, if_pos (hall l)]
-    · rw [if_neg hopt, if_pos (by omega)]
+      rw [hT l, ite_eq_left (hall l)]
+    · rw [ite_eq_right hopt, ite_eq_left (by omega)]
       apply Polynomial.coeff_eq_zero_of_natDegree_lt
       calc (∏ l, P l).natDegree ≤ ∑ l, (P l).natDegree := Polynomial.natDegree_prod_le _ _
         _ ≤ ∑ l, (cnt ι l - dd l) := Finset.sum_le_sum (fun l _ => hdeg l)
@@ -112,12 +118,13 @@ lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connecte
       hprod, coeff_zero, ite_self]
     split_ifs with h
     · symm; apply Finset.prod_eq_zero (Finset.mem_univ l0)
-      rw [hT l0, if_neg (by omega)]
+      rw [hT l0, ite_eq_right (by omega)]
     · rfl
 
 /-- **Leading coefficient of free fermions = signed sum over optimal assignments of products of
 single-particle leading coefficients.** -/
-theorem T_MB_formula {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
+theorem T_MB_formula {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (c y : Conf M N) (k : ℕ) :
     T (Γ (-hopM G t)) (wC u) (mopt G c) c k y =
       ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
@@ -133,18 +140,18 @@ theorem T_MB_formula {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Conn
     apply Finset.sum_congr rfl; intro σ _
     rw [coeff_C_mul, finsetSum_coeff]
     have := fun ι : Fin k → Fin N => term_coeff hG t u c y σ ι
-    simp only [if_pos hk] at this
+    simp only [ite_eq_left hk] at this
     split_ifs with hopt
     · congr 1; apply Finset.sum_congr rfl; intro ι _
-      rw [this ι, if_pos hopt]
-    · rw [Finset.sum_eq_zero (fun ι _ => by rw [this ι, if_neg hopt]), mul_zero]
+      rw [this ι, ite_eq_left hopt]
+    · rw [Finset.sum_eq_zero (fun ι _ => by rw [this ι, ite_eq_right hopt]), mul_zero]
   · symm
     apply Finset.sum_eq_zero; intro σ _
     split_ifs with hopt
     · rw [Finset.sum_eq_zero, mul_zero]
       intro ι _
       have := term_coeff hG t u c y σ ι
-      rw [if_neg hk, if_pos hopt] at this
+      rw [ite_eq_right hk, ite_eq_left hopt] at this
       exact this.symm
     · rfl
 
@@ -176,13 +183,16 @@ lemma words_pow (x : Fin N → ℝ) (k : ℕ) :
     · intro h; exact absurd (Finset.mem_univ i) h
 
 /-- Single-particle divided-difference coefficients for the hop `c_{σ⁻¹ l} → y_l`. -/
-noncomputable def βsp (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
-    (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (σ : Equiv.Perm (Fin N)) (l : Fin N) :
+noncomputable def βsp (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (hG : G.Connected)
+    (t : Fin M → Fin M → ℝ)
+    (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (σ : Equiv.Perm (Fin N))
+        (l : Fin N) :
     Fin M → ℝ :=
   alphaRep (-hopM G t) u hu (fun a => G.dist (τs c (σ.symm l)) a) (lip_dist hG t _)
     (τs c (σ.symm l)) SimpleGraph.dist_self (τs y l)
 
-theorem T_MB_powersum {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
+theorem T_MB_powersum {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (k : ℕ) :
     T (Γ (-hopM G t)) (wC u) (mopt G c) c k y =
       ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
@@ -200,8 +210,10 @@ theorem T_MB_powersum {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Con
   rfl
 
 
-/-- Assignment rigidity: a non-vanishing term with target positions permuted by `ρ` forces `ρ = 1`. -/
-lemma assign_rigid {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
+/-- Assignment rigidity: a non-vanishing term with target positions permuted by `ρ` forces `ρ = 1`.
+-/
+lemma assign_rigid {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (σ : Equiv.Perm (Fin N))
     (hopt : acost G c (τs y) σ.symm = mopt G c y) (ρ : Equiv.Perm (Fin N))
     (hβ : ∏ l, βsp G hG t u hu c y σ l (τs y (ρ l)) ≠ 0) : ρ = 1 := by
@@ -228,10 +240,12 @@ lemma assign_rigid {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connec
   omega
 
 /-- **α_y(y) equals the Slater-type sum over optimal assignments.** -/
-theorem alpha_eq_D {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ)
+theorem alpha_eq_D {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (hw : Function.Injective (wC u : Conf M N → ℝ))
     (c y : Conf M N)
-    (hgen : ∀ z : Fin N → Fin M, ∑ l, u (z l) = wC u y → ∃ ρ : Equiv.Perm (Fin N), ∀ l, z l = τs y (ρ l)) :
+    (hgen : ∀ z : Fin N → Fin M, ∑ l, u (z l) = wC u y →
+        ∃ ρ : Equiv.Perm (Fin N), ∀ l, z l = τs y (ρ l)) :
     alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c (mopt_self G c) y y =
       ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
         (Equiv.Perm.sign σ : ℝ) * ∏ l, βsp G hG t u hu c y σ l (τs y l) := by

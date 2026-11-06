@@ -4,9 +4,9 @@ import LatticeDFT.Generic.RationalFunctions
 /-!
 # Construction of the resonant point
 
-Route sums are rational on generic points (`ratOn_DExp`, …); partner route sums are nonzero where the target is
-the highest site (`Lval_ne_zero`); `exists_DExp_ne`: for every pair `c, y` some injective potential has
-`DExp ≠ 0`.
+Route sums are rational on generic points (`ratOn_DExp`, …); partner route sums are nonzero where
+the target is the highest site (`Lval_ne_zero`); `exists_DExp_ne`: for every pair `c, y` some
+injective potential has `DExp ≠ 0`.
 -/
 
 namespace LatticeDFT
@@ -18,9 +18,11 @@ open Matrix Filter Topology MvPolynomial
 variable {M N : ℕ}
 
 section
-variable (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ) (rep : Fin M → Fin M)
+variable (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
+    (rep : Fin M → Fin M)
 
-lemma ratOn_Gr (b a : Fin M) : ∀ n p, RatOn (fun θ : Fin M → ℝ => Gr G t (fun i => θ (rep i)) b a n p) := by
+lemma ratOn_Gr (b a : Fin M) : ∀ n p, RatOn
+    (fun θ : Fin M → ℝ => Gr G t (fun i => θ (rep i)) b a n p) := by
   intro n
   induction n with
   | zero =>
@@ -33,25 +35,30 @@ lemma ratOn_Gr (b a : Fin M) : ∀ n p, RatOn (fun θ : Fin M → ℝ => Gr G t 
     refine RatOn.ite _ (RatOn.div_sub (RatOn.sum _ fun r _ => ?_) _ _) (RatOn.const 0)
     exact RatOn.ite _ ((RatOn.const _).mul (ih r)) (RatOn.const 0)
 
-lemma ratOn_Λ (b a π : Fin M) : ∀ n q, RatOn (fun θ : Fin M → ℝ => Λ G t (fun i => θ (rep i)) b a π n q) := by
+lemma ratOn_Λ (b a π : Fin M) : ∀ n q, RatOn
+    (fun θ : Fin M → ℝ => Λ G t (fun i => θ (rep i)) b a π n q) := by
   intro n
   induction n with
   | zero => intro q; simp only [Λ]; exact RatOn.const _
   | succ n ih =>
     intro q
     simp only [Λ]
-    refine RatOn.ite _ (RatOn.ite _ (RatOn.sum _ fun r _ => ?_) (RatOn.div_sub (RatOn.sum _ fun r _ => ?_) _ _))
+    refine RatOn.ite _
+        (RatOn.ite _ (RatOn.sum _ fun r _ => ?_) (RatOn.div_sub (RatOn.sum _ fun r _ => ?_) _ _))
       (RatOn.const 0)
     · exact RatOn.ite _ ((RatOn.const _).mul (ratOn_Gr G t rep b a n r)) (RatOn.const 0)
     · exact RatOn.ite _ ((RatOn.const _).mul (ih r)) (RatOn.const 0)
 
-lemma ratOn_Lval (b a π : Fin M) : RatOn (fun θ : Fin M → ℝ => Lval G t (fun i => θ (rep i)) b a π) := by
+lemma ratOn_Lval (b a π : Fin M) : RatOn
+    (fun θ : Fin M → ℝ => Lval G t (fun i => θ (rep i)) b a π) := by
   unfold Lval
-  exact RatOn.sum _ fun p _ => RatOn.ite _ ((RatOn.const _).mul (ratOn_Λ G t rep b a π _ p)) (RatOn.const 0)
+  exact RatOn.sum _ fun p _ => RatOn.ite _ ((RatOn.const _).mul (ratOn_Λ G t rep b a π _ p))
+      (RatOn.const 0)
 
 lemma ratOn_alphaExp (b a : Fin M) : RatOn (fun u : Fin M → ℝ => alphaExp G t u b a) := by
   unfold alphaExp
-  refine (RatOn.const _).add (RatOn.sum _ fun p _ => RatOn.ite _ ((RatOn.const _).mul ?_) (RatOn.const 0))
+  refine (RatOn.const _).add
+      (RatOn.sum _ fun p _ => RatOn.ite _ ((RatOn.const _).mul ?_) (RatOn.const 0))
   simpa using ratOn_Gr G t id b a (G.dist b p) p
 
 lemma ratOn_DExp (c y : Conf M N) : RatOn (fun u : Fin M → ℝ => DExp G t u c y) := by
@@ -77,7 +84,8 @@ lemma exists_pred {G : SimpleGraph (Fin M)} (hG : G.Connected) {b q : Fin M} {n 
 
 /-- Positivity of the partner route sums when the target is the highest site. The hopping is assumed
 unfrustrated in the simplest sense: all amplitudes on edges have the sign of a fixed `s`. -/
-theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) {t : Fin M → Fin M → ℝ}
+theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ}
     {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b)
     (us : Fin M → ℝ) (π a : Fin M) (hπa : π ≠ a) (hhigh : ∀ q, q ≠ a → q ≠ π → us q < us a) :
     Lval G t us π a π ≠ 0 := by
@@ -94,9 +102,10 @@ theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Conn
       have hqa : q ≠ a := by intro h; subst h; omega
       have hden : 0 < us a - us q := sub_pos.mpr (hhigh q hqa hqπ)
       have hrw : Λ G t us π a π (n + 1) q * (-s) ^ (n + 1) =
-          (∑ r, (if G.Adj q r ∧ G.dist π r = n then (s * t q r) * (Λ G t us π a π n r * (-s) ^ n) else 0)) /
+          (∑ r, (if G.Adj q r ∧ G.dist π r = n then
+              (s * t q r) * (Λ G t us π a π n r * (-s) ^ n) else 0)) /
             (us a - us q) := by
-        simp only [Λ, if_pos hq, if_neg hqπ]
+        simp only [Λ, ite_eq_left hq, ite_eq_right hqπ]
         rw [div_mul_eq_mul_div, Finset.sum_mul]
         congr 1
         apply Finset.sum_congr rfl; intro r _
@@ -111,11 +120,12 @@ theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Conn
         · exact (mul_pos (hts q r hr.1) (ih r hr.2 (by omega))).le
         · exact le_refl 0)
       exact ⟨r0, Finset.mem_univ _, by
-        rw [if_pos ⟨hr0, hdr0⟩]; exact mul_pos (hts q r0 hr0) (ih r0 hdr0 (by omega))⟩
+        rw [ite_eq_left ⟨hr0, hdr0⟩]; exact mul_pos (hts q r0 hr0) (ih r0 hdr0 (by omega))⟩
   have hda : 0 < G.dist π a := by
     by_contra h0; push Not at h0
     exact hπa ((dist_eq_zero_iff hG).mp (by omega)).symm
-  obtain ⟨p0, hp0, hdp0⟩ := exists_pred hG (n := G.dist π a - 1) (by omega : G.dist π a = G.dist π a - 1 + 1)
+  obtain ⟨p0, hp0, hdp0⟩ :=
+      exists_pred hG (n := G.dist π a - 1) (by omega : G.dist π a = G.dist π a - 1 + 1)
   intro h0
   have hsum : 0 < ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
       (s * t a p) * (Λ G t us π a π (G.dist π p) p * (-s) ^ (G.dist π p)) else 0) := by
@@ -124,8 +134,9 @@ theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Conn
       · exact (mul_pos (hts a p hp.1) (hpos _ p rfl (by omega))).le
       · exact le_refl 0)
     exact ⟨p0, Finset.mem_univ _, by
-      rw [if_pos ⟨hp0, by omega⟩]; exact mul_pos (hts a p0 hp0) (hpos _ p0 rfl (by omega))⟩
-  have : Lval G t us π a π * (-s) ^ (G.dist π a) = ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
+      rw [ite_eq_left ⟨hp0, by omega⟩]; exact mul_pos (hts a p0 hp0) (hpos _ p0 rfl (by omega))⟩
+  have : Lval G t us π a π * (-s) ^ (G.dist π a) =
+      ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
       (s * t a p) * (Λ G t us π a π (G.dist π p) p * (-s) ^ (G.dist π p)) else 0) := by
     unfold Lval
     rw [Finset.sum_mul]
@@ -159,13 +170,13 @@ lemma partner_inj {l l' : Fin N} (h : partner c σ0 l = partner c σ0 l') : l = 
 
 lemma rep_partner {l : Fin N} (hl : τs y l ∉ c.1) : rep c y σ0 (partner c σ0 l) = τs y l := by
   have hex : ∃ l', τs y l' ∉ c.1 ∧ partner c σ0 l' = partner c σ0 l := ⟨l, hl, rfl⟩
-  simp only [rep, dif_pos hex]
+  simp only [rep, dite_eq_left hex]
   rw [partner_inj c σ0 (Classical.choose_spec hex).2]
 
 lemma rep_target (hfix : ∀ l, τs y l ∈ c.1 → τs c (σ0.symm l) = τs y l) (l : Fin N) :
     rep c y σ0 (τs y l) = τs y l := by
   unfold rep
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨l', hl', hp⟩
   have hc : τs y l ∈ c.1 := hp ▸ τs_mem c _
   have := partner_inj c σ0 (hp.trans (hfix l hc).symm)
@@ -183,7 +194,8 @@ lemma rep_eq_target {l : Fin N} {z : Fin M} (h : rep c y σ0 z = τs y l) :
 
 end
 
-theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) {t : Fin M → Fin M → ℝ}
+theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ}
     {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c y : Conf M N) :
     ∃ u : Fin M → ℝ, Function.Injective u ∧ DExp G t u c y ≠ 0 := by
   classical
@@ -214,10 +226,11 @@ theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Co
         rcases rep_eq_target c y σ0 h with h1 | ⟨-, h1⟩
         · exact hqa h1
         · exact hqπ h1
-      simp only [hRa, if_pos rfl, if_neg hRq]
+      simp only [hRa, ite_eq_right hRq]
       exact_mod_cast (R q).isLt
   obtain ⟨θ, hθ, hθS, -⟩ := exists_common_ne (κ := Fin 0)
-    (fun l : ι => fun θ => Lval G t (fun i => θ (R i)) (partner c σ0 l.1) (τs y l.1) (partner c σ0 l.1))
+    (fun l : ι => fun θ => Lval G t (fun i => θ (R i)) (partner c σ0 l.1) (τs y l.1)
+        (partner c σ0 l.1))
     (fun l => ratOn_Lval G t R _ _ _) hpt (fun k => k.elim0) (fun k => k.elim0)
   -- 2. the resonant point and the line
   set us : Fin M → ℝ := fun i => θ (R i)
@@ -231,7 +244,7 @@ theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Co
       z = τs y l ∨ (τs y l ∉ c.1 ∧ z = partner c σ0 l) := fun h => rep_eq_target c y σ0 h
   have hev := DExp_eventually_ne hG t c y σ0 h0 hfix us δ
     (fun l hl => by
-      show θ (R (τs y l)) = θ (R (partner c σ0 l))
+      change θ (R (τs y l)) = θ (R (partner c σ0 l))
       rw [hRtarget, hRp l hl])
     (fun l hl z hz => by
       simp only [us, hRtarget] at hz

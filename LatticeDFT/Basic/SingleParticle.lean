@@ -3,10 +3,11 @@ import LatticeDFT.Basic.GroundState
 /-!
 # Single-particle Hohenberg–Kohn theorem on a graph
 
-Setting: finite vertex set `V`, simple graph `G`, hopping `t`, potential `v`, `H(v) = diag v − t A_G`.
-* `hk_single_particle`: for `t > 0` on a connected graph, two potentials with ground states of equal density
-  differ by a constant (Perron–Frobenius-free proof: `|ψ|` is a ground state, nonnegative ground states are
-  strictly positive, a common positive eigenvector fixes `v − v'`).
+Setting: finite vertex set `V`, simple graph `G`, hopping `t`, potential `v`,
+`H(v) = diag v − t A_G`.
+* `hk_single_particle`: for `t > 0` on a connected graph, two potentials with ground states of equal
+  density differ by a constant (Perron–Frobenius-free proof: `|ψ|` is a ground state, nonnegative
+  ground states are strictly positive, a common positive eigenvector fixes `v − v'`).
 * `hk_fails_frustrated`: for frustrated hopping (`t < 0` on a triangle) the theorem fails.
 -/
 
@@ -23,6 +24,7 @@ noncomputable def ham (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ) (v : V 
 
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+omit [Fintype V] [DecidableEq V] in
 lemma adj_nonneg (i j : V) : 0 ≤ G.adjMatrix ℝ i j := by
   rw [SimpleGraph.adjMatrix_apply]; split_ifs <;> norm_num
 
@@ -32,6 +34,7 @@ lemma ham_mulVec_apply (t : ℝ) (v ψ : V → ℝ) (i : V) :
     Pi.smul_apply, smul_eq_mul]
   rfl
 
+omit [Fintype V] in
 lemma ham_isSymm (t : ℝ) (v : V → ℝ) : (ham G t v).IsSymm := by
   unfold ham
   exact (Matrix.isSymm_diagonal v).sub ((G.isSymm_adjMatrix).smul t)
@@ -88,7 +91,7 @@ theorem pos_of_nonneg (hG : G.Connected) {t : ℝ} (ht : 0 < t) {v ψ : V → �
     have hnonneg : ∀ k ∈ (Finset.univ : Finset V), 0 ≤ G.adjMatrix ℝ i k * ψ k :=
       fun k _ => mul_nonneg (adj_nonneg G i k) (hnn k)
     have := (Finset.sum_eq_zero_iff_of_nonneg hnonneg).mp hsum j (Finset.mem_univ j)
-    rw [SimpleGraph.adjMatrix_apply, if_pos hij, one_mul] at this
+    rw [SimpleGraph.adjMatrix_apply, ite_eq_left hij, one_mul] at this
     exact this
   have hreach : ∀ i j, G.Reachable i j → ψ i = 0 → ψ j = 0 := by
     intro i j ⟨p⟩

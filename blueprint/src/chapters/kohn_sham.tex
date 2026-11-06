@@ -73,29 +73,19 @@ uniqueness. Statements without a check mark are open targets of the formalizatio
 
 \begin{theorem}[Generic uniqueness]
   \label{thm:ks_potential_generic_unique}
-  \lean{LatticeDFT.ks_potential_generic_unique}
+  \lean{LatticeDFT.ks_potential_generic_unique_w, LatticeDFT.ks_potential_generic_unique}
   \leanok
   \uses{thm:generic_hk_lattice_fermions}
-  For spinless fermions on a connected graph with $t\ne0$, the Kohn--Sham potential reproducing a ground
-  state is unique up to a constant outside a closed, nowhere dense, null set of potentials. It is not unique
-  everywhere: the non-interacting two-fermion square has a whole plane of exceptions
+  For spinless fermions on a connected graph, with symmetric hopping amplitudes of a common sign (in
+  particular uniform $t\ne0$), the Kohn--Sham potential reproducing a ground state is unique up to a
+  constant outside a closed, nowhere dense, null set of potentials. It is not unique everywhere: the
+  non-interacting two-fermion square has a whole plane of exceptions
   (Theorems~\ref{thm:hk_fails_square}, \ref{thm:square_wall}).
 \end{theorem}
 \begin{proof}
   \leanok
-  Theorem~\ref{thm:generic_hk_lattice_fermions} with vanishing interaction.
-\end{proof}
-
-\begin{theorem}[Generic uniqueness, edge-dependent hopping]
-  \label{thm:ks_potential_generic_unique_w}
-  \lean{LatticeDFT.ks_potential_generic_unique_w}
-  \leanok
-  \uses{thm:generic_hk_lattice_fermions}
-  The same holds for symmetric hopping amplitudes $t_{ab}$ on the edges, all of the same sign.
-\end{theorem}
-\begin{proof}
-  \leanok
-  The weighted generic Hohenberg--Kohn theorem with vanishing interaction.
+  Theorem~\ref{thm:generic_hk_lattice_fermions} with vanishing interaction. In Lean the uniform case
+  is the special case $t_{ab}=t$ of the edge-dependent one.
 \end{proof}
 
 \section{Lieb's functional and convex duality}

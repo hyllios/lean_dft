@@ -4,9 +4,9 @@ import LatticeDFT.HK.Examples
 /-!
 # The Hohenberg–Kohn wall of the two-fermion square
 
-`square_wall`: for every potential with `v₀ + v₂ = v₁ + v₃` and a gapped ground state, a non-constant potential
-direction leaves the ground state unchanged. Mechanism: a hidden (non-lattice) involution `Qsq` commutes with
-the Hamiltonian exactly on this plane.
+`square_wall`: for every potential with `v₀ + v₂ = v₁ + v₃` and a gapped ground state, a
+non-constant potential direction leaves the ground state unchanged. Mechanism: a hidden
+(non-lattice) involution `Qsq` commutes with the Hamiltonian exactly on this plane.
 -/
 
 namespace LatticeDFT

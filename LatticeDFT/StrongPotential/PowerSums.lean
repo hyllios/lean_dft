@@ -28,7 +28,7 @@ lemma T_zero {A : Matrix C C ℝ} (w : C → ℝ) {d : C → ℕ} {c : C} (hc : 
   by_cases hy : y = c
   · subst hy; simp [hc]
   · by_cases hd : d y ≤ 0
-    · simp [hd, hy, Matrix.one_apply]
+    · simp [hd, hy]
     · simp [hd, hy]
 
 lemma T_succ {A : Matrix C C ℝ} (w : C → ℝ) {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
@@ -37,13 +37,13 @@ lemma T_succ {A : Matrix C C ℝ} (w : C → ℝ) {d : C → ℕ} (hL : Lip A d)
       ∑ z ∈ Finset.univ.erase y, (if d z + 1 = d y then A y z * T A w d c k z else 0) := by
   unfold T
   by_cases hy : d y ≤ k + 1
-  · rw [if_pos hy, pow_succ_coeff]
+  · rw [ite_eq_left hy, pow_succ_coeff]
     have e1 : ((Hl A 0 w ^ k) y c).coeff (k + 1 - d y) = 0 := entry_bound hL hc 0 w k y _ (by omega)
     rw [e1, mul_zero, zero_add]
     congr 1
     · by_cases h1 : d y ≤ k
-      · rw [if_neg (by omega), if_pos h1, show k + 1 - d y - 1 = k - d y by omega]
-      · rw [if_pos (by omega), if_neg h1, mul_zero]
+      · rw [ite_eq_right (by omega), ite_eq_left h1, show k + 1 - d y - 1 = k - d y by omega]
+      · rw [ite_eq_left (by omega), ite_eq_right h1, mul_zero]
     · apply Finset.sum_congr rfl
       intro z hz
       by_cases hA : A y z = 0
@@ -51,20 +51,21 @@ lemma T_succ {A : Matrix C C ℝ} (w : C → ℝ) {d : C → ℕ} (hL : Lip A d)
       · have hlip := hL y z (Finset.mem_erase.mp hz).1.symm hA
         by_cases hdz : d z + 1 = d y
         · have : k + 1 - d y = k - d z := by omega
-          rw [if_pos hdz, if_pos (by omega), this]
-        · rw [if_neg hdz, entry_bound hL hc 0 w k z _ (by omega), mul_zero]
-  · rw [if_neg hy]
+          rw [ite_eq_left hdz, ite_eq_left (by omega), this]
+        · rw [ite_eq_right hdz, entry_bound hL hc 0 w k z _ (by omega), mul_zero]
+  · rw [ite_eq_right hy]
     have h1 : ¬ d y ≤ k := by omega
-    rw [if_neg h1, mul_zero, zero_add]
+    rw [ite_eq_right h1, mul_zero, zero_add]
     symm
     apply Finset.sum_eq_zero
     intro z hz
     by_cases hdz : d z + 1 = d y
-    · rw [if_pos hdz, if_neg (show ¬ d z ≤ k by omega), mul_zero]
-    · rw [if_neg hdz]
+    · rw [ite_eq_left hdz, ite_eq_right (show ¬ d z ≤ k by omega), mul_zero]
+    · rw [ite_eq_right hdz]
 
 /-- **Power-sum (divided-difference) representation of the top coefficients.** -/
-theorem power_sum {A : Matrix C C ℝ} (w : C → ℝ) (hw : Function.Injective w) {d : C → ℕ} (hL : Lip A d)
+theorem power_sum {A : Matrix C C ℝ} (w : C → ℝ) (hw : Function.Injective w) {d : C → ℕ}
+    (hL : Lip A d)
     {c : C} (hc : d c = 0) :
     ∀ n, ∀ y, d y = n → ∃ α : C → ℝ, (∀ z, α z ≠ 0 → z = y ∨ d z < d y) ∧
       ∀ k, T A w d c k y = ∑ z, α z * w z ^ k := by
@@ -113,8 +114,8 @@ theorem power_sum {A : Matrix C C ℝ} (w : C → ℝ) (hw : Function.Injective 
       simp [β, hz]; field_simp
     have hsumβ : ∑ z, β z = if y = c then 1 else 0 := by
       rw [← Finset.add_sum_erase _ _ (Finset.mem_univ y)]
-      simp only [β, if_pos rfl]
-      rw [Finset.sum_congr rfl (fun z hz => if_neg (Finset.mem_erase.mp hz).1)]
+      simp only [β, ite_eq_left rfl]
+      rw [Finset.sum_congr rfl (fun z hz => ite_eq_right (Finset.mem_erase.mp hz).1)]
       ring
     intro k
     induction k with
@@ -152,7 +153,8 @@ lemma alphaRep_rep {A : Matrix C C ℝ} {w : C → ℝ} (hw : Function.Injective
     T A w d c k y = ∑ z, alphaRep A w hw d hL c hc y z * w z ^ k :=
   (Classical.choose_spec (power_sum w hw hL hc (d y) y rfl)).2 k
 
-/-- A matrix that is "triangular with respect to `d`" has determinant equal to its diagonal product. -/
+/-- A matrix that is "triangular with respect to `d`" has determinant equal to its diagonal product.
+-/
 lemma det_triangular_d (Mx : Matrix C C ℝ) (d : C → ℕ) (h : ∀ y z, Mx y z ≠ 0 → z = y ∨ d z < d y) :
     Mx.det = ∏ y, Mx y y := by
   rw [Matrix.det_apply, Finset.sum_eq_single 1]
@@ -229,16 +231,19 @@ theorem top_coeff_factor {A : Matrix C C ℝ} {w : C → ℝ} (hw : Function.Inj
 lemma vandermonde_factor_ne_zero {w : C → ℝ} (hw : Function.Injective w) :
     (Matrix.of fun z j => w z ^ ((Fintype.equivFin C j : ℕ))).det ≠ 0 := by
   set e := Fintype.equivFin C
-  have : (Matrix.of fun z j => w z ^ ((e j : ℕ))) = (Matrix.vandermonde (w ∘ e.symm)).submatrix e e := by
+  have : (Matrix.of fun z j => w z ^ ((e j : ℕ))) =
+      (Matrix.vandermonde (w ∘ e.symm)).submatrix e e := by
     ext z j; simp [Matrix.vandermonde]
   rw [this, Matrix.det_submatrix_equiv_self]
   exact Matrix.det_vandermonde_ne_zero_iff.mpr (hw.comp e.symm.injective)
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 /-- **Reduction of (H*) to the diagonal path sums.** Along a direction `u` with pairwise distinct
-configuration energies `w y = Σ_i u_i n_i(y)`, if every diagonal divided-difference coefficient `α_y(y)` is
-nonzero, then the Krylov polynomial of configuration `c` is nonzero for every interaction `Vint`. -/
+configuration energies `w y = Σ_i u_i n_i(y)`, if every diagonal divided-difference coefficient
+`α_y(y)` is nonzero, then the Krylov polynomial of configuration `c` is nonzero for every
+interaction `Vint`. -/
 theorem hstar_of_alpha {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
     (n : V → C → ℝ) (u : V → ℝ) (hw : Function.Injective (fun y => ∑ i, u i * n i y))
     (hα : ∀ y, alphaRep A _ hw d hL c hc y y ≠ 0) (Vint : C → ℝ) :
@@ -253,7 +258,8 @@ section
 open Polynomial
 
 lemma eval_weighted_sum {K : Type*} [Fintype K] (p : ℝ[X]) (c z : K → ℝ) :
-    ∑ k ∈ Finset.range (p.natDegree + 1), p.coeff k * ∑ i, c i * z i ^ k = ∑ i, c i * p.eval (z i) := by
+    ∑ k ∈ Finset.range (p.natDegree + 1), p.coeff k * ∑ i, c i * z i ^ k =
+        ∑ i, c i * p.eval (z i) := by
   simp_rw [Finset.mul_sum, Polynomial.eval_eq_sum_range, Finset.mul_sum]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl; intro i _
@@ -262,7 +268,8 @@ lemma eval_weighted_sum {K : Type*} [Fintype K] (p : ℝ[X]) (c z : K → ℝ) :
 /-- **Uniqueness of power-sum coefficients** (nodes may repeat). -/
 theorem ps_unique {I J : Type*} [Fintype I] [Fintype J] (a x : I → ℝ) (b y : J → ℝ)
     (h : ∀ k : ℕ, ∑ i, a i * x i ^ k = ∑ j, b j * y j ^ k) (v : ℝ) :
-    ∑ i ∈ Finset.univ.filter (fun i => x i = v), a i = ∑ j ∈ Finset.univ.filter (fun j => y j = v), b j := by
+    ∑ i ∈ Finset.univ.filter (fun i => x i = v), a i =
+        ∑ j ∈ Finset.univ.filter (fun j => y j = v), b j := by
   classical
   set S : Finset ℝ := (Finset.univ.image x ∪ Finset.univ.image y).erase v
   set p : ℝ[X] := Polynomial.C (∏ s ∈ S, (v - s))⁻¹ * ∏ s ∈ S, (X - Polynomial.C s)
@@ -280,13 +287,15 @@ theorem ps_unique {I J : Type*} [Fintype I] [Fintype J] (a x : I → ℝ) (b y :
     apply Finset.sum_congr rfl; intro i _
     split_ifs with hxi
     · rw [hxi, hv, mul_one]
-    · rw [hs (x i) hxi (Finset.mem_union_left _ (Finset.mem_image_of_mem x (Finset.mem_univ i))), mul_zero]
+    · rw [hs (x i) hxi (Finset.mem_union_left _ (Finset.mem_image_of_mem x (Finset.mem_univ i))),
+        mul_zero]
   have hB : ∑ j, b j * p.eval (y j) = ∑ j ∈ Finset.univ.filter (fun j => y j = v), b j := by
     rw [Finset.sum_filter]
     apply Finset.sum_congr rfl; intro j _
     split_ifs with hyj
     · rw [hyj, hv, mul_one]
-    · rw [hs (y j) hyj (Finset.mem_union_right _ (Finset.mem_image_of_mem y (Finset.mem_univ j))), mul_zero]
+    · rw [hs (y j) hyj (Finset.mem_union_right _ (Finset.mem_image_of_mem y (Finset.mem_univ j))),
+        mul_zero]
   rw [← hA, ← hB, ← eval_weighted_sum, ← eval_weighted_sum]
   apply Finset.sum_congr rfl; intro k _
   rw [h k]

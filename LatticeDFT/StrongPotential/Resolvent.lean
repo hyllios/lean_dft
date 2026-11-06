@@ -3,8 +3,8 @@ import LatticeDFT.StrongPotential.PowerSums
 /-!
 # Explicit divided-difference coefficients
 
-`alpha_rec`, `alpha_sum`, the resolvent route sum `Fres`, its recursion `Fres_rec`, and the explicit diagonal
-coefficient `alpha_diag : α_y(y) = [y = c] + Σ_{p pred y} A_{yp} Fres_p(w_y)`.
+`alpha_rec`, `alpha_sum`, the resolvent route sum `Fres`, its recursion `Fres_rec`, and the explicit
+diagonal coefficient `alpha_diag : α_y(y) = [y = c] + Σ_{p pred y} A_{yp} Fres_p(w_y)`.
 -/
 
 namespace LatticeDFT
@@ -72,14 +72,16 @@ theorem alpha_diag (y : C) :
       ∑ p ∈ Finset.univ.erase y, (if d p + 1 = d y then A y p * Fres hw hL hc p (w y) else 0) := by
   have hs := alpha_sum hw hL hc y
   rw [← Finset.add_sum_erase _ _ (Finset.mem_univ y)] at hs
-  have hoff : ∀ z ∈ Finset.univ.erase y, alphaRep A w hw d hL c hc y z = Ssrc hw hL hc y z / (w z - w y) := by
+  have hoff : ∀ z ∈ Finset.univ.erase y, alphaRep A w hw d hL c hc y z =
+      Ssrc hw hL hc y z / (w z - w y) := by
     intro z hz
     have hne : w z - w y ≠ 0 := sub_ne_zero.mpr (fun h => (Finset.mem_erase.mp hz).1 (hw h))
     rw [← alpha_rec hw hL hc y z]; field_simp
   rw [Finset.sum_congr rfl hoff] at hs
   have hS : ∑ z ∈ Finset.univ.erase y, Ssrc hw hL hc y z / (w z - w y) =
       -∑ z, Ssrc hw hL hc y z / (w y - w z) := by
-    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ y), Ssrc_self, zero_div, zero_add, ← Finset.sum_neg_distrib]
+    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ y), Ssrc_self, zero_div, zero_add,
+        ← Finset.sum_neg_distrib]
     apply Finset.sum_congr rfl; intro z _
     rw [← neg_sub, div_neg]
   rw [hS] at hs

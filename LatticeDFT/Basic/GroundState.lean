@@ -5,9 +5,10 @@ import Mathlib.Tactic
 /-!
 # Ground states on finite-dimensional real Hilbert spaces
 
-* `qf M ψ = ⟨ψ, M ψ⟩`, and `IsGroundState M ψ`: `ψ ≠ 0` minimises the Rayleigh quotient (written without
-  division).
-* `isGroundState_eigen`: a ground state of a symmetric matrix is an eigenvector with eigenvalue `qf/‖ψ‖²`.
+* `qf M ψ = ⟨ψ, M ψ⟩`, and `IsGroundState M ψ`: `ψ ≠ 0` minimises the Rayleigh quotient (written
+  without division).
+* `isGroundState_eigen`: a ground state of a symmetric matrix is an eigenvector with eigenvalue
+  `qf/‖ψ‖²`.
 -/
 
 namespace LatticeDFT
@@ -20,7 +21,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 /-- quadratic form ⟨ψ, M ψ⟩ -/
 def qf (M : Matrix V V ℝ) (ψ : V → ℝ) : ℝ := ψ ⬝ᵥ (M *ᵥ ψ)
 
-/-- ψ is a ground state of M: nonzero minimiser of the Rayleigh quotient (written without division) -/
+/-- ψ is a ground state of M: nonzero minimiser of the Rayleigh quotient (written without division)
+-/
 def IsGroundState (M : Matrix V V ℝ) (ψ : V → ℝ) : Prop :=
   ψ ≠ 0 ∧ ∀ φ : V → ℝ, qf M ψ * (φ ⬝ᵥ φ) ≤ qf M φ * (ψ ⬝ᵥ ψ)
 
@@ -39,9 +41,11 @@ lemma lin_coeff_zero {a b : ℝ} (h : ∀ s : ℝ, 0 ≤ a * s + b * s ^ 2) : a 
     · positivity
   linarith
 
+omit [DecidableEq V] in
 /-- A ground state of a symmetric matrix is an eigenvector with eigenvalue `qf M ψ / ‖ψ‖²`. -/
 theorem isGroundState_eigen {M : Matrix V V ℝ} (hM : M.IsSymm) {ψ : V → ℝ}
     (h : IsGroundState M ψ) : M *ᵥ ψ = (qf M ψ / (ψ ⬝ᵥ ψ)) • ψ := by
+  classical
   obtain ⟨hne, hmin⟩ := h
   have hpos : 0 < ψ ⬝ᵥ ψ := by
     obtain ⟨i, hi⟩ : ∃ i, ψ i ≠ 0 := by

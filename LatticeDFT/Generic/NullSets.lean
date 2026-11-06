@@ -6,10 +6,10 @@ import Mathlib.Algebra.MvPolynomial.Equiv
 /-!
 # Zero sets of polynomials are null; generic Hohenberg–Kohn (measure version)
 
-* `volume_zeroSet`: the zero set of a nonzero real polynomial in finitely many variables is Lebesgue-null
-  (Fubini induction on the number of variables).
-* `generic_hk_ae`: under (H*), non-uniquely-v-representable potentials lie in a closed, nowhere dense,
-  Lebesgue-null set.
+* `volume_zeroSet`: the zero set of a nonzero real polynomial in finitely many variables is
+  Lebesgue-null (Fubini induction on the number of variables).
+* `generic_hk_ae`: under (H*), non-uniquely-v-representable potentials lie in a closed, nowhere
+  dense, Lebesgue-null set.
 -/
 
 namespace LatticeDFT
@@ -43,7 +43,8 @@ theorem volume_zeroSet_fin : ∀ (n : ℕ) (P : MvPolynomial (Fin n) ℝ), P ≠
     have hq : q ≠ 0 := Polynomial.leadingCoeff_ne_zero.mpr hQ
     have ih := volume_zeroSet_fin n q hq
     -- the set in product coordinates
-    have hcont : Continuous fun p : ℝ × (Fin n → ℝ) => eval (Fin.cons p.1 p.2 : Fin (n + 1) → ℝ) P := by
+    have hcont : Continuous fun p : ℝ × (Fin n → ℝ) => eval
+        (Fin.cons p.1 p.2 : Fin (n + 1) → ℝ) P := by
       refine (MvPolynomial.continuous_eval P).comp ?_
       refine continuous_pi fun i => ?_
       refine Fin.cases ?_ (fun j => ?_) i
@@ -99,17 +100,19 @@ theorem volume_zeroSet {V : Type*} [Fintype V] {P : MvPolynomial V ℝ} (hP : P 
     simp only [Set.mem_ofPred_eq, Set.mem_preimage, hP'def, eval_rename]
     have : ((g x : Fin (Fintype.card V) → ℝ) ∘ ⇑f) = x := by
       funext v
-      show (g x) (f v) = x v
+      change (g x) (f v) = x v
       simp [g, MeasurableEquiv.coe_piCongrLeft, Equiv.piCongrLeft_apply_apply]
     rw [this]
   have hmeas : MeasurableSet {y : Fin (Fintype.card V) → ℝ | eval y P' = 0} :=
     (isClosed_eq (MvPolynomial.continuous_eval P') continuous_const).measurableSet
   rw [key, volume_pi,
-    (measurePreserving_piCongrLeft (fun _ : Fin (Fintype.card V) => (volume : Measure ℝ)) f).measure_preimage
+    (measurePreserving_piCongrLeft
+        (fun _ : Fin (Fintype.card V) => (volume : Measure ℝ)) f).measure_preimage
       hmeas.nullMeasurableSet, ← volume_pi, h0]
 
 variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 /-- **Generic Hohenberg–Kohn, measure version (conditional on (H*)).** Non-uniquely-v-representable
 potentials lie in a closed, nowhere dense, Lebesgue-null set. -/
 theorem generic_hk_ae {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hR : Rigid n)
@@ -120,7 +123,7 @@ theorem generic_hk_ae {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → �
   obtain ⟨hcl, hint⟩ := zeroSet_closed_nowhere hQ
   refine ⟨_, hcl, hint, volume_zeroSet hQ, fun v hv => ?_⟩
   obtain ⟨c, hc⟩ := nonUV_imp_krylov_zero hH0 hR hv ord
-  show MvPolynomial.eval v Q = 0
+  change MvPolynomial.eval v Q = 0
   rw [map_prod]
   exact Finset.prod_eq_zero (Finset.mem_univ c) hc
 

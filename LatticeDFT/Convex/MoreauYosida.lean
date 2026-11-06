@@ -3,12 +3,14 @@ import LatticeDFT.KohnSham.Iteration
 /-!
 # Moreau–Yosida envelopes of functionals on a compact convex domain
 
-For a convex, lower semicontinuous `f` on a nonempty compact convex set `D` (extended by `+∞` outside `D`)
-and `ε > 0`:
+For a convex, lower semicontinuous `f` on a nonempty compact convex set `D` (extended by `+∞`
+outside `D`) and `ε > 0`:
 
 * `prox D f ε x` minimises `f q + ‖x - q‖² / (2ε)` over `q ∈ D` (`prox_spec`);
-* `myEnv D f ε x = f (prox x) + ‖x - prox x‖² / (2ε)` is the Moreau envelope `inf_q [f q + ‖x-q‖²/(2ε)]`;
-* `myGrad D f ε x = ε⁻¹ (x - prox x)` is its gradient, in the sense of `IsMYSmooth` (`isMYSmooth_myEnv`);
+* `myEnv D f ε x = f (prox x) + ‖x - prox x‖² / (2ε)` is the Moreau envelope
+  `inf_q [f q + ‖x-q‖²/(2ε)]`;
+* `myGrad D f ε x = ε⁻¹ (x - prox x)` is its gradient, in the sense of `IsMYSmooth`
+  (`isMYSmooth_myEnv`);
 * the proximal points are bounded and the sublevel sets of `myEnv + ⟪w,·⟫` are bounded
   (`myEnv_sublevel_bounded`), the remaining hypotheses of the MYKSODA theorem.
 -/
@@ -37,6 +39,7 @@ noncomputable def myGrad (x : E) : E := ε⁻¹ • (x - prox D f ε x)
 
 variable {D f ε}
 
+omit [InnerProductSpace ℝ E] in
 lemma prox_spec (hD : IsCompact D) (hne : D.Nonempty) (hf : LowerSemicontinuousOn f D) (x : E) :
     prox D f ε x ∈ D ∧ ∀ q ∈ D, myEnv D f ε x ≤ f q + ‖x - q‖ ^ 2 / (2 * ε) := by
   have hex : ∃ p ∈ D, ∀ q ∈ D, f p + ‖x - p‖ ^ 2 / (2 * ε) ≤ f q + ‖x - q‖ ^ 2 / (2 * ε) := by
@@ -45,7 +48,7 @@ lemma prox_spec (hD : IsCompact D) (hne : D.Nonempty) (hf : LowerSemicontinuousO
     obtain ⟨p, hp, hmin⟩ := hl.exists_isMinOn hne hD
     exact ⟨p, hp, fun q hq => hmin hq⟩
   unfold myEnv prox
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 /-- `A + t C ≥ 0` for all small `t > 0` forces `A ≥ 0`. -/
@@ -80,7 +83,8 @@ lemma prox_vi (hD : IsCompact D) (hne : D.Nonempty) (hDc : Convex ℝ D) (hfc : 
     rw [show myEnv D f ε x = f p + ‖b‖ ^ 2 / (2 * ε) from rfl] at h1
     have e : x - ((1 - t) • p + t • q) = b - t • (q - p) := by
       simp only [b, sub_smul, one_smul, smul_sub]; abel
-    rw [e, norm_sub_sq_real b (t • (q - p)), norm_smul, Real.norm_eq_abs, abs_of_pos ht0, inner_smul_right] at h1
+    rw [e, norm_sub_sq_real b (t • (q - p)), norm_smul, Real.norm_eq_abs, abs_of_pos ht0,
+        inner_smul_right] at h1
     have h2 : 0 ≤ t * ((f q - f p - ε⁻¹ * ⟪b, q - p⟫) + t * (‖q - p‖ ^ 2 / (2 * ε))) := by
       have e2 : t * ((f q - f p - ε⁻¹ * ⟪b, q - p⟫) + t * (‖q - p‖ ^ 2 / (2 * ε))) =
           (1 - t) * f p + t * f q + (‖b‖ ^ 2 - 2 * (t * ⟪b, q - p⟫) + (t * ‖q - p‖) ^ 2) / (2 * ε)
@@ -92,7 +96,8 @@ lemma prox_vi (hD : IsCompact D) (hne : D.Nonempty) (hDc : Convex ℝ D) (hfc : 
   linarith
 
 /-- **The Moreau envelope is `IsMYSmooth`.** -/
-theorem isMYSmooth_myEnv (hD : IsCompact D) (hne : D.Nonempty) (hDc : Convex ℝ D) (hfc : ConvexOn ℝ D f)
+theorem isMYSmooth_myEnv (hD : IsCompact D) (hne : D.Nonempty) (hDc : Convex ℝ D)
+    (hfc : ConvexOn ℝ D f)
     (hf : LowerSemicontinuousOn f D) (hε : 0 < ε) : IsMYSmooth ε (myEnv D f ε) (myGrad D f ε) where
   lower x y := by
     set p := prox D f ε x
@@ -106,7 +111,8 @@ theorem isMYSmooth_myEnv (hD : IsCompact D) (hne : D.Nonempty) (hDc : Convex ℝ
       have := norm_sub_sq_real u b
       rw [real_inner_comm] at this
       nlinarith [sq_nonneg ‖u - b‖]
-    have e : f p + ε⁻¹ * ⟪b, q - p⟫ + ‖u‖ ^ 2 / (2 * ε) - (f p + ‖b‖ ^ 2 / (2 * ε) + ε⁻¹ * ⟪b, y - x⟫) =
+    have e : f p + ε⁻¹ * ⟪b,
+        q - p⟫ + ‖u‖ ^ 2 / (2 * ε) - (f p + ‖b‖ ^ 2 / (2 * ε) + ε⁻¹ * ⟪b, y - x⟫) =
         ε⁻¹ * (⟪b, q - p⟫ - ⟪b, y - x⟫ + ‖u‖ ^ 2 / 2 - ‖b‖ ^ 2 / 2) := by
       field_simp; ring
     have := mul_nonneg (inv_nonneg.mpr hε.le) hT

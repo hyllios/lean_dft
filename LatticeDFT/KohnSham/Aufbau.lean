@@ -4,13 +4,14 @@ import Mathlib.Analysis.Matrix.Spectrum
 /-!
 # The aufbau principle for non-interacting lattice fermions
 
-For a symmetric single-particle Hamiltonian `h` with an orthonormal eigenbasis `φ_a` (energies `ε_a`):
-* `slaterSub_eigen`: the Slater determinant of any `N` orbitals `S` is a many-body eigenvector of `Γ h`
-  with energy `E_S = Σ_{a ∈ S} ε_a`;
-* `qf_gamma_ge`: `⟨Ψ, Γ h Ψ⟩ ≥ min_S E_S · ‖Ψ‖²` for every many-body state (the Slater determinants form
-  an orthonormal basis);
-* `aufbau`: the non-interacting ground-state energy is the smallest sum of `N` orbital energies, and the
-  Slater determinant of a minimising set of orbitals is a ground state.
+For a symmetric single-particle Hamiltonian `h` with an orthonormal eigenbasis `φ_a` (energies
+`ε_a`):
+* `slaterSub_eigen`: the Slater determinant of any `N` orbitals `S` is a many-body eigenvector of
+  `Γ h` with energy `E_S = Σ_{a ∈ S} ε_a`;
+* `qf_gamma_ge`: `⟨Ψ, Γ h Ψ⟩ ≥ min_S E_S · ‖Ψ‖²` for every many-body state (the Slater determinants
+  form an orthonormal basis);
+* `aufbau`: the non-interacting ground-state energy is the smallest sum of `N` orbital energies, and
+  the Slater determinant of a minimising set of orbitals is a ground state.
 -/
 
 namespace LatticeDFT
@@ -25,7 +26,7 @@ def orbEnergy (ε : Fin M → ℝ) (S : Conf M N) : ℝ := ∑ j, ε (τs S j)
 theorem slaterSub_eigen (h : Matrix (Fin M) (Fin M) ℝ) {φ : Fin M → Fin M → ℝ} {ε : Fin M → ℝ}
     (hφ : ∀ a, h *ᵥ φ a = ε a • φ a) (S : Conf M N) :
     (Γ h : Matrix (Conf M N) (Conf M N) ℝ) *ᵥ slaterSub φ S = orbEnergy ε S • slaterSub φ S :=
-  gamma_slater h (fun j => φ (τs S j)) (fun j => ε (τs S j)) (fun j => hφ _)
+  gamma_slater h (fun j => φ (τs S j)) (fun j => ε (τs S j)) (fun _ => hφ _)
 
 section
 variable (φ : Fin M → Fin M → ℝ)
@@ -62,14 +63,15 @@ theorem qf_gamma_ge (h : Matrix (Fin M) (Fin M) ℝ) {φ : Fin M → Fin M → �
     simp only [mulVec, dotProduct, Pi.smul_apply, smul_eq_mul] at this
     rw [Matrix.mul_apply, Matrix.mul_apply]
     simp only [P, slaterMat, diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true]
+      ite_true]
     rw [this, mul_comm]
   have hq : qf (Γ h) (P *ᵥ c) = c ⬝ᵥ (diagonal (orbEnergy ε) *ᵥ c) := by
     unfold qf
     rw [mulVec_mulVec, hGP, ← mulVec_mulVec, dot_slaterMat hON]
   rw [hq, dot_slaterMat hON]
-  simp only [dotProduct, mulVec, diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
-    if_true, Finset.mul_sum]
+  simp only [dotProduct, mulVec, diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq,
+      Finset.mem_univ,
+    ite_true, Finset.mul_sum]
   apply Finset.sum_le_sum; intro S _
   nlinarith [hE S, mul_self_nonneg (c S)]
 
@@ -80,7 +82,8 @@ theorem exists_eigenbasis (h : Matrix (Fin M) (Fin M) ℝ) (hS : h.IsSymm) :
   have hH : h.IsHermitian := by
     unfold Matrix.IsHermitian
     rw [conjTranspose_eq_transpose_of_trivial]; exact hS
-  refine ⟨hH.eigenvalues, fun a => ⇑(hH.eigenvectorBasis a), fun a => hH.mulVec_eigenvectorBasis a, ?_⟩
+  refine ⟨hH.eigenvalues, fun a => ⇑(hH.eigenvectorBasis a), fun a => hH.mulVec_eigenvectorBasis a,
+      ?_⟩
   intro a b
   have h1 := (orthonormal_iff_ite.mp hH.eigenvectorBasis.orthonormal) a b
   rw [← h1, EuclideanSpace.inner_eq_star_dotProduct]
@@ -92,8 +95,8 @@ lemma conf_nonempty (hN : N ≤ M) : Nonempty (Conf M N) := by
   exact ⟨⟨t, ht⟩⟩
 
 /-- **Aufbau theorem.** The ground-state energy of `N` non-interacting fermions with single-particle
-Hamiltonian `h` is the smallest sum of `N` orbital energies, attained by the Slater determinant of the
-corresponding orbitals, which is a many-body ground state. -/
+Hamiltonian `h` is the smallest sum of `N` orbital energies, attained by the Slater determinant of
+the corresponding orbitals, which is a many-body ground state. -/
 theorem aufbau (h : Matrix (Fin M) (Fin M) ℝ) (hS : h.IsSymm) (hN : N ≤ M) :
     ∃ (ε : Fin M → ℝ) (φ : Fin M → Fin M → ℝ) (S0 : Conf M N),
       (∀ a, h *ᵥ φ a = ε a • φ a) ∧
@@ -103,7 +106,8 @@ theorem aufbau (h : Matrix (Fin M) (Fin M) ℝ) (hS : h.IsSymm) (hN : N ≤ M) :
       ∀ v : Conf M N → ℝ, orbEnergy ε S0 * (v ⬝ᵥ v) ≤ qf (Γ h) v := by
   obtain ⟨ε, φ, hφ, hON⟩ := exists_eigenbasis h hS
   have := conf_nonempty hN
-  obtain ⟨S0, -, hmin⟩ := Finset.exists_min_image Finset.univ (orbEnergy (N := N) ε) Finset.univ_nonempty
+  obtain ⟨S0, -, hmin⟩ :=
+      Finset.exists_min_image Finset.univ (orbEnergy (N := N) ε) Finset.univ_nonempty
   have hmin' : ∀ S, orbEnergy ε S0 ≤ orbEnergy ε S := fun S => hmin S (Finset.mem_univ S)
   have hlow := qf_gamma_ge h hφ hON hmin'
   have hnorm : slaterSub φ S0 ⬝ᵥ slaterSub φ S0 = 1 := by
@@ -125,7 +129,7 @@ variable {M N : ℕ}
 lemma orbEnergy_eq_sum (ε : Fin M → ℝ) (S : Conf M N) : orbEnergy ε S = ∑ a ∈ S.1, ε a := by
   unfold orbEnergy τs
   have hmap : Finset.univ.map (S.1.orderEmbOfFin S.2).toEmbedding = S.1 := by
-    ext a; simp [Finset.range_orderEmbOfFin]
+    ext a; simp
   conv_rhs => rw [← hmap]
   rw [Finset.sum_map]; rfl
 
@@ -139,11 +143,12 @@ lemma sum_le_sum_of_forall_le {A B : Finset (Fin M)} (ε : Fin M → ℝ) (hc : 
     obtain ⟨a0, ha0, hm⟩ := Finset.exists_mem_eq_sup' hA ε
     calc ∑ a ∈ A, ε a ≤ ∑ _a ∈ A, m := Finset.sum_le_sum fun a ha => Finset.le_sup' ε ha
       _ = ∑ _b ∈ B, m := by simp [hc]
-      _ ≤ ∑ b ∈ B, ε b := Finset.sum_le_sum fun b hb => by rw [show m = ε a0 from hm]; exact h a0 ha0 b hb
+      _ ≤ ∑ b ∈ B, ε b :=
+          Finset.sum_le_sum fun b hb => by rw [show m = ε a0 from hm]; exact h a0 ha0 b hb
 
-/-- **Aufbau: the minimising orbital sets are exactly the sets of lowest orbitals.** A set `S` of `N`
-orbitals minimises the total orbital energy iff no unoccupied orbital lies strictly below an occupied
-one (arbitrary choices among degenerate orbitals at the Fermi level are allowed). -/
+/-- **Aufbau: the minimising orbital sets are exactly the sets of lowest orbitals.** A set `S` of
+`N` orbitals minimises the total orbital energy iff no unoccupied orbital lies strictly below an
+occupied one (arbitrary choices among degenerate orbitals at the Fermi level are allowed). -/
 theorem aufbau_lowest (ε : Fin M → ℝ) (S : Conf M N) :
     (∀ T : Conf M N, orbEnergy ε S ≤ orbEnergy ε T) ↔ ∀ a ∈ S.1, ∀ b ∉ S.1, ε a ≤ ε b := by
   simp only [orbEnergy_eq_sum]

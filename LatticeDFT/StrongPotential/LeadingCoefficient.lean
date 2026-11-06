@@ -3,8 +3,8 @@ import LatticeDFT.Generic.Krylov
 /-!
 # Strong-potential limit: the interaction drops out of the leading coefficient
 
-Along `v = λ u`, entries `(Hᵏ)_{yc}` have degree `≤ k − d(y)` for any `d` growing by at most one per hop
-(`entry_bound`), with interaction-independent top coefficient (`entry_top`). Hence `det_top` and
+Along `v = λ u`, entries `(Hᵏ)_{yc}` have degree `≤ k − d(y)` for any `d` growing by at most one per
+hop (`entry_bound`), with interaction-independent top coefficient (`entry_top`). Hence `det_top` and
 `krylovPoly_ne_zero_of_top`: a nonzero leading coefficient for the free problem gives (H*) for every
 configuration-diagonal interaction.
 -/
@@ -24,8 +24,10 @@ noncomputable def Hl (A : Matrix C C ℝ) (V w : C → ℝ) : Matrix C C ℝ[X] 
 /-- `d` grows by at most one along off-diagonal entries of `A`. -/
 def Lip (A : Matrix C C ℝ) (d : C → ℕ) : Prop := ∀ y z, y ≠ z → A y z ≠ 0 → d y ≤ d z + 1
 
+omit [Fintype C] in
 lemma Hl_apply (A : Matrix C C ℝ) (V w : C → ℝ) (y z : C) :
-    Hl A V w y z = Polynomial.C (A y z) + if y = z then Polynomial.C (V y) + Polynomial.C (w y) * X else 0 := by
+    Hl A V w y z = Polynomial.C (A y z) + if y = z then
+        Polynomial.C (V y) + Polynomial.C (w y) * X else 0 := by
   simp [Hl, Matrix.diagonal_apply]
 
 /-- Coefficient of `(Hl ^ (k+1)) y c` as a sum over the middle index. -/
@@ -37,7 +39,7 @@ lemma pow_succ_coeff (A : Matrix C C ℝ) (V w : C → ℝ) (k : ℕ) (y c : C) 
   rw [pow_succ', Matrix.mul_apply, finsetSum_coeff,
     ← Finset.add_sum_erase _ _ (Finset.mem_univ y)]
   congr 1
-  · rw [Hl_apply, if_pos rfl]
+  · rw [Hl_apply, ite_eq_left rfl]
     have hpoly : Polynomial.C (A y y) + (Polynomial.C (V y) + Polynomial.C (w y) * X) =
         Polynomial.C (A y y + V y) + Polynomial.C (w y) * X := by
       simp [map_add]; ring
@@ -52,7 +54,7 @@ lemma pow_succ_coeff (A : Matrix C C ℝ) (V w : C → ℝ) (k : ℕ) (y c : C) 
     rw [hpoly, add_mul, coeff_add, hc1, hc2]
   · apply Finset.sum_congr rfl
     intro z hz
-    rw [Hl_apply, if_neg (Finset.mem_erase.mp hz).1.symm, add_zero, coeff_C_mul]
+    rw [Hl_apply, ite_eq_right (Finset.mem_erase.mp hz).1.symm, add_zero, coeff_C_mul]
 
 /-- Degree bound: no coefficients above `k - d y`. -/
 theorem entry_bound {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
@@ -62,8 +64,8 @@ theorem entry_bound {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} 
   | zero =>
     intro y m hm
     by_cases hy : y = c
-    · subst hy; rw [hc] at hm; simp [pow_zero, Matrix.one_apply, coeff_one]; omega
-    · simp [pow_zero, Matrix.one_apply, hy]
+    · subst hy; rw [hc] at hm; simp [pow_zero, coeff_one]; omega
+    · simp [pow_zero, hy]
   | succ k ih =>
     intro y m hm
     rw [pow_succ_coeff]
@@ -94,7 +96,8 @@ theorem entry_top {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (h
     intro y hy
     rw [pow_succ_coeff, pow_succ_coeff]
     have e1 : ((Hl A V w ^ k) y c).coeff (k + 1 - d y) = 0 := entry_bound hL hc V w k y _ (by omega)
-    have e1' : ((Hl A V' w ^ k) y c).coeff (k + 1 - d y) = 0 := entry_bound hL hc V' w k y _ (by omega)
+    have e1' : ((Hl A V' w ^ k) y c).coeff (k + 1 - d y) = 0 :=
+        entry_bound hL hc V' w k y _ (by omega)
     rw [e1, e1', mul_zero, mul_zero, zero_add, zero_add]
     congr 1
     · split_ifs with h0
@@ -130,16 +133,18 @@ lemma prod_top {ι : Type*} (s : Finset ι) (f g : ι → ℝ[X]) (e : ι → �
   | empty => simp
   | insert a s ha ih =>
     obtain ⟨h1, h2, h3⟩ := ih (fun i hi => hf i (Finset.mem_insert_of_mem hi))
-      (fun i hi => hg i (Finset.mem_insert_of_mem hi)) (fun i hi => he i (Finset.mem_insert_of_mem hi))
+      (fun i hi => hg i (Finset.mem_insert_of_mem hi))
+          (fun i hi => he i (Finset.mem_insert_of_mem hi))
     rw [Finset.prod_insert ha, Finset.prod_insert ha, Finset.sum_insert ha]
     have hfa := hf a (Finset.mem_insert_self a s)
     have hga := hg a (Finset.mem_insert_self a s)
-    refine ⟨natDegree_mul_le.trans (add_le_add hfa h1), natDegree_mul_le.trans (add_le_add hga h2), ?_⟩
+    refine ⟨natDegree_mul_le.trans (add_le_add hfa h1), natDegree_mul_le.trans (add_le_add hga h2),
+        ?_⟩
     rw [coeff_mul_add_eq_of_natDegree_le hfa h1, coeff_mul_add_eq_of_natDegree_le hga h2,
       he a (Finset.mem_insert_self a s), h3]
 
-/-- **Interaction independence.** The coefficient of degree `Σ ord − Σ d` of the Krylov determinant does not depend on the
-configuration-diagonal interaction. -/
+/-- **Interaction independence.** The coefficient of degree `Σ ord − Σ d` of the Krylov determinant
+does not depend on the configuration-diagonal interaction. -/
 theorem det_top {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
     (V V' w : C → ℝ) (ord : C → ℕ) :
     (kry (Hl A V w) c ord).det.coeff (∑ j, ord j - ∑ y, d y) =
@@ -164,19 +169,22 @@ theorem det_top {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc 
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [Fintype C] [DecidableEq V] in
 lemma Hl_eval (A : Matrix C C ℝ) (Vint : C → ℝ) (n : V → C → ℝ) (u : V → ℝ) (lam : ℝ) :
     (Hl A Vint (fun y => ∑ i, u i * n i y)).map (Polynomial.eval lam) =
       hamN (A + Matrix.diagonal Vint) n (lam • u) := by
   ext a b
   by_cases h : a = b
   · subst h
-    simp [Hl, hamN, Matrix.diagonal_apply, Finset.mul_sum, Finset.sum_mul]
+    simp [Hl, hamN, Finset.sum_mul]
     rw [add_assoc]; congr 1; congr 1
     rw [← Polynomial.coe_evalRingHom, map_sum]
     apply Finset.sum_congr rfl; intro i _; simp; ring
-  · simp [Hl, hamN, Matrix.diagonal_apply, h]
+  · simp [Hl, hamN, h]
 
-lemma det_kry_eval (A : Matrix C C ℝ) (Vint : C → ℝ) (n : V → C → ℝ) (u : V → ℝ) (c : C) (ord : C → ℕ)
+omit [DecidableEq V] in
+lemma det_kry_eval (A : Matrix C C ℝ) (Vint : C → ℝ) (n : V → C → ℝ) (u : V → ℝ) (c : C)
+    (ord : C → ℕ)
     (lam : ℝ) :
     (kry (Hl A Vint (fun y => ∑ i, u i * n i y)) c ord).det.eval lam =
       (kry (hamN (A + Matrix.diagonal Vint) n (lam • u)) c ord).det := by
@@ -188,10 +196,12 @@ lemma det_kry_eval (A : Matrix C C ℝ) (Vint : C → ℝ) (n : V → C → ℝ)
     rw [← Polynomial.coe_evalRingHom, ← RingHom.mapMatrix_apply, ← map_pow, RingHom.mapMatrix_apply]
   simp only [kry, RingHom.mapMatrix_apply, Matrix.map_apply, hp, Polynomial.coe_evalRingHom]
 
-/-- **Reduction to free fermions.** If the leading strong-potential coefficient of the *non-interacting* Krylov
-determinant is nonzero along some direction `u`, then the Krylov polynomial is nonzero for *every*
-configuration-diagonal interaction. -/
-theorem krylovPoly_ne_zero_of_top {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
+omit [DecidableEq V] in
+/-- **Reduction to free fermions.** If the leading strong-potential coefficient of the
+*non-interacting* Krylov determinant is nonzero along some direction `u`, then the Krylov polynomial
+is nonzero for *every* configuration-diagonal interaction. -/
+theorem krylovPoly_ne_zero_of_top {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C}
+    (hc : d c = 0)
     (n : V → C → ℝ) (u : V → ℝ) (ord : C → ℕ)
     (htop : (kry (Hl A 0 (fun y => ∑ i, u i * n i y)) c ord).det.coeff (∑ j, ord j - ∑ y, d y) ≠ 0)
     (Vint : C → ℝ) : krylovPoly (A + Matrix.diagonal Vint) n c ord ≠ 0 := by

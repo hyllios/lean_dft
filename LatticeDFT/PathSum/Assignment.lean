@@ -5,8 +5,8 @@ import Mathlib.Combinatorics.SimpleGraph.Metric
 /-!
 # Optimal particle assignments
 
-* `Mopt`, `mopt`: optimal-assignment (transport) distance between configurations; `lip_mopt`: it grows by at
-  most one per fermion hop.
+* `Mopt`, `mopt`: optimal-assignment (transport) distance between configurations; `lip_mopt`: it
+  grows by at most one per fermion hop.
 * `exists_opt_fixing`: an optimal assignment leaving all common sites in place exists.
 * `opt_unique_of_through`: only that assignment routes every moving particle through its partner.
 -/
@@ -20,16 +20,19 @@ open Matrix
 variable {M N : ℕ}
 
 /-- Cost of the assignment `σ` (particle `l` of the target tuple comes from `c_{σ l}`). -/
-noncomputable def acost (G : SimpleGraph (Fin M)) (c : Conf M N) (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N)) : ℕ :=
+noncomputable def acost (G : SimpleGraph (Fin M)) (c : Conf M N) (τ : Fin N → Fin M)
+    (σ : Equiv.Perm (Fin N)) : ℕ :=
   ∑ l, G.dist (τs c (σ l)) (τ l)
 
 /-- Optimal-assignment distance. -/
 noncomputable def Mopt (G : SimpleGraph (Fin M)) (c : Conf M N) (τ : Fin N → Fin M) : ℕ :=
   Finset.univ.inf' Finset.univ_nonempty (acost G c τ)
 
-noncomputable def mopt (G : SimpleGraph (Fin M)) (c : Conf M N) (y : Conf M N) : ℕ := Mopt G c (τs y)
+noncomputable def mopt (G : SimpleGraph (Fin M)) (c : Conf M N) (y : Conf M N) : ℕ :=
+    Mopt G c (τs y)
 
-lemma Mopt_le (G : SimpleGraph (Fin M)) (c : Conf M N) (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N)) :
+lemma Mopt_le (G : SimpleGraph (Fin M)) (c : Conf M N) (τ : Fin N → Fin M)
+    (σ : Equiv.Perm (Fin N)) :
     Mopt G c τ ≤ acost G c τ σ := Finset.inf'_le _ (Finset.mem_univ σ)
 
 lemma Mopt_exists (G : SimpleGraph (Fin M)) (c : Conf M N) (τ : Fin N → Fin M) :
@@ -42,7 +45,8 @@ lemma mopt_self (G : SimpleGraph (Fin M)) (c : Conf M N) : mopt G c c = 0 := by
   calc mopt G c c ≤ acost G c (τs c) 1 := Mopt_le _ _ _ _
     _ = 0 := by simp [acost]
 
-lemma Mopt_perm (G : SimpleGraph (Fin M)) (c : Conf M N) (τ : Fin N → Fin M) (ρ : Equiv.Perm (Fin N)) :
+lemma Mopt_perm (G : SimpleGraph (Fin M)) (c : Conf M N) (τ : Fin N → Fin M)
+    (ρ : Equiv.Perm (Fin N)) :
     Mopt G c (fun l => τ (ρ l)) = Mopt G c τ := by
   apply le_antisymm
   · obtain ⟨σ, hσ⟩ := Mopt_exists G c τ
@@ -77,7 +81,8 @@ lemma Mopt_update {G : SimpleGraph (Fin M)} (hG : G.Connected) (c : Conf M N) (�
     _ = Mopt G c τ + G.dist (τ k) a := by rw [hσ]
 
 /-- `mopt` is a valid distance for the fermionic hopping matrix. -/
-theorem lip_mopt {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected) (t : Fin M → Fin M → ℝ) (c : Conf M N) :
+theorem lip_mopt {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    (t : Fin M → Fin M → ℝ) (c : Conf M N) :
     Lip (Γ (-hopM G t) : Matrix (Conf M N) (Conf M N) ℝ) (mopt G c) := by
   intro y z _ hyz
   -- a nonzero matrix element comes from one hop `τs y k → b` along an edge
@@ -193,7 +198,8 @@ theorem opt_unique_of_through {G : SimpleGraph (Fin M)} (hG : G.Connected) (c y 
     by_cases hl : τs y l ∈ c.1
     · rw [hfix l hl, SimpleGraph.dist_self, zero_add]
     · rw [← hthr l hl]; omega
-  have hsum : ∑ l, G.dist (τs c (σ0.symm l)) (τs y l) + ∑ l, G.dist (τs c (σ.symm l)) (τs c (σ0.symm l))
+  have hsum : ∑ l, G.dist (τs c (σ0.symm l)) (τs y l) +
+      ∑ l, G.dist (τs c (σ.symm l)) (τs c (σ0.symm l))
       ≤ ∑ l, G.dist (τs c (σ.symm l)) (τs y l) := by
     rw [← Finset.sum_add_distrib]; exact Finset.sum_le_sum (fun l _ => hterm l)
   have hc0 : ∑ l, G.dist (τs c (σ0.symm l)) (τs y l) = ∑ l, G.dist (τs c (σ.symm l)) (τs y l) := by
