@@ -125,3 +125,24 @@ infrastructure) → B6 (pure algebra) → B2/B3 → B4 → B5 → B7. Each miles
   Slater) + G6–G8 (top coefficients, power sums) + F5–F7 (optimal assignments, α = D) + F8–F13 (route sums,
   resonance limit, RatOn simultaneity) + F14 (rigidity, assembly). G9 `exists_common_ne` (simultaneous
   non-vanishing of rational functions) is a reusable tool.
+
+## Kohn–Sham and extensions (2026-11-06, after the restructuring; module names as in the current tree)
+- KS1 `KohnSham/Aufbau`: aufbau via Cauchy–Binet; `aufbau_lowest` (minimisers = sets of lowest orbitals,
+  exchange argument).
+- KS2 `KohnSham/Uniqueness`: generic uniqueness of the KS potential (generic HK with Vint = 0).
+- KS3 `KohnSham/Duality`: Lieb functional, duality, convexity.
+- KS4 `KohnSham/Maximizer`, `Representability`, `Existence`: ensemble v-representability of strictly positive
+  mixtures (maximiser via coercivity, limit argument, Hahn–Banach separation).
+- KS4b `KohnSham/Hypersimplex`: vertex description of the hypersimplex (induction on fractional sites);
+  `ks_potential_exists_interior`: every ρ with 0 < ρ_i < 1, Σρ = N has a KS potential.
+- KS5 `KohnSham/Iteration`, `Convex/MoreauYosida`, `KohnSham/RegularizedKS`: convergence of MYKSODA
+  (Penz–Laestadius–Tellgren–Ruggenthaler PRL 123, 037401 (2019)). NOTE: the original letter's convergence claim
+  is wrong (erratum with P. E. Lammert): ‖x_{i+1} − x_i‖ → 0 does not give a Cauchy sequence. We formalise the
+  corrected statement: decreasing energies, ∇F_ε(x_i) + v → 0, accumulation points exist and are regularised
+  ground-state quasi-densities z, energies converge to the minimum, z + εv is a true (Lieb) ground-state
+  density, and the KS potentials converge along the subsequence to v_KS with z + εv_KS the KS density.
+  Abstract layer needs no derivatives: only the two inequalities of `IsMYSmooth`.
+- Weighted hopping: the PathSum chain takes edge amplitudes `t a b`; only `Lval_ne_zero` uses the sign
+  condition ∃ s, s·t_ab > 0 on edges. `generic_hk_lattice_fermions_w`; the uniform theorem is a corollary.
+- CI: docgen-action ran doc-gen on dependencies even with `api-docs: false` (OOM); blueprint, checkdecls and
+  Jekyll are now explicit workflow steps; runner pinned to ubuntu-24.04 (setup-ruby vs ubuntu-26.04).
