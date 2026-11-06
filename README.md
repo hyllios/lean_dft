@@ -88,6 +88,12 @@ Schrödinger equation.
   invariance of Krylov determinants under constant energy shifts). `td_spin_existence`,
   `td_spin_uniqueness`: the spin densities `(ρ↑, ρ↓)(t)` determine `(v↑, v↓)(t)` up to one constant
   per spin.
+* Frozen densities (`TDDFT/Frozen`): an eigenstate of `H0` whose configurations all have the same
+  occupations is an eigenstate for every potential, so its density never moves, whatever `v(t)` is,
+  and the potential is completely undetermined. `not_mem_omega_of_frozen` derives `ψ ∉ Ω` from
+  `td_uniqueness`. For the half-filled Hubbard dimer the `S_z = 0` triplet is such a state for every
+  `t` and `U` (`hubbard_triplet_frozen`, `hubbard_triplet_not_mem_omega`): total-density TDDFT for
+  spinful electrons fails for it outright.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -157,6 +163,7 @@ proof is wrong.
 | `TDDFT/FluxGround` | ground states with flux: doubled Krylov criterion, generic flux strengths |
 | `TDDFT/Peierls` | ground states with Peierls phases `t e^{iθφ}`: analytic dependence on the field, isolated bad field strengths |
 | `TDDFT/Spin` | spin-resolved TDDFT: reduced observables with one conserved sum, Krylov shift invariance, generic ground-state start, existence and uniqueness of `(v↑, v↓)` up to one constant per spin |
+| `TDDFT/Frozen` | frozen densities: eigenstates whose configurations share one occupation pattern keep their density under every potential; the Hubbard-dimer triplet lies outside `Ω` for all `t`, `U` |
 | `TDDFT/Dimer` | reality check: one particle on two sites; `Ω = {bond order ≠ 0}`, speed limit, closed-form TD potential, Rabi oscillation outside `Ω` (numerical check in `scripts/dimer_check.py`) |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |

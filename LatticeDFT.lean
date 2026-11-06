@@ -45,6 +45,7 @@ import LatticeDFT.TDDFT.Ensemble
 import LatticeDFT.TDDFT.Existence
 import LatticeDFT.TDDFT.FluxGround
 import LatticeDFT.TDDFT.ForceBalance
+import LatticeDFT.TDDFT.Frozen
 import LatticeDFT.TDDFT.Global
 import LatticeDFT.TDDFT.GroundStart
 import LatticeDFT.TDDFT.KohnSham

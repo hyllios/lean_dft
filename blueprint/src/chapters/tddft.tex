@@ -504,6 +504,39 @@ $o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only thei
   spin on site $0$ is recovered from norm conservation.
 \end{proof}
 
+\section{Frozen densities}
+
+\begin{theorem}[Frozen states]
+  \label{thm:frozen}
+  \lean{LatticeDFT.hamN_mulVec_frozen, LatticeDFT.frozenPhase, LatticeDFT.frozenPath,
+    LatticeDFT.frozenPath_hasDerivAt, LatticeDFT.tdens_frozenPath, LatticeDFT.frozenPath_zero,
+    LatticeDFT.frozenPhase_self, LatticeDFT.not_mem_omega_of_frozen}
+  \leanok
+  \uses{thm:td_uniqueness}
+  Let $H_0x=Ex$ and let every configuration in the support of $x$ have the same occupations $\nu$. Then for every
+  continuous $v(t)$ the state $(\cos\theta(t)\,x,-\sin\theta(t)\,x)$ with $\dot\theta=E+\sum_iv_i\nu_i$ solves the
+  Schr\"odinger equation, and its density never changes. Such a state lies outside $\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $x$ is an eigenvector of $H_0+\sum_iv_in_i$ for every $v$. If $(x,0)\in\Omega$, the potentials $0$ and
+  $e_i-e_j$ would both reproduce the same density, contradicting Theorem~\ref{thm:td_uniqueness}.
+\end{proof}
+
+\begin{theorem}[The frozen Hubbard triplet]
+  \label{thm:frozen_triplet}
+  \lean{LatticeDFT.hubD, LatticeDFT.tripD, LatticeDFT.hubD_isSymm, LatticeDFT.hubD_triplet, LatticeDFT.triplet_occ,
+    LatticeDFT.hubbard_triplet_frozen, LatticeDFT.hubbard_triplet_not_mem_omega}
+  \leanok
+  \uses{thm:frozen}
+  For the Hubbard dimer with one up and one down electron, any $t$ and $U$, the $S_z=0$ triplet has density $(1,1)$
+  under every time-dependent spin-independent potential, and lies outside $\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The triplet has no double occupancy and is annihilated by the hopping.
+\end{proof}
+
 \section{A reality check: the dimer}
 
 One particle on two sites, $H=-T\sigma_x$, $n_i(c)=\delta_{ic}$. Write $b=\mathrm{Re}(\bar\psi_0\psi_1)$ (bond order) and
