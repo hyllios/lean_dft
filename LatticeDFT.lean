@@ -49,3 +49,4 @@ import LatticeDFT.TDDFT.Global
 import LatticeDFT.TDDFT.GroundStart
 import LatticeDFT.TDDFT.KohnSham
 import LatticeDFT.TDDFT.Peierls
+import LatticeDFT.TDDFT.Spin

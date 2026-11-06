@@ -81,6 +81,13 @@ Schrödinger equation.
   determinant is now real-analytic in `θ` and nonzero at `θ = 0`, so by the principle of isolated
   zeros the bad field strengths form a closed set without accumulation points (finite in every
   bounded interval, `0` excluded); off it, almost every potential has all its ground states in `Ω`.
+* Spin-resolved TDDFT (`TDDFT/Spin`): with two conserved particle numbers the force-balance matrix
+  of `(n↑, n↓)` always has two zero modes, so the theory is run on `2M - 1` reduced observables with a
+  single conserved sum, and all spinless results apply. `generic_ground_mem_omega_spin`: for almost
+  every spin-dependent potential every ground state lies in `Ω` (via the spin-resolved (H\*) and the
+  invariance of Krylov determinants under constant energy shifts). `td_spin_existence`,
+  `td_spin_uniqueness`: the spin densities `(ρ↑, ρ↓)(t)` determine `(v↑, v↓)(t)` up to one constant
+  per spin.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -149,6 +156,7 @@ proof is wrong.
 | `TDDFT/ComplexHopping` | lattice TDDFT with complex (Peierls) hopping via a doubled real system |
 | `TDDFT/FluxGround` | ground states with flux: doubled Krylov criterion, generic flux strengths |
 | `TDDFT/Peierls` | ground states with Peierls phases `t e^{iθφ}`: analytic dependence on the field, isolated bad field strengths |
+| `TDDFT/Spin` | spin-resolved TDDFT: reduced observables with one conserved sum, Krylov shift invariance, generic ground-state start, existence and uniqueness of `(v↑, v↓)` up to one constant per spin |
 | `TDDFT/Dimer` | reality check: one particle on two sites; `Ω = {bond order ≠ 0}`, speed limit, closed-form TD potential, Rabi oscillation outside `Ω` (numerical check in `scripts/dimer_check.py`) |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
@@ -188,8 +196,11 @@ Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Ma
 * Frustrated or complex hopping: the general proof needs hopping amplitudes of a common sign. Frustrated
   hopping (e.g. π-flux) can genuinely fail.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
-* Time-dependent DFT: local existence, global uniqueness, the blow-up alternative and complex (Peierls)
-  hopping are proved; how long a given solution actually stays in `Ω` is not controlled.
+* Time-dependent DFT: local existence, global uniqueness, the blow-up alternative, complex (Peierls)
+  hopping and spin-resolved densities are proved; how long a given solution actually stays in `Ω` is
+  not controlled. TDDFT for the total density of spinful electrons (spin-independent potential) runs
+  in the same framework, but whether its ground states generically lie in `Ω` is the time-dependent
+  face of the open total-density problem above.
 
 ## License
 

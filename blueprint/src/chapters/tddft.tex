@@ -433,6 +433,77 @@ both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
   discrete set; off it the doubled Krylov polynomials are nonzero and Theorem~\ref{thm:mem_omegaC_of_hstarC} applies.
 \end{proof}
 
+\section{Spin-resolved TDDFT}
+
+With $N_\uparrow$ and $N_\downarrow$ conserved separately, the force-balance matrix of the spin densities
+$(n_\uparrow,n_\downarrow)$ annihilates a constant on each spin, so $K+\mathbb 1\mathbb 1^T$ is always singular. On
+$K+1$ sites we use the $2K+1$ reduced observables $o_i=n_{i\uparrow}-\frac1{K+1}\sum_{j\ge1}n_{j\downarrow}$ and
+$o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only their total sum $N_\uparrow$ is conserved.
+
+\begin{lemma}[Reduced spin observables]
+  \label{lem:spin_obs}
+  \lean{LatticeDFT.SpinIdx, LatticeDFT.SConf, LatticeDFT.occR, LatticeDFT.spinPot, LatticeDFT.potW_occR,
+    LatticeDFT.sum_occR, LatticeDFT.rigid_occR, LatticeDFT.hamN_occR, LatticeDFT.exists_spinPot,
+    LatticeDFT.hamN_occS_shift, LatticeDFT.exists_spinPot_gauge}
+  \leanok
+  \uses{thm:generic_hk_spin}
+  A reduced potential $w$ couples as the spin potential $v_\uparrow=w$, $v_{0\downarrow}=0$,
+  $v_{j\downarrow}=w'_j-\bar w$. The reduced observables are rigid modulo one constant, and every spin potential
+  equals such a potential with $\sum w=0$ up to one constant per spin.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Rigidity of the two species gives a constant on each spin; $v_{0\downarrow}=0$ forces the down constant to vanish
+  and then all components of $w$ agree.
+\end{proof}
+
+\begin{lemma}[Constant energy shifts]
+  \label{lem:kry_shift}
+  \lean{LatticeDFT.binU, LatticeDFT.det_binU, LatticeDFT.add_smul_one_pow_apply, LatticeDFT.det_kry_add_smul_one,
+    LatticeDFT.isGroundState_add_smul_one}
+  \leanok
+  Krylov determinants and ground states are unchanged by $H\mapsto H+\lambda$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $(H+\lambda)^k e_c=\sum_{m\le k}\binom km\lambda^{k-m}H^me_c$, so the Krylov matrix is multiplied by a unipotent
+  upper triangular matrix.
+\end{proof}
+
+\begin{theorem}[Spin-resolved TDDFT from the ground state]
+  \label{thm:generic_ground_spin}
+  \lean{LatticeDFT.generic_ground_mem_omega_spin}
+  \leanok
+  \uses{lem:spin_obs, lem:kry_shift, thm:generic_td_vrep}
+  Two spin species on a connected graph, spin-conserving hopping of a common sign, any diagonal interaction: outside
+  a closed, nowhere dense, null set of spin potentials, every ground state lies in $\Omega$ of the reduced observables.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Off the zero set of the spin-resolved Krylov polynomials, shift the potential to reduced form; the Krylov
+  determinants of the reduced problem are those of the spin problem, so the force balance is definite modulo
+  constants.
+\end{proof}
+
+\begin{theorem}[Spin-resolved TDDFT]
+  \label{thm:td_spin}
+  \lean{LatticeDFT.tdens_eq_sum, LatticeDFT.tcur_eq_sum, LatticeDFT.tdens_lin, LatticeDFT.tcur_lin, LatticeDFT.Lr,
+    LatticeDFT.redDens, LatticeDFT.redDens_inl, LatticeDFT.redDens_inr, LatticeDFT.occR_eq, LatticeDFT.tdens_occR,
+    LatticeDFT.tcur_occR, LatticeDFT.sum_redDens, LatticeDFT.hasDerivAt_redDens, LatticeDFT.continuous_redDens,
+    LatticeDFT.schr_occR, LatticeDFT.sum_tdens_dn, LatticeDFT.spin_of_red, LatticeDFT.td_spin_existence,
+    LatticeDFT.td_spin_uniqueness}
+  \leanok
+  \uses{lem:spin_obs, thm:td_existence, thm:td_uniqueness}
+  Let the target spin densities have continuous second derivatives with conserved particle numbers, and let
+  $\psi_0\in\Omega$ reproduce them and their first derivatives at $t_0$. Near $t_0$ there is a solution driven by a
+  spin potential reproducing them, and the spin potential is unique up to one constant per spin.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Apply the spinless theorems to the reduced observables; densities and currents transform linearly, and the down
+  spin on site $0$ is recovered from norm conservation.
+\end{proof}
+
 \section{A reality check: the dimer}
 
 One particle on two sites, $H=-T\sigma_x$, $n_i(c)=\delta_{ic}$. Write $b=\mathrm{Re}(\bar\psi_0\psi_1)$ (bond order) and
