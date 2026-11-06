@@ -89,6 +89,7 @@ proof is wrong.
 | `KohnSham/Existence` | existence of Kohn–Sham potentials for lattice fermions |
 | `KohnSham/Hypersimplex` | interior densities are positive mixtures of configurations; KS potentials for every density with `0 < ρ_i < 1` |
 | `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
+| `Spin/Symmetric`, `Spin/HubbardCertificates` | generic HK with a symmetry (sector-wise Krylov condition); total-density HK for the Hubbard dimer and triangle |
 | `Spin/KronSum`, `Spin/SpinResolved`, `Spin/SpinField` | two spin species: Kronecker sums, factorisation of the leading coefficients, spin-resolved generic HK; the same in terms of `(v, B)` |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
 | `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
@@ -118,9 +119,11 @@ Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Ma
 
 ## Scope and open directions
 
-* Spinful (Hubbard) fermions: the spin-resolved theorem (spin-dependent potentials) is proved. The total
-  density with a spin-independent potential is open in general (spin symmetry forces zeros and the
-  strong-potential limit is degenerate); it is certified by exact computation for small lattices.
+* Spinful (Hubbard) fermions: the spin-resolved theorem (spin-dependent potentials) is proved. For the
+  total density with a spin-independent potential, `generic_hk_sym` reduces generic HK to a sector-wise
+  Krylov condition (spin sectors), proved by exact certificates for the Hubbard dimer and triangle
+  (`hubbard_dimer_generic_hk_ae`, `hubbard_triangle_generic_hk_ae`) and checked numerically up to 6
+  sites; a proof for all lattices is open (the strong-potential limit is degenerate).
 * Frustrated or complex hopping: the general proof needs hopping amplitudes of a common sign. Frustrated
   hopping (e.g. π-flux) can genuinely fail.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
