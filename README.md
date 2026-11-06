@@ -1,10 +1,20 @@
 # LatticeDFT — density-functional theory on lattices, formalized in Lean 4
 
 A Lean 4 / Mathlib formalization of the foundations of density-functional theory (DFT) for finite lattice
-systems: ground states, the Hohenberg–Kohn (HK) theorem and its failures, second-quantized lattice fermions,
-and a **generic Hohenberg–Kohn theorem**.
+systems. It covers ground states, the Hohenberg–Kohn (HK) theorem and its failures, second-quantized lattice
+fermions, a **generic Hohenberg–Kohn theorem**, and **Kohn–Sham theory**: existence and generic uniqueness
+of Kohn–Sham potentials, and convergence of the regularised Kohn–Sham iteration.
 
-## Main result
+All proofs use only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`), and there is no `sorry`.
+
+**Website:** <https://hyllios.github.io/lean_dft/>. It has the blueprint, a human-readable account of every
+definition and theorem with links to the Lean code ([web](https://hyllios.github.io/lean_dft/blueprint/),
+[pdf](https://hyllios.github.io/lean_dft/blueprint.pdf),
+[dependency graph](https://hyllios.github.io/lean_dft/blueprint/dep_graph_document.html)).
+
+## Main results
+
+### Generic Hohenberg–Kohn theorem
 
 ```lean
 theorem LatticeDFT.generic_hk_lattice_fermions
@@ -14,21 +24,34 @@ theorem LatticeDFT.generic_hk_lattice_fermions
       {v | NonUV (H0F G t Vint) occF v} ⊆ Z
 ```
 
-For `N` spinless fermions on any connected lattice (graph) with `M` sites, hopping `t ≠ 0` and any
-density–density interaction, the external potentials `v` for which some ground state of `H(v)` is also a
-ground state of a potential differing from `v` by more than a constant form a closed, nowhere dense,
-Lebesgue-null set. In other words, the HK theorem holds for almost every potential, although it fails on
-lattices in general (Penz & van Leeuwen, *J. Chem. Phys.* **155**, 244111 (2021)). The potential-side
-statement was left open in Penz & van Leeuwen, *Quantum* **7**, 918 (2023).
-`generic_hk_lattice_fermions_w` extends this to edge-dependent (symmetric) hopping amplitudes of a common sign.
+Take `N` spinless fermions on any connected lattice (graph) with `M` sites, hopping `t ≠ 0`, and any
+density–density interaction. Call a potential `v` bad if some ground state of `H(v)` is also a ground state
+of a potential that differs from `v` by more than a constant. The bad potentials lie in a closed, nowhere
+dense set of Lebesgue measure zero. So the HK theorem holds for almost every potential, although it fails on
+lattices in general (Penz & van Leeuwen, *J. Chem. Phys.* **155**, 244111 (2021)). Penz & van Leeuwen,
+*Quantum* **7**, 918 (2023), left this potential-side statement open.
 
-The proof uses only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`) and contains no `sorry`.
+`generic_hk_lattice_fermions_w` extends the theorem to edge-dependent, symmetric hopping amplitudes `t a b`
+that all have the same sign.
+
+### Kohn–Sham theory
+
+| Theorem | Statement |
+|---|---|
+| `ks_potential_exists_interior` | every density with `0 < ρ_i < 1` and `Σ ρ_i = N` is the ground-state (ensemble) density of a non-interacting system in some potential |
+| `ks_potential_generic_unique` | for almost every potential, the non-interacting ground state determines the Kohn–Sham potential up to a constant (the generic HK theorem with no interaction) |
+| `aufbau_lowest` | a set of orbitals minimises the non-interacting energy exactly when it consists of the lowest orbitals |
+| `lattice_myksoda` | the regularised KS iteration (MYKSODA; Penz, Laestadius, Tellgren, Ruggenthaler, *PRL* **123**, 037401 (2019)): energies decrease, limit points exist and are regularised ground states, and the KS potentials converge along subsequences |
+
+`lattice_myksoda` is the corrected statement from the paper's erratum. The original paper's convergence
+proof is wrong.
 
 ## Structure
 
 | Module | Content |
 |---|---|
 | `Basic/GroundState` | Rayleigh-quotient ground states; ground states are eigenvectors |
+| `Basic/Spectral` | existence of ground states; ground-state energy |
 | `Basic/SingleParticle` | single-particle HK theorem; failure for frustrated hopping |
 | `HK/Basic` | many-body Hamiltonian `hamN`, density, weak and strong HK, spin-DFT-type non-uniqueness |
 | `HK/Examples` | HK counterexamples: two fermions on a triangle and on a square |
@@ -40,32 +63,33 @@ The proof uses only the standard axioms (`propext`, `Classical.choice`, `Quot.so
 | `Generic/SquareCertificate` | (H\*) for the square by exact computation in Lean |
 | `Fermions/Configurations` | `N`-particle configurations, occupations |
 | `Fermions/Slater` | Slater determinants in first quantization |
-| `Fermions/SecondQuantization` | second quantization `Γ h` via determinants; `H0F` |
+| `Fermions/SecondQuantization` | second quantization `Γ h` via determinants; `H0F` (uniform) and `H0Fw` (edge-dependent hopping) |
 | `Fermions/FirstQuantization` | many-body powers as signed sums of single-particle powers |
 | `Fermions/CauchyBinet` | Cauchy–Binet for Slater determinants; orthonormality of Slater states |
 | `StrongPotential/*` | strong-potential leading coefficients, power sums, explicit coefficients |
 | `PathSum/*` | optimal assignments, free-fermion leading coefficients, route sums, resonance argument |
-| `GenericHK` | the main theorem |
+| `GenericHK` | the generic HK theorem (uniform and edge-dependent hopping) |
 | `KohnSham/Aufbau` | aufbau: non-interacting ground states are Slater determinants of the lowest orbitals |
-| `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
-| `Basic/Spectral` | existence of ground states; ground-state energy |
 | `KohnSham/Duality` | Lieb's functional, convex duality |
 | `KohnSham/Maximizer`, `KohnSham/Representability` | ensemble v-representability (maximiser, limit argument, separation) |
 | `KohnSham/Existence` | existence of Kohn–Sham potentials for lattice fermions |
-| `KohnSham/Iteration`, `Convex/MoreauYosida`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, Penz et al. 2019 with erratum) |
-| `KohnSham/Hypersimplex` | interior densities are positive mixtures of configurations; every density with 0 < ρᵢ < 1 has a Kohn–Sham potential |
+| `KohnSham/Hypersimplex` | interior densities are positive mixtures of configurations; KS potentials for every density with `0 < ρ_i < 1` |
+| `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
+| `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
+| `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
 
-**Blueprint.** A human-readable description of every definition, lemma and theorem, with proofs and links to
-the Lean declarations, is in `blueprint/` (LaTeX, built by CI into a website with a dependency graph and a PDF:
-<https://hyllios.github.io/lean_dft/blueprint/>). To build it locally: `pip install leanblueprint`, then
-`leanblueprint web` or `leanblueprint pdf`.
+About 6,000 lines of Lean in total.
 
-`docs/generic-hk-paper-proof.md` contains the informal proof (with the literature context and an independent
-review); `docs/formalization-log.md` documents how the formal proof was assembled.
+## Further material
 
-`scripts/` contains Python scripts used for exploration and for exact certificates (e.g. (H\*) for all
-connected graphs up to 7 sites, and sector-wise for the spinful Hubbard model up to 6 sites), with outputs in
-`scripts/data/`.
+* `blueprint/`: LaTeX source of the blueprint. CI builds it into the website above. To build it locally, run
+  `pip install leanblueprint`, then `leanblueprint web` or `leanblueprint pdf`.
+* `docs/generic-hk-paper-proof.md`: the informal proof of the generic HK theorem, with the literature context
+  and an independent review.
+* `docs/formalization-log.md`: how the formal proofs were assembled.
+* `scripts/`: Python scripts used for exploration and for exact certificates, e.g. (H\*) for all connected
+  graphs up to 7 sites, and sector by sector for the spinful Hubbard model up to 6 sites. Outputs are in
+  `scripts/data/`.
 
 ## Building
 
@@ -74,18 +98,16 @@ lake exe cache get   # download the Mathlib cache
 lake build
 ```
 
-Requires the Lean toolchain in `lean-toolchain` and Mathlib as pinned in `lake-manifest.json`.
+Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Mathlib as pinned in
+`lake-manifest.json`.
 
 ## Scope and open directions
 
 * Spinful (Hubbard) fermions: certified by exact computation for small lattices, not yet in the general proof.
-* Frustrated or complex hopping: the general proof covers hopping amplitudes of a common sign (in particular
-  uniform `t ≠ 0`); frustrated (e.g. π-flux) hopping can genuinely fail.
+* Frustrated or complex hopping: the general proof needs hopping amplitudes of a common sign. Frustrated
+  hopping (e.g. π-flux) can genuinely fail.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
-* Kohn–Sham: aufbau (including the lowest-orbital characterisation), Lieb duality, existence of KS potentials
-  for every density with `0 < ρ_i < 1`, generic uniqueness, and convergence of the regularised KS iteration
-  (MYKSODA, in the corrected form of the erratum) are proved.
-* Planned: time-dependent DFT.
+* Time-dependent DFT: planned.
 
 ## Authors
 
