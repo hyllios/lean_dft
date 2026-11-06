@@ -230,3 +230,51 @@ $Q(A)=x^TAx+y^TAy$, $W(M)=y^TMx-x^TMy$:
   If $(K+\mathbf 1\mathbf 1^T)w=0$ then $0=-w^T\mathrm{kMat}\,w+(\sum_iw_i)^2$; both terms are non-negative, so
   $w$ is constant (Theorem~\ref{thm:generic_td_vrep}) with zero sum.
 \end{proof}
+
+\section{Time-dependent Kohn--Sham}
+
+\begin{lemma}[The density of a trajectory is $C^2$]
+  \label{lem:density_c2}
+  \lean{LatticeDFT.tcur_real, LatticeDFT.ddens, LatticeDFT.dens_hasDerivAt, LatticeDFT.ddens_hasDerivAt,
+    LatticeDFT.continuous_ddens, LatticeDFT.ddens_sum}
+  \leanok
+  \uses{thm:force_balance}
+  Along a trajectory driven by a continuous potential $v(t)$ the density has $\dot\rho=j$ and
+  $\ddot\rho=q-Kv$, which is continuous with $\sum_i\ddot\rho_i=0$. A real state carries no current.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The continuity and force-balance equations; $q$ and $K$ are quadratic in $\psi$; the gauge identities.
+\end{proof}
+
+\begin{theorem}[van Leeuwen's theorem on the lattice]
+  \label{thm:van_leeuwen}
+  \lean{LatticeDFT.van_leeuwen, LatticeDFT.van_leeuwen_unique, LatticeDFT.van_leeuwen_unique'}
+  \leanok
+  \uses{lem:density_c2, thm:td_existence, thm:td_uniqueness}
+  Let $\psi(t)$ be a trajectory of one system (any interaction) driven by a continuous potential. Let
+  $\varphi_0$ be a state of a second system on the same sites, in its set $\Omega'$, with the density and current
+  of $\psi(t_0)$. Then near $t_0$ the second system, driven by a unique potential with $\sum_iv_i=0$, evolves from
+  $\varphi_0$ with exactly the density of $\psi(t)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Apply Theorems~\ref{thm:td_existence} and~\ref{thm:td_uniqueness} to the target $n(t)=\rho_\psi(t)$, which is
+  admissible by Lemma~\ref{lem:density_c2}.
+\end{proof}
+
+\begin{theorem}[Time-dependent Kohn--Sham]
+  \label{thm:td_kohn_sham}
+  \lean{LatticeDFT.td_kohn_sham}
+  \leanok
+  \uses{thm:van_leeuwen, thm:generic_ground_mem_omega}
+  Spinless lattice fermions on a connected graph. Outside a closed, nowhere dense, null set of potentials $v_s$:
+  if a ground state $\varphi_0$ of the non-interacting $H_s(v_s)$ has the density of a real state $\psi(t_0)$ of
+  any trajectory driven by a continuous potential (for instance the interacting system starting from its ground
+  state), then a unique time-dependent Kohn--Sham potential reproduces the density of $\psi(t)$ near $t_0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\varphi_0\in\Omega_s$ by Theorem~\ref{thm:generic_ground_mem_omega} with zero interaction; both currents
+  vanish for real states; apply Theorem~\ref{thm:van_leeuwen}.
+\end{proof}
