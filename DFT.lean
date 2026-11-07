@@ -9,8 +9,11 @@ import DFT.Continuum.BoxSturm
 import DFT.Continuum.FromLattice
 import DFT.Continuum.HK
 import DFT.Continuum.Lieb
+import DFT.Continuum.MaxPrinciple
 import DFT.Continuum.Pair
+import DFT.Continuum.PairBosons
 import DFT.Continuum.PairFree
+import DFT.Continuum.PairStrong
 import DFT.Lattice.Basic.GroundState
 import DFT.Lattice.Basic.SingleParticle
 import DFT.Lattice.Basic.Spectral

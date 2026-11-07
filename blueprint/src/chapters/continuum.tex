@@ -253,6 +253,49 @@ antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\
   gives $k\,\psi_0\otimes\psi_0$ with $k\neq0$, which has no zeros in the square. Theorem~\ref{thm:hk_pair} applies.
 \end{proof}
 
+\section{Two interacting bosons}
+
+\begin{lemma}[Ground states are classical solutions]
+  \label{lem:pair_strong}
+  \lean{DFT.Continuum.Pair.d11, DFT.Continuum.Pair.d22, DFT.Continuum.Pair.lap, DFT.Continuum.Pair.contDiff_d1, DFT.Continuum.Pair.contDiff_d2, DFT.Continuum.Pair.continuous_d11, DFT.Continuum.Pair.continuous_d22, DFT.Continuum.Pair.continuous_lap, DFT.Continuum.Pair.eq_zero_of_integral_sym, DFT.Continuum.Pair.hasDerivAt_d1_slice, DFT.Continuum.Pair.hasDerivAt_d2_slice, DFT.Continuum.Pair.hasDerivAt_slice1, DFT.Continuum.Pair.hasDerivAt_slice2, DFT.Continuum.Pair.d1_swap, DFT.Continuum.Pair.d11_swap, DFT.Continuum.Pair.d22_swap, DFT.Continuum.Pair.integral_unit, DFT.Continuum.Pair.ibp1, DFT.Continuum.Pair.ibp2, DFT.Continuum.Pair.strong_eq}
+  \leanok
+  \uses{thm:hk_pair, lem:euler_lagrange}
+  For bosons with a continuous symmetric interaction, a ground state solves
+  $-\Delta\Phi+(w+v(x_1)+v(x_2)-E)\Phi=0$ on the open square.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Integrate the weak equation by parts slice by slice (Fubini), and apply the fundamental lemma with symmetrised test
+  functions; the residual is symmetric because $\partial_{11}\Phi(x,y)=\partial_{22}\Phi(y,x)$.
+\end{proof}
+
+\begin{theorem}[Hopf's strong maximum principle]
+  \label{thm:strong_max}
+  \lean{DFT.Continuum.Pair.hasDerivAt_s1, DFT.Continuum.Pair.hasDerivAt_s2, DFT.Continuum.Pair.d1_eq_of_hasDerivAt, DFT.Continuum.Pair.d2_eq_of_hasDerivAt, DFT.Continuum.Pair.d11_eq_d1, DFT.Continuum.Pair.d22_eq_d2, DFT.Continuum.Pair.deriv2_nonneg_of_isLocalMin, DFT.Continuum.Pair.d11_nonneg_of_isLocalMin, DFT.Continuum.Pair.d22_nonneg_of_isLocalMin, DFT.Continuum.Pair.d1_sub_mul, DFT.Continuum.Pair.d2_sub_mul, DFT.Continuum.Pair.lap_sub_mul, DFT.Continuum.Pair.eu, DFT.Continuum.Pair.continuous_eu, DFT.Continuum.Pair.barrier, DFT.Continuum.Pair.bar1, DFT.Continuum.Pair.bar2, DFT.Continuum.Pair.differentiable_barrier, DFT.Continuum.Pair.differentiable_bar1, DFT.Continuum.Pair.differentiable_bar2, DFT.Continuum.Pair.d1_barrier, DFT.Continuum.Pair.d2_barrier, DFT.Continuum.Pair.d1_bar1, DFT.Continuum.Pair.d2_bar2, DFT.Continuum.Pair.lap_barrier, DFT.Continuum.Pair.contDiff_barrier, DFT.Continuum.Pair.dist_sq_le_eu, DFT.Continuum.Pair.eu_le_dist_sq, DFT.Continuum.Pair.dist_lt_of_eu_lt, DFT.Continuum.Pair.barrier_neg, DFT.Continuum.Pair.local_zero, DFT.Continuum.Pair.strong_max_principle}
+  \leanok
+  A nonnegative $C^2$ function with $-\Delta u+cu\ge0$ ($c\ge0$) on the square that vanishes at one interior point
+  vanishes on the whole square.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Locally: compare $u$ with the barrier $e^{-\alpha|x-y|^2}-e^{-\alpha R^2}$ on an annulus touching the zero set, which
+  forces $u$ to grow linearly away from a zero where its gradient must vanish. Globally: the square is connected.
+\end{proof}
+
+\begin{theorem}[Hohenberg--Kohn for two interacting bosons, given the sign]
+  \label{thm:hk_bosons}
+  \lean{DFT.Continuum.Pair.isGS_neg, DFT.Continuum.Pair.pos_of_nonneg_gs, DFT.Continuum.Pair.ucp_bosons, DFT.Continuum.Pair.hk_bosons}
+  \leanok
+  \uses{lem:pair_strong, thm:strong_max, thm:hk_pair}
+  A ground state of two interacting bosons that does not change sign has no zeros in the square; hence HK holds
+  whenever the ground state does not change sign (the Perron--Frobenius property).
+\end{theorem}
+\begin{proof}
+  \leanok
+  With $c=\max(V-E,0)$, a nonnegative ground state is a supersolution of $-\Delta+c$; the strong maximum principle
+  rules out interior zeros.
+\end{proof}
+
 For interacting particles, or fermions, the one assumption left, unique continuation for ground states of $-\Delta+V$ in two dimensions, is a genuine PDE
 fact (Carleman/Aronszajn-type unique continuation); in one dimension it reduced to ODE uniqueness.
 

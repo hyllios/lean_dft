@@ -116,6 +116,9 @@ Schrödinger equation.
   search, gives back `E(v) = inf_ψ (F(ρ_ψ) + ρ_ψ(v))`, is convex, and has `-v` as a subgradient at a
   ground-state density of `v`; Hohenberg–Kohn says this subgradient is unique up to constants
   (`subgrad_unique`). In the box this is unconditional (`lieb_box`).
+  Interacting bosons (`Continuum/PairBosons`): ground states solve the 2D Schrödinger equation
+  classically and, by Hopf's strong maximum principle, a ground state that does not change sign has
+  no zeros; so `hk_bosons` assumes only the Perron–Frobenius sign property, whose proof needs `H¹`.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -207,6 +210,7 @@ the lattice results as a special case. Module paths below are relative to these 
 | `BoxSolve`, `BoxSturm`, `BoxPicone`, `BoxExtend`, `BoxGround` | existence of ground states in the box by shooting (truncated Picard–Lindelöf + Grönwall, Sturm comparison, Picone inequality, cutoff extension); `hk_box_complete`: Hohenberg–Kohn in the box with no assumption on ground states |
 | `Pair` | two particles in a box (bosons or fermions, any continuous interaction): separation, rigidity and the one-body density proved; `hk_pair_of_ucp` is Hohenberg–Kohn conditional only on unique continuation of the ground state in 2D |
 | `BoxPiconeEq`, `PairFree` | equality case of Picone; two free bosons in a box: lower bound `2E₀` by slicing, product ground state, every ground state is `k ψ₀⊗ψ₀`; `hk_free_bosons` is an unconditional two-particle Hohenberg–Kohn theorem |
+| `PairStrong`, `MaxPrinciple`, `PairBosons` | interacting bosons: ground states are classical solutions of the 2D equation, Hopf's strong maximum principle, and `hk_bosons`: HK for two interacting bosons assuming only that the ground state does not change sign |
 | `Lieb`, `BoxLieb` | the Lieb functional `F(ρ) = sup_v (E(v) − ρ(v))` (extended reals): constrained-search bound, variational principle, convexity, subgradients ⇔ ground states, HK as uniqueness of the subgradient; in the box all of this is unconditional (`lieb_box`) |
 
 About 13,000 lines of Lean in total.

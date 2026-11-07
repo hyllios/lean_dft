@@ -55,6 +55,26 @@ def Dom2 (σ : ℝ) : Submodule ℝ (ℝ × ℝ → ℝ) where
 noncomputable def d1 (ψ : ℝ × ℝ → ℝ) (p : ℝ × ℝ) : ℝ := fderiv ℝ ψ p (1, 0)
 noncomputable def d2 (ψ : ℝ × ℝ → ℝ) (p : ℝ × ℝ) : ℝ := fderiv ℝ ψ p (0, 1)
 
+/-- Second partial derivatives `∂₁₁ψ` and `∂₂₂ψ`, and the Laplacian. -/
+noncomputable def d11 (ψ : ℝ × ℝ → ℝ) (p : ℝ × ℝ) : ℝ := fderiv ℝ (d1 ψ) p (1, 0)
+noncomputable def d22 (ψ : ℝ × ℝ → ℝ) (p : ℝ × ℝ) : ℝ := fderiv ℝ (d2 ψ) p (0, 1)
+noncomputable def lap (ψ : ℝ × ℝ → ℝ) (p : ℝ × ℝ) : ℝ := d11 ψ p + d22 ψ p
+
+lemma contDiff_d1 {ψ : ℝ × ℝ → ℝ} (h : ContDiff ℝ 2 ψ) : ContDiff ℝ 1 (d1 ψ) :=
+  (h.fderiv_right (m := 1) (by norm_num)).clm_apply contDiff_const
+
+lemma contDiff_d2 {ψ : ℝ × ℝ → ℝ} (h : ContDiff ℝ 2 ψ) : ContDiff ℝ 1 (d2 ψ) :=
+  (h.fderiv_right (m := 1) (by norm_num)).clm_apply contDiff_const
+
+lemma continuous_d11 {ψ : ℝ × ℝ → ℝ} (h : ContDiff ℝ 2 ψ) : Continuous (d11 ψ) :=
+  ((contDiff_d1 h).continuous_fderiv one_ne_zero).clm_apply continuous_const
+
+lemma continuous_d22 {ψ : ℝ × ℝ → ℝ} (h : ContDiff ℝ 2 ψ) : Continuous (d22 ψ) :=
+  ((contDiff_d2 h).continuous_fderiv one_ne_zero).clm_apply continuous_const
+
+lemma continuous_lap {ψ : ℝ × ℝ → ℝ} (h : ContDiff ℝ 2 ψ) : Continuous (lap ψ) :=
+  (continuous_d11 h).add (continuous_d22 h)
+
 lemma integrable2 {F : ℝ × ℝ → ℝ} (hF : Continuous F) : Integrable F μ2 :=
   (hF.continuousOn.integrableOn_compact (isCompact_Icc.prod isCompact_Icc)).mono_set
     (prod_mono Ioo_subset_Icc_self Ioo_subset_Icc_self)
