@@ -334,3 +334,26 @@ reals, $E(v)=\inf\{\langle\psi,H(v)\psi\rangle:\|\psi\|=1\}$ and $F(\rho)=\sup_v
   Normalise the ground state of Theorem~\ref{thm:box_exists}; unique continuation and separation are proved in the
   box.
 \end{proof}
+
+\section{Weak derivatives}
+
+Interacting bosons need $|\Phi|$ as a competitor, and $|\Phi|$ is not $C^2$ across a nodal line. A first layer of
+Sobolev theory on open subsets of the plane (Mathlib's Sobolev spaces live on the whole space, via the Fourier
+transform).
+
+\begin{theorem}[Weak derivatives and Kato's inequality]
+  \label{thm:weak}
+  \lean{DFT.Continuum.Sobolev.IsTest, DFT.Continuum.Sobolev.HasWeakDeriv, DFT.Continuum.Sobolev.sgn, DFT.Continuum.Sobolev.sgn_mul_self, DFT.Continuum.Sobolev.abs_sgn_le, DFT.Continuum.Sobolev.measurable_sgn, DFT.Continuum.Sobolev.IsTest.continuous, DFT.Continuum.Sobolev.IsTest.continuous_fderiv, DFT.Continuum.Sobolev.integrable_mul_of_support, DFT.Continuum.Sobolev.notMem_tsupport, DFT.Continuum.Sobolev.integrable_mul_test, DFT.Continuum.Sobolev.integrable_mul_dtest, DFT.Continuum.Sobolev.HasWeakDeriv.ae_eq, DFT.Continuum.Sobolev.hasWeakDeriv_of_contDiff, DFT.Continuum.Sobolev.HasWeakDeriv.add, DFT.Continuum.Sobolev.hasWeakDeriv_of_tendsto, DFT.Continuum.Sobolev.hasFDerivAt_smooth_abs, DFT.Continuum.Sobolev.contDiff_smooth_abs, DFT.Continuum.Sobolev.fderiv_smooth_abs, DFT.Continuum.Sobolev.tendsto_sqrt_eps, DFT.Continuum.Sobolev.sgn_eq_div, DFT.Continuum.Sobolev.tendsto_ratio_eps, DFT.Continuum.Sobolev.abs_ratio_le, DFT.Continuum.Sobolev.sqrt_le_abs_add, DFT.Continuum.Sobolev.hasWeakDeriv_abs, DFT.Continuum.Sobolev.sq_weak_abs_le, DFT.Continuum.Sobolev.kato_energy}
+  \leanok
+  Weak derivatives on an open set are unique almost everywhere, agree with classical ones for $C^1$ functions, are
+  linear and pass to limits. For $C^1$ $f$, $|f|$ has weak derivative $\mathrm{sgn}(f)\,\partial f$, so
+  $|\partial|f||\le|\partial f|$ and the kinetic energy of $|f|$ is at most that of $f$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Uniqueness by the fundamental lemma; the classical case by integration by parts; the chain rule by smoothing
+  $|f|$ as $\sqrt{f^2+\varepsilon^2}$ and dominated convergence.
+\end{proof}
+
+The remaining steps of the Perron--Frobenius argument (density of smooth functions in $H^1_0$, so that $|\Phi|$ is
+a competitor, and regularity of $H^1$ minimisers, so that the strong maximum principle applies) are not formalized.

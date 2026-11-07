@@ -14,6 +14,7 @@ import DFT.Continuum.Pair.Bosons
 import DFT.Continuum.Pair.Free
 import DFT.Continuum.Pair.MaxPrinciple
 import DFT.Continuum.Pair.Strong
+import DFT.Continuum.Sobolev.Weak
 import DFT.Lattice.Basic.GroundState
 import DFT.Lattice.Basic.SingleParticle
 import DFT.Lattice.Basic.Spectral
