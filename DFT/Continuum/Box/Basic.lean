@@ -3,7 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.HK
+import DFT.Continuum.General.HK
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 import Mathlib.Analysis.ODE.ExistUnique
@@ -13,7 +13,8 @@ import Mathlib.Analysis.Calculus.Deriv.Slope
 # An unconditional continuum Hohenberg–Kohn theorem: one particle in a box
 
 One particle on `[0, 1]` with hard walls (`ψ(0) = ψ(1) = 0`), kinetic energy `∫ ψ'²` and a
-continuous potential `v`. States in the form domain are `C²`. Every hypothesis of `hk_of_ucp` is proved:
+continuous potential `v`. States in the form domain are `C²`. Every hypothesis of `hk_of_ucp` is
+proved:
 
 * `sep_box`: separation, from the fundamental lemma of the calculus of variations.
 * `rigidL_box`: a continuous potential that is a.e. constant on `(0, 1)` is constant on `[0, 1]`.

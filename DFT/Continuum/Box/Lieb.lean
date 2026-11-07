@@ -3,8 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Lieb
-import DFT.Continuum.BoxGround
+import DFT.Continuum.General.Lieb
+import DFT.Continuum.Box.Ground
 
 /-!
 # The Lieb functional for one particle in a box

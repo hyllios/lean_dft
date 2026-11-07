@@ -96,27 +96,27 @@ Schrödinger equation.
   `td_uniqueness`. For the half-filled Hubbard dimer the `S_z = 0` triplet is such a state for every
   `t` and `U` (`hubbard_triplet_frozen`, `hubbard_triplet_not_mem_omega`): total-density TDDFT for
   spinful electrons fails for it outright.
-* Towards the continuum (`Continuum/HK`): Hohenberg–Kohn for a configuration space `(X, μ)` (e.g.
+* Towards the continuum (`Continuum/General/HK`): Hohenberg–Kohn for a configuration space `(X, μ)` (e.g.
   `ℝ^{3N}`), with the kinetic energy and interaction as a bilinear form on a form domain and one-body
   potentials coupled by `Σᵢ w(xᵢ)`. `hk_of_ucp`: same density ⇒ potentials differ by a constant,
   assuming separation (fundamental lemma), rigidity of the coupling, and unique continuation of the
   ground state. `lattice_hk_of_hstar` recovers the lattice theorem: there, unique continuation is
   "no zero amplitude", supplied by (H\*).
-  `hk_box` (`Continuum/Box`) is an unconditional continuum case: one particle on `[0, 1]` with hard
+  `hk_box` (`Continuum/Box/Basic`) is an unconditional continuum case: one particle on `[0, 1]` with hard
   walls and a continuous potential. A ground state solves `ψ'' = (v - E)ψ`, its zeros cannot
   accumulate (ODE uniqueness), so it vanishes only on a null set, and equal densities `ψ² = ψ'²` force
   `v - v'` to be constant. Ground states exist for every continuous potential (`exists_isGS`, by
   shooting and the Picone inequality), so `hk_box_complete` needs no assumption at all.
-  `hk_pair_of_ucp` (`Continuum/Pair`): two particles on `[0, 1]` (bosons or fermions, continuous
+  `hk_pair_of_ucp` (`Continuum/Pair/Basic`): two particles on `[0, 1]` (bosons or fermions, continuous
   interaction). Everything is proved except unique continuation of the ground state on the square,
   which in two dimensions is genuine PDE theory.
-  For two non-interacting bosons it is proved (`hk_free_bosons`, `Continuum/PairFree`): every ground
+  For two non-interacting bosons it is proved (`hk_free_bosons`, `Continuum/Pair/Free`): every ground
   state is `k ψ₀(x₁)ψ₀(x₂)` (slicing + equality case of Picone), so the theorem is unconditional.
-  The Lieb functional (`Continuum/Lieb`): `F(ρ) = sup_v (E(v) − ρ(v))` lies below the constrained
+  The Lieb functional (`Continuum/General/Lieb`): `F(ρ) = sup_v (E(v) − ρ(v))` lies below the constrained
   search, gives back `E(v) = inf_ψ (F(ρ_ψ) + ρ_ψ(v))`, is convex, and has `-v` as a subgradient at a
   ground-state density of `v`; Hohenberg–Kohn says this subgradient is unique up to constants
   (`subgrad_unique`). In the box this is unconditional (`lieb_box`).
-  Interacting bosons (`Continuum/PairBosons`): ground states solve the 2D Schrödinger equation
+  Interacting bosons (`Continuum/Pair/Bosons`): ground states solve the 2D Schrödinger equation
   classically and, by Hopf's strong maximum principle, a ground state that does not change sign has
   no zeros; so `hk_bosons` assumes only the Perron–Frobenius sign property, whose proof needs `H¹`.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
@@ -205,13 +205,15 @@ the lattice results as a special case. Module paths below are relative to these 
 
 | Module | Content |
 |---|---|
-| `HK`, `FromLattice` | Hohenberg–Kohn on a general configuration space `(X, μ)`, conditional on unique continuation; the lattice as the counting-measure instance, with (H\*) supplying unique continuation |
-| `Box` | one particle in a box with a continuous potential: unique continuation proved (ODE uniqueness), unconditional continuum Hohenberg–Kohn `hk_box` |
-| `BoxSolve`, `BoxSturm`, `BoxPicone`, `BoxExtend`, `BoxGround` | existence of ground states in the box by shooting (truncated Picard–Lindelöf + Grönwall, Sturm comparison, Picone inequality, cutoff extension); `hk_box_complete`: Hohenberg–Kohn in the box with no assumption on ground states |
-| `Pair` | two particles in a box (bosons or fermions, any continuous interaction): separation, rigidity and the one-body density proved; `hk_pair_of_ucp` is Hohenberg–Kohn conditional only on unique continuation of the ground state in 2D |
-| `BoxPiconeEq`, `PairFree` | equality case of Picone; two free bosons in a box: lower bound `2E₀` by slicing, product ground state, every ground state is `k ψ₀⊗ψ₀`; `hk_free_bosons` is an unconditional two-particle Hohenberg–Kohn theorem |
-| `PairStrong`, `MaxPrinciple`, `PairBosons` | interacting bosons: ground states are classical solutions of the 2D equation, Hopf's strong maximum principle, and `hk_bosons`: HK for two interacting bosons assuming only that the ground state does not change sign |
-| `Lieb`, `BoxLieb` | the Lieb functional `F(ρ) = sup_v (E(v) − ρ(v))` (extended reals): constrained-search bound, variational principle, convexity, subgradients ⇔ ground states, HK as uniqueness of the subgradient; in the box all of this is unconditional (`lieb_box`) |
+| `General/HK` | Hohenberg–Kohn on a general configuration space `(X, μ)`, conditional on separation, rigidity and unique continuation |
+| `General/FromLattice` | the lattice as the counting-measure instance; (H\*) supplies unique continuation |
+| `General/Lieb` | the Lieb functional `F(ρ) = sup_v (E(v) − ρ(v))`: constrained-search bound, variational principle, convexity, subgradients ⇔ ground states, HK as uniqueness of the subgradient |
+| `Box/Basic` | one particle in a box with a continuous potential: separation, rigidity, the Schrödinger equation, unique continuation (ODE uniqueness), `hk_box` |
+| `Box/Solve`, `Box/Sturm`, `Box/Picone`, `Box/PiconeEq`, `Box/Extend`, `Box/Ground` | existence of ground states by shooting (truncated Picard–Lindelöf + Grönwall, Sturm comparison, Picone inequality and its equality case, cutoff extension); `hk_box_complete` |
+| `Box/Lieb` | the Lieb functional in the box, unconditional (`lieb_box`) |
+| `Pair/Basic` | two particles in a box (bosons or fermions, continuous interaction): separation, rigidity, one-body density; `hk_pair_of_ucp` conditional on unique continuation |
+| `Pair/Free` | two free bosons: lower bound `2E₀` by slicing, product ground state, every ground state is `k ψ₀⊗ψ₀`; `hk_free_bosons`, unconditional |
+| `Pair/Strong`, `Pair/MaxPrinciple`, `Pair/Bosons` | interacting bosons: ground states are classical solutions, Hopf's strong maximum principle; `hk_bosons` assumes only that the ground state does not change sign |
 
 About 13,000 lines of Lean in total.
 

@@ -3,15 +3,15 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Pair
-import DFT.Continuum.BoxGround
-import DFT.Continuum.BoxPiconeEq
+import DFT.Continuum.Pair.Basic
+import DFT.Continuum.Box.Ground
+import DFT.Continuum.Box.PiconeEq
 
 /-!
 # Two free bosons in a box: an unconditional many-body Hohenberg–Kohn theorem
 
 Two non-interacting bosons on `[0, 1]` with hard walls and a continuous potential `v`. Let `ψ₀` be
-the one-particle ground state (energy `E₀`, from `BoxGround`).
+the one-particle ground state (energy `E₀`, from `Continuum/Box/Ground`).
 
 * `Q_free_sub`, `lower_bound`: the energy splits into one-particle energies along horizontal and
   vertical slices, each `≥ E₀` (Fubini), so every state has energy `≥ 2E₀`.

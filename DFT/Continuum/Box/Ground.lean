@@ -3,10 +3,10 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.BoxSturm
-import DFT.Continuum.BoxExtend
-import DFT.Continuum.BoxPicone
-import DFT.Continuum.BoxSolve
+import DFT.Continuum.Box.Sturm
+import DFT.Continuum.Box.Extend
+import DFT.Continuum.Box.Picone
+import DFT.Continuum.Box.Solve
 
 /-!
 # Ground states in the box exist
@@ -15,16 +15,18 @@ For every continuous potential `v` on `[0, 1]` the box Hamiltonian has a ground 
 form domain, so `hk_box` holds without assuming ground states.
 
 Shooting: for each energy `E`, `sol v E` solves `ψ'' = (v - E) ψ`, `ψ(0) = 0`, `ψ'(0) = 1`
-(`BoxSolve`). It stays positive on `(0, 1]` for `E ≤ -‖v‖` and has a zero in `(0, 1)` for
-`E ≥ ‖v‖ + 16` (`BoxSturm`). At `E* = sup {E | ψ_E > 0 on (0, 1]}`, by continuous dependence on `E`:
+(`Continuum/Box/Solve`). It stays positive on `(0, 1]` for `E ≤ -‖v‖` and has a zero in `(0, 1)` for
+`E ≥ ‖v‖ + 16` (`Continuum/Box/Sturm`). At `E* = sup {E | ψ_E > 0 on (0, 1]}`, by continuous
+dependence on `E`:
 
 * `star_nonneg`, `star_pos`: `ψ_{E*} ≥ 0` on `[0, 1]` and `> 0` on `(0, 1)` (an interior zero
   would be a double zero, forcing `ψ ≡ 0`);
 * `star_one`: `ψ_{E*}(1) = 0` (otherwise slightly larger `E` would still be positive);
 * `star_d1`: `ψ'_{E*}(1) < 0`.
 
-The Picone inequality (`BoxPicone`) then shows that no state has lower energy than `E*`, and a
-cutoff (`BoxExtend`) makes `ψ_{E*}` a `C²` function on `ℝ`.
+The Picone inequality (`Continuum/Box/Picone`) then shows that no state has lower energy than `E*`,
+and a
+cutoff (`Continuum/Box/Extend`) makes `ψ_{E*}` a `C²` function on `ℝ`.
 
 * `exists_isGS`: every continuous potential has a ground state.
 * `hk_box_complete`: **Hohenberg–Kohn for one particle in a box, unconditional.**

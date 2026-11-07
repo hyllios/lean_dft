@@ -3,9 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.PairStrong
-import DFT.Continuum.MaxPrinciple
-import DFT.Continuum.Lieb
+import DFT.Continuum.Pair.Strong
+import DFT.Continuum.Pair.MaxPrinciple
+import DFT.Continuum.General.Lieb
 
 /-!
 # Two interacting bosons in a box
@@ -13,9 +13,10 @@ import DFT.Continuum.Lieb
 For two bosons on `[0, 1]` with a continuous symmetric interaction, unique continuation is reduced
 to the sign of the ground state:
 
-* `strong_eq` (`PairStrong`): ground states solve `-ΔΦ + (w + v(x₁) + v(x₂) - E) Φ = 0`
+* `strong_eq` (`Continuum/Pair/Strong`): ground states solve `-ΔΦ + (w + v(x₁) + v(x₂) - E) Φ = 0`
   classically;
-* `strong_max_principle` (`MaxPrinciple`): Hopf's strong maximum principle on the square;
+* `strong_max_principle` (`Continuum/Pair/MaxPrinciple`): Hopf's strong maximum principle on the
+  square;
 * `pos_of_nonneg_gs`: a nonnegative ground state is positive on the square;
 * `ucp_bosons`: a ground state that does not change sign has no zeros in the square;
 * `hk_bosons`: **Hohenberg–Kohn for two interacting bosons**, assuming only that the ground state

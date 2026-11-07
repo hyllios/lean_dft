@@ -3,13 +3,14 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.HK
+import DFT.Continuum.General.HK
 import Mathlib.Data.EReal.Operations
 
 /-!
 # The Lieb functional on a general configuration space
 
-Lieb's convex-analysis formulation of DFT, for the general setting of `Continuum/HK`. Densities are
+Lieb's convex-analysis formulation of DFT, for the general setting of `Continuum/General/HK`.
+Densities are
 linear functionals on one-body potentials (`ρ_ψ(w) = ∫ (L w) ψ²`). With values in `EReal`:
 
 * `gsE v = inf {⟨ψ, H(v) ψ⟩ : ψ normalised}` (the ground-state energy, possibly `-∞`);
