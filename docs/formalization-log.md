@@ -1,5 +1,5 @@
 > **Module map.** This log was written while the formalization was developed in files named J1–J5, F0–F14,
-> G6–G9. They now live in the `LatticeDFT/` tree:
+> G6–G9. They now live in the `DFT/Lattice/` tree:
 > J1 → `Basic/GroundState`, `Basic/SingleParticle`; J2 → `HK/Basic`, `HK/Examples`; J3 → `HK/Gap`, `HK/SquareWall`;
 > J4 → `Generic/Krylov`; J5 → `Generic/NullSets`; J4sq → `Generic/SquareCertificate`; G9 → `Generic/RationalFunctions`;
 > F0 → `Fermions/Configurations`; F1 → `Fermions/Slater`; F2+F3 → `Fermions/SecondQuantization`;
@@ -142,8 +142,9 @@ infrastructure) → B6 (pure algebra) → B2/B3 → B4 → B5 → B7. Each miles
   (Penz–Laestadius–Tellgren–Ruggenthaler PRL 123, 037401 (2019)). NOTE: the original letter's convergence claim
   is wrong (erratum with P. E. Lammert): ‖x_{i+1} − x_i‖ → 0 does not give a Cauchy sequence. We formalise the
   corrected statement: decreasing energies, ∇F_ε(x_i) + v → 0, accumulation points exist and are regularised
-  ground-state quasi-densities z, energies converge to the minimum, z + εv is a true (Lieb) ground-state
-  density, and the KS potentials converge along the subsequence to v_KS with z + εv_KS the KS density.
+  ground-state quasi-densities z, energies converge to the minimum, z + εv minimises the Lieb energy
+  F(ρ) + v·ρ = E(v) (being the density of a ground-state ensemble is not stated), and the KS potentials
+  converge along the subsequence to v_KS, with z + εv_KS minimising the reference Lieb energy in v_KS.
   Abstract layer needs no derivatives: only the two inequalities of `IsMYSmooth`.
 - Weighted hopping: the PathSum chain takes edge amplitudes `t a b`; only `Lval_ne_zero` uses the sign
   condition ∃ s, s·t_ab > 0 on edges. `generic_hk_lattice_fermions_w`; the uniform theorem is a corollary.

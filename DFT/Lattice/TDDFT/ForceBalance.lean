@@ -10,15 +10,17 @@ import DFT.Lattice.HK.SquareWall
 # The force-balance matrix of lattice TDDFT at a ground state
 
 In lattice TDDFT (Farzanehpour & Tokatly, *Phys. Rev. B* **86**, 125130 (2012)) the potential is
-determined from the density by the force-balance equation `K(ψ) v = n̈ + q(ψ)`. Lattice TDDFT exists
-locally (by Picard–Lindelöf) for initial states where `K(ψ)` has no zero eigenvalue besides the
-constant potentials. For a real state `ψ` the quadratic form of `K` is
-`wᵀ K(ψ) w = Σ_{c,c'} H0(c,c') ψ_c ψ_{c'} (d_c - d_{c'})²`, `d_c = Σ_i w_i n_i(c)` (`kMat`; diagonal
+determined from the density by the force-balance equation `K(ψ) v = q(ψ) - n̈` (`kfb`, `qsrc` in
+`TDDFT/Dynamics`). Lattice TDDFT exists locally (by Picard–Lindelöf) for initial states where `K(ψ)`
+has no zero eigenvalue besides the constant potentials. For a real state `ψ` this file works with
+`kMat ψ`, which for symmetric `H0` equals `-K(ψ, 0)` (`kfb_quad_real` states the equality of
+quadratic forms). Its quadratic form is
+`wᵀ kMat(ψ) w = Σ_{c,c'} H0(c,c') ψ_c ψ_{c'} (d_c - d_{c'})²`, `d_c = Σ_i w_i n_i(c)` (diagonal
 parts of `H0`, such as the interaction, drop out).
 
-* `kMat_form_eigen`: for an eigenvector, `wᵀ K w = 2 (E |dψ|² - ⟨dψ| H |dψ⟩)` (an f-sum rule).
-* `kMat_nonpos`: at a ground state `K(ψ)` is negative semidefinite.
-* `kMat_mulVec_eq_zero`: if `d` is constant on the support of `ψ`, then `K(ψ) w = 0`.
+* `kMat_form_eigen`: for an eigenvector, `wᵀ kMat w = 2 (E |dψ|² - ⟨dψ| H |dψ⟩)` (an f-sum rule).
+* `kMat_nonpos`: at a ground state `kMat(ψ)` is negative semidefinite.
+* `kMat_mulVec_eq_zero`: if `d` is constant on the support of `ψ`, then `kMat(ψ) w = 0`.
 * `kMat_degenerate_of_nonUV`: every ground state shared by two potentials that differ by more than a
   constant has a non-constant zero mode. With `hk_fails_square` this disproves Theorem 2 of
   Farzanehpour–Tokatly ("every ground state on a connected lattice is in the v-representability
@@ -26,7 +28,7 @@ parts of `H0`, such as the interaction, drop out).
   which fails when `ψ₀` has zero amplitudes.
 * `kMat_definite_of_hstar`, `generic_td_vrep`: the corrected statement. For almost every static
   potential (outside a closed, nowhere dense, null set), every ground state of lattice fermions has
-  `K(ψ)` negative definite modulo constants, so lattice TDDFT exists starting from it.
+  `kMat(ψ)` negative definite modulo constants, so lattice TDDFT exists starting from it.
 -/
 
 namespace DFT
@@ -40,7 +42,8 @@ variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V]
 /-- The density-coupled multiplication operator `d_c = Σ_i w_i n_i(c)`. -/
 def potW (n : V → C → ℝ) (w : V → ℝ) : C → ℝ := fun c => ∑ i, w i * n i c
 
-/-- The force-balance matrix `K(ψ)` of a real state. -/
+/-- The force-balance matrix of a real state, with the opposite sign: for symmetric `H0`,
+`kMat ψ = -K(ψ, 0)` where `K = kfb` (`kfb_quad_real` gives the equality of quadratic forms). -/
 def kMat (H0 : Matrix C C ℝ) (n : V → C → ℝ) (ψ : C → ℝ) : Matrix V V ℝ :=
   fun i j => ∑ c, ∑ c', H0 c c' * ψ c * ψ c' * (n i c - n i c') * (n j c - n j c')
 
@@ -261,9 +264,11 @@ theorem kMat_definite_of_hstar {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V �
 end
 
 /-- **Counterexample to Farzanehpour–Tokatly Theorem 2.** Two fermions on the square at the
-potential `(3/4, -3/4, -3/4, 3/4)`: the (non-degenerate) ground state `(0, 2, 1, 4, 2, 0)` has a
-non-constant zero mode of the force-balance matrix, so it lies outside the v-representability set
-although the lattice is connected. -/
+potential `(3/4, -3/4, -3/4, 3/4)`: the ground state `(0, 2, 1, 4, 2, 0)` has a non-constant zero
+mode of the force-balance matrix, although the lattice is connected. (Not stated here: that the
+state lies outside `Ω`, which follows from `kMat ψ = -K(ψ, 0)` and the fixed particle number, and
+that it is non-degenerate, which follows from the sum-of-squares certificate in
+`hk_fails_square`.) -/
 theorem square_kMat_degenerate :
     IsGroundState (hamN H0sq occ4 ![3/4, -3/4, -3/4, 3/4]) ![0, 2, 1, 4, 2, 0] ∧
       ∃ w : Fin 4 → ℝ, (¬ ∃ k, ∀ i, w i = k) ∧ kMat H0sq occ4 ![0, 2, 1, 4, 2, 0] *ᵥ w = 0 := by

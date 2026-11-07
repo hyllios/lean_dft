@@ -20,9 +20,10 @@ al., PRL 123, 037401 (2019). For a symmetric Hamiltonian `H0` and occupations `n
 Main results:
 * `lattice_myksoda`: for an interacting `H0` and a reference `H0'` (e.g. `H0F G t Vint` and
   `H0F G t 0`), the MYKSODA iteration has decreasing energies; every accumulation point `z` is a
-  regularised ground-state quasi-density; `ρ = z + ε v` is a true ground-state density,
-  `F(ρ) + v·ρ = E(v)`; and the Kohn–Sham potentials converge along the subsequence to `v_KS`, whose
-  non-interacting ground-state density is `ρ_KS = z + ε v_KS` (eq. (24) of the paper).
+  regularised ground-state quasi-density; `ρ = z + ε v` lies in the density domain and minimises
+  the Lieb energy, `F(ρ) + v·ρ = E(v)` (that it is the density of a ground-state ensemble is not
+  stated); and the Kohn–Sham potentials converge along the subsequence to `v_KS`, for which
+  `ρ_KS = z + ε v_KS` minimises the non-interacting Lieb energy (eq. (24) of the paper).
 * `lattice_myksoda_exists`: the iteration is well defined from any starting point.
 -/
 
@@ -164,11 +165,13 @@ regularised Lieb functionals of both systems. Then:
 1. the regularised energies decrease;
 2. there is an accumulation point;
 3. for every accumulation point `z` (along `φ`):
-   * `ρ = z + ε v` is a ground-state density of the interacting system: `F(ρ) + v·ρ = E(v)`;
+   * `ρ = z + ε v` lies in the density domain and minimises the interacting Lieb energy:
+     `F(ρ) + v·ρ = E(v)`;
    * `z` minimises the regularised energy `F_ε + ⟪v,·⟫`, and the energies of the whole sequence
      converge to this minimum;
-   * the Kohn–Sham potentials converge along `φ` to `v_KS`, and `ρ_KS = z + ε v_KS` is a
-     ground-state density of the reference system in `v_KS`: `F₀(ρ_KS) + v_KS·ρ_KS = E₀(v_KS)`. -/
+   * the Kohn–Sham potentials converge along `φ` to `v_KS`, and `ρ_KS = z + ε v_KS` minimises the
+     reference Lieb energy in `v_KS`: `F₀(ρ_KS) + v_KS·ρ_KS = E₀(v_KS)`.
+   (That `ρ`, `ρ_KS` are densities of ground-state ensembles is not stated.) -/
 theorem lattice_myksoda (hε : 0 < ε) (hH0 : H0.IsSymm) (hH0' : H0'.IsSymm) (v : EuclideanSpace ℝ V)
     {x x' : ℕ → EuclideanSpace ℝ V}
     (hb : ∀ i, gFreg H0' n ε (x' i) = -(v + gFreg H0 n ε (x i) - gFreg H0' n ε (x i)))

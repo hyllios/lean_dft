@@ -243,7 +243,8 @@ lemma rigidS_D : RigidOn PSD occD := by
   simp [occD, Fin.sum_univ_succ] at e0 e3
   exact ⟨w 0, fun i => by fin_cases i <;> simp <;> linarith⟩
 
-/-- **The polarised half-filled state is never a ground state.** The triplet has energy `v₀ + v₁`;
+/-- **The `S_z = 0` triplet of the half-filled dimer is never a ground state.** The triplet has
+energy `v₀ + v₁`;
 the trial state `(1, 2, 2, 1)` has energy `v₀ + v₁ - 8/10`. -/
 lemma noGS_D : NoGS H0D occD PTD := by
   intro v ψ hψ

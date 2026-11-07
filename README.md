@@ -58,16 +58,20 @@ Schrödinger equation.
 
 * `td_existence`, `td_uniqueness` (their Theorem 1): from an initial state in
   `Ω = {det(K + 𝟙𝟙ᵀ) ≠ 0}` that reproduces `n(t₀)` and `ṅ(t₀)`, every density with continuous `n̈` is
-  produced, locally in time, by a potential that is unique up to a constant (Picard–Lindelöf).
+  produced, locally in time, by a potential that is unique up to a constant (Picard–Lindelöf). In
+  Lean the constant is fixed by the gauge `Σᵢ vᵢ(t) = 0`: uniqueness is among potentials obeying it
+  (removing the gauge needs the time-dependent phase transformation of `ψ`, not formalised).
 * Their Theorem 2 claims every ground state on a connected lattice is in `Ω`. `square_kMat_degenerate`
   shows it is false: a ground state shared by two different potentials (two fermions on the square) has a
   non-constant zero mode of `K` (`kMat_shared`).
-* `generic_ground_mem_omega`: the corrected statement. For almost every static potential, every ground
-  state of lattice fermions is in `Ω`, so TDDFT starting from it is well posed.
+* `generic_ground_mem_omega`: the corrected statement. For almost every static potential, every (real)
+  ground state of lattice fermions is in `Ω`, so TDDFT starting from it is well posed.
 * `td_global` (continuation in time): the norm is conserved, so the only way the TDDFT solution can
   stop is by reaching the boundary of `Ω`. For every `T`, either the potential exists on all of
   `[t₀, T]`, or the evolution comes arbitrarily close to `det(K + 𝟙𝟙ᵀ) = 0` before `T`. Solutions
-  are unique on the whole interval (`goodOn_unique`).
+  of the reduced (potential-eliminated) Schrödinger equation that stay in `Ω` are unique on the
+  whole interval (`goodOn_unique`); uniqueness among arbitrary potentials is proved only locally
+  (`td_uniqueness`).
 * Complex hopping (magnetic flux): `td_existence_complex`, `td_uniqueness_complex`,
   `td_global_complex`. A Hermitian hopping `A + iB` is the real symmetric hopping
   `[[A, -B], [B, A]]` on a doubled lattice; the unphysical half has conserved norm, so it stays
@@ -89,7 +93,7 @@ Schrödinger equation.
   every spin-dependent potential every ground state lies in `Ω` (via the spin-resolved (H\*) and the
   invariance of Krylov determinants under constant energy shifts). `td_spin_existence`,
   `td_spin_uniqueness`: the spin densities `(ρ↑, ρ↓)(t)` determine `(v↑, v↓)(t)` up to one constant
-  per spin.
+  per spin (in Lean, among gauge-fixed potentials, as for `td_uniqueness`).
 * Frozen densities (`TDDFT/Frozen`): an eigenstate of `H0` whose configurations all have the same
   occupations is an eigenstate for every potential, so its density never moves, whatever `v(t)` is,
   and the potential is completely undetermined. `not_mem_omega_of_frozen` derives `ψ ∉ Ω` from
@@ -137,7 +141,8 @@ Schrödinger equation.
   Kohn–Sham potential reproduces the interacting density near `t₀`.
 * `td_kohn_sham_ensemble`: the same without the pure-state assumption. Any ground-state ensemble
   `Γ` of `H_s(v_s)` (as produced by `ks_potential_exists`) works: `Γ = Σ_k b_k b_kᵀ` (`ens_purify`),
-  and the ensemble members evolve under one common, unique Kohn–Sham potential. The proof
+  and the ensemble members evolve under one common Kohn–Sham potential, unique for that
+  decomposition `b` (independence from the choice of decomposition is not stated). The proof
   purifies the ensemble into one state on configurations `C × κ` and reuses van Leeuwen's theorem
   (`van_leeuwen_ens`).
 
@@ -169,7 +174,7 @@ the lattice results as a special case. Module paths below are relative to these 
 | `HK/Basic` | many-body Hamiltonian `hamN`, density, weak and strong HK, spin-DFT-type non-uniqueness |
 | `HK/Examples` | HK counterexamples: two fermions on a triangle and on a square |
 | `HK/Gap` | gapped ground states and invisible potential directions |
-| `HK/SquareWall` | HK fails on the whole plane `v₀+v₂ = v₁+v₃` of the two-fermion square (hidden involution) |
+| `HK/SquareWall` | HK fails at every gapped point of the plane `v₀+v₂ = v₁+v₃` of the two-fermion square (hidden involution) |
 | `Generic/Krylov` | Krylov criterion; (H\*) ⇒ HK on an open dense set |
 | `Generic/NullSets` | zero sets of nonzero polynomials are null; (H\*) ⇒ HK almost everywhere |
 | `Generic/RationalFunctions` | rational functions on generic points; simultaneous non-vanishing |
@@ -182,7 +187,7 @@ the lattice results as a special case. Module paths below are relative to these 
 | `StrongPotential/*` | strong-potential leading coefficients, power sums, explicit coefficients |
 | `PathSum/*` | optimal assignments, free-fermion leading coefficients, route sums, resonance argument |
 | `GenericHK` | the generic HK theorem (uniform and edge-dependent hopping) |
-| `KohnSham/Aufbau` | aufbau: non-interacting ground states are Slater determinants of the lowest orbitals |
+| `KohnSham/Aufbau` | aufbau: the Slater determinant of the lowest orbitals is a non-interacting ground state, with energy the smallest orbital sum |
 | `KohnSham/Duality` | Lieb's functional, convex duality |
 | `KohnSham/Maximizer`, `KohnSham/Representability` | ensemble v-representability (maximiser, limit argument, separation) |
 | `KohnSham/Existence` | existence of Kohn–Sham potentials for lattice fermions |

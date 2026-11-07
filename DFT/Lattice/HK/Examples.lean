@@ -9,8 +9,10 @@ import DFT.Lattice.HK.Basic
 # Counterexamples to the Hohenberg–Kohn theorem on lattices
 
 Two spinless fermions on a triangle (`hk_fails_triangle`) and on a square (`hk_fails_square`):
-non-degenerate ground states with fractional densities that are shared by potentials differing by
-more than a constant (cf. Penz & van Leeuwen, J. Chem. Phys. 155, 244111 (2021)).
+ground states shared by potentials differing by more than a constant (cf. Penz & van Leeuwen,
+J. Chem. Phys. 155, 244111 (2021)). On the triangle one site is always occupied, so its potential
+is invisible (the trivial mechanism); the square has fractional densities. Both ground states are
+non-degenerate (by the sum-of-squares certificates), but the theorems do not state it.
 -/
 
 namespace DFT

@@ -515,8 +515,8 @@ lemma kJ_ker_iff [Nonempty V] {K : Matrix V V ℝ} (hcol : ∀ j, ∑ i, K i j =
     funext i; simp [hs]
 
 /-- **Zero flux.** For real hopping (`B = 0`) the v-representability set of the doubled
-description is the original one, so the complex-hopping theorems contain the real ones (and, `Ω`
-being open, they apply to all states of `Ω` for small enough flux). -/
+description is the original one, so the complex-hopping theorems contain the real ones. (Continuity
+in the flux `B`, which would extend this to small nonzero flux, is not proved here.) -/
 theorem omegaC_zero [Nonempty V] {A : Matrix C C ℝ} (hA : A.IsSymm) {n : V → C → ℝ} {Ntot : ℝ}
     (hN : ∀ c, ∑ i, n i c = Ntot) : omegaC A 0 n = omega A n := by
   ext ψ

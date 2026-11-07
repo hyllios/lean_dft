@@ -324,7 +324,7 @@ non-interacting `H_s(v_s)`, `v_s ∉ Z` (as produced by `ks_potential_exists`), 
 any trajectory on the same sites, driven by a continuous potential, real at `t₀` and with the
 density of `Γ` there. Then `Γ = Σ_k b_k b_kᵀ`, and near `t₀` the Kohn–Sham ensemble `φ_k(t)`
 (from `b_k`), all driven by one gauge-fixed potential `v_s(t)`, has exactly the density of
-`ψ(t)`; the evolution and the potential are unique. -/
+`ψ(t)`; the evolution and the potential are unique for this decomposition `b`. -/
 theorem td_kohn_sham_ensemble [NeZero M] [Nonempty (Conf M N)] {G : SimpleGraph (Fin M)}
     [DecidableRel G.Adj] (hG : G.Connected) {t : Fin M → Fin M → ℝ}
     (htsym : ∀ a b, t a b = t b a) {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b)
