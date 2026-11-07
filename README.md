@@ -118,7 +118,10 @@ Schrödinger equation.
   (`subgrad_unique`). In the box this is unconditional (`lieb_box`).
   Interacting bosons (`Continuum/Pair/Bosons`): ground states solve the 2D Schrödinger equation
   classically and, by Hopf's strong maximum principle, a ground state that does not change sign has
-  no zeros; so `hk_bosons` assumes only the Perron–Frobenius sign property, whose proof needs `H¹`.
+  no zeros. The sign property itself is proved in the `C²` form domain (`Continuum/Pair/Sign`):
+  ground states have zero gradient at their zeros, and the Hopf boundary lemma then rules out sign
+  changes. So `hk_interacting_bosons` holds for every continuous symmetric interaction, with no
+  assumption beyond the existence of ground states.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -214,6 +217,7 @@ the lattice results as a special case. Module paths below are relative to these 
 | `Pair/Basic` | two particles in a box (bosons or fermions, continuous interaction): separation, rigidity, one-body density; `hk_pair_of_ucp` conditional on unique continuation |
 | `Pair/Free` | two free bosons: lower bound `2E₀` by slicing, product ground state, every ground state is `k ψ₀⊗ψ₀`; `hk_free_bosons`, unconditional |
 | `Pair/Strong`, `Pair/MaxPrinciple`, `Pair/Bosons` | interacting bosons: ground states are classical solutions, Hopf's strong maximum principle; `hk_bosons` assumes only that the ground state does not change sign |
+| `Pair/Nodal`, `Pair/Hopf`, `Pair/Sign` | interacting bosons do not change sign: zero gradient at zeros (smoothed-`|Φ|` competitors), Hopf boundary lemma; `hk_interacting_bosons`: HK for two interacting bosons, no extra assumption |
 | `Sobolev/Weak` | weak derivatives on open subsets of the plane: uniqueness, classical case, linearity, limits; chain rule for `|f|` and Kato's inequality (first step of the Perron–Frobenius argument) |
 
 About 13,000 lines of Lean in total.

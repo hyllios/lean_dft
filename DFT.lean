@@ -12,7 +12,10 @@ import DFT.Continuum.General.Lieb
 import DFT.Continuum.Pair.Basic
 import DFT.Continuum.Pair.Bosons
 import DFT.Continuum.Pair.Free
+import DFT.Continuum.Pair.Hopf
 import DFT.Continuum.Pair.MaxPrinciple
+import DFT.Continuum.Pair.Nodal
+import DFT.Continuum.Pair.Sign
 import DFT.Continuum.Pair.Strong
 import DFT.Continuum.Sobolev.Weak
 import DFT.Lattice.Basic.GroundState

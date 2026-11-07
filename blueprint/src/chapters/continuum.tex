@@ -355,5 +355,51 @@ transform).
   $|f|$ as $\sqrt{f^2+\varepsilon^2}$ and dominated convergence.
 \end{proof}
 
-The remaining steps of the Perron--Frobenius argument (density of smooth functions in $H^1_0$, so that $|\Phi|$ is
-a competitor, and regularity of $H^1$ minimisers, so that the strong maximum principle applies) are not formalized.
+\section{Interacting bosons do not change sign}
+
+The Perron--Frobenius property is proved inside the $C^2$ form domain, avoiding Sobolev spaces and regularity
+theory.
+
+\begin{lemma}[Zero gradient at zeros]
+  \label{lem:nodal}
+  \lean{DFT.Continuum.Pair.hε, DFT.Continuum.Pair.kε, DFT.Continuum.Pair.k2, DFT.Continuum.Pair.sqrt_pos_eps, DFT.Continuum.Pair.sq_sqrt_eps, DFT.Continuum.Pair.hasDerivAt_sq_eps, DFT.Continuum.Pair.hasDerivAt_hε, DFT.Continuum.Pair.hasDerivAt_kε, DFT.Continuum.Pair.contDiff_sq_eps, DFT.Continuum.Pair.contDiff_hε, DFT.Continuum.Pair.contDiff_kε, DFT.Continuum.Pair.hε_zero, DFT.Continuum.Pair.k2_pos, DFT.Continuum.Pair.continuous_k2, DFT.Continuum.Pair.abs_le_sqrt_eps, DFT.Continuum.Pair.eps_le_sqrt_eps, DFT.Continuum.Pair.sqrt_eps_le, DFT.Continuum.Pair.abs_kε_le, DFT.Continuum.Pair.kε_sq_le, DFT.Continuum.Pair.kε_ge_half, DFT.Continuum.Pair.kε_le_neg_half, DFT.Continuum.Pair.abs_hε_sq_sub, DFT.Continuum.Pair.abs_hε_sub, DFT.Continuum.Pair.fderiv_comp_apply, DFT.Continuum.Pair.fderiv_mul_apply, DFT.Continuum.Pair.discr_le, DFT.Continuum.Pair.Rf, DFT.Continuum.Pair.Rf_eq, DFT.Continuum.Pair.Rf_nonneg, DFT.Continuum.Pair.Rf_expand, DFT.Continuum.Pair.Rf_self, DFT.Continuum.Pair.Rf_EL, DFT.Continuum.Pair.hΦ_mem, DFT.Continuum.Pair.g_mem, DFT.Continuum.Pair.fderiv_hΦ, DFT.Continuum.Pair.fderiv_g, DFT.Continuum.Pair.slice_lower, DFT.Continuum.Pair.dist_le_of_abs, DFT.Continuum.Pair.box_data, DFT.Continuum.Pair.box_integral, DFT.Continuum.Pair.isGS_neg_pair, DFT.Continuum.Pair.final_arith, DFT.Continuum.Pair.no_pos_d1, DFT.Continuum.Pair.grad_zero_at_zero}
+  \leanok
+  \uses{lem:pair_strong, thm:hk_pair}
+  A ground state of two interacting bosons has $\nabla\Phi=0$ wherever $\Phi=0$ in the square.
+\end{lemma}
+\begin{proof}
+  \leanok
+  With $h_\varepsilon(s)=\sqrt{s^2+\varepsilon^2}-\varepsilon$, the ground-state property for
+  $h_\varepsilon(\Phi)+t\varphi$ gives a nonnegative quadratic in $t$ whose constant term is $O(\varepsilon)$, so its
+  linear term, which equals $-\int h_\varepsilon''(\Phi)|\nabla\Phi|^2\varphi$ up to $O(\varepsilon)$, is
+  $O(\sqrt\varepsilon)$. At a zero with $\partial_1\Phi\ne0$, the fundamental theorem of calculus along horizontal
+  segments keeps that integral bounded below. Contradiction.
+\end{proof}
+
+\begin{lemma}[Hopf boundary lemma]
+  \label{lem:hopf}
+  \lean{DFT.Continuum.Pair.eu_segment, DFT.Continuum.Pair.exists_zero_segment, DFT.Continuum.Pair.fderiv_eq_zero_of_d, DFT.Continuum.Pair.local_nonpos, DFT.Continuum.Pair.pos_or_nonpos}
+  \leanok
+  \uses{thm:strong_max}
+  A $C^2$ supersolution of $-\Delta+c$ ($c\ge0$) where it is positive, with zero gradient at its zeros, is either
+  positive on the whole square or nowhere positive.
+\end{lemma}
+\begin{proof}
+  \leanok
+  A ball inside the positive set touching a zero, and the exponential barrier, force a nonzero gradient at the zero.
+\end{proof}
+
+\begin{theorem}[Hohenberg--Kohn for two interacting bosons]
+  \label{thm:hk_interacting_bosons}
+  \lean{DFT.Continuum.Pair.gs_pos_or_nonpos, DFT.Continuum.Pair.gs_sign, DFT.Continuum.Pair.hk_interacting_bosons}
+  \leanok
+  \uses{lem:nodal, lem:hopf, thm:hk_bosons}
+  For every continuous symmetric interaction, ground states of two bosons in a box do not change sign, and ground
+  states of continuous potentials with the same one-body density force the potentials to differ by a constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Apply the Hopf lemma to $\Phi$ and to $-\Phi$, with $c=\max(V-E,0)$; Theorem~\ref{thm:hk_bosons} then applies.
+\end{proof}
+
+Existence of ground states for the interacting two-particle problem is not formalized (HK presupposes them).
