@@ -2,7 +2,7 @@
 
 A Lean 4 / Mathlib formalization of the foundations of density-functional theory (DFT) for finite lattice
 systems. It covers ground states, the Hohenberg–Kohn (HK) theorem and its failures, second-quantized lattice
-fermions, a **generic Hohenberg–Kohn theorem** (spinless, and spin-resolved for spinful electrons), and
+fermions, a **generic Hohenberg–Kohn theorem** (spinless, with non-uv densities of codimension ≥ 2, and spin-resolved for spinful electrons), and
 **Kohn–Sham theory**: existence and generic uniqueness of Kohn–Sham potentials, and convergence of the
 regularised Kohn–Sham iteration. It then treats time-dependent DFT on lattices and takes first steps to
 the continuum: Hohenberg–Kohn on a general configuration space, conditional on unique continuation, and an
@@ -36,6 +36,28 @@ lattices in general (Penz & van Leeuwen, *J. Chem. Phys.* **155**, 244111 (2021)
 
 `generic_hk_lattice_fermions_w` extends the theorem to edge-dependent, symmetric hopping amplitudes `t a b`
 that all have the same sign.
+
+### Non-uniquely v-representable densities have codimension ≥ 2
+
+```lean
+theorem DFT.dimH_nonUVDens_lattice_fermions {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
+    (hG : G.Connected) {t : ℝ} (ht : t ≠ 0) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
+    dimH (NonUVDens (H0F G t Vint) occF) ≤ (M : ENNReal) - 3
+```
+
+`NonUVDens` is the set of densities of normalised, non-degenerate ground states of `H(v)` that are also
+ground states of some `H(v')` with `v - v'` not constant. Under the hypotheses of the generic HK theorem
+this set has Hausdorff dimension at most `M - 3`. Densities lie in the `(M-1)`-dimensional hyperplane
+`Σ ρ_i = N`, so the non-uv densities have codimension at least 2 there. This sharpens the measure-zero
+result of Penz & van Leeuwen (2021, Theorem 11). The bound is sharp: on the two-fermion square the non-uv
+densities contain a segment (their Eq. (52)). `dimH_nonUVDens_lattice_fermions_w` covers common-sign,
+edge-dependent hopping; `dimH_nonUVDens_le` is the abstract version (any symmetric `H0`, fixed particle
+number, and a nonzero polynomial vanishing on the non-uv potentials). Proof: a gapped ground state keeps its
+density when the potential moves along its invisible directions (a subspace of dimension ≥ 2), so locally
+every non-uv potential can be moved to a slice of dimension ≤ `M - 2` on which the Krylov polynomial does
+not vanish identically; its zero set there has Hausdorff dimension ≤ `M - 3` (`dimH_zeroSet_add_one_le`),
+and the density is Lipschitz in the potential near a gapped ground state
+(`dimH_image_le_of_pointwise_lipschitz`).
 
 ### Spin-resolved generic Hohenberg–Kohn theorem
 
@@ -182,6 +204,8 @@ the lattice results as a special case. Module paths below are relative to these 
 | `HK/SquareWall` | HK fails at every gapped point of the plane `v₀+v₂ = v₁+v₃` of the two-fermion square (hidden involution) |
 | `Generic/Krylov` | Krylov criterion; (H\*) ⇒ HK on an open dense set |
 | `Generic/NullSets` | zero sets of nonzero polynomials are null; (H\*) ⇒ HK almost everywhere |
+| `Generic/ZeroSetDim` | zero sets of nonzero polynomials have Hausdorff dimension ≤ d − 1; pointwise-Lipschitz maps do not raise Hausdorff dimension |
+| `Generic/DensityDim`, `DensityDim/Gap`, `DensityDim/Fermions` | non-uv densities have Hausdorff dimension ≤ M − 3 (gap from non-degeneracy, gap persistence, Lipschitz density, slicing) |
 | `Generic/RationalFunctions` | rational functions on generic points; simultaneous non-vanishing |
 | `Generic/SquareCertificate` | (H\*) for the square by exact computation in Lean |
 | `Fermions/Configurations` | `N`-particle configurations, occupations |

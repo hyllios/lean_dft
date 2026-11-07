@@ -28,9 +28,13 @@ import DFT.Lattice.Fermions.FirstQuantization
 import DFT.Lattice.Fermions.SecondQuantization
 import DFT.Lattice.Fermions.Slater
 import DFT.Lattice.Generic.Krylov
+import DFT.Lattice.Generic.DensityDim
+import DFT.Lattice.Generic.DensityDim.Fermions
+import DFT.Lattice.Generic.DensityDim.Gap
 import DFT.Lattice.Generic.NullSets
 import DFT.Lattice.Generic.RationalFunctions
 import DFT.Lattice.Generic.SquareCertificate
+import DFT.Lattice.Generic.ZeroSetDim
 import DFT.Lattice.GenericHK
 import DFT.Lattice.HK.Basic
 import DFT.Lattice.HK.Examples
