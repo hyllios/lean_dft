@@ -57,3 +57,74 @@
   In Lean the edge-dependent version is proved first; the uniform version is its special case
   $t_{ab}=t$.
 \end{proof}
+
+\section{Non-uniquely v-representable densities}
+
+\begin{theorem}[Zero sets of polynomials]
+  \label{thm:dimH_zeroSet}
+  \lean{DFT.dimH_zeroSet_add_one_le, DFT.dimH_zeroSet_le, DFT.hasStrictFDerivAt_eval,
+    DFT.exists_nhds_dimH_level_add_one_le}
+  \leanok
+  The zero set of a nonzero real polynomial in $d\ge1$ variables has Hausdorff dimension at most $d-1$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Strong induction on the total degree. Pick a variable $i$ with $\partial_iP\ne0$. Then
+  $Z(P)\subseteq\{P=0,\ \partial_iP\ne0\}\cup Z(\partial_iP)$. Near a zero where the derivative of $P$ is
+  nonzero, the projection of each level set onto the kernel of the derivative is antilipschitz, so the
+  regular part has dimension at most $d-1$. Local bounds give a global bound.
+\end{proof}
+
+\begin{theorem}[Pointwise-Lipschitz maps]
+  \label{thm:dimH_pointwise_lipschitz}
+  \lean{DFT.dimH_image_le_of_pointwise_lipschitz, DFT.dimH_image_le_of_pointwise_lipschitz'}
+  \leanok
+  If $f$ satisfies $\operatorname{dist}(f(z),f(x))\le C_x\operatorname{dist}(z,x)$ for all $z\in t$ near each
+  $x\in t$, then $\dim_H f(t)\le\dim_H t$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  As for differentiable maps in Mathlib, decompose $t$ into countably many pieces on which $f$ is Lipschitz.
+\end{proof}
+
+\begin{lemma}[Gaps and Lipschitz densities]
+  \label{lem:density_gap}
+  \lean{DFT.HasGap, DFT.exists_gap_of_unique, DFT.persist_gap, DFT.dens_lipschitz_of_gap}
+  \leanok
+  \uses{thm:unique_of_gap, thm:persist_of_gap}
+  A normalized non-degenerate ground state has a positive gap. Along invisible directions it stays the
+  ground state, with the gap reduced by at most $|\varepsilon|m$. Near a potential with a gapped ground
+  state, every normalized ground state of a nearby potential has a density within $K\|z-x\|$ of the
+  original one.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The gap follows by compactness of the unit sphere orthogonal to $\psi$. The Lipschitz bound follows from the
+  eigenvalue equations: the component $\chi\perp\psi$ of the new ground state satisfies
+  $(g-L\|z-x\|)\|\chi\|^2\le L\|z-x\|\,\|\chi\|$.
+\end{proof}
+
+\begin{theorem}[Non-uv densities have codimension at least two]
+  \label{thm:dimH_nonUVDens}
+  \lean{DFT.NonUVDens, DFT.invisible, DFT.two_le_finrank_invisible, DFT.dimH_slice_zeroSet_add_one_le,
+    DFT.local_dimH_bound, DFT.dimH_nonUVDens_le, DFT.dimH_nonUVDens,
+    DFT.dimH_nonUVDens_lattice_fermions, DFT.dimH_nonUVDens_lattice_fermions_w}
+  \leanok
+  \uses{thm:generic_hk_lattice_fermions, thm:dimH_zeroSet, thm:dimH_pointwise_lipschitz, lem:density_gap,
+    def:NonUV, thm:zeroSet_closed_nowhere}
+  Under the hypotheses of Theorem~\ref{thm:generic_hk_lattice_fermions}, the densities of normalized,
+  non-degenerate ground states that are shared by two potentials differing by more than a constant have
+  Hausdorff dimension at most $M-3$. They therefore have codimension at least two in the hyperplane
+  $\sum_i\rho_i=N$. The bound is attained on the two-fermion square.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Let $S$ be the support of the shared ground state. The directions $w$ with $\sum_iw_in_i(c)$ constant on
+  $S$ form a subspace $K_S$ of dimension at least two (constants and $v'-v$), along which the gapped ground
+  state and its density do not change. Locally, every non-uv potential can be moved along $K_S$ to a slice
+  $a+W$ with $W$ complementary to $K_S$, $\dim W\le M-2$, on which the Krylov polynomial does not vanish
+  identically. The moved potentials are still non-uv, so they lie in its zero set, which has dimension at
+  most $M-3$ by Theorem~\ref{thm:dimH_zeroSet}. Lemma~\ref{lem:density_gap} and
+  Theorem~\ref{thm:dimH_pointwise_lipschitz} transfer the bound to the densities. Countable unions over
+  supports, gap sizes and a Lindel\"of cover finish the proof.
+\end{proof}
