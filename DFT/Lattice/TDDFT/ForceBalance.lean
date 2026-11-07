@@ -265,10 +265,9 @@ end
 
 /-- **Counterexample to Farzanehpour–Tokatly Theorem 2.** Two fermions on the square at the
 potential `(3/4, -3/4, -3/4, 3/4)`: the ground state `(0, 2, 1, 4, 2, 0)` has a non-constant zero
-mode of the force-balance matrix, although the lattice is connected. (Not stated here: that the
-state lies outside `Ω`, which follows from `kMat ψ = -K(ψ, 0)` and the fixed particle number, and
-that it is non-degenerate, which follows from the sum-of-squares certificate in
-`hk_fails_square`.) -/
+mode of the force-balance matrix, although the lattice is connected. The state lies outside `Ω`
+(`square_not_mem_omega`), and a consistent density that no potential produces is constructed in
+`ft_theorem2_false` (both in `TDDFT/Counterexample`). -/
 theorem square_kMat_degenerate :
     IsGroundState (hamN H0sq occ4 ![3/4, -3/4, -3/4, 3/4]) ![0, 2, 1, 4, 2, 0] ∧
       ∃ w : Fin 4 → ℝ, (¬ ∃ k, ∀ i, w i = k) ∧ kMat H0sq occ4 ![0, 2, 1, 4, 2, 0] *ᵥ w = 0 := by

@@ -59,6 +59,7 @@ import DFT.Lattice.StrongPotential.LeadingCoefficient
 import DFT.Lattice.StrongPotential.PowerSums
 import DFT.Lattice.StrongPotential.Resolvent
 import DFT.Lattice.TDDFT.ComplexHopping
+import DFT.Lattice.TDDFT.Counterexample
 import DFT.Lattice.TDDFT.Dimer
 import DFT.Lattice.TDDFT.Dynamics
 import DFT.Lattice.TDDFT.Ensemble

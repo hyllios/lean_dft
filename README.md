@@ -61,9 +61,14 @@ Schrödinger equation.
   produced, locally in time, by a potential that is unique up to a constant (Picard–Lindelöf). In
   Lean the constant is fixed by the gauge `Σᵢ vᵢ(t) = 0`: uniqueness is among potentials obeying it
   (removing the gauge needs the time-dependent phase transformation of `ψ`, not formalised).
-* Their Theorem 2 claims every ground state on a connected lattice is in `Ω`. `square_kMat_degenerate`
-  shows it is false: a ground state shared by two different potentials (two fermions on the square) has a
-  non-constant zero mode of `K` (`kMat_shared`).
+* Their Theorem 2 claims every ground state on a connected lattice is in `Ω`, so that every
+  consistent density is produced by a potential. It is false (`TDDFT/Counterexample`). The ground
+  state `ψ₀ = (0, 2, 1, 4, 2, 0)` of two fermions on the square at `v₀ = (3/4, -3/4, -3/4, 3/4)` is
+  shared with another potential, so `K(ψ₀, 0)` has the non-constant zero mode `w = (1, 1, -1, -1)`
+  (`square_kMat_degenerate`, `kfb_sq_w`). Hence `(ψ₀, 0) ∉ Ω` (`square_not_mem_omega`), and
+  `ft_theorem2_false` gives a consistent density `n(t) = ρ₀ + (t − t₀)²/2 · (q − w)` (right initial
+  density and current, `Σ n̈ = 0`, smooth) that no potential produces from `ψ₀`: force balance at
+  `t₀` would give `w·(q − w) = w·q`, i.e. `|w|² = 0`.
 * `generic_ground_mem_omega`: the corrected statement. For almost every static potential, every (real)
   ground state of lattice fermions is in `Ω`, so TDDFT starting from it is well posed.
 * `td_global` (continuation in time): the norm is conserved, so the only way the TDDFT solution can

@@ -69,6 +69,25 @@ almost every static potential.
   Theorem~\ref{thm:kMat_shared}.
 \end{proof}
 
+\begin{theorem}[Theorem~2 of Farzanehpour--Tokatly is false]
+  \label{thm:ft_theorem2_false}
+  \lean{DFT.kfb_transpose, DFT.mulVec_eq_zero_of_psd, DFT.ψsq, DFT.vsq0, DFT.wsq, DFT.sum_occ4, DFT.ground_sq,
+    DFT.kMat_sq_w, DFT.kfb_sq_w, DFT.ftAcc, DFT.ftDens, DFT.sum_ftAcc, DFT.hasDerivAt_ftDens,
+    DFT.hasDerivAt_ftVel, DFT.ft_theorem2_false, DFT.square_not_mem_omega}
+  \leanok
+  \uses{thm:square_kMat_degenerate}
+  For the ground state $\psi_0$ of Theorem~\ref{thm:square_kMat_degenerate} and $w=(1,1,-1,-1)$, the density
+  $n(t)=\rho_0+\frac{(t-t_0)^2}2(q(\psi_0)-w)$ is consistent with $\psi_0$ (smooth, $\sum_i\ddot n_i=0$, right initial
+  density and current), but no trajectory from $(\psi_0,0)$, driven by any potential, produces it near $t_0$. In
+  particular $(\psi_0,0)\notin\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $K=K(\psi_0,0)$ is symmetric and positive semidefinite at a ground state, and $w^TKw=-w^T\mathrm{kMat}\,w=0$, so
+  $Kw=0$. A trajectory producing $n$ would have current $\dot n$ near $t_0$ and, by force balance at $t_0$,
+  $q-w=q-Kv(t_0)$; dotting with $w$ gives $|w|^2=0$. For $\Omega$: $w\ne0$ and $(K+\mathbb 1\mathbb 1^T)w=0$.
+\end{proof}
+
 The published proof shows correctly that $w^TK(\psi_0)w=0$ only when $\hat w\psi_0=\lambda\psi_0$ (for a
 non-degenerate ground state), and then asserts that this forces $w$ to be constant. That holds when
 $\psi_0$ has no zero amplitudes, but not in general: the zeros of $\psi_0$ are exactly where Hohenberg--Kohn
