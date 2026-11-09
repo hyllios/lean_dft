@@ -13,13 +13,12 @@ import DFT.Continuum.Line.Basic
 import DFT.Continuum.Line.Bosons
 import DFT.Continuum.Line.Chamber
 import DFT.Continuum.Line.Fermions
+import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.Hopf
 import DFT.Continuum.Line.Lieb
 import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Smooth
 import DFT.Continuum.Line.Strong
-import DFT.Continuum.Pair.Basic
-import DFT.Continuum.Pair.Free
 import DFT.Continuum.Sobolev.Weak
 import DFT.Lattice.Basic.GroundState
 import DFT.Lattice.Basic.SingleParticle

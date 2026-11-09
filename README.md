@@ -138,11 +138,6 @@ Schrödinger equation.
   accumulate (ODE uniqueness), so it vanishes only on a null set, and equal densities `ψ² = ψ'²` force
   `v - v'` to be constant. Ground states exist for every continuous potential (`exists_isGS`, by
   shooting and the Picone inequality), so `hk_box_complete` needs no assumption at all.
-  `hk_pair_of_ucp` (`Continuum/Pair/Basic`): two particles on `[0, 1]` (bosons or fermions, continuous
-  interaction), conditional on unique continuation of the ground state on the square; it is proved
-  as the case `N = 2` of `Continuum/Line` below.
-  For two non-interacting bosons it is proved (`hk_free_bosons`, `Continuum/Pair/Free`): every ground
-  state is `k ψ₀(x₁)ψ₀(x₂)` (slicing + equality case of Picone), so the theorem is unconditional.
   The Lieb functional (`Continuum/General/Lieb`): `F(ρ) = sup_v (E(v) − ρ(v))` lies below the constrained
   search, gives back `E(v) = inf_ψ (F(ρ_ψ) + ρ_ψ(v))`, is convex, and has `-v` as a subgradient at a
   ground-state density of `v`; Hohenberg–Kohn says this subgradient is unique up to constants
@@ -156,6 +151,12 @@ Schrödinger equation.
   a null set. Hence `hk_interacting_bosons_line` and `hk_interacting_fermions_line` need no assumption
   beyond the existence of ground states, and in Lieb's form (`lieb_line`) `-v` is the only subgradient
   of the Lieb functional up to constants at a ground-state density.
+  For free bosons ground states exist (`Continuum/Line/Free`): the energy splits into one-particle
+  slice energies along each coordinate, so `ψ₀(x₀)⋯ψ₀(xₙ)` is a ground state, and
+  `hk_free_bosons_line` and `lieb_free_bosons_line` hold with no assumption at all. For interacting
+  particles, existence in the `C²` form domain is false in general for merely continuous potentials
+  (the ground state is only `C^{1,α}`); it needs Hölder potentials and Schauder theory, or a Sobolev
+  form domain.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -251,12 +252,11 @@ the lattice results as a special case. Module paths below are relative to these 
 | `Box/Basic` | one particle in a box with a continuous potential: separation, rigidity, the Schrödinger equation, unique continuation (ODE uniqueness), `hk_box` |
 | `Box/Solve`, `Box/Sturm`, `Box/Picone`, `Box/PiconeEq`, `Box/Extend`, `Box/Ground` | existence of ground states by shooting (truncated Picard–Lindelöf + Grönwall, Sturm comparison, Picone inequality and its equality case, cutoff extension); `hk_box_complete` |
 | `Box/Lieb` | the Lieb functional in the box, unconditional (`lieb_box`) |
-| `Pair/Basic` | two particles in a box (bosons or fermions, continuous interaction): separation, rigidity, one-body density; `hk_pair_of_ucp` conditional on unique continuation |
-| `Pair/Free` | two free bosons: lower bound `2E₀` by slicing, product ground state, every ground state is `k ψ₀⊗ψ₀`; `hk_free_bosons`, unconditional |
 | `Line/Basic` | `N = n + 1` bosons or fermions on `[0, 1]`: relabelling (measure preserving), the exchange character, the `C²` domain of either symmetry, (anti)symmetrisation, separation, rigidity, one-body density (Fubini); `hk_line_of_ucp` conditional on unique continuation |
 | `Line/Strong`, `Line/Hopf`, `Line/Smooth` | ground states are classical solutions (integration by parts along each coordinate, the Laplacian commutes with relabelling); Hopf's lemma in `n + 1` dimensions on any connected open set; the smoothed modulus `h_ε` |
 | `Line/Nodal`, `Line/Bosons` | zero gradient at zeros (smoothed-modulus competitors); bosonic ground states have no zeros; `hk_interacting_bosons_line`: HK for `N` interacting bosons on a line, no extra assumption |
 | `Line/Chamber`, `Line/Fermions` | the smooth sign of the ordering, its `O(1/ε)` derivative bound, `|Φ| ≤ M |xᵢ − xⱼ|`, the near-collision set has measure `O(ε)`; no sign change on the ordered chamber, zeros only at collisions; `hk_interacting_fermions_line`: HK for `N` interacting fermions on a line, no extra assumption |
+| `Line/Free` | `N` free bosons: lower bound `NE₀` by slicing along each coordinate, the product ground state; `hk_free_bosons_line`, `lieb_free_bosons_line`, unconditional |
 | `Line/Lieb` | the Lieb functional for `N` bosons or fermions on a line: at every ground-state density the subgradient is unique up to constants (`lieb_line`) |
 | `Sobolev/Weak` | weak derivatives on open subsets of the plane: uniqueness, classical case, linearity, limits; chain rule for `|f|` and Kato's inequality (first step of the Perron–Frobenius argument) |
 

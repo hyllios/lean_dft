@@ -201,28 +201,6 @@ $\psi''=(v-E)\psi$, $\psi(0)=0$, $\psi'(0)=1$, and take the largest $E$ for whic
   (integration by parts). A cutoff puts it in the form domain.
 \end{proof}
 
-\section{Two particles in a box}
-
-Two particles on $[0,1]$ with hard walls, a continuous interaction $w(x_1,x_2)$ and a one-body potential acting as
-$v(x_1)+v(x_2)$: the configuration space is the square $(0,1)^2$, states are $C^2$, symmetric (bosons) or
-antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\nabla\psi|^2$.
-
-\begin{theorem}[Hohenberg--Kohn for two particles, conditional on unique continuation]
-  \label{thm:hk_pair}
-  \lean{DFT.Continuum.Pair.Sq, DFT.Continuum.Pair.μ2, DFT.Continuum.Pair.Dom2, DFT.Continuum.Pair.d1, DFT.Continuum.Pair.d2, DFT.Continuum.Pair.integrable2, DFT.Continuum.Pair.diff2, DFT.Continuum.Pair.cont_d1, DFT.Continuum.Pair.cont_d2, DFT.Continuum.Pair.L2, DFT.Continuum.Pair.continuous_L2, DFT.Continuum.Pair.h02, DFT.Continuum.Pair.setting2, DFT.Continuum.Pair.integral_swap, DFT.Continuum.Pair.sep_pair, DFT.Continuum.Pair.rigidL_pair, DFT.Continuum.Pair.dens_eq_of_marginal, DFT.Continuum.Pair.hk_pair_of_ucp}
-  \leanok
-  \uses{thm:hk_continuum}
-  Separation and rigidity hold on the square, and equal one-body densities $\rho(x)=\int\psi(x,y)^2\,dy$ give equal
-  density functionals. Hence if ground states of continuous $v$ and $v'$ have the same density and the ground state of
-  $v$ vanishes only on a null set, $v-v'$ is constant.
-\end{theorem}
-\begin{proof}
-  \leanok
-  Separation: symmetrise a test function $\varphi\mapsto\varphi+\sigma\,\varphi\circ\mathrm{swap}$ (swap preserves the
-  measure of the square) and use the fundamental lemma on the open square. Rigidity: on the diagonal,
-  $2v(x)=c$. Densities: Fubini, and exchange symmetry turns $\int v(x_2)\psi^2$ into $\int v(x_1)\psi^2$.
-\end{proof}
-
 \begin{lemma}[Equality in the Picone inequality]
   \label{lem:picone_eq}
   \lean{DFT.Continuum.Box.picone_interior_eq, DFT.Continuum.Box.picone_tendsto, DFT.Continuum.Box.picone_eq}
@@ -235,22 +213,6 @@ antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\
   \leanok
   The exact identity $\int_a^b G=F(b)-F(a)+\int_a^b\psi^2((\varphi/\psi)')^2$ and the vanishing of the boundary
   terms give $(\varphi/\psi)'=0$.
-\end{proof}
-
-\begin{theorem}[Two free bosons: Hohenberg--Kohn, unconditional]
-  \label{thm:hk_free_bosons}
-  \lean{DFT.Continuum.Pair.free, DFT.Continuum.Pair.hprod, DFT.Continuum.Pair.fub1, DFT.Continuum.Pair.fub2, DFT.Continuum.Pair.slice1_mem, DFT.Continuum.Pair.slice2_mem, DFT.Continuum.Pair.deriv_slice1, DFT.Continuum.Pair.deriv_slice2, DFT.Continuum.Pair.sA, DFT.Continuum.Pair.sB, DFT.Continuum.Pair.continuous_sA, DFT.Continuum.Pair.continuous_sB, DFT.Continuum.Pair.Q_free_sub, DFT.Continuum.Pair.slice_A, DFT.Continuum.Pair.slice_B, DFT.Continuum.Pair.lower_bound, DFT.Continuum.Pair.prodState, DFT.Continuum.Pair.prodState_mem, DFT.Continuum.Pair.ip_prodState, DFT.Continuum.Pair.prod_isGS, DFT.Continuum.Pair.eq_zero_of_integral_zero, DFT.Continuum.Pair.continuous_sliceA, DFT.Continuum.Pair.ucp_free, DFT.Continuum.Pair.hk_free_bosons}
-  \leanok
-  \uses{thm:hk_pair, thm:box_exists, lem:picone_eq}
-  For two non-interacting bosons in the box, every continuous potential has a ground state, and ground states with
-  the same one-body density force the potentials to differ by a constant.
-\end{theorem}
-\begin{proof}
-  \leanok
-  The energy splits into one-particle energies of horizontal and vertical slices (Fubini), each at least $E_0$, so
-  every state has energy $\ge2E_0$, attained by $\psi_0\otimes\psi_0$. A ground state therefore has all slice
-  energies equal to $E_0$; by the equality case of Picone each slice is a multiple of $\psi_0$, and exchange symmetry
-  gives $k\,\psi_0\otimes\psi_0$ with $k\neq0$, which has no zeros in the square. Theorem~\ref{thm:hk_pair} applies.
 \end{proof}
 
 \section{The Lieb functional}
@@ -313,8 +275,7 @@ transform).
 
 $N=n+1$ bosons or fermions on $[0,1]$ with hard walls: the configuration space is the cube $(0,1)^N$, states are
 $C^2$, symmetric (bosons) or antisymmetric (fermions) under relabelling $x\mapsto x\circ\sigma$, and vanish on the
-walls; the interaction $w$ is continuous and invariant under relabelling, and $v$ acts as $\sum_k v(x_k)$. For
-$N=2$ this is the two-particle problem of Theorem~\ref{thm:hk_pair}.
+walls; the interaction $w$ is continuous and invariant under relabelling, and $v$ acts as $\sum_k v(x_k)$.
 
 \begin{theorem}[Hohenberg--Kohn for $N$ particles, conditional on unique continuation]
   \label{thm:hk_line_ucp}
@@ -401,6 +362,22 @@ $N=2$ this is the two-particle problem of Theorem~\ref{thm:hk_pair}.
   \leanok
   With $c=\max(V-E,0)$, the Hopf lemma on the convex cube, applied to $\Phi$ and $-\Phi$, leaves either no zeros or
   $\Phi\equiv0$, which contradicts $\|\Phi\|>0$.
+\end{proof}
+
+\begin{theorem}[$N$ free bosons: ground states exist, Hohenberg--Kohn unconditional]
+  \label{thm:free_bosons_line}
+  \lean{DFT.Continuum.Line.freeS, DFT.Continuum.Line.insertNth_eq_add, DFT.Continuum.Line.contDiff_insertNth, DFT.Continuum.Line.slice_mem, DFT.Continuum.Line.deriv_slice, DFT.Continuum.Line.sk, DFT.Continuum.Line.continuous_sk, DFT.Continuum.Line.Q_slices, DFT.Continuum.Line.slice_energy, DFT.Continuum.Line.lower_bound_free, DFT.Continuum.Line.prodS, DFT.Continuum.Line.prodS_mem, DFT.Continuum.Line.prodS_insertNth, DFT.Continuum.Line.volume_cube, DFT.Continuum.Line.integral_pos_of_pos, DFT.Continuum.Line.prodS_isGS, DFT.Continuum.Line.hk_free_bosons_line, DFT.Continuum.Line.exists_isNGS_free, DFT.Continuum.Line.lieb_free_bosons_line}
+  \leanok
+  \uses{thm:hk_interacting_bosons_line, thm:lieb_line, thm:box_exists}
+  For $N$ non-interacting bosons on $[0,1]$, every continuous potential has a ground state,
+  $\psi_0(x_0)\cdots\psi_0(x_n)$; hence Hohenberg--Kohn and its Lieb form hold with no assumption.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The energy minus $NE_0\|\varphi\|^2$ is a sum over coordinates of one-particle slice energies (Fubini along each
+  coordinate), each nonnegative, so every state has energy at least $NE_0$; on the product state each slice is a
+  multiple of $\psi_0$, so its slice energies vanish. Theorems~\ref{thm:hk_interacting_bosons_line}
+  and~\ref{thm:lieb_line} apply with $w=0$.
 \end{proof}
 
 \begin{lemma}[A smooth sign of the ordering]
