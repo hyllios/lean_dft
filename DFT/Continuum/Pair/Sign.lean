@@ -34,7 +34,7 @@ lemma gs_pos_or_nonpos {w : ℝ × ℝ → ℝ} {hw : Continuous w} (hws : ∀ p
   set E := Q (setting2 1 w hw) v Φ / ip (μ := μ2) Φ Φ
   set V : ℝ × ℝ → ℝ := fun p => w p + L2 v p - E
   have hV : Continuous V := (hw.add (continuous_L2 v)).sub continuous_const
-  have heq := strong_eq (by norm_num) hws hΦ
+  have heq := strong_eq hws hΦ
   refine pos_or_nonpos (c := fun p => max (V p) 0) hΦ.1.1 (hV.max continuous_const)
     (fun p => le_max_right _ _) (fun p hp hpos => ?_) (grad_zero_at_zero hws hΦ)
   have e := heq p hp

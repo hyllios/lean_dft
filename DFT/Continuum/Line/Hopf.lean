@@ -12,7 +12,7 @@ import DFT.Continuum.Pair.MaxPrinciple
 A `C²` function on a connected open set of `ℝ^(n+1)` that is a supersolution of `-Δ + c`
 (`c ≥ 0`) wherever it is positive, and whose gradient vanishes at each of its zeros, is either
 positive on the whole set or nonpositive on the whole set. This is the `n + 1`-dimensional version
-of `DFT.Continuum.Pair.pos_or_nonpos_on`.
+of `DFT.Continuum.Pair.pos_or_nonpos` (which is stated on the square).
 
 * `Neu`: the squared Euclidean distance; `Ndist_sq_le_eu`, `Neu_le_dist_sq`: comparison with the
   sup distance of `Cfg n`.

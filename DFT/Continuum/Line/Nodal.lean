@@ -4,17 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Line.Chamber
-import DFT.Continuum.Pair.Fermions
+import DFT.Continuum.Pair.Nodal
 
 /-!
 # `N` fermions: critical zeros away from collisions
 
 A ground state `Φ` of `n + 1` interacting fermions on `[0, 1]` has vanishing gradient at each zero
 `a` in the open cube with no collision (`aᵢ ≠ aⱼ` for `i ≠ j`). The argument is the one for two
-fermions (`Pair/Fermions`) in `n + 1` dimensions: the competitor is `Sgn ε · h_ε(Φ)`, where `Sgn ε` is
-the smooth sign of the ordering (`Chamber`), and the test function is `Sgn η₀ · sym β`, with `β` a
-bump at `a`. On the near-collision set the competitor costs `O(1)` energy per unit volume, and that
-set has volume `O(ε)`.
+bosons (`Pair/Nodal`), made antisymmetric and run in `n + 1` dimensions: the competitor `h_ε(Φ)`
+(a smoothed `|Φ|`) becomes `Sgn ε · h_ε(Φ)`, where `Sgn ε` is the smooth sign of the ordering
+(`Chamber`), and the test function is `Sgn η₀ · sym β`, with `β` a bump at `a`. On the
+near-collision set the competitor costs `O(1)` energy per unit volume, and that set has volume
+`O(ε)`.
 
 * `RfL`: the shifted energy form `h₀ + ⟨v·,·⟩ - E ⟨·,·⟩`, and its basic properties.
 * `box_data_line`, `box_integral_line`: near a zero with `∂ₖΦ > 0`, `Φ` changes sign across a box,
@@ -108,19 +109,35 @@ lemma isGS_neg_line {Φ : Cfg n → ℝ} (h : IsGS (settingF n w hw) v Φ) :
 
 end Rf
 
+/-! ### The smoothed absolute value: parity and bounds -/
+
+lemma hε_neg (ε s : ℝ) : hε ε (-s) = hε ε s := by simp [hε]
+
+lemma kε_neg (ε s : ℝ) : kε ε (-s) = -kε ε s := by simp [kε, neg_div]
+
+lemma abs_hε_le {ε : ℝ} (hε0 : 0 < ε) (s : ℝ) : |hε ε s| ≤ |s| := by
+  have h1 := Pair.eps_le_sqrt_eps hε0 s
+  have h2 := Pair.sqrt_eps_le hε0 s
+  rw [abs_of_nonneg (by simp only [hε]; linarith)]
+  simp only [hε]; linarith
+
+lemma ar_X {V x p ε : ℝ} (h : |x| ≤ ε) (hp : 0 ≤ p) : |V| * |x| * p ≤ ε * (|V| * p) := by
+  have := mul_le_mul_of_nonneg_left h (mul_nonneg (abs_nonneg V) hp)
+  nlinarith
+
 /-! ### Admissible functions -/
 
 lemma hε_sgn_mul {ε : ℝ} (σ : Equiv.Perm (Fin (n + 1))) (s : ℝ) :
     hε ε (sgn σ * s) = hε ε s := by
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h
   · simp [sgn, h]
-  · simp [sgn, h, Pair.hε_neg]
+  · simp [sgn, h, hε_neg]
 
 lemma kε_sgn_mul {ε : ℝ} (σ : Equiv.Perm (Fin (n + 1))) (s : ℝ) :
     kε ε (sgn σ * s) = sgn σ * kε ε s := by
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h
   · simp [sgn, h]
-  · simp [sgn, h, Pair.kε_neg]
+  · simp [sgn, h, kε_neg]
 
 /-- `Sgn η · f` lies in the domain, for `f` symmetric, `C²` and vanishing on the walls. -/
 lemma Sgn_mul_mem {f : Cfg n → ℝ} (hf : ContDiff ℝ 2 f) (hfs : ∀ σ x, f (pm σ x) = f x)
@@ -157,7 +174,7 @@ lemma box_data_line {Φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) {U : Set (Cfg n)} 
   have hO : IsOpen ((Cube n ∩ U) ∩ {x | s0 / 2 < dk k Φ x}) :=
     (isOpen_cube.inter hU).inter (isOpen_lt continuous_const (cont_dk hD k))
   obtain ⟨ε, hε, hball⟩ :=
-    Metric.isOpen_iff.mp hO a ⟨ha, by simp only [mem_setOf_eq]; linarith⟩
+    Metric.isOpen_iff.mp hO a ⟨ha, by simp only [mem_ofPred_eq]; linarith⟩
   set r := ε / 4
   have hr : 0 < r := by positivity
   have hin : ∀ x : Cfg n, dist x a ≤ 2 * r → x ∈ Cube n ∩ U ∧ s0 / 2 < dk k Φ x := fun x hx =>
@@ -225,7 +242,7 @@ lemma dist_le_of_boxL {a : Cfg n} {k : Fin (n + 1)} {r r' : ℝ} (hrr : r' ≤ r
   have := hx l (mem_univ _)
   rw [Real.dist_eq, abs_le]
   by_cases hl : l = k
-  · subst hl; simp only [if_true] at this; constructor <;> linarith [this.1, this.2]
+  · subst hl; simp only [ite_true] at this; constructor <;> linarith [this.1, this.2]
   · simp only [hl, ite_false] at this; constructor <;> linarith [this.1, this.2]
 
 /-- Across the box, the integral of `k₂(Φ) ∂ₖΦ` is at least the box's cross-section `(2r')ⁿ`. -/
@@ -249,7 +266,7 @@ lemma box_integral_line {Φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) {ε : ℝ} (h�
     simp only [mem_preimage, mem_prod, boxL, Set.mem_pi, mem_univ, true_implies, hcomp]
     rw [k.forall_iff_succAbove]
     simp only [Fin.insertNth_apply_same, Fin.insertNth_apply_succAbove, Fin.succAbove_ne,
-      if_true, if_false, mem_Icc, B', Pi.le_def, ← forall_and]
+      ite_true, ite_false, mem_Icc, B', Pi.le_def, ← forall_and]
   have h := he.setIntegral_preimage_emb e.symm.measurableEmbedding F (boxL a k r r')
   rw [hpre] at h
   rw [← h, ← Measure.prod_restrict]
@@ -383,7 +400,7 @@ lemma energy_far (dH dΦ : Fin (n + 1) → ℝ) {S kk hh V aV Φv ε : ℝ}
   nlinarith
 
 /-- The energy excess of the competitor near collisions is bounded. -/
-lemma energy_near (dH dΦ : Fin (n + 1) → ℝ) {A V Hv Φv m1 m2 R : ℝ} (hA : 0 ≤ A)
+lemma energy_near (dH dΦ : Fin (n + 1) → ℝ) {A V Hv Φv m1 m2 R : ℝ}
     (hdH : ∀ l, |dH l| ≤ A) (hV1 : V * (Hv * Hv) ≤ m1) (hV2 : -(V * (Φv * Φv)) ≤ m2)
     (hR : 0 ≤ R) :
     ∑ l, dH l * dH l + V * (Hv * Hv) - (∑ l, dΦ l * dΦ l + V * (Φv * Φv)) ≤
@@ -400,6 +417,7 @@ lemma energy_near (dH dΦ : Fin (n + 1) → ℝ) {A V Hv Φv m1 m2 R : ℝ} (hA 
 variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
 
 set_option maxHeartbeats 2000000 in
+-- the main proof is long and keeps many constants in context
 /-- A ground state cannot vanish at a collision-free point of the cube where `∂ₖΦ > 0`. -/
 lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cfg n} (ha : a ∈ Cube n)
     (hinj : Function.Injective a) {k : Fin (n + 1)} (h0 : Φ a = 0) (hpos : 0 < dk k Φ a) :
@@ -600,7 +618,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
           refine integral_mono (integrableN hXc.abs)
             (integrableN (continuous_const.mul (hVc.abs.mul hφc))) fun x => ?_
           simp only [X, abs_mul, abs_of_nonneg (hφs0 x)]
-          exact Pair.ar_X (Pair.abs_hε_sub hε0 (Φ x)) (hφs0 x)
+          exact ar_X (Pair.abs_hε_sub hε0 (Φ x)) (hφs0 x)
       _ = ε * K2 := integral_const_mul _ _
   -- the energy of the competitor
   have hB2 : RfL w hw v E H H ≤ 2 * ε * K1' := by
@@ -656,7 +674,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
             have hΦd : |Φ x| ≤ M * ε :=
               (abs_le_pair hD hij (fun y hy => hMq y hy i) hxK).trans
                 (mul_le_mul_of_nonneg_left hle hM0)
-            have hhΦ := Pair.abs_hε_le hε0 (Φ x)
+            have hhΦ := abs_hε_le hε0 (Φ x)
             have hS := abs_Sgn_le (n := n) ε x
             have hk := Pair.abs_kε_le hε0 (Φ x)
             have bl : ∀ l, |dk l H x| ≤ A := by
@@ -695,7 +713,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
                     rw [← neg_mul]
                     exact mul_le_mul_of_nonneg_right (neg_le_abs _) (mul_self_nonneg _)
                 _ ≤ _ := mul_le_mul hVq hΦ2 (mul_self_nonneg _) (le_max_right _ _)
-            exact (energy_near (fun l => dk l H x) (fun l => dk l Φ x) hA0 bl hV1 hV2
+            exact (energy_near (fun l => dk l H x) (fun l => dk l Φ x) bl hV1 hV2
               hR0).trans_eq (by ring)
       _ = 2 * ε * K1 + (μN n).real St * Kθ := by
           rw [integral_add (f := fun x => 2 * ε * (|V x| * |Φ x|))

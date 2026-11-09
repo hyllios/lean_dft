@@ -13,8 +13,8 @@ import Mathlib.GroupTheory.Perm.Sign
 
 `N = n + 1` fermions on `[0, 1]` with hard walls, an interaction `w(x₀, …, xₙ)`, and a one-body
 potential `v` acting as `Σₖ v(xₖ)`. The configuration space is the open cube `(0, 1)^N`; states
-are `C²` functions that are antisymmetric under relabelling of the particles and vanish on the walls.
-The kinetic energy is `∫ |∇ψ|²`.
+are `C²` functions that are antisymmetric under relabelling of the particles and vanish on the
+walls. The kinetic energy is `∫ |∇ψ|²`.
 
 * `pm σ x = x ∘ σ`: relabelling; it preserves Lebesgue measure and the cube (`integral_pm`).
 * `DomF`: the fermionic form domain; `settingF`: the Hohenberg–Kohn setting.
@@ -94,7 +94,8 @@ lemma pm_pm_inv (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) : pm σ (pm σ⁻¹ 
 
 lemma contDiff_pm (σ : Equiv.Perm (Fin (n + 1))) {m : WithTop ℕ∞} :
     ContDiff ℝ m (pm σ : Cfg n → Cfg n) :=
-  contDiff_pi.2 fun i => (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin (n + 1) => ℝ) (σ i)).contDiff
+  contDiff_pi.2 fun i =>
+    (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin (n + 1) => ℝ) (σ i)).contDiff
 
 lemma continuous_pm (σ : Equiv.Perm (Fin (n + 1))) : Continuous (pm σ : Cfg n → Cfg n) :=
   continuous_pi fun i => continuous_apply (σ i)
@@ -171,7 +172,8 @@ lemma continuous_lapN {ψ : Cfg n → ℝ} (h : ContDiff ℝ 2 ψ) : Continuous 
 
 /-- The slice of `ψ` along coordinate `k` through `x`, and its derivative. -/
 lemma hasDerivAt_slice {ψ : Cfg n → ℝ} (hψ : Differentiable ℝ ψ) (x : Cfg n) (k : Fin (n + 1))
-    (t : ℝ) : HasDerivAt (fun s => ψ (Function.update x k s)) (dk k ψ (Function.update x k t)) t := by
+    (t : ℝ) :
+    HasDerivAt (fun s => ψ (Function.update x k s)) (dk k ψ (Function.update x k t)) t := by
   have hl : HasDerivAt (fun s : ℝ => Function.update x k s) (Pi.single k 1) t := by
     refine hasDerivAt_pi.2 fun i => ?_
     by_cases hi : i = k

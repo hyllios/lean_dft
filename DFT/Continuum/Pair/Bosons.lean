@@ -44,7 +44,7 @@ lemma pos_of_nonneg_gs {w : ℝ × ℝ → ℝ} {hw : Continuous w} (hws : ∀ p
   set E := Q (setting2 1 w hw) v Φ / ip (μ := μ2) Φ Φ
   set V : ℝ × ℝ → ℝ := fun p => w p + L2 v p - E
   have hV : Continuous V := (hw.add (continuous_L2 v)).sub continuous_const
-  have heq := strong_eq (by norm_num) hws hΦ
+  have heq := strong_eq hws hΦ
   intro p0 hp0
   rcases (hnn p0 hp0).lt_or_eq with h | h
   · exact h

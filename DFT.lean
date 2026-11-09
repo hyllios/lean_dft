@@ -17,7 +17,6 @@ import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Pair.Basic
 import DFT.Continuum.Pair.Bosons
-import DFT.Continuum.Pair.Fermions
 import DFT.Continuum.Pair.Free
 import DFT.Continuum.Pair.Hopf
 import DFT.Continuum.Pair.MaxPrinciple

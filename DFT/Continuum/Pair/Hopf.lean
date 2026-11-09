@@ -8,7 +8,7 @@ import DFT.Continuum.Pair.MaxPrinciple
 /-!
 # Hopf's lemma: no sign change through critical zeros
 
-A `C²` function on a connected open set (e.g. the open square) that is a supersolution of `-Δ + c` (`c ≥ 0`) wherever it is
+A `C²` function on the open square that is a supersolution of `-Δ + c` (`c ≥ 0`) wherever it is
 positive, and whose gradient vanishes at each of its zeros, is either positive on the whole square
 or nonpositive on the whole square.
 
@@ -55,17 +55,16 @@ lemma fderiv_eq_zero_of_d {u : ℝ × ℝ → ℝ} {x : ℝ × ℝ} (h1 : d1 u x
   simp only [d1, d2] at h1 h2
   simp [h1, h2]
 
-/-- **Local Hopf lemma.** Near a zero of `u` in an open set `U`, `u ≤ 0`. -/
-theorem local_nonpos_on {U : Set (ℝ × ℝ)} (hU : IsOpen U) {u c : ℝ × ℝ → ℝ} (hu : ContDiff ℝ 2 u)
-    (hc : Continuous c)
-    (hc0 : ∀ p, 0 ≤ c p) (hsup : ∀ p ∈ U, 0 < u p → 0 ≤ -lap u p + c p * u p)
-    (hgrad : ∀ p ∈ U, u p = 0 → d1 u p = 0 ∧ d2 u p = 0) {z : ℝ × ℝ} (hz : z ∈ U)
+/-- **Local Hopf lemma.** Near a zero of `u` in the square, `u ≤ 0`. -/
+theorem local_nonpos {u c : ℝ × ℝ → ℝ} (hu : ContDiff ℝ 2 u) (hc : Continuous c)
+    (hc0 : ∀ p, 0 ≤ c p) (hsup : ∀ p ∈ Sq, 0 < u p → 0 ≤ -lap u p + c p * u p)
+    (hgrad : ∀ p ∈ Sq, u p = 0 → d1 u p = 0 ∧ d2 u p = 0) {z : ℝ × ℝ} (hz : z ∈ Sq)
     (h0 : u z = 0) : ∀ᶠ p in 𝓝 z, u p ≤ 0 := by
   have hud : Differentiable ℝ u := hu.differentiable (by norm_num)
-  obtain ⟨r0, hr0, hr0s⟩ := Metric.isOpen_iff.mp hU z hz
+  obtain ⟨r0, hr0, hr0s⟩ := Metric.isOpen_iff.mp (isOpen_Ioo.prod isOpen_Ioo) z hz
   set r := r0 / 2
   have hr : 0 < r := by positivity
-  have hB : closedBall z r ⊆ U := (closedBall_subset_ball (by simp only [r]; linarith)).trans hr0s
+  have hB : closedBall z r ⊆ Sq := (closedBall_subset_ball (by simp only [r]; linarith)).trans hr0s
   by_contra hne
   obtain ⟨y, hyu, hyb⟩ := ((Filter.not_eventually.mp hne).and_eventually
     (ball_mem_nhds z (show 0 < r / 4 by positivity))).exists
@@ -98,7 +97,7 @@ theorem local_nonpos_on {U : Set (ℝ × ℝ)} (hU : IsOpen U) {u c : ℝ × ℝ
     intro p hp
     have := dist_lt_of_eu_lt (s := r / 2) (by positivity) (lt_of_le_of_lt hp hR2small)
     linarith [dist_triangle p y z]
-  have hinSq : ∀ p, eu y p ≤ R2 → p ∈ U := fun p hp =>
+  have hinSq : ∀ p, eu y p ≤ R2 → p ∈ Sq := fun p hp =>
     hB (mem_closedBall.mpr (by linarith [hnear p hp]))
   -- no zero strictly inside the Euclidean ball around `y`
   have hnz : ∀ p, eu y p < R2 → u p ≠ 0 := by
@@ -122,7 +121,7 @@ theorem local_nonpos_on {U : Set (ℝ × ℝ)} (hU : IsOpen U) {u c : ℝ × ℝ
   have hposin : ∀ p, eu y p < R2 → 0 < u p := fun p hp =>
     lt_of_le_of_ne (hnn p hp.le) (Ne.symm (hnz p hp))
   -- the gradient vanishes at `x1`
-  have hx1Sq : x1 ∈ U := hinSq x1 le_rfl
+  have hx1Sq : x1 ∈ Sq := hinSq x1 le_rfl
   obtain ⟨hg1, hg2⟩ := hgrad x1 hx1Sq hx1u
   have hgrad0 : fderiv ℝ u x1 = 0 := fderiv_eq_zero_of_d hg1 hg2
   -- the annulus
@@ -285,14 +284,13 @@ theorem local_nonpos_on {U : Set (ℝ × ℝ)} (hU : IsOpen U) {u c : ℝ × ℝ
     nlinarith [norm_nonneg d, mul_pos hκ ht0, mul_nonneg (mul_pos hκ ht0).le (norm_nonneg d)]
   linarith
 
-/-- **No sign change through critical zeros.** A `C²` function on a connected open set `U` that is
-a supersolution of `-Δ + c` (`c ≥ 0`) where it is positive, and whose gradient vanishes at every
-zero, is either positive on the whole of `U` or nonpositive on the whole of `U`. -/
-theorem pos_or_nonpos_on {U : Set (ℝ × ℝ)} (hU : IsOpen U) (hconn : IsPreconnected U)
-    {u c : ℝ × ℝ → ℝ} (hu : ContDiff ℝ 2 u) (hc : Continuous c)
-    (hc0 : ∀ p, 0 ≤ c p) (hsup : ∀ p ∈ U, 0 < u p → 0 ≤ -lap u p + c p * u p)
-    (hgrad : ∀ p ∈ U, u p = 0 → d1 u p = 0 ∧ d2 u p = 0) :
-    (∀ p ∈ U, 0 < u p) ∨ ∀ p ∈ U, u p ≤ 0 := by
+/-- **No sign change through critical zeros.** A `C²` function on the open square that is a
+supersolution of `-Δ + c` (`c ≥ 0`) where it is positive, and whose gradient vanishes at every zero,
+is either positive on the whole square or nonpositive on the whole square. -/
+theorem pos_or_nonpos {u c : ℝ × ℝ → ℝ} (hu : ContDiff ℝ 2 u) (hc : Continuous c)
+    (hc0 : ∀ p, 0 ≤ c p) (hsup : ∀ p ∈ Sq, 0 < u p → 0 ≤ -lap u p + c p * u p)
+    (hgrad : ∀ p ∈ Sq, u p = 0 → d1 u p = 0 ∧ d2 u p = 0) :
+    (∀ p ∈ Sq, 0 < u p) ∨ ∀ p ∈ Sq, u p ≤ 0 := by
   set A := {p | ∀ᶠ q in 𝓝 p, u q ≤ 0}
   set B := {p | 0 < u p}
   have hA : IsOpen A := isOpen_setOfPred_eventually_nhds
@@ -302,32 +300,18 @@ theorem pos_or_nonpos_on {U : Set (ℝ × ℝ)} (hU : IsOpen U) (hconn : IsPreco
     intro p ⟨hpA, hpB⟩
     have := hpA.self_of_nhds
     exact absurd hpB (not_lt.mpr this)
-  have hcover : U ⊆ A ∪ B := by
+  have hcover : Sq ⊆ A ∪ B := by
     intro p hp
     rcases lt_trichotomy (u p) 0 with hneg | hz | hpos
     · left
       exact (hu.continuous.continuousAt.eventually_lt continuousAt_const hneg).mono
         fun q hq => hq.le
-    · exact Or.inl (local_nonpos_on hU hu hc hc0 hsup hgrad hp hz)
+    · exact Or.inl (local_nonpos hu hc hc0 hsup hgrad hp hz)
     · exact Or.inr hpos
+  have hconn : IsPreconnected Sq := ((convex_Ioo 0 1).prod (convex_Ioo 0 1)).isPreconnected
   rcases hconn.subset_or_subset hA hBo hdisj hcover with h | h
   · exact Or.inr fun p hp => (h hp).self_of_nhds
   · exact Or.inl fun p hp => h hp
-
-/-- `local_nonpos_on` on the square. -/
-theorem local_nonpos {u c : ℝ × ℝ → ℝ} (hu : ContDiff ℝ 2 u) (hc : Continuous c)
-    (hc0 : ∀ p, 0 ≤ c p) (hsup : ∀ p ∈ Sq, 0 < u p → 0 ≤ -lap u p + c p * u p)
-    (hgrad : ∀ p ∈ Sq, u p = 0 → d1 u p = 0 ∧ d2 u p = 0) {z : ℝ × ℝ} (hz : z ∈ Sq)
-    (h0 : u z = 0) : ∀ᶠ p in 𝓝 z, u p ≤ 0 :=
-  local_nonpos_on (isOpen_Ioo.prod isOpen_Ioo) hu hc hc0 hsup hgrad hz h0
-
-/-- `pos_or_nonpos_on` on the square. -/
-theorem pos_or_nonpos {u c : ℝ × ℝ → ℝ} (hu : ContDiff ℝ 2 u) (hc : Continuous c)
-    (hc0 : ∀ p, 0 ≤ c p) (hsup : ∀ p ∈ Sq, 0 < u p → 0 ≤ -lap u p + c p * u p)
-    (hgrad : ∀ p ∈ Sq, u p = 0 → d1 u p = 0 ∧ d2 u p = 0) :
-    (∀ p ∈ Sq, 0 < u p) ∨ ∀ p ∈ Sq, u p ≤ 0 :=
-  pos_or_nonpos_on (isOpen_Ioo.prod isOpen_Ioo)
-    ((convex_Ioo 0 1).prod (convex_Ioo 0 1)).isPreconnected hu hc hc0 hsup hgrad
 
 end Pair
 

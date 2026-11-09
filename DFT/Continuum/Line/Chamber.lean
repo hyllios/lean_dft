@@ -11,8 +11,9 @@ import Mathlib.Data.Fin.Tuple.Sort
 # A smooth sign of the ordering, and the collision strips
 
 For `η > 0`, `Sgn η = alt χ_η` is the antisymmetrisation of the smooth indicator
-`χ_η(x) = Πⱼ τ((x_{j+1} - x_j)/η)` of the ordered chamber (`τ` is Mathlib's smooth transition). It is
-smooth and antisymmetric. Away from collisions (`|xᵢ - xⱼ| > η` for all `i ≠ j`) it equals the sign of
+`χ_η(x) = Πⱼ τ((x_{j+1} - x_j)/η)` of the ordered chamber (`τ` is Mathlib's smooth
+transition). It is smooth and antisymmetric. Away from collisions (`|xᵢ - xⱼ| > η` for all
+`i ≠ j`) it equals the sign of
 the permutation that sorts `x` and is locally constant; everywhere its partial derivatives are
 `O(1/η)`.
 
@@ -83,7 +84,7 @@ lemma Sgn_pm (η : ℝ) (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
     Sgn η (pm σ x) = sgn σ * Sgn η x := alt_pm _ σ x
 
 lemma chi_nonneg (η : ℝ) (x : Cfg n) : 0 ≤ chi η x :=
-  Finset.prod_nonneg fun j _ => Real.smoothTransition.nonneg _
+  Finset.prod_nonneg fun _ _ => Real.smoothTransition.nonneg _
 
 lemma chi_le_one (η : ℝ) (x : Cfg n) : chi η x ≤ 1 :=
   Finset.prod_le_one₀ (fun _ _ => Real.smoothTransition.nonneg _)
@@ -216,12 +217,12 @@ lemma hasFDerivAt_gapF (η : ℝ) (j : Fin n) (x : Cfg n) :
 
 lemma abs_gapL_single {η : ℝ} (hη : 0 < η) (j : Fin n) (k : Fin (n + 1)) :
     |gapL η j (Pi.single k 1)| ≤ η⁻¹ := by
-  simp only [gapL, ContinuousLinearMap.smul_apply, ContinuousLinearMap.sub_apply,
+  simp only [gapL, smul_apply, sub_apply,
     ContinuousLinearMap.proj_apply, smul_eq_mul, abs_mul, abs_inv, abs_of_pos hη]
   have h01 : ∀ i : Fin (n + 1), (Pi.single k (1 : ℝ) : Cfg n) i ∈ Icc (0 : ℝ) 1 := by
     intro i; by_cases h : i = k
     · subst h; simp
-    · simp [Pi.single_apply, h]
+    · simp [h]
   have ha := h01 j.succ
   have hb := h01 j.castSucc
   have : |(Pi.single k (1 : ℝ) : Cfg n) j.succ - (Pi.single k (1 : ℝ) : Cfg n) j.castSucc| ≤ 1 :=
@@ -235,8 +236,8 @@ lemma abs_dk_chi_le {η C : ℝ} (hη : 0 < η)
   have hd := HasFDerivAt.finsetProd (u := Finset.univ) (x := x)
     (fun j _ => hasFDerivAt_gapF η j x)
   have e : chi η = fun y => ∏ j ∈ (Finset.univ : Finset (Fin n)), gapF η j y := rfl
-  simp only [dk, e, hd.fderiv, ContinuousLinearMap.coe_sum', Finset.sum_apply,
-    ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_eq_mul]
+  simp only [dk, e, hd.fderiv, FunLike.coe_sum, Finset.sum_apply,
+    FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
   refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
   have hb : ∀ j ∈ (Finset.univ : Finset (Fin n)),
       |(∏ i ∈ Finset.univ.erase j, gapF η i x) *
@@ -273,12 +274,12 @@ lemma exists_dk_Sgn_bound :
   have hsum : dk k (Sgn η) x = ∑ σ, sgn σ * dk (σ⁻¹ k) (chi η) (pm σ x) := by
     simp only [dk, e]
     rw [fderiv_fun_sum (fun σ _ => (hdiff σ x))]
-    simp only [ContinuousLinearMap.coe_sum', Finset.sum_apply]
+    simp only [FunLike.coe_sum, Finset.sum_apply]
     refine Finset.sum_congr rfl fun σ _ => ?_
     rw [show (fun y => sgn σ * chi η (pm σ y)) = fun y => sgn σ * (chi η ∘ pm σ) y from rfl,
       fderiv_const_mul (((contDiff_chi η).differentiable (by norm_num)).comp
         ((contDiff_pm σ (m := 1)).differentiable one_ne_zero) x)]
-    simp only [ContinuousLinearMap.smul_apply, smul_eq_mul]
+    simp only [smul_apply, smul_eq_mul]
     congr 1
     exact dk_comp_pm ((contDiff_chi η).differentiable (by norm_num)) σ k x
   rw [hsum]
@@ -332,7 +333,7 @@ lemma volume_cube' : volume (Cube' n) = 1 := by
   rw [Real.volume_pi_Ioo]; simp
 
 /-- A single collision strip has measure at most `2η` in the cube. -/
-lemma mu_strip_le {η : ℝ} (hη : 0 ≤ η) {i j : Fin (n + 1)} (hij : i ≠ j) :
+lemma mu_strip_le {η : ℝ} (_hη : 0 ≤ η) {i j : Fin (n + 1)} (hij : i ≠ j) :
     μN n {x | |x i - x j| ≤ η} ≤ ENNReal.ofReal (2 * η) := by
   obtain ⟨j', rfl⟩ := Fin.exists_succAbove_eq hij.symm
   set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (n + 1) => ℝ) i
@@ -341,19 +342,21 @@ lemma mu_strip_le {η : ℝ} (hη : 0 ≤ η) {i j : Fin (n + 1)} (hij : i ≠ j
   have hm : MeasurableSet {x : Cfg n | |x i - x (i.succAbove j')| ≤ η} :=
     measurableSet_le (show Continuous fun x : Cfg n => |x i - x (i.succAbove j')| by
       fun_prop).measurable measurable_const
-  rw [Measure.restrict_apply hm, ← he.measure_preimage (hm.inter measurableSet_cube).nullMeasurableSet]
+  rw [Measure.restrict_apply hm,
+    ← he.measure_preimage (hm.inter measurableSet_cube).nullMeasurableSet]
   set T : Set (ℝ × (Fin n → ℝ)) := {p | |p.1 - p.2 j'| ≤ η ∧ p.2 ∈ Cube' n}
   have hsub : e.symm ⁻¹' ({x : Cfg n | |x i - x (i.succAbove j')| ≤ η} ∩ Cube n) ⊆ T := by
     rintro ⟨t, y⟩ ⟨h1, h2⟩
     have hc : e.symm (t, y) = Fin.insertNth i t y := rfl
-    simp only [mem_preimage, mem_setOf_eq, hc, Fin.insertNth_apply_same,
+    simp only [mem_ofPred_eq, hc, Fin.insertNth_apply_same,
       Fin.insertNth_apply_succAbove] at h1 h2
     refine ⟨h1, fun l _ => ?_⟩
     have := h2 (i.succAbove l) (mem_univ _)
     simpa [hc, Fin.insertNth_apply_succAbove] using this
   have hTm : MeasurableSet T :=
     (measurableSet_le (show Continuous fun p : ℝ × (Fin n → ℝ) => |p.1 - p.2 j'| by
-      fun_prop).measurable measurable_const).inter (measurable_snd (MeasurableSet.univ_pi fun _ => measurableSet_Ioo))
+      fun_prop).measurable measurable_const).inter
+      (measurable_snd (MeasurableSet.univ_pi fun _ => measurableSet_Ioo))
   refine (measure_mono hsub).trans ?_
   rw [Measure.prod_apply_symm hTm]
   calc ∫⁻ y, volume ((fun t => (t, y)) ⁻¹' T)

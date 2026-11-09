@@ -140,8 +140,8 @@ Schrödinger equation.
   `v - v'` to be constant. Ground states exist for every continuous potential (`exists_isGS`, by
   shooting and the Picone inequality), so `hk_box_complete` needs no assumption at all.
   `hk_pair_of_ucp` (`Continuum/Pair/Basic`): two particles on `[0, 1]` (bosons or fermions, continuous
-  interaction). Everything is proved except unique continuation of the ground state on the square,
-  which in two dimensions is genuine PDE theory.
+  interaction), conditional on unique continuation of the ground state on the square; it is proved
+  below for bosons, and for fermions as the case `N = 2` of `Continuum/Line`.
   For two non-interacting bosons it is proved (`hk_free_bosons`, `Continuum/Pair/Free`): every ground
   state is `k ψ₀(x₁)ψ₀(x₂)` (slicing + equality case of Picone), so the theorem is unconditional.
   The Lieb functional (`Continuum/General/Lieb`): `F(ρ) = sup_v (E(v) − ρ(v))` lies below the constrained
@@ -154,14 +154,8 @@ Schrödinger equation.
   ground states have zero gradient at their zeros, and the Hopf boundary lemma then rules out sign
   changes. So `hk_interacting_bosons` holds for every continuous symmetric interaction, with no
   assumption beyond the existence of ground states.
-  Interacting fermions (`Continuum/Pair/Fermions`): the antisymmetric ground state vanishes on the
-  diagonal `x₁ = x₂` and nowhere else in the open square (`gs_ne_zero_f`), so unique continuation
-  holds (`ucp_fermions`) and `hk_interacting_fermions` needs no assumption beyond the existence of
-  ground states. The boson argument runs on the half-square `{x₁ < x₂}`, with the antisymmetric
-  competitor `θ((x₂ − x₁)/ε) h_ε(Φ)` (a smooth sign of `x₂ − x₁` times the smoothed `|Φ|`). Its extra
-  energy on the strip `|x₂ − x₁| ≤ ε` is `O(ε)`, because `|Φ| ≤ M |x₂ − x₁|` there.
-  Any number of interacting fermions on a line (`Continuum/Line`): the same argument for `N = n + 1`
-  fermions on `[0, 1]`, on the cube `(0, 1)^N`. The ground state vanishes exactly where two particles
+  Any number of interacting fermions on a line (`Continuum/Line`): the boson argument, made
+  antisymmetric, for `N = n + 1` fermions on `[0, 1]`, on the cube `(0, 1)^N`. The ground state vanishes exactly where two particles
   meet (`gs_ne_zero_line`), a null set, so `hk_interacting_fermions_line` holds for every continuous
   interaction invariant under relabelling, with no assumption beyond the existence of ground states.
   The competitor is `Sgn_ε · h_ε(Φ)`, where `Sgn_ε` antisymmetrises the smooth indicator
@@ -264,16 +258,15 @@ the lattice results as a special case. Module paths below are relative to these 
 | `Box/Lieb` | the Lieb functional in the box, unconditional (`lieb_box`) |
 | `Pair/Basic` | two particles in a box (bosons or fermions, continuous interaction): separation, rigidity, one-body density; `hk_pair_of_ucp` conditional on unique continuation |
 | `Pair/Free` | two free bosons: lower bound `2E₀` by slicing, product ground state, every ground state is `k ψ₀⊗ψ₀`; `hk_free_bosons`, unconditional |
-| `Pair/Strong`, `Pair/MaxPrinciple`, `Pair/Bosons` | interacting bosons (and fermions, for `Strong`): ground states are classical solutions, Hopf's strong maximum principle; `hk_bosons` assumes only that the ground state does not change sign |
-| `Pair/Nodal`, `Pair/Hopf`, `Pair/Sign` | interacting bosons do not change sign: zero gradient at zeros (smoothed-`|Φ|` competitors), Hopf boundary lemma on any connected open set; `hk_interacting_bosons`: HK for two interacting bosons, no extra assumption |
-| `Pair/Fermions` | interacting fermions: zero gradient at zeros off the diagonal (competitor `θ((x₂ − x₁)/ε) h_ε(Φ)`, strip estimate), no sign change on the half-square, zeros only on the diagonal; `hk_interacting_fermions`: HK for two interacting fermions, no extra assumption |
+| `Pair/Strong`, `Pair/MaxPrinciple`, `Pair/Bosons` | interacting bosons: ground states are classical solutions, Hopf's strong maximum principle; `hk_bosons` assumes only that the ground state does not change sign |
+| `Pair/Nodal`, `Pair/Hopf`, `Pair/Sign` | interacting bosons do not change sign: zero gradient at zeros (smoothed-`|Φ|` competitors), Hopf boundary lemma; `hk_interacting_bosons`: HK for two interacting bosons, no extra assumption |
 | `Line/Basic` | `N = n + 1` fermions on `[0, 1]`: relabelling (measure preserving), the antisymmetric `C²` domain, antisymmetrisation, separation, rigidity, one-body density (Fubini); `hk_line_of_ucp` conditional on unique continuation |
 | `Line/Strong`, `Line/Hopf` | ground states are classical solutions (integration by parts along each coordinate, the Laplacian commutes with relabelling); Hopf's lemma in `n + 1` dimensions on any connected open set |
 | `Line/Chamber`, `Line/Nodal` | the smooth sign of the ordering and its `O(1/ε)` derivative bound, `|Φ| ≤ M |xᵢ − xⱼ|`, the near-collision set has measure `O(ε)`; zero gradient at zeros away from collisions |
 | `Line/Fermions` | no sign change on the ordered chamber, zeros only at collisions (`ucp_line`); `hk_interacting_fermions_line`: HK for `N` interacting fermions on a line, no extra assumption |
 | `Sobolev/Weak` | weak derivatives on open subsets of the plane: uniqueness, classical case, linearity, limits; chain rule for `|f|` and Kato's inequality (first step of the Perron–Frobenius argument) |
 
-About 22,000 lines of Lean in total.
+About 21,000 lines of Lean in total.
 
 ## Further material
 

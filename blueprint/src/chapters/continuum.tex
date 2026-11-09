@@ -257,17 +257,16 @@ antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\
 
 \begin{lemma}[Ground states are classical solutions]
   \label{lem:pair_strong}
-  \lean{DFT.Continuum.Pair.d11, DFT.Continuum.Pair.d22, DFT.Continuum.Pair.lap, DFT.Continuum.Pair.contDiff_d1, DFT.Continuum.Pair.contDiff_d2, DFT.Continuum.Pair.continuous_d11, DFT.Continuum.Pair.continuous_d22, DFT.Continuum.Pair.continuous_lap, DFT.Continuum.Pair.eq_zero_of_integral_sym, DFT.Continuum.Pair.hasDerivAt_d1_slice, DFT.Continuum.Pair.hasDerivAt_d2_slice, DFT.Continuum.Pair.hasDerivAt_slice1, DFT.Continuum.Pair.hasDerivAt_slice2, DFT.Continuum.Pair.d1_swap_of, DFT.Continuum.Pair.d11_swap_of, DFT.Continuum.Pair.d22_swap_of, DFT.Continuum.Pair.d1_swap, DFT.Continuum.Pair.d11_swap, DFT.Continuum.Pair.d22_swap, DFT.Continuum.Pair.integral_unit, DFT.Continuum.Pair.ibp1, DFT.Continuum.Pair.ibp2, DFT.Continuum.Pair.strong_eq}
+  \lean{DFT.Continuum.Pair.d11, DFT.Continuum.Pair.d22, DFT.Continuum.Pair.lap, DFT.Continuum.Pair.contDiff_d1, DFT.Continuum.Pair.contDiff_d2, DFT.Continuum.Pair.continuous_d11, DFT.Continuum.Pair.continuous_d22, DFT.Continuum.Pair.continuous_lap, DFT.Continuum.Pair.eq_zero_of_integral_sym, DFT.Continuum.Pair.hasDerivAt_d1_slice, DFT.Continuum.Pair.hasDerivAt_d2_slice, DFT.Continuum.Pair.hasDerivAt_slice1, DFT.Continuum.Pair.hasDerivAt_slice2, DFT.Continuum.Pair.d1_swap, DFT.Continuum.Pair.d11_swap, DFT.Continuum.Pair.d22_swap, DFT.Continuum.Pair.integral_unit, DFT.Continuum.Pair.ibp1, DFT.Continuum.Pair.ibp2, DFT.Continuum.Pair.strong_eq}
   \leanok
   \uses{thm:hk_pair, lem:euler_lagrange}
-  For bosons or fermions with a continuous symmetric interaction, a ground state solves
+  For bosons with a continuous symmetric interaction, a ground state solves
   $-\Delta\Phi+(w+v(x_1)+v(x_2)-E)\Phi=0$ on the open square.
 \end{lemma}
 \begin{proof}
   \leanok
   Integrate the weak equation by parts slice by slice (Fubini), and apply the fundamental lemma with symmetrised test
-  functions of the same exchange symmetry $\sigma$; the residual has symmetry $\sigma$ because
-  $\partial_{11}\Phi(x,y)=\sigma\,\partial_{22}\Phi(y,x)$.
+  functions; the residual is symmetric because $\partial_{11}\Phi(x,y)=\partial_{22}\Phi(y,x)$.
 \end{proof}
 
 \begin{theorem}[Hopf's strong maximum principle]
@@ -297,10 +296,10 @@ antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\
   rules out interior zeros.
 \end{proof}
 
-In general, the one assumption left, unique continuation for ground states of $-\Delta+V$ in two dimensions, is a
-genuine PDE fact (Carleman/Aronszajn-type unique continuation); in one dimension it reduced to ODE uniqueness. For
-two particles on a line it follows from the sign structure of the ground state: for bosons below
-(Theorem~\ref{thm:hk_interacting_bosons}), for fermions in Theorem~\ref{thm:hk_interacting_fermions}.
+In general, the one assumption left, unique continuation for ground states of $-\Delta+V$ in two or more
+dimensions, is a genuine PDE fact (Carleman/Aronszajn-type unique continuation); in one dimension it reduced to ODE
+uniqueness. For particles on a line it follows from the sign structure of the ground state: for two bosons in
+Theorem~\ref{thm:hk_interacting_bosons}, for any number of fermions in Theorem~\ref{thm:hk_interacting_fermions_line}.
 
 \section{The Lieb functional}
 
@@ -381,11 +380,11 @@ theory.
 
 \begin{lemma}[Hopf boundary lemma]
   \label{lem:hopf}
-  \lean{DFT.Continuum.Pair.eu_segment, DFT.Continuum.Pair.exists_zero_segment, DFT.Continuum.Pair.fderiv_eq_zero_of_d, DFT.Continuum.Pair.local_nonpos_on, DFT.Continuum.Pair.pos_or_nonpos_on, DFT.Continuum.Pair.local_nonpos, DFT.Continuum.Pair.pos_or_nonpos}
+  \lean{DFT.Continuum.Pair.eu_segment, DFT.Continuum.Pair.exists_zero_segment, DFT.Continuum.Pair.fderiv_eq_zero_of_d, DFT.Continuum.Pair.local_nonpos, DFT.Continuum.Pair.pos_or_nonpos}
   \leanok
   \uses{thm:strong_max}
   A $C^2$ supersolution of $-\Delta+c$ ($c\ge0$) where it is positive, with zero gradient at its zeros, is either
-  positive on a whole connected open set (e.g.\ the square) or nowhere positive there.
+  positive on the whole square or nowhere positive.
 \end{lemma}
 \begin{proof}
   \leanok
@@ -403,61 +402,6 @@ theory.
 \begin{proof}
   \leanok
   Apply the Hopf lemma to $\Phi$ and to $-\Phi$, with $c=\max(V-E,0)$; Theorem~\ref{thm:hk_bosons} then applies.
-\end{proof}
-
-\section{Interacting fermions: the nodal set is the diagonal}
-
-An antisymmetric ground state vanishes on the diagonal $x_1=x_2$, where its gradient need not vanish, so the boson
-argument cannot run on the whole square. It runs on the half-square $\{0<x_1<x_2<1\}$ instead. There the competitor
-$|\Phi|$ becomes $\operatorname{sign}(x_2-x_1)|\Phi|$. That function is antisymmetric but not $C^2$ across the
-diagonal, so it is smoothed with an odd step $\theta$.
-
-\begin{lemma}[A smooth sign and the strip]
-  \label{lem:fermion_strip}
-  \lean{DFT.Continuum.Pair.θs, DFT.Continuum.Pair.contDiff_θs, DFT.Continuum.Pair.θs_neg, DFT.Continuum.Pair.θs_of_one_le, DFT.Continuum.Pair.θs_of_le_neg_one, DFT.Continuum.Pair.abs_θs_le, DFT.Continuum.Pair.deriv_θs_of_one_lt, DFT.Continuum.Pair.exists_deriv_θs_bound, DFT.Continuum.Pair.Sg, DFT.Continuum.Pair.Sg_swap, DFT.Continuum.Pair.Sg_sq, DFT.Continuum.Pair.Sg_mul_Sg, DFT.Continuum.Pair.d1_Sg, DFT.Continuum.Pair.d2_Sg, DFT.Continuum.Pair.abs_le_diag, DFT.Continuum.Pair.vol_strip, DFT.Continuum.Pair.mu2_strip}
-  \leanok
-  There is a smooth odd $\theta$ with $\theta=\pm1$ for $\pm t\ge1$, $|\theta|\le1$ and $\theta'$ bounded; so
-  $S_\eta(x)=\theta((x_2-x_1)/\eta)$ is antisymmetric, $S_\eta^2=1$ and $\nabla S_\eta=0$ off the strip
-  $|x_2-x_1|\le\eta$, and $|\nabla S_\eta|\le C/\eta$. An antisymmetric $C^1$ function satisfies
-  $|\Phi(x)|\le M|x_2-x_1|$ on the closed square, and the strip over $[0,1]$ has area at most $2\eta$.
-\end{lemma}
-\begin{proof}
-  \leanok
-  $\theta(t)=s(t)-s(-t)$ with Mathlib's smooth transition $s$. The bound on $\Phi$ is the mean value theorem along
-  $x_1$ from the diagonal, where $\Phi=0$. The area bound is Tonelli: each slice is an interval of length $2\eta$.
-\end{proof}
-
-\begin{lemma}[Zero gradient at zeros off the diagonal]
-  \label{lem:nodal_f}
-  \lean{DFT.Continuum.Pair.no_pos_d1_f, DFT.Continuum.Pair.grad_zero_at_zero_f, DFT.Continuum.Pair.box_data_on, DFT.Continuum.Pair.hε_comp_mem, DFT.Continuum.Pair.Sg_mul_mem, DFT.Continuum.Pair.kε_mul_mem}
-  \leanok
-  \uses{lem:nodal, lem:fermion_strip}
-  A ground state of two interacting fermions has $\nabla\Phi=0$ at each of its zeros in the square off the diagonal.
-\end{lemma}
-\begin{proof}
-  \leanok
-  As in Lemma~\ref{lem:nodal}, with the antisymmetric competitor $S_\varepsilon\,h_\varepsilon(\Phi)$ and test
-  function $S_{\eta_0}\varphi_s$, where $\varphi_s$ is the symmetrised bump at the zero and $\eta_0$ is a quarter of
-  its distance to the diagonal; the Euler--Lagrange test function $k_\varepsilon(\Phi)\varphi_s$ is already
-  antisymmetric. Off the strip the pointwise identities of the boson proof hold verbatim. On the strip
-  $|\nabla(S_\varepsilon h_\varepsilon(\Phi))|\le (C/\varepsilon)M\varepsilon+M$, so the energy excess is bounded
-  by a constant times the area $2\varepsilon$, which keeps the energy of the competitor within $O(\varepsilon)$ of $E$.
-\end{proof}
-
-\begin{theorem}[Hohenberg--Kohn for two interacting fermions]
-  \label{thm:hk_interacting_fermions}
-  \lean{DFT.Continuum.Pair.Half, DFT.Continuum.Pair.isOpen_half, DFT.Continuum.Pair.convex_half, DFT.Continuum.Pair.gs_pos_or_nonpos_half, DFT.Continuum.Pair.gs_ne_zero_f, DFT.Continuum.Pair.diag_null, DFT.Continuum.Pair.ucp_fermions, DFT.Continuum.Pair.hk_interacting_fermions}
-  \leanok
-  \uses{lem:nodal_f, lem:hopf, lem:pair_strong, thm:hk_pair}
-  For every continuous symmetric interaction, a ground state of two fermions in a box vanishes in the open square
-  exactly on the diagonal; hence ground states of continuous potentials with the same one-body density force the
-  potentials to differ by a constant.
-\end{theorem}
-\begin{proof}
-  \leanok
-  On the convex half-square the Hopf lemma, applied to $\Phi$ and $-\Phi$, leaves either no zeros or
-  $\Phi\equiv0$ there; the latter makes $\Phi\equiv0$ by antisymmetry, contradicting $\|\Phi\|>0$. The diagonal is
-  null, so unique continuation holds and Theorem~\ref{thm:hk_pair} applies.
 \end{proof}
 
 \section{Any number of fermions on a line}
@@ -527,15 +471,18 @@ and invariant under relabelling, and $v$ acts as $\sum_k v(x_k)$.
   \label{lem:line_nodal}
   \lean{DFT.Continuum.Line.RfL, DFT.Continuum.Line.RfL_eq, DFT.Continuum.Line.RfL_nonneg, DFT.Continuum.Line.RfL_expand, DFT.Continuum.Line.RfL_self, DFT.Continuum.Line.RfL_EL, DFT.Continuum.Line.isGS_neg_line, DFT.Continuum.Line.hε_sgn_mul, DFT.Continuum.Line.kε_sgn_mul, DFT.Continuum.Line.Sgn_mul_mem, DFT.Continuum.Line.hε_comp_sym, DFT.Continuum.Line.kε_mul_mem_line, DFT.Continuum.Line.box_data_line, DFT.Continuum.Line.boxL, DFT.Continuum.Line.isCompact_boxL, DFT.Continuum.Line.measurableSet_boxL, DFT.Continuum.Line.dist_le_of_boxL, DFT.Continuum.Line.box_integral_line, DFT.Continuum.Line.fderiv_comp_applyL, DFT.Continuum.Line.fderiv_mul_applyL, DFT.Continuum.Line.abs_dk_le_norm, DFT.Continuum.Line.exists_far, DFT.Continuum.Line.Far.mono, DFT.Continuum.Line.ar_lowN, DFT.Continuum.Line.ptwise_far, DFT.Continuum.Line.energy_far, DFT.Continuum.Line.energy_near, DFT.Continuum.Line.no_pos_dk, DFT.Continuum.Line.grad_zero_at_zero_line}
   \leanok
-  \uses{lem:nodal_f, lem:line_chamber, thm:hk_line_ucp}
+  \uses{lem:nodal, lem:line_chamber, thm:hk_line_ucp}
   A ground state of $N$ interacting fermions has $\nabla\Phi=0$ at each of its zeros in the cube without
   collisions.
 \end{lemma}
 \begin{proof}
   \leanok
-  As in Lemma~\ref{lem:nodal_f}, with competitor $S_\varepsilon h_\varepsilon(\Phi)$, test function
-  $S_{\eta_0}\sum_\sigma\beta\circ\sigma$ for a bump $\beta$ at the zero, and a box across which $\Phi$ changes sign
-  along the coordinate with $\partial_k\Phi\neq0$.
+  As in Lemma~\ref{lem:nodal}, made antisymmetric: the competitor is $S_\varepsilon h_\varepsilon(\Phi)$ (no
+  longer $h_\varepsilon(\Phi)$, which is symmetric), the test function is $S_{\eta_0}\sum_\sigma\beta\circ\sigma$
+  for a bump $\beta$ at the zero, and the box crosses the zero along the coordinate with $\partial_k\Phi\neq0$.
+  Away from collisions the pointwise identities of the boson proof hold verbatim. Near collisions
+  $|\nabla(S_\varepsilon h_\varepsilon(\Phi))|\le (C/\varepsilon)M\varepsilon+M$, because $|\Phi|\le M|x_i-x_j|$
+  there, so the energy excess is a constant times the measure $O(\varepsilon)$ of the near-collision set.
 \end{proof}
 
 \begin{theorem}[Hohenberg--Kohn for $N$ interacting fermions on a line]

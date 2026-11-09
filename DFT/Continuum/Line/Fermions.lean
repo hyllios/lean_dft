@@ -43,7 +43,7 @@ lemma isOpen_Ch : IsOpen (Ch n) := by
 lemma convex_Ch : Convex ℝ (Ch n) := by
   refine (convex_pi fun _ _ => convex_Ioo 0 1).inter ?_
   intro x hx y hy s t hs ht hst j
-  simp only [mem_setOf_eq, Pi.add_apply, Pi.smul_apply, smul_eq_mul] at hx hy ⊢
+  simp only [mem_ofPred_eq, Pi.add_apply, Pi.smul_apply, smul_eq_mul] at hx hy ⊢
   rcases hs.lt_or_eq with hs' | hs'
   · nlinarith [mul_lt_mul_of_pos_left (hx j) hs', mul_le_mul_of_nonneg_left (hy j).le ht]
   · subst hs'; simp only [zero_add] at hst; subst hst; simpa using hy j
