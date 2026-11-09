@@ -13,6 +13,7 @@ import DFT.Continuum.Line.Basic
 import DFT.Continuum.Line.Chamber
 import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.Hopf
+import DFT.Continuum.Line.Lieb
 import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Pair.Basic

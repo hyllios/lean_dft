@@ -501,4 +501,19 @@ and invariant under relabelling, and $v$ acts as $\sum_k v(x_k)$.
   relabelling of a point of the chamber, and the collision set is null.
 \end{proof}
 
+\begin{theorem}[The Lieb functional for $N$ fermions on a line]
+  \label{thm:lieb_line}
+  \lean{DFT.Continuum.Line.h0N_nonneg_of_ip_zero, DFT.Continuum.Line.lieb_line}
+  \leanok
+  \uses{thm:lieb, thm:hk_interacting_fermions_line}
+  For every continuous interaction invariant under relabelling: at the density of a normalised ground state of $v$,
+  the Lieb functional equals $\langle\psi,(T+W)\psi\rangle$, $-v$ is a subgradient, and every other subgradient
+  $-v'$ has $v-v'$ constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A state of zero norm vanishes on the cube, so its energy is its kinetic energy, which is nonnegative. Separation,
+  rigidity and unique continuation hold, so Theorem~\ref{thm:lieb} applies.
+\end{proof}
+
 Existence of ground states for interacting particles is not formalized (HK presupposes them).

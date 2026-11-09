@@ -160,7 +160,8 @@ Schrödinger equation.
   interaction invariant under relabelling, with no assumption beyond the existence of ground states.
   The competitor is `Sgn_ε · h_ε(Φ)`, where `Sgn_ε` antisymmetrises the smooth indicator
   `Πⱼ τ((x_{j+1} − x_j)/ε)` of the ordered chamber; Hopf's lemma runs on the chamber
-  `{x₀ < ⋯ < xₙ}`.
+  `{x₀ < ⋯ < xₙ}`. In Lieb's form (`lieb_line`, `Continuum/Line/Lieb`): at the density of a
+  normalised ground state of `v`, `-v` is the only subgradient of the Lieb functional up to constants.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is
@@ -264,6 +265,7 @@ the lattice results as a special case. Module paths below are relative to these 
 | `Line/Strong`, `Line/Hopf` | ground states are classical solutions (integration by parts along each coordinate, the Laplacian commutes with relabelling); Hopf's lemma in `n + 1` dimensions on any connected open set |
 | `Line/Chamber`, `Line/Nodal` | the smooth sign of the ordering and its `O(1/ε)` derivative bound, `|Φ| ≤ M |xᵢ − xⱼ|`, the near-collision set has measure `O(ε)`; zero gradient at zeros away from collisions |
 | `Line/Fermions` | no sign change on the ordered chamber, zeros only at collisions (`ucp_line`); `hk_interacting_fermions_line`: HK for `N` interacting fermions on a line, no extra assumption |
+| `Line/Lieb` | the Lieb functional for `N` fermions on a line: at every ground-state density the subgradient is unique up to constants (`lieb_line`) |
 | `Sobolev/Weak` | weak derivatives on open subsets of the plane: uniqueness, classical case, linearity, limits; chain rule for `|f|` and Kato's inequality (first step of the Perron–Frobenius argument) |
 
 About 21,000 lines of Lean in total.
