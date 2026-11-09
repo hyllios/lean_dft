@@ -257,16 +257,17 @@ antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\
 
 \begin{lemma}[Ground states are classical solutions]
   \label{lem:pair_strong}
-  \lean{DFT.Continuum.Pair.d11, DFT.Continuum.Pair.d22, DFT.Continuum.Pair.lap, DFT.Continuum.Pair.contDiff_d1, DFT.Continuum.Pair.contDiff_d2, DFT.Continuum.Pair.continuous_d11, DFT.Continuum.Pair.continuous_d22, DFT.Continuum.Pair.continuous_lap, DFT.Continuum.Pair.eq_zero_of_integral_sym, DFT.Continuum.Pair.hasDerivAt_d1_slice, DFT.Continuum.Pair.hasDerivAt_d2_slice, DFT.Continuum.Pair.hasDerivAt_slice1, DFT.Continuum.Pair.hasDerivAt_slice2, DFT.Continuum.Pair.d1_swap, DFT.Continuum.Pair.d11_swap, DFT.Continuum.Pair.d22_swap, DFT.Continuum.Pair.integral_unit, DFT.Continuum.Pair.ibp1, DFT.Continuum.Pair.ibp2, DFT.Continuum.Pair.strong_eq}
+  \lean{DFT.Continuum.Pair.d11, DFT.Continuum.Pair.d22, DFT.Continuum.Pair.lap, DFT.Continuum.Pair.contDiff_d1, DFT.Continuum.Pair.contDiff_d2, DFT.Continuum.Pair.continuous_d11, DFT.Continuum.Pair.continuous_d22, DFT.Continuum.Pair.continuous_lap, DFT.Continuum.Pair.eq_zero_of_integral_sym, DFT.Continuum.Pair.hasDerivAt_d1_slice, DFT.Continuum.Pair.hasDerivAt_d2_slice, DFT.Continuum.Pair.hasDerivAt_slice1, DFT.Continuum.Pair.hasDerivAt_slice2, DFT.Continuum.Pair.d1_swap_of, DFT.Continuum.Pair.d11_swap_of, DFT.Continuum.Pair.d22_swap_of, DFT.Continuum.Pair.d1_swap, DFT.Continuum.Pair.d11_swap, DFT.Continuum.Pair.d22_swap, DFT.Continuum.Pair.integral_unit, DFT.Continuum.Pair.ibp1, DFT.Continuum.Pair.ibp2, DFT.Continuum.Pair.strong_eq}
   \leanok
   \uses{thm:hk_pair, lem:euler_lagrange}
-  For bosons with a continuous symmetric interaction, a ground state solves
+  For bosons or fermions with a continuous symmetric interaction, a ground state solves
   $-\Delta\Phi+(w+v(x_1)+v(x_2)-E)\Phi=0$ on the open square.
 \end{lemma}
 \begin{proof}
   \leanok
   Integrate the weak equation by parts slice by slice (Fubini), and apply the fundamental lemma with symmetrised test
-  functions; the residual is symmetric because $\partial_{11}\Phi(x,y)=\partial_{22}\Phi(y,x)$.
+  functions of the same exchange symmetry $\sigma$; the residual has symmetry $\sigma$ because
+  $\partial_{11}\Phi(x,y)=\sigma\,\partial_{22}\Phi(y,x)$.
 \end{proof}
 
 \begin{theorem}[Hopf's strong maximum principle]
@@ -296,8 +297,10 @@ antisymmetric (fermions), and vanish on the walls; the kinetic energy is $\int|\
   rules out interior zeros.
 \end{proof}
 
-For interacting particles, or fermions, the one assumption left, unique continuation for ground states of $-\Delta+V$ in two dimensions, is a genuine PDE
-fact (Carleman/Aronszajn-type unique continuation); in one dimension it reduced to ODE uniqueness.
+In general, the one assumption left, unique continuation for ground states of $-\Delta+V$ in two dimensions, is a
+genuine PDE fact (Carleman/Aronszajn-type unique continuation); in one dimension it reduced to ODE uniqueness. For
+two particles on a line it follows from the sign structure of the ground state: for bosons below
+(Theorem~\ref{thm:hk_interacting_bosons}), for fermions in Theorem~\ref{thm:hk_interacting_fermions}.
 
 \section{The Lieb functional}
 
@@ -378,11 +381,11 @@ theory.
 
 \begin{lemma}[Hopf boundary lemma]
   \label{lem:hopf}
-  \lean{DFT.Continuum.Pair.eu_segment, DFT.Continuum.Pair.exists_zero_segment, DFT.Continuum.Pair.fderiv_eq_zero_of_d, DFT.Continuum.Pair.local_nonpos, DFT.Continuum.Pair.pos_or_nonpos}
+  \lean{DFT.Continuum.Pair.eu_segment, DFT.Continuum.Pair.exists_zero_segment, DFT.Continuum.Pair.fderiv_eq_zero_of_d, DFT.Continuum.Pair.local_nonpos_on, DFT.Continuum.Pair.pos_or_nonpos_on, DFT.Continuum.Pair.local_nonpos, DFT.Continuum.Pair.pos_or_nonpos}
   \leanok
   \uses{thm:strong_max}
   A $C^2$ supersolution of $-\Delta+c$ ($c\ge0$) where it is positive, with zero gradient at its zeros, is either
-  positive on the whole square or nowhere positive.
+  positive on a whole connected open set (e.g.\ the square) or nowhere positive there.
 \end{lemma}
 \begin{proof}
   \leanok
@@ -402,4 +405,153 @@ theory.
   Apply the Hopf lemma to $\Phi$ and to $-\Phi$, with $c=\max(V-E,0)$; Theorem~\ref{thm:hk_bosons} then applies.
 \end{proof}
 
-Existence of ground states for the interacting two-particle problem is not formalized (HK presupposes them).
+\section{Interacting fermions: the nodal set is the diagonal}
+
+An antisymmetric ground state vanishes on the diagonal $x_1=x_2$, where its gradient need not vanish, so the boson
+argument cannot run on the whole square. It runs on the half-square $\{0<x_1<x_2<1\}$ instead. There the competitor
+$|\Phi|$ becomes $\operatorname{sign}(x_2-x_1)|\Phi|$. That function is antisymmetric but not $C^2$ across the
+diagonal, so it is smoothed with an odd step $\theta$.
+
+\begin{lemma}[A smooth sign and the strip]
+  \label{lem:fermion_strip}
+  \lean{DFT.Continuum.Pair.θs, DFT.Continuum.Pair.contDiff_θs, DFT.Continuum.Pair.θs_neg, DFT.Continuum.Pair.θs_of_one_le, DFT.Continuum.Pair.θs_of_le_neg_one, DFT.Continuum.Pair.abs_θs_le, DFT.Continuum.Pair.deriv_θs_of_one_lt, DFT.Continuum.Pair.exists_deriv_θs_bound, DFT.Continuum.Pair.Sg, DFT.Continuum.Pair.Sg_swap, DFT.Continuum.Pair.Sg_sq, DFT.Continuum.Pair.Sg_mul_Sg, DFT.Continuum.Pair.d1_Sg, DFT.Continuum.Pair.d2_Sg, DFT.Continuum.Pair.abs_le_diag, DFT.Continuum.Pair.vol_strip, DFT.Continuum.Pair.mu2_strip}
+  \leanok
+  There is a smooth odd $\theta$ with $\theta=\pm1$ for $\pm t\ge1$, $|\theta|\le1$ and $\theta'$ bounded; so
+  $S_\eta(x)=\theta((x_2-x_1)/\eta)$ is antisymmetric, $S_\eta^2=1$ and $\nabla S_\eta=0$ off the strip
+  $|x_2-x_1|\le\eta$, and $|\nabla S_\eta|\le C/\eta$. An antisymmetric $C^1$ function satisfies
+  $|\Phi(x)|\le M|x_2-x_1|$ on the closed square, and the strip over $[0,1]$ has area at most $2\eta$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $\theta(t)=s(t)-s(-t)$ with Mathlib's smooth transition $s$. The bound on $\Phi$ is the mean value theorem along
+  $x_1$ from the diagonal, where $\Phi=0$. The area bound is Tonelli: each slice is an interval of length $2\eta$.
+\end{proof}
+
+\begin{lemma}[Zero gradient at zeros off the diagonal]
+  \label{lem:nodal_f}
+  \lean{DFT.Continuum.Pair.no_pos_d1_f, DFT.Continuum.Pair.grad_zero_at_zero_f, DFT.Continuum.Pair.box_data_on, DFT.Continuum.Pair.hε_comp_mem, DFT.Continuum.Pair.Sg_mul_mem, DFT.Continuum.Pair.kε_mul_mem}
+  \leanok
+  \uses{lem:nodal, lem:fermion_strip}
+  A ground state of two interacting fermions has $\nabla\Phi=0$ at each of its zeros in the square off the diagonal.
+\end{lemma}
+\begin{proof}
+  \leanok
+  As in Lemma~\ref{lem:nodal}, with the antisymmetric competitor $S_\varepsilon\,h_\varepsilon(\Phi)$ and test
+  function $S_{\eta_0}\varphi_s$, where $\varphi_s$ is the symmetrised bump at the zero and $\eta_0$ is a quarter of
+  its distance to the diagonal; the Euler--Lagrange test function $k_\varepsilon(\Phi)\varphi_s$ is already
+  antisymmetric. Off the strip the pointwise identities of the boson proof hold verbatim. On the strip
+  $|\nabla(S_\varepsilon h_\varepsilon(\Phi))|\le (C/\varepsilon)M\varepsilon+M$, so the energy excess is bounded
+  by a constant times the area $2\varepsilon$, which keeps the energy of the competitor within $O(\varepsilon)$ of $E$.
+\end{proof}
+
+\begin{theorem}[Hohenberg--Kohn for two interacting fermions]
+  \label{thm:hk_interacting_fermions}
+  \lean{DFT.Continuum.Pair.Half, DFT.Continuum.Pair.isOpen_half, DFT.Continuum.Pair.convex_half, DFT.Continuum.Pair.gs_pos_or_nonpos_half, DFT.Continuum.Pair.gs_ne_zero_f, DFT.Continuum.Pair.diag_null, DFT.Continuum.Pair.ucp_fermions, DFT.Continuum.Pair.hk_interacting_fermions}
+  \leanok
+  \uses{lem:nodal_f, lem:hopf, lem:pair_strong, thm:hk_pair}
+  For every continuous symmetric interaction, a ground state of two fermions in a box vanishes in the open square
+  exactly on the diagonal; hence ground states of continuous potentials with the same one-body density force the
+  potentials to differ by a constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  On the convex half-square the Hopf lemma, applied to $\Phi$ and $-\Phi$, leaves either no zeros or
+  $\Phi\equiv0$ there; the latter makes $\Phi\equiv0$ by antisymmetry, contradicting $\|\Phi\|>0$. The diagonal is
+  null, so unique continuation holds and Theorem~\ref{thm:hk_pair} applies.
+\end{proof}
+
+\section{Any number of fermions on a line}
+
+$N=n+1$ fermions on $[0,1]$ with hard walls: the configuration space is the cube $(0,1)^N$, states are $C^2$,
+antisymmetric under relabelling $x\mapsto x\circ\sigma$, and vanish on the walls; the interaction $w$ is continuous
+and invariant under relabelling, and $v$ acts as $\sum_k v(x_k)$.
+
+\begin{theorem}[Hohenberg--Kohn for $N$ fermions, conditional on unique continuation]
+  \label{thm:hk_line_ucp}
+  \lean{DFT.Continuum.Line.Cfg, DFT.Continuum.Line.Cube, DFT.Continuum.Line.CubeC, DFT.Continuum.Line.μN, DFT.Continuum.Line.isOpen_cube, DFT.Continuum.Line.measurableSet_cube, DFT.Continuum.Line.isCompact_cubeC, DFT.Continuum.Line.cube_subset, DFT.Continuum.Line.integrableN, DFT.Continuum.Line.sgn, DFT.Continuum.Line.sgn_mul, DFT.Continuum.Line.sgn_mul_self, DFT.Continuum.Line.sgn_inv, DFT.Continuum.Line.sgn_one, DFT.Continuum.Line.sgn_swap, DFT.Continuum.Line.pm, DFT.Continuum.Line.pm_apply, DFT.Continuum.Line.pm_mul, DFT.Continuum.Line.pm_one, DFT.Continuum.Line.pm_inv_pm, DFT.Continuum.Line.pm_pm_inv, DFT.Continuum.Line.contDiff_pm, DFT.Continuum.Line.continuous_pm, DFT.Continuum.Line.pm_mem_cube, DFT.Continuum.Line.pmE, DFT.Continuum.Line.coe_pmE, DFT.Continuum.Line.mp_pm, DFT.Continuum.Line.integral_pm, DFT.Continuum.Line.DomF, DFT.Continuum.Line.dk, DFT.Continuum.Line.diffF, DFT.Continuum.Line.cont_dk, DFT.Continuum.Line.contDiff_dk, DFT.Continuum.Line.dkk, DFT.Continuum.Line.lapN, DFT.Continuum.Line.continuous_dkk, DFT.Continuum.Line.continuous_lapN, DFT.Continuum.Line.hasDerivAt_slice, DFT.Continuum.Line.fderiv_eq_zero_of_dk, DFT.Continuum.Line.LN, DFT.Continuum.Line.continuous_LN, DFT.Continuum.Line.LN_pm, DFT.Continuum.Line.h0N, DFT.Continuum.Line.dk_add, DFT.Continuum.Line.dk_smul, DFT.Continuum.Line.cont_kin, DFT.Continuum.Line.settingF, DFT.Continuum.Line.alt, DFT.Continuum.Line.sym, DFT.Continuum.Line.alt_pm, DFT.Continuum.Line.sym_pm, DFT.Continuum.Line.contDiff_alt, DFT.Continuum.Line.contDiff_sym, DFT.Continuum.Line.pm_not_mem_cube, DFT.Continuum.Line.alt_mem, DFT.Continuum.Line.mul_sym_mem, DFT.Continuum.Line.eq_zero_of_integral_alt, DFT.Continuum.Line.sep_line, DFT.Continuum.Line.rigidL_line, DFT.Continuum.Line.Cube', DFT.Continuum.Line.integral_cube_cons, DFT.Continuum.Line.sq_pm, DFT.Continuum.Line.dens_eq_of_marginal_line, DFT.Continuum.Line.hk_line_of_ucp}
+  \leanok
+  \uses{thm:hk_continuum}
+  Separation, rigidity and the density hold on the cube; hence equal one-body densities force $v-v'$ to be constant
+  whenever the ground state of $v$ vanishes only on a null set.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Relabelling preserves Lebesgue measure and the cube. Separation uses antisymmetrised test functions
+  $\sum_\sigma \operatorname{sgn}\sigma\,\varphi\circ\sigma$; rigidity evaluates on the diagonal $(t,\dots,t)$; the
+  density functional is $N\int v(x_0)\Phi^2$ by symmetry of $\Phi^2$, and Fubini splits off $x_0$.
+\end{proof}
+
+\begin{lemma}[Ground states are classical solutions]
+  \label{lem:line_strong}
+  \lean{DFT.Continuum.Line.integral_cube_insertNth, DFT.Continuum.Line.hasDerivAt_insertNth, DFT.Continuum.Line.integral_unit', DFT.Continuum.Line.ibpN, DFT.Continuum.Line.pmL, DFT.Continuum.Line.pmL_single, DFT.Continuum.Line.dk_comp_pm, DFT.Continuum.Line.dk_fun_comp_pm, DFT.Continuum.Line.lapN_comp_pm, DFT.Continuum.Line.lapN_pm, DFT.Continuum.Line.strong_eq_line}
+  \leanok
+  \uses{thm:hk_line_ucp, lem:euler_lagrange}
+  A ground state solves $-\Delta\Phi+(w+\sum_k v(x_k)-E)\Phi=0$ on the open cube.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Integration by parts along each coordinate (Fubini with that coordinate innermost); the residual is antisymmetric
+  because the Laplacian commutes with relabelling, so the fundamental lemma with antisymmetric test functions applies.
+\end{proof}
+
+\begin{lemma}[Hopf's lemma in $N$ dimensions]
+  \label{lem:line_hopf}
+  \lean{DFT.Continuum.Line.Ndk_eq, DFT.Continuum.Line.Ndkk_nonneg_of_isLocalMin, DFT.Continuum.Line.Ndk_sub_mul, DFT.Continuum.Line.NlapN_sub_mul, DFT.Continuum.Line.Neu, DFT.Continuum.Line.continuous_Neu, DFT.Continuum.Line.Neu_nonneg, DFT.Continuum.Line.Neu_update, DFT.Continuum.Line.Neu_segment, DFT.Continuum.Line.Ndist_sq_le_eu, DFT.Continuum.Line.Neu_le_dist_sq, DFT.Continuum.Line.Ndist_lt_of_eu_lt, DFT.Continuum.Line.Nexists_zero_segment, DFT.Continuum.Line.Nbarrier, DFT.Continuum.Line.Nbark, DFT.Continuum.Line.contDiff_Nbarrier, DFT.Continuum.Line.hasDerivAt_Nexpo, DFT.Continuum.Line.Ndk_barrier, DFT.Continuum.Line.Ndkk_barrier, DFT.Continuum.Line.lapN_Nbarrier, DFT.Continuum.Line.Nbarrier_neg, DFT.Continuum.Line.Nexp_growth, DFT.Continuum.Line.Nhopf_contra, DFT.Continuum.Line.local_nonpos_on, DFT.Continuum.Line.pos_or_nonpos_on}
+  \leanok
+  A $C^2$ supersolution of $-\Delta+c$ ($c\ge0$) where it is positive, with zero gradient at its zeros, is either
+  positive on a whole connected open set or nowhere positive there.
+\end{lemma}
+\begin{proof}
+  \leanok
+  As in Lemma~\ref{lem:hopf}, with the barrier $e^{-\alpha|x-y|^2}$ in $N$ dimensions and the Euclidean distance
+  compared with the sup distance.
+\end{proof}
+
+\begin{lemma}[A smooth sign of the ordering]
+  \label{lem:line_chamber}
+  \lean{DFT.Continuum.Line.deriv_smoothTransition_of_lt, DFT.Continuum.Line.contDiff_smoothTransition2, DFT.Continuum.Line.exists_deriv_smoothTransition_bound, DFT.Continuum.Line.gapF, DFT.Continuum.Line.chi, DFT.Continuum.Line.Sgn, DFT.Continuum.Line.contDiff_gapF, DFT.Continuum.Line.contDiff_chi, DFT.Continuum.Line.contDiff_Sgn, DFT.Continuum.Line.Sgn_pm, DFT.Continuum.Line.chi_nonneg, DFT.Continuum.Line.chi_le_one, DFT.Continuum.Line.abs_sgn, DFT.Continuum.Line.abs_Sgn_le, DFT.Continuum.Line.chi_eq_one, DFT.Continuum.Line.chi_eq_zero, DFT.Continuum.Line.Far, DFT.Continuum.Line.Far.injective, DFT.Continuum.Line.Far.pm, DFT.Continuum.Line.perm_eq_of_strictMono, DFT.Continuum.Line.Sgn_eq_of_strictMono, DFT.Continuum.Line.exists_strictMono, DFT.Continuum.Line.isOpen_far, DFT.Continuum.Line.Sgn_eventually_const, DFT.Continuum.Line.dk_Sgn_far, DFT.Continuum.Line.Sgn_mul_Sgn_far, DFT.Continuum.Line.gapL, DFT.Continuum.Line.gapF_eq, DFT.Continuum.Line.hasFDerivAt_gapF, DFT.Continuum.Line.abs_gapL_single, DFT.Continuum.Line.abs_dk_chi_le, DFT.Continuum.Line.exists_dk_Sgn_bound, DFT.Continuum.Line.eq_zero_of_collision, DFT.Continuum.Line.abs_le_pair, DFT.Continuum.Line.volume_cube', DFT.Continuum.Line.mu_strip_le, DFT.Continuum.Line.NearS, DFT.Continuum.Line.NearS_eq, DFT.Continuum.Line.measurableSet_pair, DFT.Continuum.Line.measurableSet_NearS, DFT.Continuum.Line.mu_near_le}
+  \leanok
+  Let $S_\eta=\sum_\sigma\operatorname{sgn}\sigma\,\chi_\eta\circ\sigma$ with
+  $\chi_\eta(x)=\prod_j\tau((x_{j+1}-x_j)/\eta)$. Then $S_\eta$ is smooth and antisymmetric; where all
+  $|x_i-x_j|>\eta$ it is locally constant and equal to the sign of the sorting permutation; and
+  $|\partial_k S_\eta|\le C/\eta$. An antisymmetric $C^1$ function satisfies $|\Phi(x)|\le M|x_i-x_j|$, and the
+  set where some $|x_i-x_j|\le\eta$ has measure at most $N^2\cdot2\eta$ in the cube.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Away from collisions exactly one rearrangement of $x$ is increasing with gaps above $\eta$; the derivative bound
+  is the product rule; the measure bound is a union of strips, each of area at most $2\eta$ by Tonelli.
+\end{proof}
+
+\begin{lemma}[Zero gradient at zeros away from collisions]
+  \label{lem:line_nodal}
+  \lean{DFT.Continuum.Line.RfL, DFT.Continuum.Line.RfL_eq, DFT.Continuum.Line.RfL_nonneg, DFT.Continuum.Line.RfL_expand, DFT.Continuum.Line.RfL_self, DFT.Continuum.Line.RfL_EL, DFT.Continuum.Line.isGS_neg_line, DFT.Continuum.Line.hε_sgn_mul, DFT.Continuum.Line.kε_sgn_mul, DFT.Continuum.Line.Sgn_mul_mem, DFT.Continuum.Line.hε_comp_sym, DFT.Continuum.Line.kε_mul_mem_line, DFT.Continuum.Line.box_data_line, DFT.Continuum.Line.boxL, DFT.Continuum.Line.isCompact_boxL, DFT.Continuum.Line.measurableSet_boxL, DFT.Continuum.Line.dist_le_of_boxL, DFT.Continuum.Line.box_integral_line, DFT.Continuum.Line.fderiv_comp_applyL, DFT.Continuum.Line.fderiv_mul_applyL, DFT.Continuum.Line.abs_dk_le_norm, DFT.Continuum.Line.exists_far, DFT.Continuum.Line.Far.mono, DFT.Continuum.Line.ar_lowN, DFT.Continuum.Line.ptwise_far, DFT.Continuum.Line.energy_far, DFT.Continuum.Line.energy_near, DFT.Continuum.Line.no_pos_dk, DFT.Continuum.Line.grad_zero_at_zero_line}
+  \leanok
+  \uses{lem:nodal_f, lem:line_chamber, thm:hk_line_ucp}
+  A ground state of $N$ interacting fermions has $\nabla\Phi=0$ at each of its zeros in the cube without
+  collisions.
+\end{lemma}
+\begin{proof}
+  \leanok
+  As in Lemma~\ref{lem:nodal_f}, with competitor $S_\varepsilon h_\varepsilon(\Phi)$, test function
+  $S_{\eta_0}\sum_\sigma\beta\circ\sigma$ for a bump $\beta$ at the zero, and a box across which $\Phi$ changes sign
+  along the coordinate with $\partial_k\Phi\neq0$.
+\end{proof}
+
+\begin{theorem}[Hohenberg--Kohn for $N$ interacting fermions on a line]
+  \label{thm:hk_interacting_fermions_line}
+  \lean{DFT.Continuum.Line.Ch, DFT.Continuum.Line.mem_Ch, DFT.Continuum.Line.isOpen_Ch, DFT.Continuum.Line.convex_Ch, DFT.Continuum.Line.gs_pos_or_nonpos_ch, DFT.Continuum.Line.gs_ne_zero_line, DFT.Continuum.Line.mu_collision, DFT.Continuum.Line.ucp_line, DFT.Continuum.Line.hk_interacting_fermions_line}
+  \leanok
+  \uses{lem:line_nodal, lem:line_hopf, lem:line_strong, thm:hk_line_ucp}
+  For every continuous interaction invariant under relabelling, a ground state of $N$ fermions on $[0,1]$ vanishes
+  in the open cube exactly where two particles meet; hence ground states of continuous potentials with the same
+  one-body density force the potentials to differ by a constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  On the convex chamber $\{x_0<\dots<x_n\}$ the Hopf lemma, applied to $\Phi$ and $-\Phi$, leaves either no zeros
+  or $\Phi\equiv0$, and the latter makes $\Phi\equiv0$ on the cube by antisymmetry. Every collision-free point is a
+  relabelling of a point of the chamber, and the collision set is null.
+\end{proof}
+
+Existence of ground states for interacting particles is not formalized (HK presupposes them).

@@ -54,15 +54,15 @@ section slices
 
 variable {φ : ℝ × ℝ → ℝ}
 
-lemma slice1_mem (hφ : φ ∈ Dom2 1) (y : ℝ) : (fun x => φ (x, y)) ∈ Dom :=
+lemma slice1_mem {σ : ℝ} (hφ : φ ∈ Dom2 σ) (y : ℝ) : (fun x => φ (x, y)) ∈ Dom :=
   ⟨hφ.1.comp (contDiff_id.prodMk contDiff_const), hφ.2.2.1 y, hφ.2.2.2 y⟩
 
-lemma slice2_mem (hφ : φ ∈ Dom2 1) (x : ℝ) : (fun y => φ (x, y)) ∈ Dom := by
+lemma slice2_mem {σ : ℝ} (hφ : φ ∈ Dom2 σ) (x : ℝ) : (fun y => φ (x, y)) ∈ Dom := by
   refine ⟨hφ.1.comp (contDiff_const.prodMk contDiff_id), ?_, ?_⟩
-  · have := hφ.2.1 (0, x); simp only [Prod.swap_prod_mk, one_mul] at this
-    simp only [this, hφ.2.2.1 x]
-  · have := hφ.2.1 (1, x); simp only [Prod.swap_prod_mk, one_mul] at this
-    simp only [this, hφ.2.2.2 x]
+  · have := hφ.2.1 (0, x); simp only [Prod.swap_prod_mk] at this
+    simp only [this, hφ.2.2.1 x, mul_zero]
+  · have := hφ.2.1 (1, x); simp only [Prod.swap_prod_mk] at this
+    simp only [this, hφ.2.2.2 x, mul_zero]
 
 lemma deriv_slice1 (hφ : φ ∈ Dom2 1) (x y : ℝ) : deriv (fun x => φ (x, y)) x = d1 φ (x, y) := by
   have h := ((diff2 hφ (x, y)).hasFDerivAt).comp_hasDerivAt x

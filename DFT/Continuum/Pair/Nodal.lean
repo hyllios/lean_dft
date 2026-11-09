@@ -193,15 +193,15 @@ lemma discr_le {a b c : ℝ} (hc : 0 ≤ c) (h : ∀ t : ℝ, 0 ≤ a + 2 * t * 
     rw [e] at this
     linarith
 
-variable {w : ℝ × ℝ → ℝ} {hw : Continuous w} {v : Pot}
+variable {σ : ℝ} {w : ℝ × ℝ → ℝ} {hw : Continuous w} {v : Pot}
 
 /-- The shifted energy form `h₀ + ⟨v·,·⟩ - E ⟨·,·⟩`. -/
-noncomputable def Rf (w : ℝ × ℝ → ℝ) (hw : Continuous w) (v : Pot) (E : ℝ)
+noncomputable def Rf (σ : ℝ) (w : ℝ × ℝ → ℝ) (hw : Continuous w) (v : Pot) (E : ℝ)
     (ψ φ : ℝ × ℝ → ℝ) : ℝ :=
-  (setting2 1 w hw).h0 ψ φ + pf (setting2 1 w hw) v ψ φ - E * ip (μ := μ2) ψ φ
+  (setting2 σ w hw).h0 ψ φ + pf (setting2 σ w hw) v ψ φ - E * ip (μ := μ2) ψ φ
 
-lemma Rf_eq (E : ℝ) {ψ φ : ℝ × ℝ → ℝ} (hψ : ψ ∈ Dom2 1) (hφ : φ ∈ Dom2 1) :
-    Rf w hw v E ψ φ = ∫ p, (d1 ψ p * d1 φ p + d2 ψ p * d2 φ p +
+lemma Rf_eq (E : ℝ) {ψ φ : ℝ × ℝ → ℝ} (hψ : ψ ∈ Dom2 σ) (hφ : φ ∈ Dom2 σ) :
+    Rf σ w hw v E ψ φ = ∫ p, (d1 ψ p * d1 φ p + d2 ψ p * d2 φ p +
       (w p + L2 v p - E) * (ψ p * φ p)) ∂μ2 := by
   have i1 := integrable2 (((cont_d1 hψ).mul (cont_d1 hφ)).add ((cont_d2 hψ).mul (cont_d2 hφ)))
   have i2 := integrable2 (hw.mul (hψ.1.continuous.mul hφ.1.continuous))
@@ -219,38 +219,38 @@ lemma Rf_eq (E : ℝ) {ψ φ : ℝ × ℝ → ℝ} (hψ : ψ ∈ Dom2 1) (hφ : 
       (g := fun p => w p * (ψ p * φ p)) i1 i2, integral_const_mul]
   rfl
 
-lemma Rf_nonneg {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 1 w hw) v Φ) {ψ : ℝ × ℝ → ℝ}
-    (hψ : ψ ∈ Dom2 1) :
-    0 ≤ Rf w hw v (Q (setting2 1 w hw) v Φ / ip (μ := μ2) Φ Φ) ψ ψ := by
+lemma Rf_nonneg {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 σ w hw) v Φ) {ψ : ℝ × ℝ → ℝ}
+    (hψ : ψ ∈ Dom2 σ) :
+    0 ≤ Rf σ w hw v (Q (setting2 σ w hw) v Φ / ip (μ := μ2) Φ Φ) ψ ψ := by
   have h := hΦ.2.2 ψ hψ
   have hp := hΦ.2.1
-  have : Q (setting2 1 w hw) v Φ / ip (μ := μ2) Φ Φ * ip (μ := μ2) ψ ψ ≤
-      Q (setting2 1 w hw) v ψ := by
+  have : Q (setting2 σ w hw) v Φ / ip (μ := μ2) Φ Φ * ip (μ := μ2) ψ ψ ≤
+      Q (setting2 σ w hw) v ψ := by
     rw [div_mul_eq_mul_div, div_le_iff₀ hp]; linarith
-  have e : Q (setting2 1 w hw) v ψ =
-      (setting2 1 w hw).h0 ψ ψ + pf (setting2 1 w hw) v ψ ψ := rfl
+  have e : Q (setting2 σ w hw) v ψ =
+      (setting2 σ w hw).h0 ψ ψ + pf (setting2 σ w hw) v ψ ψ := rfl
   rw [e] at this
   unfold Rf
   linarith
 
-lemma Rf_expand (E : ℝ) {ψ φ : ℝ × ℝ → ℝ} (hψ : ψ ∈ Dom2 1) (hφ : φ ∈ Dom2 1) (t : ℝ) :
-    Rf w hw v E (ψ + t • φ) (ψ + t • φ) =
-      Rf w hw v E ψ ψ + 2 * t * Rf w hw v E ψ φ + t ^ 2 * Rf w hw v E φ φ := by
+lemma Rf_expand (E : ℝ) {ψ φ : ℝ × ℝ → ℝ} (hψ : ψ ∈ Dom2 σ) (hφ : φ ∈ Dom2 σ) (t : ℝ) :
+    Rf σ w hw v E (ψ + t • φ) (ψ + t • φ) =
+      Rf σ w hw v E ψ ψ + 2 * t * Rf σ w hw v E ψ φ + t ^ 2 * Rf σ w hw v E φ φ := by
   unfold Rf
-  rw [h0_expand (S := setting2 1 w hw) hψ hφ, pf_expand (S := setting2 1 w hw) v hψ hφ,
-    ip_expand (S := setting2 1 w hw) hψ hφ]
+  rw [h0_expand (S := setting2 σ w hw) hψ hφ, pf_expand (S := setting2 σ w hw) v hψ hφ,
+    ip_expand (S := setting2 σ w hw) hψ hφ]
   ring
 
-lemma Rf_self {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 1 w hw) v Φ) :
-    Rf w hw v (Q (setting2 1 w hw) v Φ / ip (μ := μ2) Φ Φ) Φ Φ = 0 := by
+lemma Rf_self {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 σ w hw) v Φ) :
+    Rf σ w hw v (Q (setting2 σ w hw) v Φ / ip (μ := μ2) Φ Φ) Φ Φ = 0 := by
   have hp := hΦ.2.1
-  have e : Rf w hw v (Q (setting2 1 w hw) v Φ / ip (μ := μ2) Φ Φ) Φ Φ =
-      Q (setting2 1 w hw) v Φ -
-        Q (setting2 1 w hw) v Φ / ip (μ := μ2) Φ Φ * ip (μ := μ2) Φ Φ := rfl
+  have e : Rf σ w hw v (Q (setting2 σ w hw) v Φ / ip (μ := μ2) Φ Φ) Φ Φ =
+      Q (setting2 σ w hw) v Φ -
+        Q (setting2 σ w hw) v Φ / ip (μ := μ2) Φ Φ * ip (μ := μ2) Φ Φ := rfl
   rw [e, div_mul_cancel₀ _ hp.ne', sub_self]
 
-lemma Rf_EL {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 1 w hw) v Φ) {g : ℝ × ℝ → ℝ}
-    (hg : g ∈ Dom2 1) : Rf w hw v (Q (setting2 1 w hw) v Φ / ip (μ := μ2) Φ Φ) Φ g = 0 := by
+lemma Rf_EL {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 σ w hw) v Φ) {g : ℝ × ℝ → ℝ}
+    (hg : g ∈ Dom2 σ) : Rf σ w hw v (Q (setting2 σ w hw) v Φ / ip (μ := μ2) Φ Φ) Φ g = 0 := by
   have h := euler_lagrange hΦ (φ := g) hg
   unfold Rf
   linarith
@@ -301,19 +301,20 @@ lemma dist_le_of_abs {q : ℝ × ℝ} {a b r : ℝ} (h1 : |q.1 - a| ≤ r) (h2 :
 
 /-- Around a zero with `∂₁Φ > 0`: a box inside the square where `∂₁Φ > ∂₁Φ(a,b)/2`, across which
 `Φ` changes sign uniformly. -/
-lemma box_data {Φ : ℝ × ℝ → ℝ} (hD : Φ ∈ Dom2 1) {a b : ℝ} (hab : (a, b) ∈ Sq)
+lemma box_data_on {Φ : ℝ × ℝ → ℝ} (hD : Φ ∈ Dom2 σ) {U : Set (ℝ × ℝ)} (hU : IsOpen U)
+    {a b : ℝ} (hab : (a, b) ∈ Sq ∩ U)
     (h0 : Φ (a, b) = 0) (hpos : 0 < d1 Φ (a, b)) :
     ∃ r r' δ : ℝ, 0 < r ∧ 0 < r' ∧ r' ≤ r ∧ 0 < δ ∧
-      (∀ q : ℝ × ℝ, dist q (a, b) ≤ 2 * r → q ∈ Sq ∧ d1 Φ (a, b) / 2 < d1 Φ q) ∧
+      (∀ q : ℝ × ℝ, dist q (a, b) ≤ 2 * r → q ∈ Sq ∩ U ∧ d1 Φ (a, b) / 2 < d1 Φ q) ∧
       ∀ y, |y - b| ≤ r' → δ < Φ (a + r, y) ∧ Φ (a - r, y) < -δ := by
   set s0 := d1 Φ (a, b)
-  have hO : IsOpen (Sq ∩ {q | s0 / 2 < d1 Φ q}) :=
-    (isOpen_Ioo.prod isOpen_Ioo).inter (isOpen_lt continuous_const (cont_d1 hD))
+  have hO : IsOpen ((Sq ∩ U) ∩ {q | s0 / 2 < d1 Φ q}) :=
+    ((isOpen_Ioo.prod isOpen_Ioo).inter hU).inter (isOpen_lt continuous_const (cont_d1 hD))
   obtain ⟨ε, hε, hball⟩ :=
     Metric.isOpen_iff.mp hO (a, b) ⟨hab, by simp only [mem_ofPred_eq]; linarith⟩
   set r := ε / 4
   have hr : 0 < r := by positivity
-  have hin : ∀ q : ℝ × ℝ, dist q (a, b) ≤ 2 * r → q ∈ Sq ∧ s0 / 2 < d1 Φ q := fun q hq =>
+  have hin : ∀ q : ℝ × ℝ, dist q (a, b) ≤ 2 * r → q ∈ Sq ∩ U ∧ s0 / 2 < d1 Φ q := fun q hq =>
     hball (show dist q (a, b) < ε by simp only [r] at hq; linarith)
   have hslice : ∀ x ∈ Icc (a - r) (a + r), s0 / 2 ≤ d1 Φ (x, b) := fun x hx =>
     (hin (x, b) (dist_le_of_abs (abs_le.mpr ⟨by linarith [hx.1], by linarith [hx.2]⟩)
@@ -352,8 +353,16 @@ lemma box_data {Φ : ℝ × ℝ → ℝ} (hD : Φ ∈ Dom2 1) {a b : ℝ} (hab :
   · have := (abs_lt.mp e1).1; linarith
   · have := (abs_lt.mp e2).2; linarith
 
+lemma box_data {Φ : ℝ × ℝ → ℝ} (hD : Φ ∈ Dom2 1) {a b : ℝ} (hab : (a, b) ∈ Sq)
+    (h0 : Φ (a, b) = 0) (hpos : 0 < d1 Φ (a, b)) :
+    ∃ r r' δ : ℝ, 0 < r ∧ 0 < r' ∧ r' ≤ r ∧ 0 < δ ∧
+      (∀ q : ℝ × ℝ, dist q (a, b) ≤ 2 * r → q ∈ Sq ∧ d1 Φ (a, b) / 2 < d1 Φ q) ∧
+      ∀ y, |y - b| ≤ r' → δ < Φ (a + r, y) ∧ Φ (a - r, y) < -δ := by
+  obtain ⟨r, r', δ, h1, h2, h3, h4, hin, h5⟩ := box_data_on hD isOpen_univ ⟨hab, mem_univ _⟩ h0 hpos
+  exact ⟨r, r', δ, h1, h2, h3, h4, fun q hq => ⟨(hin q hq).1.1, (hin q hq).2⟩, h5⟩
+
 /-- Across the box, the integral of `k₂(Φ) ∂₁Φ` is at least the height of the box. -/
-lemma box_integral {Φ : ℝ × ℝ → ℝ} (hD : Φ ∈ Dom2 1) {ε : ℝ} (hε0 : 0 < ε) {a b r r' δ : ℝ}
+lemma box_integral {Φ : ℝ × ℝ → ℝ} (hD : Φ ∈ Dom2 σ) {ε : ℝ} (hε0 : 0 < ε) {a b r r' δ : ℝ}
     (hr : 0 < r) (hr' : 0 < r') (hεδ : ε ≤ δ)
     (hsign : ∀ y, |y - b| ≤ r' → δ < Φ (a + r, y) ∧ Φ (a - r, y) < -δ) :
     2 * r' ≤ ∫ q in Icc (a - r) (a + r) ×ˢ Icc (b - r') (b + r'), k2 ε (Φ q) * d1 Φ q := by
@@ -395,11 +404,11 @@ lemma box_integral {Φ : ℝ × ℝ → ℝ} (hD : Φ ∈ Dom2 1) {ε : ℝ} (h�
 
 /-! ### The contradiction -/
 
-lemma isGS_neg_pair {Φ : ℝ × ℝ → ℝ} (h : IsGS (setting2 1 w hw) v Φ) :
-    IsGS (setting2 1 w hw) v (-Φ) := by
+lemma isGS_neg_pair {Φ : ℝ × ℝ → ℝ} (h : IsGS (setting2 σ w hw) v Φ) :
+    IsGS (setting2 σ w hw) v (-Φ) := by
   have hn : -Φ = (-1 : ℝ) • Φ := by simp
   obtain ⟨hD, hpos, hmin⟩ := h
-  refine ⟨(setting2 1 w hw).D.neg_mem hD, ?_, fun φ hφ => ?_⟩
+  refine ⟨(setting2 σ w hw).D.neg_mem hD, ?_, fun φ hφ => ?_⟩
   · rw [hn, ip_smul_self]; linarith
   · rw [hn, ip_smul_self, Q_smul_self v _ hD]
     have := hmin φ hφ
@@ -465,7 +474,7 @@ lemma no_pos_d1 {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 1 w hw) v Φ) {a
   set K2 := ∫ q, |V q| * φs q ∂μ2 with hK2d
   have hK1 : 0 ≤ K1 := integral_nonneg fun q => mul_nonneg (abs_nonneg _) (abs_nonneg _)
   have hK2 : 0 ≤ K2 := integral_nonneg fun q => mul_nonneg (abs_nonneg _) (hφs0 q)
-  set C := Rf w hw v E φs φs with hCd
+  set C := Rf 1 w hw v E φs φs with hCd
   have hC : 0 ≤ C := Rf_nonneg hΦ hφs
   set L := s0 * r' with hLd
   have hL : 0 < L := mul_pos hpos hr'
@@ -526,7 +535,7 @@ lemma no_pos_d1 {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 1 w hw) v Φ) {a
   -- the cross term
   set X : ℝ × ℝ → ℝ := fun q => V q * (hε ε (Φ q) - Φ q * kε ε (Φ q)) * φs q with hXd
   have hXc : Continuous X := (hVc.mul ((hhc.comp hΦc).sub (hΦc.mul (hkc.comp hΦc)))).mul hφc
-  set B := Rf w hw v E hΦε φs with hBd
+  set B := Rf 1 w hw v E hΦε φs with hBd
   have hU : ∫ q, G q ∂μ2 = ∫ q, X q ∂μ2 - B := by
     have hEL := Rf_EL hΦ hgm
     rw [Rf_eq E hD hgm] at hEL
@@ -557,7 +566,7 @@ lemma no_pos_d1 {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 1 w hw) v Φ) {a
           have h0' : 0 ≤ |V q| * φs q := mul_nonneg (abs_nonneg _) (hφs0 q)
           nlinarith [abs_nonneg (V q)]
       _ = ε * K2 := integral_const_mul _ _
-  have hB2 : Rf w hw v E hΦε hΦε ≤ 2 * ε * K1 := by
+  have hB2 : Rf 1 w hw v E hΦε hΦε ≤ 2 * ε * K1 := by
     have hself := Rf_self hΦ
     rw [Rf_eq E hD hD] at hself
     rw [Rf_eq E hhm hhm]
@@ -601,7 +610,7 @@ lemma no_pos_d1 {Φ : ℝ × ℝ → ℝ} (hΦ : IsGS (setting2 1 w hw) v Φ) {a
           simp only [hΦε]
           nlinarith [hVle, hkk]
       _ = 2 * ε * K1 := integral_const_mul _ _
-  have hB3 : B ^ 2 ≤ Rf w hw v E hΦε hΦε * C := by
+  have hB3 : B ^ 2 ≤ Rf 1 w hw v E hΦε hΦε * C := by
     refine discr_le hC fun t => ?_
     have h := Rf_nonneg hΦ ((Dom2 1).add_mem hhm ((Dom2 1).smul_mem t hφs))
     rw [Rf_expand E hhm hφs t] at h
