@@ -67,7 +67,7 @@ noncomputable def gapF (η : ℝ) (j : Fin n) (x : Cfg n) : ℝ :=
 noncomputable def chi (η : ℝ) (x : Cfg n) : ℝ := ∏ j : Fin n, gapF η j x
 
 /-- The smooth sign of the ordering, `Sgn η = alt χ_η`. -/
-noncomputable def Sgn (η : ℝ) : Cfg n → ℝ := alt (chi η)
+noncomputable def Sgn (η : ℝ) : Cfg n → ℝ := alt .fer (chi η)
 
 lemma contDiff_gapF (η : ℝ) (j : Fin n) : ContDiff ℝ 2 (gapF η j) :=
   contDiff_smoothTransition2.comp
@@ -78,10 +78,10 @@ lemma contDiff_gapF (η : ℝ) (j : Fin n) : ContDiff ℝ 2 (gapF η j) :=
 lemma contDiff_chi (η : ℝ) : ContDiff ℝ 2 (chi (n := n) η) :=
   contDiff_prod fun j _ => contDiff_gapF η j
 
-lemma contDiff_Sgn (η : ℝ) : ContDiff ℝ 2 (Sgn (n := n) η) := contDiff_alt (contDiff_chi η)
+lemma contDiff_Sgn (η : ℝ) : ContDiff ℝ 2 (Sgn (n := n) η) := contDiff_alt .fer (contDiff_chi η)
 
 lemma Sgn_pm (η : ℝ) (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
-    Sgn η (pm σ x) = sgn σ * Sgn η x := alt_pm _ σ x
+    Sgn η (pm σ x) = sgn σ * Sgn η x := alt_pm .fer _ σ x
 
 lemma chi_nonneg (η : ℝ) (x : Cfg n) : 0 ≤ chi η x :=
   Finset.prod_nonneg fun _ _ => Real.smoothTransition.nonneg _
@@ -94,7 +94,7 @@ lemma abs_sgn (σ : Equiv.Perm (Fin (n + 1))) : |sgn σ| = 1 := by
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [sgn, h]
 
 lemma abs_Sgn_le (η : ℝ) (x : Cfg n) : |Sgn η x| ≤ Fintype.card (Equiv.Perm (Fin (n + 1))) := by
-  simp only [Sgn, alt]
+  simp only [Sgn, alt, ch_fer]
   refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
   rw [Finset.card_univ.symm, ← nsmul_one, ← Finset.sum_const]
   refine Finset.sum_le_sum fun σ _ => ?_
@@ -142,7 +142,7 @@ lemma perm_eq_of_strictMono {x : Cfg n} (hx : Function.Injective x)
 /-- Away from collisions, `Sgn η` is the sign of the sorting permutation. -/
 lemma Sgn_eq_of_strictMono {η : ℝ} (hη : 0 < η) {x : Cfg n} (hx : Far η x)
     {σ : Equiv.Perm (Fin (n + 1))} (hσ : StrictMono (pm σ x)) : Sgn η x = sgn σ := by
-  simp only [Sgn, alt]
+  simp only [Sgn, alt, ch_fer]
   rw [Finset.sum_eq_single σ]
   · rw [chi_eq_one hη, mul_one]
     intro j
@@ -303,7 +303,7 @@ lemma eq_zero_of_collision {Φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) {x : Cfg n}
     by_cases hl' : l = j
     · subst hl'; simp [h]
     · rw [Equiv.swap_apply_of_ne_of_ne hl hl']
-  have := hD.2.1 (Equiv.swap i j) x
+  have := anti hD (Equiv.swap i j) x
   rw [hpm, sgn_swap hij] at this
   linarith
 

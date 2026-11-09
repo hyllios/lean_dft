@@ -16,8 +16,8 @@ walls. The kinetic energy is `∫ |∇ψ|²`.
 Everything in `hk_of_ucp` is proved here except unique continuation, which in two dimensions is a
 genuine PDE fact (the zero set of a ground state of `-Δ + V` has measure zero; classically a
 Carleman/Aronszajn-type unique continuation theorem). It stays an explicit hypothesis here; it is
-proved for interacting bosons in `Pair/Sign`, and for any number of interacting fermions in
-`Line/Fermions` (whose configuration space for two particles is `Fin 2 → ℝ`).
+proved for any number of interacting bosons and fermions in `Line/Bosons` and `Line/Fermions`
+(whose configuration space for two particles is `Fin 2 → ℝ`).
 
 * `sep_pair`: separation, from the fundamental lemma on the square, after symmetrising test
   functions.

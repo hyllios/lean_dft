@@ -6,15 +6,15 @@ Authors: Miguel A. L. Marques
 import DFT.Continuum.Line.Basic
 
 /-!
-# Ground states of `N` fermions on a line are classical solutions
+# Ground states of `N` particles on a line are classical solutions
 
-For `n + 1` fermions on `[0, 1]` with a continuous interaction `w` invariant under relabelling,
-every ground state `Φ` of the potential `v` solves the Schrödinger equation pointwise on the open
-cube: `-ΔΦ + (w + Σₖ v(xₖ) - E) Φ = 0`, with `E = ⟨Φ, HΦ⟩ / ⟨Φ, Φ⟩`.
+For `n + 1` bosons or fermions on `[0, 1]` with a continuous interaction `w` invariant under
+relabelling, every ground state `Φ` of the potential `v` solves the Schrödinger equation pointwise
+on the open cube: `-ΔΦ + (w + Σₖ v(xₖ) - E) Φ = 0`, with `E = ⟨Φ, HΦ⟩ / ⟨Φ, Φ⟩`.
 
 * `integral_cube_insertNth`: Fubini on the cube, with coordinate `k` innermost.
 * `dk_comp_pm`: the chain rule for relabelling, `∂ₖ(f ∘ σ) = (∂_{σ⁻¹ k} f) ∘ σ`.
-* `lapN_pm`: the Laplacian of an antisymmetric function is antisymmetric.
+* `lapN_pm`: the Laplacian of a state has the same exchange symmetry.
 * `ibpN`: integration by parts along each coordinate.
 * `strong_eq_line`: the strong Schrödinger equation.
 -/
@@ -23,7 +23,7 @@ namespace DFT.Continuum.Line
 
 open MeasureTheory Set Filter Topology Box
 
-variable {n : ℕ}
+variable {n : ℕ} {τ : Stat}
 
 /-- **Fubini on the cube**, with coordinate `k` innermost. -/
 lemma integral_cube_insertNth {F : Cfg n → ℝ} (hF : Continuous F) (k : Fin (n + 1)) :
@@ -62,7 +62,7 @@ lemma integral_unit' {f : ℝ → ℝ} : ∫ x in (0 : ℝ)..1, f x = ∫ x in I
   rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
 
 /-- **Integration by parts along coordinate `k`.** -/
-lemma ibpN {Φ φ : Cfg n → ℝ} (hΦ : ContDiff ℝ 2 Φ) (hφ : φ ∈ DomF n) (k : Fin (n + 1)) :
+lemma ibpN {Φ φ : Cfg n → ℝ} (hΦ : ContDiff ℝ 2 Φ) (hφ : φ ∈ Dom τ n) (k : Fin (n + 1)) :
     ∫ x, dk k Φ x * dk k φ x ∂μN n = -∫ x, dkk k Φ x * φ x ∂μN n := by
   have hdc : Continuous (dk k Φ) := (contDiff_dk hΦ k).continuous
   rw [integral_cube_insertNth (F := fun x => dk k Φ x * dk k φ x) (hdc.mul (cont_dk hφ k)) k,
@@ -124,30 +124,30 @@ lemma lapN_comp_pm {f : Cfg n → ℝ} (hf : ContDiff ℝ 2 f) (σ : Equiv.Perm 
   simp only [e]
   exact Equiv.sum_comp σ⁻¹ (fun j => dk j (dk j f) (pm σ x))
 
-/-- **The Laplacian of an antisymmetric function is antisymmetric.** -/
-lemma lapN_pm {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomF n) (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
-    lapN Φ (pm σ x) = sgn σ * lapN Φ x := by
+/-- **The Laplacian of a state has the same exchange symmetry.** -/
+lemma lapN_pm {Φ : Cfg n → ℝ} (hΦ : Φ ∈ Dom τ n) (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
+    lapN Φ (pm σ x) = ch τ σ * lapN Φ x := by
   rw [← lapN_comp_pm hΦ.1 σ x]
-  have e : (fun y => Φ (pm σ y)) = sgn σ • Φ := by funext y; simp [hΦ.2.1 σ y]
+  have e : (fun y => Φ (pm σ y)) = ch τ σ • Φ := by funext y; simp [hΦ.2.1 σ y]
   rw [e]
   simp only [lapN, dkk, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [dk_smul (diffF hΦ), dk_smul ((contDiff_dk hΦ.1 k).differentiable one_ne_zero)]
   rfl
 
-/-- **Ground states of `n + 1` interacting fermions are classical solutions** of
+/-- **Ground states of `n + 1` interacting particles are classical solutions** of
 `-ΔΦ + (w + Σₖ v(xₖ) - E) Φ = 0` on the open cube. -/
 theorem strong_eq_line {w : Cfg n → ℝ} {hw : Continuous w} (hws : ∀ σ x, w (pm σ x) = w x)
-    {v : Pot} {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) :
+    {v : Pot} {Φ : Cfg n → ℝ} (hΦ : IsGS (setting τ n w hw) v Φ) :
     ∀ x ∈ Cube n, -lapN Φ x +
-      (w x + LN n v x - Q (settingF n w hw) v Φ / ip (μ := μN n) Φ Φ) * Φ x = 0 := by
-  have hD : Φ ∈ DomF n := hΦ.1
-  set E := Q (settingF n w hw) v Φ / ip (μ := μN n) Φ Φ
+      (w x + LN n v x - Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ) * Φ x = 0 := by
+  have hD : Φ ∈ Dom τ n := hΦ.1
+  set E := Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ
   set g : Cfg n → ℝ := fun x => -lapN Φ x + (w x + LN n v x - E) * Φ x
   have hc := hD.1.continuous
   have hg : Continuous g :=
     (continuous_lapN hD.1).neg.add (((hw.add (continuous_LN v)).sub continuous_const).mul hc)
-  have hgs : ∀ σ x, g (pm σ x) = sgn σ * g x := by
+  have hgs : ∀ σ x, g (pm σ x) = ch τ σ * g x := by
     intro σ x
     simp only [g, lapN_pm hD, hws, LN_pm, hD.2.1 σ x]
     ring

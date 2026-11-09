@@ -4,29 +4,30 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Line.Chamber
-import DFT.Continuum.Pair.Nodal
+import DFT.Continuum.Line.Smooth
+import DFT.Continuum.General.Lieb
+import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 
 /-!
 # `N` fermions: critical zeros away from collisions
 
 A ground state `Φ` of `n + 1` interacting fermions on `[0, 1]` has vanishing gradient at each zero
 `a` in the open cube with no collision (`aᵢ ≠ aⱼ` for `i ≠ j`). The argument is the one for two
-bosons (`Pair/Nodal`), made antisymmetric and run in `n + 1` dimensions: the competitor `h_ε(Φ)`
+bosons, made antisymmetric and run in `n + 1` dimensions: the competitor `h_ε(Φ)`
 (a smoothed `|Φ|`) becomes `Sgn ε · h_ε(Φ)`, where `Sgn ε` is the smooth sign of the ordering
 (`Chamber`), and the test function is `Sgn η₀ · sym β`, with `β` a bump at `a`. On the
 near-collision set the competitor costs `O(1)` energy per unit volume, and that set has volume
 `O(ε)`.
 
-* `RfL`: the shifted energy form `h₀ + ⟨v·,·⟩ - E ⟨·,·⟩`, and its basic properties.
-* `box_data_line`, `box_integral_line`: near a zero with `∂ₖΦ > 0`, `Φ` changes sign across a box,
-  so `∫ k₂(Φ) ∂ₖΦ` over the box is at least the box's cross-section.
+* `RfL`: the shifted energy form `h₀ + ⟨v·,·⟩ - E ⟨·,·⟩` and its properties (both statistics).
+* `box_data_line`, `box_integral_line` (both statistics): near a zero with `∂ₖΦ > 0`, `Φ` changes
+  sign across a box, so `∫ k₂(Φ) ∂ₖΦ` over the box is at least the box's cross-section.
 * `no_pos_dk`, `grad_zero_at_zero_line`: zeros away from collisions are critical.
 -/
 
 namespace DFT.Continuum.Line
 
 open MeasureTheory Set Filter Topology Box Metric
-open DFT.Continuum.Pair (hε kε k2 discr_le final_arith slice_lower)
 
 variable {n : ℕ}
 
@@ -34,15 +35,15 @@ variable {n : ℕ}
 
 section Rf
 
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
+variable {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
 
 /-- The shifted energy form `h₀ + ⟨v·,·⟩ - E ⟨·,·⟩`. -/
-noncomputable def RfL (w : Cfg n → ℝ) (hw : Continuous w) (v : Pot) (E : ℝ)
+noncomputable def RfL (τ : Stat) (w : Cfg n → ℝ) (hw : Continuous w) (v : Pot) (E : ℝ)
     (ψ φ : Cfg n → ℝ) : ℝ :=
-  (settingF n w hw).h0 ψ φ + pf (settingF n w hw) v ψ φ - E * ip (μ := μN n) ψ φ
+  (setting τ n w hw).h0 ψ φ + pf (setting τ n w hw) v ψ φ - E * ip (μ := μN n) ψ φ
 
-lemma RfL_eq (E : ℝ) {ψ φ : Cfg n → ℝ} (hψ : ψ ∈ DomF n) (hφ : φ ∈ DomF n) :
-    RfL w hw v E ψ φ = ∫ x, (∑ k, dk k ψ x * dk k φ x +
+lemma RfL_eq (E : ℝ) {ψ φ : Cfg n → ℝ} (hψ : ψ ∈ Dom τ n) (hφ : φ ∈ Dom τ n) :
+    RfL τ w hw v E ψ φ = ∫ x, (∑ k, dk k ψ x * dk k φ x +
       (w x + LN n v x - E) * (ψ x * φ x)) ∂μN n := by
   have i1 := integrableN (cont_kin hψ hφ)
   have i2 := integrableN (hw.mul (hψ.1.continuous.mul hφ.1.continuous))
@@ -61,69 +62,53 @@ lemma RfL_eq (E : ℝ) {ψ φ : Cfg n → ℝ} (hψ : ψ ∈ DomF n) (hφ : φ �
       (g := fun x => w x * (ψ x * φ x)) i1 i2, integral_const_mul]
   rfl
 
-lemma RfL_nonneg {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {ψ : Cfg n → ℝ}
-    (hψ : ψ ∈ DomF n) :
-    0 ≤ RfL w hw v (Q (settingF n w hw) v Φ / ip (μ := μN n) Φ Φ) ψ ψ := by
+lemma RfL_nonneg {Φ : Cfg n → ℝ} (hΦ : IsGS (setting τ n w hw) v Φ) {ψ : Cfg n → ℝ}
+    (hψ : ψ ∈ Dom τ n) :
+    0 ≤ RfL τ w hw v (Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ) ψ ψ := by
   have h := hΦ.2.2 ψ hψ
   have hp := hΦ.2.1
-  have : Q (settingF n w hw) v Φ / ip (μ := μN n) Φ Φ * ip (μ := μN n) ψ ψ ≤
-      Q (settingF n w hw) v ψ := by
+  have : Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ * ip (μ := μN n) ψ ψ ≤
+      Q (setting τ n w hw) v ψ := by
     rw [div_mul_eq_mul_div, div_le_iff₀ hp]; linarith
-  have e : Q (settingF n w hw) v ψ =
-      (settingF n w hw).h0 ψ ψ + pf (settingF n w hw) v ψ ψ := rfl
+  have e : Q (setting τ n w hw) v ψ =
+      (setting τ n w hw).h0 ψ ψ + pf (setting τ n w hw) v ψ ψ := rfl
   rw [e] at this
   unfold RfL
   linarith
 
-lemma RfL_expand (E : ℝ) {ψ φ : Cfg n → ℝ} (hψ : ψ ∈ DomF n) (hφ : φ ∈ DomF n) (t : ℝ) :
-    RfL w hw v E (ψ + t • φ) (ψ + t • φ) =
-      RfL w hw v E ψ ψ + 2 * t * RfL w hw v E ψ φ + t ^ 2 * RfL w hw v E φ φ := by
+lemma RfL_expand (E : ℝ) {ψ φ : Cfg n → ℝ} (hψ : ψ ∈ Dom τ n) (hφ : φ ∈ Dom τ n) (t : ℝ) :
+    RfL τ w hw v E (ψ + t • φ) (ψ + t • φ) =
+      RfL τ w hw v E ψ ψ + 2 * t * RfL τ w hw v E ψ φ + t ^ 2 * RfL τ w hw v E φ φ := by
   unfold RfL
-  rw [h0_expand (S := settingF n w hw) hψ hφ, pf_expand (S := settingF n w hw) v hψ hφ,
-    ip_expand (S := settingF n w hw) hψ hφ]
+  rw [h0_expand (S := setting τ n w hw) hψ hφ, pf_expand (S := setting τ n w hw) v hψ hφ,
+    ip_expand (S := setting τ n w hw) hψ hφ]
   ring
 
-lemma RfL_self {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) :
-    RfL w hw v (Q (settingF n w hw) v Φ / ip (μ := μN n) Φ Φ) Φ Φ = 0 := by
+lemma RfL_self {Φ : Cfg n → ℝ} (hΦ : IsGS (setting τ n w hw) v Φ) :
+    RfL τ w hw v (Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ) Φ Φ = 0 := by
   have hp := hΦ.2.1
-  have e : RfL w hw v (Q (settingF n w hw) v Φ / ip (μ := μN n) Φ Φ) Φ Φ =
-      Q (settingF n w hw) v Φ -
-        Q (settingF n w hw) v Φ / ip (μ := μN n) Φ Φ * ip (μ := μN n) Φ Φ := rfl
+  have e : RfL τ w hw v (Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ) Φ Φ =
+      Q (setting τ n w hw) v Φ -
+        Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ * ip (μ := μN n) Φ Φ := rfl
   rw [e, div_mul_cancel₀ _ hp.ne', sub_self]
 
-lemma RfL_EL {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {g : Cfg n → ℝ}
-    (hg : g ∈ DomF n) : RfL w hw v (Q (settingF n w hw) v Φ / ip (μ := μN n) Φ Φ) Φ g = 0 := by
+lemma RfL_EL {Φ : Cfg n → ℝ} (hΦ : IsGS (setting τ n w hw) v Φ) {g : Cfg n → ℝ}
+    (hg : g ∈ Dom τ n) : RfL τ w hw v (Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ) Φ g = 0 := by
   have h := euler_lagrange hΦ (φ := g) hg
   unfold RfL
   linarith
 
-lemma isGS_neg_line {Φ : Cfg n → ℝ} (h : IsGS (settingF n w hw) v Φ) :
-    IsGS (settingF n w hw) v (-Φ) := by
+lemma isGS_neg_line {Φ : Cfg n → ℝ} (h : IsGS (setting τ n w hw) v Φ) :
+    IsGS (setting τ n w hw) v (-Φ) := by
   have hn : -Φ = (-1 : ℝ) • Φ := by simp
   obtain ⟨hD, hpos, hmin⟩ := h
-  refine ⟨(settingF n w hw).D.neg_mem hD, ?_, fun φ hφ => ?_⟩
+  refine ⟨(setting τ n w hw).D.neg_mem hD, ?_, fun φ hφ => ?_⟩
   · rw [hn, ip_smul_self]; linarith
   · rw [hn, ip_smul_self, Q_smul_self v _ hD]
     have := hmin φ hφ
     linarith
 
 end Rf
-
-/-! ### The smoothed absolute value: parity and bounds -/
-
-lemma hε_neg (ε s : ℝ) : hε ε (-s) = hε ε s := by simp [hε]
-
-lemma kε_neg (ε s : ℝ) : kε ε (-s) = -kε ε s := by simp [kε, neg_div]
-
-lemma abs_hε_le {ε : ℝ} (hε0 : 0 < ε) (s : ℝ) : |hε ε s| ≤ |s| := by
-  have h1 := Pair.eps_le_sqrt_eps hε0 s
-  have h2 := Pair.sqrt_eps_le hε0 s
-  rw [abs_of_nonneg (by simp only [hε]; linarith)]
-  simp only [hε]; linarith
-
-lemma ar_X {V x p ε : ℝ} (h : |x| ≤ ε) (hp : 0 ≤ p) : |V| * |x| * p ≤ ε * (|V| * p) := by
-  have := mul_le_mul_of_nonneg_left h (mul_nonneg (abs_nonneg V) hp)
-  nlinarith
 
 /-! ### Admissible functions -/
 
@@ -150,21 +135,21 @@ lemma Sgn_mul_mem {f : Cfg n → ℝ} (hf : ContDiff ℝ 2 f) (hfs : ∀ σ x, f
 
 lemma hε_comp_sym {Φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) {ε : ℝ} (σ : Equiv.Perm (Fin (n + 1)))
     (x : Cfg n) : hε ε (Φ (pm σ x)) = hε ε (Φ x) := by
-  rw [hD.2.1 σ x, hε_sgn_mul]
+  rw [anti hD σ x, hε_sgn_mul]
 
 lemma kε_mul_mem_line {Φ φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) (hφ : ContDiff ℝ 2 φ)
     (hφs : ∀ σ x, φ (pm σ x) = φ x) (hφw : ∀ x k, (x k = 0 ∨ x k = 1) → φ x = 0) {ε : ℝ}
     (hε0 : 0 < ε) : (fun x => kε ε (Φ x) * φ x) ∈ DomF n :=
-  ⟨((Pair.contDiff_kε hε0).comp hD.1).mul hφ, fun σ x => by
+  ⟨((contDiff_kε hε0).comp hD.1).mul hφ, fun σ x => by
     change kε ε (Φ (pm σ x)) * φ (pm σ x) = sgn σ * (kε ε (Φ x) * φ x)
-    rw [hD.2.1 σ x, kε_sgn_mul, hφs]; ring,
+    rw [anti hD σ x, kε_sgn_mul, hφs]; ring,
     fun x k hk => by change kε ε (Φ x) * φ x = 0; rw [hφw x k hk, mul_zero]⟩
 
 /-! ### Geometry near a zero with `∂ₖΦ > 0` -/
 
 /-- Around a zero with `∂ₖΦ > 0`: a ball inside `Cube ∩ U` where `∂ₖΦ > ∂ₖΦ(a)/2`, across which
 `Φ` changes sign uniformly along coordinate `k`. -/
-lemma box_data_line {Φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) {U : Set (Cfg n)} (hU : IsOpen U)
+lemma box_data_line {τ : Stat} {Φ : Cfg n → ℝ} (hD : Φ ∈ Dom τ n) {U : Set (Cfg n)} (hU : IsOpen U)
     {a : Cfg n} (ha : a ∈ Cube n ∩ U) {k : Fin (n + 1)} (h0 : Φ a = 0) (hpos : 0 < dk k Φ a) :
     ∃ r r' δ : ℝ, 0 < r ∧ 0 < r' ∧ r' ≤ r ∧ 0 < δ ∧
       (∀ x : Cfg n, dist x a ≤ 2 * r → x ∈ Cube n ∩ U ∧ dk k Φ a / 2 < dk k Φ x) ∧
@@ -246,13 +231,14 @@ lemma dist_le_of_boxL {a : Cfg n} {k : Fin (n + 1)} {r r' : ℝ} (hrr : r' ≤ r
   · simp only [hl, ite_false] at this; constructor <;> linarith [this.1, this.2]
 
 /-- Across the box, the integral of `k₂(Φ) ∂ₖΦ` is at least the box's cross-section `(2r')ⁿ`. -/
-lemma box_integral_line {Φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) {ε : ℝ} (hε0 : 0 < ε) {a : Cfg n}
+lemma box_integral_line {τ : Stat} {Φ : Cfg n → ℝ} (hD : Φ ∈ Dom τ n) {ε : ℝ} (hε0 : 0 < ε)
+    {a : Cfg n}
     {k : Fin (n + 1)} {r r' δ : ℝ} (hr : 0 < r) (hr' : 0 < r') (hεδ : ε ≤ δ)
     (hsign : ∀ y : Cfg n, dist y a ≤ r' →
       δ < Φ (Function.update y k (a k + r)) ∧ Φ (Function.update y k (a k - r)) < -δ) :
     (2 * r') ^ n ≤ ∫ x in boxL a k r r', k2 ε (Φ x) * dk k Φ x := by
-  have hk2c : Continuous (k2 ε) := Pair.continuous_k2 hε0
-  have hkc : Continuous (kε ε) := (Pair.contDiff_kε hε0).continuous
+  have hk2c : Continuous (k2 ε) := continuous_k2 hε0
+  have hkc : Continuous (kε ε) := (contDiff_kε hε0).continuous
   set F : Cfg n → ℝ := fun x => k2 ε (Φ x) * dk k Φ x
   have hF : Continuous F := (hk2c.comp hD.1.continuous).mul (cont_dk hD k)
   set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (n + 1) => ℝ) k
@@ -283,7 +269,7 @@ lemma box_integral_line {Φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) {ε : ℝ} (h�
     rw [integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le (by linarith)]
     refine intervalIntegral.integral_eq_sub_of_hasDerivAt
       (f := fun t => kε ε (Φ (Fin.insertNth k t y)))
-      (fun t _ => (Pair.hasDerivAt_kε hε0 _).comp t (hasDerivAt_insertNth (diffF hD) k y t))
+      (fun t _ => (hasDerivAt_kε hε0 _).comp t (hasDerivAt_insertNth (diffF hD) k y t))
       ((hF.comp (by fun_prop)).intervalIntegrable _ _)
   simp only [inner]
   have hcont : Continuous fun y : Fin n → ℝ => kε ε (Φ (Fin.insertNth k (a k + r) y)) -
@@ -307,8 +293,8 @@ lemma box_integral_line {Φ : Cfg n → ℝ} (hD : Φ ∈ DomF n) {ε : ℝ} (h�
         constructor <;> linarith
     obtain ⟨h1, h2⟩ := hsign y0 hy0
     simp only [y0, Fin.update_insertNth] at h1 h2
-    have k1 := Pair.kε_ge_half hε0 (s := Φ (Fin.insertNth k (a k + r) y)) (by linarith)
-    have k2' := Pair.kε_le_neg_half hε0 (s := Φ (Fin.insertNth k (a k - r) y)) (by linarith)
+    have k1 := kε_ge_half hε0 (s := Φ (Fin.insertNth k (a k + r) y)) (by linarith)
+    have k2' := kε_le_neg_half hε0 (s := Φ (Fin.insertNth k (a k - r) y)) (by linarith)
     linarith
   refine le_trans (le_of_eq ?_) hmono
   rw [setIntegral_const, smul_eq_mul, mul_one, Measure.real, Real.volume_Icc_pi]
@@ -516,7 +502,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
   have hη0 : 0 < η0 := by positivity
   set φ : Cfg n → ℝ := fun x => Sgn η0 x * φs x with hφd
   have hφm : φ ∈ DomF n := Sgn_mul_mem hφsc hφss hφsw η0
-  set C := RfL w hw v E φ φ with hCd
+  set C := RfL .fer w hw v E φ φ with hCd
   have hC : 0 ≤ C := RfL_nonneg hΦ hφm
   set L := s0 / 2 * (2 * r') ^ n with hLd
   have hL : 0 < L := by positivity
@@ -530,10 +516,10 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
     (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
   have hε3 : ε ≤ η0 := (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_right _ _))
   -- the competitor `Sgn ε · h_ε(Φ)` and the Euler–Lagrange test `k_ε(Φ) φs`
-  have hhc2 : ContDiff ℝ 2 (fun x => hε ε (Φ x)) := (Pair.contDiff_hε hε0).comp hD.1
+  have hhc2 : ContDiff ℝ 2 (fun x => hε ε (Φ x)) := (contDiff_hε hε0).comp hD.1
   set H : Cfg n → ℝ := fun x => Sgn ε x * hε ε (Φ x) with hHd
   have hHm : H ∈ DomF n := Sgn_mul_mem hhc2 (fun σ x => hε_comp_sym hD σ x)
-    (fun x l hl => by simp only [hD.2.2 x l hl, Pair.hε_zero hε0]) ε
+    (fun x l hl => by simp only [hD.2.2 x l hl, hε_zero hε0]) ε
   set g : Cfg n → ℝ := fun x => kε ε (Φ x) * φs x with hgd
   have hgm : g ∈ DomF n := kε_mul_mem_line hD hφsc hφss hφsw hε0
   have hhd : Differentiable ℝ (fun x => hε ε (Φ x)) := hhc2.differentiable (by norm_num)
@@ -543,18 +529,18 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
   have dH : ∀ l x, dk l H x =
       dk l (Sgn ε) x * hε ε (Φ x) + Sgn ε x * (kε ε (Φ x) * dk l Φ x) := fun l x => by
     simp only [dk, H]
-    rw [fderiv_mul_applyL (hSd ε) hhd, fderiv_comp_applyL (Pair.hasDerivAt_hε hε0) (diffF hD)]
+    rw [fderiv_mul_applyL (hSd ε) hhd, fderiv_comp_applyL (hasDerivAt_hε hε0) (diffF hD)]
   have dφ : ∀ l x, dk l φ x = dk l (Sgn η0) x * φs x + Sgn η0 x * dk l φs x := fun l x => by
     simp only [dk, φ]; rw [fderiv_mul_applyL (hSd η0) hφsd']
   have dg : ∀ l x, dk l g x = k2 ε (Φ x) * dk l Φ x * φs x + kε ε (Φ x) * dk l φs x :=
     fun l x => by
       simp only [dk, g]
       rw [fderiv_mul_applyL (f := fun y => kε ε (Φ y)) (g := φs)
-        (((Pair.contDiff_kε hε0).comp hD.1).differentiable (by norm_num)) hφsd',
-        fderiv_comp_applyL (Pair.hasDerivAt_kε hε0) (diffF hD)]
-  have hk2c : Continuous (k2 ε) := Pair.continuous_k2 hε0
-  have hkc : Continuous (kε ε) := (Pair.contDiff_kε hε0).continuous
-  have hhc : Continuous (hε ε) := (Pair.contDiff_hε hε0).continuous
+        (((contDiff_kε hε0).comp hD.1).differentiable (by norm_num)) hφsd',
+        fderiv_comp_applyL (hasDerivAt_kε hε0) (diffF hD)]
+  have hk2c : Continuous (k2 ε) := continuous_k2 hε0
+  have hkc : Continuous (kε ε) := (contDiff_kε hε0).continuous
+  have hhc : Continuous (hε ε) := (contDiff_hε hε0).continuous
   have hgradc : Continuous fun x => ∑ l, dk l Φ x ^ 2 :=
     continuous_finsetSum _ fun l _ => (cont_dk hD l).pow 2
   set G : Cfg n → ℝ := fun x => k2 ε (Φ x) * (∑ l, dk l Φ x ^ 2) * φs x with hGd
@@ -564,14 +550,14 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
     have hcpt : IsCompact Bx := isCompact_boxL a k r r'
     have h1 : ∫ x in Bx, G x ≤ ∫ x, G x ∂μN n :=
       setIntegral_mono_set (integrableN hGc)
-        (ae_of_all _ fun x => mul_nonneg (mul_nonneg (Pair.k2_pos hε0 _).le
+        (ae_of_all _ fun x => mul_nonneg (mul_nonneg (k2_pos hε0 _).le
           (Finset.sum_nonneg fun l _ => sq_nonneg _)) (hφs0 x)) hBxS.eventuallyLE
     have hFc : Continuous fun x => k2 ε (Φ x) * dk k Φ x := (hk2c.comp hΦc).mul (cont_dk hD k)
     have h2 : ∫ x in Bx, s0 / 2 * (k2 ε (Φ x) * dk k Φ x) ≤ ∫ x in Bx, G x := by
       refine setIntegral_mono_on ((continuous_const.mul hFc).continuousOn.integrableOn_compact
         hcpt) (hGc.continuousOn.integrableOn_compact hcpt) (measurableSet_boxL a k r r')
         fun x hx => ?_
-      exact ar_lowN hpos (Pair.k2_pos hε0 (Φ x)) (hBxd1 x hx)
+      exact ar_lowN hpos (k2_pos hε0 (Φ x)) (hBxd1 x hx)
         (Finset.single_le_sum (f := fun l => dk l Φ x ^ 2) (fun l _ => sq_nonneg _)
           (Finset.mem_univ k)) (hφs1 x hx)
     have h3 := box_integral_line hD hε0 hr hr' hεδ hsign
@@ -584,7 +570,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
   -- the cross term
   set X : Cfg n → ℝ := fun x => V x * (hε ε (Φ x) - Φ x * kε ε (Φ x)) * φs x with hXd
   have hXc : Continuous X := (hVc.mul ((hhc.comp hΦc).sub (hΦc.mul (hkc.comp hΦc)))).mul hφc
-  set B := RfL w hw v E H φ with hBd
+  set B := RfL .fer w hw v E H φ with hBd
   have hU : ∫ x, G x ∂μN n = ∫ x, X x ∂μN n - B := by
     have hEL := RfL_EL hΦ hgm
     rw [RfL_eq E hD hgm] at hEL
@@ -618,10 +604,10 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
           refine integral_mono (integrableN hXc.abs)
             (integrableN (continuous_const.mul (hVc.abs.mul hφc))) fun x => ?_
           simp only [X, abs_mul, abs_of_nonneg (hφs0 x)]
-          exact ar_X (Pair.abs_hε_sub hε0 (Φ x)) (hφs0 x)
+          exact ar_X (abs_hε_sub hε0 (Φ x)) (hφs0 x)
       _ = ε * K2 := integral_const_mul _ _
   -- the energy of the competitor
-  have hB2 : RfL w hw v E H H ≤ 2 * ε * K1' := by
+  have hB2 : RfL .fer w hw v E H H ≤ 2 * ε * K1' := by
     have hself := RfL_self hΦ
     rw [RfL_eq E hD hD] at hself
     rw [RfL_eq E hHm hHm]
@@ -651,7 +637,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
           refine integral_mono_ae ihΦ iR ?_
           refine (ae_restrict_iff' measurableSet_cube).2 (ae_of_all _ fun x hx => ?_)
           have hxK := hSqK x hx
-          have hsq := Pair.abs_hε_sq_sub hε0 (Φ x)
+          have hsq := abs_hε_sq_sub hε0 (Φ x)
           have hVle : (w x + LN n v x - E) * (hε ε (Φ x) ^ 2 - Φ x ^ 2) ≤
               |V x| * (2 * ε * |Φ x|) := by
             calc (w x + LN n v x - E) * (hε ε (Φ x) ^ 2 - Φ x ^ 2)
@@ -667,7 +653,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
             have hS2 : Sgn ε x ^ 2 = 1 := by rw [hσ1, sq, sgn_mul_self]
             exact energy_far (fun l => dk l H x) (fun l => dk l Φ x)
               (fun l => by rw [dH, dk_Sgn_far hε0 hfar, zero_mul, zero_add]) hS2
-              (Pair.kε_sq_le hε0 (Φ x)) hVle
+              (kε_sq_le hε0 (Φ x)) hVle
           · rw [indicator_of_mem (show x ∈ St from hfar)]
             simp only [Far, not_forall, not_lt] at hfar
             obtain ⟨i, j, hij, hle⟩ := hfar
@@ -676,7 +662,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
                 (mul_le_mul_of_nonneg_left hle hM0)
             have hhΦ := abs_hε_le hε0 (Φ x)
             have hS := abs_Sgn_le (n := n) ε x
-            have hk := Pair.abs_kε_le hε0 (Φ x)
+            have hk := abs_kε_le hε0 (Φ x)
             have bl : ∀ l, |dk l H x| ≤ A := by
               intro l
               rw [dH]
@@ -725,7 +711,7 @@ lemma no_pos_dk {Φ : Cfg n → ℝ} (hΦ : IsGS (settingF n w hw) v Φ) {a : Cf
           have := mul_le_mul_of_nonneg_right (mu_near_le (n := n) hε0.le) hKθ0
           linarith
       _ = 2 * ε * K1' := by simp only [K1']; ring
-  have hB3 : B ^ 2 ≤ RfL w hw v E H H * C := by
+  have hB3 : B ^ 2 ≤ RfL .fer w hw v E H H * C := by
     refine discr_le hC fun t => ?_
     have h := RfL_nonneg hΦ ((DomF n).add_mem hHm ((DomF n).smul_mem t hφm))
     rw [RfL_expand E hHm hφm t] at h

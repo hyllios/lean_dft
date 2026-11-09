@@ -4,15 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Line.Basic
-import DFT.Continuum.Pair.MaxPrinciple
+import DFT.Continuum.Line.Smooth
 
 /-!
 # Hopf's lemma in `n + 1` dimensions: no sign change through critical zeros
 
 A `C²` function on a connected open set of `ℝ^(n+1)` that is a supersolution of `-Δ + c`
 (`c ≥ 0`) wherever it is positive, and whose gradient vanishes at each of its zeros, is either
-positive on the whole set or nonpositive on the whole set. This is the `n + 1`-dimensional version
-of `DFT.Continuum.Pair.pos_or_nonpos` (which is stated on the square).
+positive on the whole set or nonpositive on the whole set. It is used for bosons on the whole
+cube and for fermions on the ordered chamber.
 
 * `Neu`: the squared Euclidean distance; `Ndist_sq_le_eu`, `Neu_le_dist_sq`: comparison with the
   sup distance of `Cfg n`.
@@ -46,7 +46,7 @@ lemma Ndkk_nonneg_of_isLocalMin {ψ : Cfg n → ℝ} (hψ : ContDiff ℝ 2 ψ) {
   have hg : Continuous fun s : ℝ => Function.update q k s :=
     continuous_const.update k continuous_id
   have hq' : IsLocalMin ψ (Function.update q k (q k)) := by rwa [Function.update_eq_self]
-  have := Pair.deriv2_nonneg_of_isLocalMin (f := fun s => ψ (Function.update q k s))
+  have := deriv2_nonneg_of_isLocalMin (f := fun s => ψ (Function.update q k s))
     (f' := fun s => dk k ψ (Function.update q k s))
     (f'' := fun s => dkk k ψ (Function.update q k s)) (x0 := q k)
     (fun s => hasDerivAt_slice hd q k s) (fun s => hasDerivAt_slice hd1 q k s)

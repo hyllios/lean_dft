@@ -9,20 +9,21 @@ import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.GroupTheory.Perm.Sign
 
 /-!
-# `N` fermions on a line
+# `N` particles on a line
 
-`N = n + 1` fermions on `[0, 1]` with hard walls, an interaction `w(x₀, …, xₙ)`, and a one-body
-potential `v` acting as `Σₖ v(xₖ)`. The configuration space is the open cube `(0, 1)^N`; states
-are `C²` functions that are antisymmetric under relabelling of the particles and vanish on the
-walls. The kinetic energy is `∫ |∇ψ|²`.
+`N = n + 1` bosons or fermions on `[0, 1]` with hard walls, an interaction `w(x₀, …, xₙ)`, and a
+one-body potential `v` acting as `Σₖ v(xₖ)`. The configuration space is the open cube `(0, 1)^N`;
+states are `C²` functions that are symmetric (bosons) or antisymmetric (fermions) under relabelling
+of the particles and vanish on the walls. The kinetic energy is `∫ |∇ψ|²`.
 
 * `pm σ x = x ∘ σ`: relabelling; it preserves Lebesgue measure and the cube (`integral_pm`).
-* `DomF`: the fermionic form domain; `settingF`: the Hohenberg–Kohn setting.
-* `sep_line`: separation, from the fundamental lemma with antisymmetrised test functions.
+* `Stat`, `ch`: the statistics and the exchange character (`1` for bosons, the sign for fermions).
+* `Dom τ`: the form domain (`DomB`, `DomF`); `setting τ`: the Hohenberg–Kohn setting.
+* `sep_line`: separation, from the fundamental lemma with test functions of the same symmetry.
 * `rigidL_line`: a continuous `v` with `Σₖ v(xₖ)` a.e. constant on the cube is constant.
 * `dens_eq_of_marginal_line`: equal one-body densities `ρ(t) = ∫ ψ(t, y)² dy` give equal density
   functionals (Fubini, and symmetry of `ψ²`).
-* `hk_line_of_ucp`: **Hohenberg–Kohn for `N` fermions on a line**, conditional on unique
+* `hk_line_of_ucp`: **Hohenberg–Kohn for `N` particles on a line**, conditional on unique
   continuation of the ground state.
 -/
 
@@ -127,11 +128,38 @@ lemma integral_pm (σ : Equiv.Perm (Fin (n + 1))) (F : Cfg n → ℝ) :
   rw [hpre] at h
   exact h
 
+/-! ### Statistics -/
+
+/-- Particle statistics. -/
+inductive Stat
+  | bos
+  | fer
+
+/-- The exchange character: `1` for bosons, the sign of the permutation for fermions. -/
+noncomputable def ch : Stat → Equiv.Perm (Fin (n + 1)) → ℝ
+  | .bos, _ => 1
+  | .fer, σ => sgn σ
+
+@[simp] lemma ch_bos (σ : Equiv.Perm (Fin (n + 1))) : ch .bos σ = 1 := rfl
+
+@[simp] lemma ch_fer (σ : Equiv.Perm (Fin (n + 1))) : ch .fer σ = sgn σ := rfl
+
+lemma ch_mul (τ : Stat) (σ ρ : Equiv.Perm (Fin (n + 1))) : ch τ (σ * ρ) = ch τ σ * ch τ ρ := by
+  cases τ <;> simp [sgn_mul]
+
+lemma ch_mul_self (τ : Stat) (σ : Equiv.Perm (Fin (n + 1))) : ch τ σ * ch τ σ = 1 := by
+  cases τ <;> simp [sgn_mul_self]
+
+lemma ch_inv (τ : Stat) (σ : Equiv.Perm (Fin (n + 1))) : ch τ σ⁻¹ = ch τ σ := by
+  cases τ <;> simp [sgn_inv]
+
+variable {τ : Stat}
+
 /-! ### The form domain and the setting -/
 
-/-- The fermionic form domain: `C²`, antisymmetric under relabelling, vanishing on the walls. -/
-def DomF (n : ℕ) : Submodule ℝ (Cfg n → ℝ) where
-  carrier := {ψ | ContDiff ℝ 2 ψ ∧ (∀ σ x, ψ (pm σ x) = sgn σ * ψ x) ∧
+/-- The form domain: `C²`, of exchange symmetry `τ`, vanishing on the walls. -/
+def Dom (τ : Stat) (n : ℕ) : Submodule ℝ (Cfg n → ℝ) where
+  carrier := {ψ | ContDiff ℝ 2 ψ ∧ (∀ σ x, ψ (pm σ x) = ch τ σ * ψ x) ∧
     ∀ x k, (x k = 0 ∨ x k = 1) → ψ x = 0}
   add_mem' ha hb := ⟨ha.1.add hb.1, fun σ x => by simp [ha.2.1 σ x, hb.2.1 σ x]; ring,
     fun x k hk => by simp [ha.2.2 x k hk, hb.2.2 x k hk]⟩
@@ -147,9 +175,9 @@ section domain
 
 variable {ψ : Cfg n → ℝ}
 
-lemma diffF (h : ψ ∈ DomF n) : Differentiable ℝ ψ := h.1.differentiable (by norm_num)
+lemma diffF (h : ψ ∈ Dom τ n) : Differentiable ℝ ψ := h.1.differentiable (by norm_num)
 
-lemma cont_dk (h : ψ ∈ DomF n) (k : Fin (n + 1)) : Continuous (dk k ψ) :=
+lemma cont_dk (h : ψ ∈ Dom τ n) (k : Fin (n + 1)) : Continuous (dk k ψ) :=
   (h.1.continuous_fderiv (by norm_num)).clm_apply continuous_const
 
 lemma contDiff_dk {ψ : Cfg n → ℝ} (h : ContDiff ℝ 2 ψ) (k : Fin (n + 1)) :
@@ -221,13 +249,14 @@ lemma dk_smul {a : Cfg n → ℝ} (ha : Differentiable ℝ a) (r : ℝ) (k : Fin
     dk k (r • a) = r • dk k a := by
   funext x; simp [dk, fderiv_const_smul (ha x) r]
 
-lemma cont_kin {ψ φ : Cfg n → ℝ} (hψ : ψ ∈ DomF n) (hφ : φ ∈ DomF n) :
+lemma cont_kin {ψ φ : Cfg n → ℝ} (hψ : ψ ∈ Dom τ n) (hφ : φ ∈ Dom τ n) :
     Continuous fun x => ∑ k, dk k ψ x * dk k φ x :=
   continuous_finsetSum _ fun k _ => (cont_dk hψ k).mul (cont_dk hφ k)
 
-/-- `n + 1` fermions on a line as a Hohenberg–Kohn setting. -/
-noncomputable def settingF (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) : Setting (μN n) Pot where
-  D := DomF n
+/-- `n + 1` particles of statistics `τ` on a line as a Hohenberg–Kohn setting. -/
+noncomputable def setting (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) :
+    Setting (μN n) Pot where
+  D := Dom τ n
   h0 := h0N n w
   h0_add a ha b hb c hc := by
     have e : ∀ k, dk k (a + b) = dk k a + dk k b := dk_add (diffF ha) (diffF hb)
@@ -264,28 +293,40 @@ noncomputable def settingF (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) : S
   int_L v ψ φ hψ hφ := integrableN ((continuous_LN v).mul (hψ.1.continuous.mul hφ.1.continuous))
   int_sq ψ φ hψ hφ := integrableN (hψ.1.continuous.mul hφ.1.continuous)
 
-/-! ### Antisymmetrisation -/
+/-- The bosonic and fermionic domains and settings. -/
+abbrev DomB (n : ℕ) := Dom .bos n
+abbrev DomF (n : ℕ) := Dom .fer n
+noncomputable abbrev settingB (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) := setting .bos n w hw
+noncomputable abbrev settingF (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) := setting .fer n w hw
 
-/-- The antisymmetrisation `Σ_σ sgn σ · f ∘ σ` (without normalisation). -/
-noncomputable def alt (f : Cfg n → ℝ) (x : Cfg n) : ℝ := ∑ σ, sgn σ * f (pm σ x)
+/-- Fermionic states are antisymmetric. -/
+lemma anti {ψ : Cfg n → ℝ} (h : ψ ∈ DomF n) (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
+    ψ (pm σ x) = sgn σ * ψ x := h.2.1 σ x
+
+/-! ### Symmetrisation -/
+
+/-- The `τ`-symmetrisation `Σ_σ χ(σ) · f ∘ σ` (without normalisation); for fermions, the
+antisymmetrisation. -/
+noncomputable def alt (τ : Stat) (f : Cfg n → ℝ) (x : Cfg n) : ℝ := ∑ σ, ch τ σ * f (pm σ x)
 
 /-- The symmetrisation `Σ_σ f ∘ σ`. -/
 noncomputable def sym (f : Cfg n → ℝ) (x : Cfg n) : ℝ := ∑ σ, f (pm σ x)
 
-lemma alt_pm (f : Cfg n → ℝ) (τ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
-    alt f (pm τ x) = sgn τ * alt f x := by
+lemma alt_pm (τ : Stat) (f : Cfg n → ℝ) (ρ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
+    alt τ f (pm ρ x) = ch τ ρ * alt τ f x := by
   simp only [alt, Finset.mul_sum]
-  refine Fintype.sum_equiv (Equiv.mulLeft τ) _ _ fun σ => ?_
-  simp only [Equiv.coe_mulLeft, sgn_mul, ← pm_mul]
-  linear_combination (-(sgn σ * f (pm (τ * σ) x))) * sgn_mul_self τ
+  refine Fintype.sum_equiv (Equiv.mulLeft ρ) _ _ fun σ => ?_
+  simp only [Equiv.coe_mulLeft, ch_mul τ, ← pm_mul]
+  linear_combination (-(ch τ σ * f (pm (ρ * σ) x))) * ch_mul_self τ ρ
 
-lemma sym_pm (f : Cfg n → ℝ) (τ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
-    sym f (pm τ x) = sym f x := by
+lemma sym_pm (f : Cfg n → ℝ) (ρ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
+    sym f (pm ρ x) = sym f x := by
   simp only [sym]
-  refine Fintype.sum_equiv (Equiv.mulLeft τ) _ _ fun σ => ?_
+  refine Fintype.sum_equiv (Equiv.mulLeft ρ) _ _ fun σ => ?_
   simp only [Equiv.coe_mulLeft, ← pm_mul]
 
-lemma contDiff_alt {f : Cfg n → ℝ} {m : WithTop ℕ∞} (hf : ContDiff ℝ m f) : ContDiff ℝ m (alt f) :=
+lemma contDiff_alt (τ : Stat) {f : Cfg n → ℝ} {m : WithTop ℕ∞} (hf : ContDiff ℝ m f) :
+    ContDiff ℝ m (alt τ f) :=
   ContDiff.sum fun σ _ => contDiff_const.mul (hf.comp (contDiff_pm σ))
 
 lemma contDiff_sym {f : Cfg n → ℝ} {m : WithTop ℕ∞} (hf : ContDiff ℝ m f) : ContDiff ℝ m (sym f) :=
@@ -301,27 +342,27 @@ lemma pm_not_mem_cube {x : Cfg n} {k : Fin (n + 1)} (hk : x k = 0 ∨ x k = 1)
   · exact lt_irrefl _ this.1
   · exact lt_irrefl _ this.2
 
-/-- The antisymmetrisation of a `C²` function vanishing off the cube lies in the domain. -/
+/-- The `τ`-symmetrisation of a `C²` function vanishing off the cube lies in the domain. -/
 lemma alt_mem {f : Cfg n → ℝ} (hf : ContDiff ℝ 2 f) (hout : ∀ x, x ∉ Cube n → f x = 0) :
-    alt f ∈ DomF n :=
-  ⟨contDiff_alt hf, fun σ x => alt_pm f σ x, fun x k hk => by
+    alt τ f ∈ Dom τ n :=
+  ⟨contDiff_alt τ hf, fun σ x => alt_pm τ f σ x, fun x k hk => by
     simp only [alt]
     exact Finset.sum_eq_zero fun σ _ => by rw [hout _ (pm_not_mem_cube hk σ), mul_zero]⟩
 
 /-- `ψ · sym f` lies in the domain, for `ψ` in the domain and `f` smooth. -/
-lemma mul_sym_mem {ψ f : Cfg n → ℝ} (hψ : ψ ∈ DomF n) (hf : ContDiff ℝ 2 f) :
-    (fun x => ψ x * sym f x) ∈ DomF n :=
+lemma mul_sym_mem {ψ f : Cfg n → ℝ} (hψ : ψ ∈ Dom τ n) (hf : ContDiff ℝ 2 f) :
+    (fun x => ψ x * sym f x) ∈ Dom τ n :=
   ⟨hψ.1.mul (contDiff_sym hf), fun σ x => by
-    change ψ (pm σ x) * sym f (pm σ x) = sgn σ * (ψ x * sym f x)
+    change ψ (pm σ x) * sym f (pm σ x) = ch τ σ * (ψ x * sym f x)
     rw [hψ.2.1 σ x, sym_pm]; ring,
     fun x k hk => by change ψ x * sym f x = 0; rw [hψ.2.2 x k hk, zero_mul]⟩
 
 /-! ### Separation -/
 
-/-- **Fundamental lemma with antisymmetric test functions.** -/
+/-- **Fundamental lemma with test functions of exchange symmetry `τ`.** -/
 lemma eq_zero_of_integral_alt {g : Cfg n → ℝ} (hg : Continuous g)
-    (hgs : ∀ σ x, g (pm σ x) = sgn σ * g x)
-    (h : ∀ φ ∈ DomF n, ∫ x, g x * φ x ∂μN n = 0) : ∀ x ∈ Cube n, g x = 0 := by
+    (hgs : ∀ σ x, g (pm σ x) = ch τ σ * g x)
+    (h : ∀ φ ∈ Dom τ n, ∫ x, g x * φ x ∂μN n = 0) : ∀ x ∈ Cube n, g x = 0 := by
   have hae := IsOpen.ae_eq_zero_of_integral_contDiff_smul_eq_zero (U := Cube n) (μ := volume)
     (f := g) isOpen_cube (hg.locallyIntegrable.locallyIntegrableOn _)
     (fun φ hφ _ (hsub : tsupport φ ⊆ Cube n) => ?_)
@@ -330,21 +371,21 @@ lemma eq_zero_of_integral_alt {g : Cfg n → ℝ} (hg : Continuous g)
   have hout : ∀ x, x ∉ Cube n → φ x = 0 := fun x hx =>
     image_eq_zero_of_notMem_tsupport fun h' => hx (hsub h')
   have hφ2 : ContDiff ℝ 2 φ := hφ.of_le (WithTop.coe_le_coe.mpr le_top)
-  have h1 := h (alt φ) (alt_mem hφ2 hout)
+  have h1 := h (alt τ φ) (alt_mem hφ2 hout)
   -- each relabelled term contributes `∫ g φ`
   have hterm : ∀ σ : Equiv.Perm (Fin (n + 1)),
-      ∫ x, g x * (sgn σ * φ (pm σ x)) ∂μN n = ∫ x, g x * φ x ∂μN n := by
+      ∫ x, g x * (ch τ σ * φ (pm σ x)) ∂μN n = ∫ x, g x * φ x ∂μN n := by
     intro σ
-    have := integral_pm σ (fun y => g (pm σ⁻¹ y) * (sgn σ * φ y))
+    have := integral_pm σ (fun y => g (pm σ⁻¹ y) * (ch τ σ * φ y))
     simp only [pm_inv_pm] at this
     rw [this]
     congr 1; funext y
-    rw [hgs, sgn_inv]
-    linear_combination (g y * φ y) * sgn_mul_self σ
-  have hsum : ∫ x, g x * alt φ x ∂μN n =
-      ∑ σ : Equiv.Perm (Fin (n + 1)), ∫ x, g x * (sgn σ * φ (pm σ x)) ∂μN n := by
+    rw [hgs, ch_inv τ]
+    linear_combination (g y * φ y) * ch_mul_self τ σ
+  have hsum : ∫ x, g x * alt τ φ x ∂μN n =
+      ∑ σ : Equiv.Perm (Fin (n + 1)), ∫ x, g x * (ch τ σ * φ (pm σ x)) ∂μN n := by
     simp only [alt, Finset.mul_sum]
-    exact integral_finsetSum (f := fun σ x => g x * (sgn σ * φ (pm σ x))) _ fun σ _ =>
+    exact integral_finsetSum (f := fun σ x => g x * (ch τ σ * φ (pm σ x))) _ fun σ _ =>
       integrableN (hg.mul (continuous_const.mul (hφ.continuous.comp (continuous_pm σ))))
   rw [hsum] at h1
   simp only [hterm, Finset.sum_const, Finset.card_univ, nsmul_eq_mul] at h1
@@ -359,17 +400,17 @@ lemma eq_zero_of_integral_alt {g : Cfg n → ℝ} (hg : Continuous g)
   · intro x hx; rw [hout x hx, zero_smul]
 
 /-- **Separation on the cube.** -/
-theorem sep_line (w : Cfg n → ℝ) (hw : Continuous w) : Sep (settingF n w hw) := by
+theorem sep_line (w : Cfg n → ℝ) (hw : Continuous w) : Sep (setting τ n w hw) := by
   intro v c ψ hψ h
   set g : Cfg n → ℝ := fun x => (LN n v x - c) * ψ x
   have hg : Continuous g := ((continuous_LN v).sub continuous_const).mul hψ.1.continuous
-  have hgs : ∀ σ x, g (pm σ x) = sgn σ * g x := by
+  have hgs : ∀ σ x, g (pm σ x) = ch τ σ * g x := by
     intro σ x; simp only [g, LN_pm, hψ.2.1 σ x]; ring
   have h0 := eq_zero_of_integral_alt hg hgs fun φ hφ => h φ hφ
   exact (ae_restrict_iff' measurableSet_cube).2 (ae_of_all _ fun x hx => h0 x hx)
 
 /-- **Rigidity on the cube.** -/
-theorem rigidL_line (w : Cfg n → ℝ) (hw : Continuous w) : RigidL (settingF n w hw) one := by
+theorem rigidL_line (w : Cfg n → ℝ) (hw : Continuous w) : RigidL (setting τ n w hw) one := by
   intro v c h
   have hO : EqOn (LN n v) (fun _ => c) (Cube n) :=
     Measure.eqOn_open_of_ae_eq h isOpen_cube (continuous_LN v).continuousOn continuousOn_const
@@ -429,20 +470,20 @@ lemma integral_cube_cons {F : Cfg n → ℝ} (hF : Continuous F) :
     (isCompact_Icc.prod (isCompact_univ_pi fun _ => isCompact_Icc))).mono_set
     (prod_mono Ioo_subset_Icc_self (pi_mono fun _ _ => Ioo_subset_Icc_self))
 
-/-- The square of an antisymmetric function is symmetric. -/
-lemma sq_pm {ψ : Cfg n → ℝ} (hψ : ψ ∈ DomF n) (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
+/-- The square of a state is symmetric. -/
+lemma sq_pm {ψ : Cfg n → ℝ} (hψ : ψ ∈ Dom τ n) (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) :
     ψ (pm σ x) * ψ (pm σ x) = ψ x * ψ x := by
   rw [hψ.2.1 σ x]
-  linear_combination (ψ x * ψ x) * sgn_mul_self σ
+  linear_combination (ψ x * ψ x) * ch_mul_self τ σ
 
 /-- **Densities.** If the one-body densities `ρ(t) = ∫ ψ(t, y)² dy` agree on `(0, 1)`, so do the
 norms and the density functionals. -/
 theorem dens_eq_of_marginal_line {w : Cfg n → ℝ} {hw : Continuous w} {ψ ψ' : Cfg n → ℝ}
-    (hψ : ψ ∈ DomF n) (hψ' : ψ' ∈ DomF n)
+    (hψ : ψ ∈ Dom τ n) (hψ' : ψ' ∈ Dom τ n)
     (hρ : ∀ t ∈ Ioo (0 : ℝ) 1, ∫ y in Cube' n, ψ (Fin.cons t y) ^ 2 =
       ∫ y in Cube' n, ψ' (Fin.cons t y) ^ 2) :
     ip (μ := μN n) ψ ψ = ip (μ := μN n) ψ' ψ' ∧
-      dens (settingF n w hw) ψ = dens (settingF n w hw) ψ' := by
+      dens (setting τ n w hw) ψ = dens (setting τ n w hw) ψ' := by
   -- the integral of `f(x₀) ψ(x)²` only depends on the density
   have key : ∀ f : ℝ → ℝ, Continuous f →
       ∫ x, f (x 0) * (ψ x * ψ x) ∂μN n = ∫ x, f (x 0) * (ψ' x * ψ' x) ∂μN n := by
@@ -458,7 +499,7 @@ theorem dens_eq_of_marginal_line {w : Cfg n → ℝ} {hw : Continuous w} {ψ ψ'
     simp only [sq] at this
     rw [this]
   -- relabelling moves `f(xₖ)` to `f(x₀)`
-  have swapsq : ∀ φ : Cfg n → ℝ, φ ∈ DomF n → ∀ f : ℝ → ℝ, ∀ k : Fin (n + 1),
+  have swapsq : ∀ φ : Cfg n → ℝ, φ ∈ Dom τ n → ∀ f : ℝ → ℝ, ∀ k : Fin (n + 1),
       ∫ x, f (x k) * (φ x * φ x) ∂μN n = ∫ x, f (x 0) * (φ x * φ x) ∂μN n := by
     intro φ hφ f k
     rw [← integral_pm (Equiv.swap 0 k)]
@@ -473,7 +514,7 @@ theorem dens_eq_of_marginal_line {w : Cfg n → ℝ} {hw : Continuous w} {ψ ψ'
     simp only [dens, pf]
     change ∫ x, (∑ k, Box.ext v (x k)) * (ψ x * ψ x) ∂μN n =
       ∫ x, (∑ k, Box.ext v (x k)) * (ψ' x * ψ' x) ∂μN n
-    have split : ∀ φ : Cfg n → ℝ, φ ∈ DomF n →
+    have split : ∀ φ : Cfg n → ℝ, φ ∈ Dom τ n →
         ∫ x, (∑ k, Box.ext v (x k)) * (φ x * φ x) ∂μN n =
           (n + 1) * ∫ x, Box.ext v (x 0) * (φ x * φ x) ∂μN n := by
       intro φ hφ
@@ -488,11 +529,11 @@ theorem dens_eq_of_marginal_line {w : Cfg n → ℝ} {hw : Continuous w} {ψ ψ'
       push_cast; ring
     rw [split ψ hψ, split ψ' hψ', key _ hv]
 
-/-- **Hohenberg–Kohn for `n + 1` fermions on a line, conditional on unique continuation.** If
+/-- **Hohenberg–Kohn for `n + 1` particles on a line, conditional on unique continuation.** If
 ground states of continuous potentials `v` and `v'` have the same one-body density, and the ground
 state of `v` vanishes only on a null set of the cube, then `v - v'` is constant. -/
 theorem hk_line_of_ucp {w : Cfg n → ℝ} {hw : Continuous w} {v v' : Pot} {ψ ψ' : Cfg n → ℝ}
-    (hψ : IsGS (settingF n w hw) v ψ) (hψ' : IsGS (settingF n w hw) v' ψ')
+    (hψ : IsGS (setting τ n w hw) v ψ) (hψ' : IsGS (setting τ n w hw) v' ψ')
     (hρ : ∀ t ∈ Ioo (0 : ℝ) 1, ∫ y in Cube' n, ψ (Fin.cons t y) ^ 2 =
       ∫ y in Cube' n, ψ' (Fin.cons t y) ^ 2)
     (hucp : ∀ᵐ x ∂μN n, ψ x ≠ 0) : ∃ k : ℝ, v - v' = k • one := by

@@ -88,7 +88,7 @@ theorem gs_ne_zero_line (hws : ∀ σ x, w (pm σ x) = w x) {Φ : Cfg n → ℝ}
       by_cases hinj : Function.Injective x
       · obtain ⟨σ, hσ⟩ := exists_strictMono hinj
         have := hz (pm σ x) (mem_Ch.2 ⟨pm_mem_cube.2 hx, hσ⟩)
-        rw [hD.2.1 σ x] at this
+        rw [anti hD σ x] at this
         exact (mul_eq_zero.1 this).resolve_left (hsgn σ)
       · simp only [Function.Injective, not_forall] at hinj
         obtain ⟨i, j, hij, hne⟩ := hinj
@@ -101,7 +101,7 @@ theorem gs_ne_zero_line (hws : ∀ σ x, w (pm σ x) = w x) {Φ : Cfg n → ℝ}
     exact absurd hΦ.2.1 (by rw [hip]; exact lt_irrefl 0)
   intro x hx hinj h0
   obtain ⟨σ, hσ⟩ := exists_strictMono hinj
-  exact hch (pm σ x) (mem_Ch.2 ⟨pm_mem_cube.2 hx, hσ⟩) (by rw [hD.2.1 σ x, h0, mul_zero])
+  exact hch (pm σ x) (mem_Ch.2 ⟨pm_mem_cube.2 hx, hσ⟩) (by rw [anti hD σ x, h0, mul_zero])
 
 /-- The collision set is null. -/
 lemma mu_collision : μN n (NearS 0) = 0 := by
