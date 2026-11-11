@@ -271,6 +271,83 @@ transform).
   $|f|$ as $\sqrt{f^2+\varepsilon^2}$ and dominated convergence.
 \end{proof}
 
+\section{The one-particle spectrum in the box}
+
+Ground states of free fermions are built from the lowest one-particle eigenfunctions, so the whole spectrum of
+$h=-d^2/dx^2+W$ on $[0,1]$ with Dirichlet walls is needed. The shooting argument of the previous sections only gives
+the lowest eigenvalue. The spectrum comes instead from the Green operator, which is compact.
+
+\begin{lemma}[The Green function]
+  \label{lem:spec_green}
+  \lean{DFT.Continuum.Spectral.solL, DFT.Continuum.Spectral.solL_zero, DFT.Continuum.Spectral.solL_deriv, DFT.Continuum.Spectral.Wr, DFT.Continuum.Spectral.continuous_Wr, DFT.Continuum.Spectral.solR, DFT.Continuum.Spectral.solR_zero, DFT.Continuum.Spectral.solR_deriv, DFT.Continuum.Spectral.uS, DFT.Continuum.Spectral.duS, DFT.Continuum.Spectral.wS, DFT.Continuum.Spectral.dwS, DFT.Continuum.Spectral.mem_reflect, DFT.Continuum.Spectral.hasDerivAt_uS, DFT.Continuum.Spectral.hasDerivAt_duS, DFT.Continuum.Spectral.hasDerivAt_wS, DFT.Continuum.Spectral.hasDerivAt_dwS, DFT.Continuum.Spectral.uS_zero, DFT.Continuum.Spectral.duS_zero, DFT.Continuum.Spectral.wS_one, DFT.Continuum.Spectral.dwS_one, DFT.Continuum.Spectral.uS_pos, DFT.Continuum.Spectral.wS_pos, DFT.Continuum.Spectral.wronskian_const, DFT.Continuum.Spectral.omega_pos, DFT.Continuum.Spectral.Gf, DFT.Continuum.Spectral.dGf, DFT.Continuum.Spectral.continuousOn_uS, DFT.Continuum.Spectral.continuousOn_wS, DFT.Continuum.Spectral.Icc_sub_Ioo, DFT.Continuum.Spectral.hasDerivAt_intL, DFT.Continuum.Spectral.hasDerivAt_intR, DFT.Continuum.Spectral.hasDerivAt_Gf, DFT.Continuum.Spectral.hasDerivAt_dGf, DFT.Continuum.Spectral.Gf_zero, DFT.Continuum.Spectral.Gf_one, DFT.Continuum.Spectral.eq_zero_of_dirichlet, DFT.Continuum.Spectral.eq_Gf, DFT.Continuum.Spectral.Kg, DFT.Continuum.Spectral.Kg_symm, DFT.Continuum.Spectral.Icc_sub_Ioo', DFT.Continuum.Spectral.continuousOn_Kg, DFT.Continuum.Spectral.exists_Kg_bound, DFT.Continuum.Spectral.Kg_unif, DFT.Continuum.Spectral.Gk, DFT.Continuum.Spectral.ae_mem_Icc, DFT.Continuum.Spectral.aestronglyMeasurable_Kg, DFT.Continuum.Spectral.integrable_Kg_mul, DFT.Continuum.Spectral.exists_Gk_bound, DFT.Continuum.Spectral.Gk_equicont, DFT.Continuum.Spectral.continuousOn_Gk, DFT.Continuum.Spectral.Gk_eq_Gf}
+  \leanok
+  \uses{thm:box_exists}
+  Let $W\ge0$ be continuous on $[0,1]$, let $u$ solve $u''=Wu$ with $u(0)=0$, $u'(0)=1$, and let $w$ solve it with
+  $w(1)=0$, $w'(1)=-1$. Both are positive inside, their Wronskian is the constant $\omega=w(0)>0$, and for continuous
+  $f$ the function $Gf(x)=\int_0^1K(x,y)f(y)\,dy$ with $K(x,y)=u(\min(x,y))\,w(\max(x,y))/\omega$ is the unique
+  solution of $-y''+Wy=f$, $y(0)=y(1)=0$. The kernel is continuous and symmetric on the closed square.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Positivity is the Sturm comparison behind Theorem~\ref{thm:box_exists}. Differentiating under the integral gives
+  $(Gf)''=WGf-f$, and the difference of two solutions solves $y''=Wy$ with $y(0)=y(1)=0$, so it is a multiple of
+  $u$ vanishing at $1$, hence zero.
+\end{proof}
+
+\begin{lemma}[The Green operator on $L^2(0,1)$]
+  \label{lem:spec_operator}
+  \lean{DFT.Continuum.Spectral.HL, DFT.Continuum.Spectral.mu1_univ, DFT.Continuum.Spectral.measureUnivNNReal_mu1, DFT.Continuum.Spectral.integrable_HL, DFT.Continuum.Spectral.Ksl, DFT.Continuum.Spectral.Ksl_ae, DFT.Continuum.Spectral.norm_Ksl_sub_le, DFT.Continuum.Spectral.continuous_Ksl, DFT.Continuum.Spectral.norm_Ksl_le, DFT.Continuum.Spectral.Gk_eq_inner, DFT.Continuum.Spectral.Bop, DFT.Continuum.Spectral.Bop_apply, DFT.Continuum.Spectral.memLp_comp_projIcc, DFT.Continuum.Spectral.Jop, DFT.Continuum.Spectral.Gop, DFT.Continuum.Spectral.Gop_ae, DFT.Continuum.Spectral.isCompactOperator_Bop, DFT.Continuum.Spectral.isCompactOperator_Gop, DFT.Continuum.Spectral.prod_mu1, DFT.Continuum.Spectral.integrable_kernel_prod, DFT.Continuum.Spectral.inner_Gop, DFT.Continuum.Spectral.Gop_symm, DFT.Continuum.Spectral.isSymmetric_Gop, DFT.Continuum.Spectral.test_out, DFT.Continuum.Spectral.test_c2, DFT.Continuum.Spectral.src, DFT.Continuum.Spectral.continuous_src, DFT.Continuum.Spectral.Gk_test, DFT.Continuum.Spectral.memLp_of_continuous, DFT.Continuum.Spectral.Gop_injective}
+  \leanok
+  \uses{lem:spec_green}
+  The Green operator is a compact, symmetric and injective operator on $L^2(0,1)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  It factors through $C([0,1])$, and the image of the unit ball there is bounded and equicontinuous because the
+  kernel is uniformly continuous, so Arzel\`a--Ascoli gives compactness. Symmetry is Fubini and $K(x,y)=K(y,x)$. If
+  $Gf=0$ then $\langle f,\varphi\rangle=\langle f,G(-\varphi''+W\varphi)\rangle=\langle Gf,-\varphi''+W\varphi\rangle=0$
+  for every test function $\varphi$, and $f=0$ by the fundamental lemma.
+\end{proof}
+
+\begin{lemma}[Eigenvectors are classical and the eigenbasis]
+  \label{lem:spec_basis}
+  \lean{DFT.Continuum.Spectral.continuous_Gk_proj, DFT.Continuum.Spectral.Gk_congr, DFT.Continuum.Spectral.eigen_regular, DFT.Continuum.Spectral.integral_unit_mu1, DFT.Continuum.Spectral.eigenvalue_pos, DFT.Continuum.Spectral.EVal, DFT.Continuum.Spectral.eval_ne_zero, DFT.Continuum.Spectral.instFDEigen, DFT.Continuum.Spectral.EIdx, DFT.Continuum.Spectral.eigOB, DFT.Continuum.Spectral.eigVec, DFT.Continuum.Spectral.eigVec_apply, DFT.Continuum.Spectral.orthonormal_eigVec, DFT.Continuum.Spectral.span_eigVec_orthogonal, DFT.Continuum.Spectral.eigenBasis, DFT.Continuum.Spectral.eigenBasis_coe, DFT.Continuum.Spectral.finite_ge}
+  \leanok
+  \uses{lem:spec_operator}
+  If $Gf=\mu f$ with $\mu\neq0$, then $f$ agrees almost everywhere with a $C^2$ function $e$ vanishing at the walls
+  with $e''=(W-\mu^{-1})e$, and $\mu>0$. For a compact, symmetric and injective operator, orthonormal bases of the
+  eigenspaces together form a Hilbert basis, and only finitely many of its vectors have eigenvalue at least $\delta$,
+  for every $\delta>0$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The continuous representative $\mu^{-1}Gf$ is a fixed point of $\mu^{-1}G$, so it solves the ODE by
+  Lemma~\ref{lem:spec_green} and agrees with a shooting solution, which extends to a $C^2$ function on $\mathbb R$.
+  Integrating $e''e$ by parts gives $\mu^{-1}\int e^2=\int e'^2+\int We^2\ge0$. The basis is the spectral theorem for
+  compact self-adjoint operators. Infinitely many orthonormal eigenvectors with eigenvalues at least $\delta$ would
+  have images at mutual distance at least $\sqrt2\,\delta$, which compactness forbids.
+\end{proof}
+
+\begin{lemma}[The one-particle bound]
+  \label{lem:spec_bound}
+  \lean{DFT.Continuum.Spectral.toHL, DFT.Continuum.Spectral.toHL_ae, DFT.Continuum.Spectral.inner_toHL_right, DFT.Continuum.Spectral.inner_toHL_toHL, DFT.Continuum.Spectral.dom_c2, DFT.Continuum.Spectral.continuous_src_dom, DFT.Continuum.Spectral.Gk_src, DFT.Continuum.Spectral.Gop_toHL_src, DFT.Continuum.Spectral.inner_src, DFT.Continuum.Spectral.Idx, DFT.Continuum.Spectral.eB, DFT.Continuum.Spectral.mu, DFT.Continuum.Spectral.Gop_eB, DFT.Continuum.Spectral.mu_ne_zero, DFT.Continuum.Spectral.eB_ne_zero, DFT.Continuum.Spectral.mu_pos, DFT.Continuum.Spectral.exists_rep, DFT.Continuum.Spectral.rep, DFT.Continuum.Spectral.rep_mem, DFT.Continuum.Spectral.rep_ae, DFT.Continuum.Spectral.rep_ode, DFT.Continuum.Spectral.inner_eB_toHL, DFT.Continuum.Spectral.rep_orthonormal, DFT.Continuum.Spectral.coef, DFT.Continuum.Spectral.hasSum_sq, DFT.Continuum.Spectral.hasSum_form, DFT.Continuum.Spectral.cell, DFT.Continuum.Spectral.cell_sub, DFT.Continuum.Spectral.measurableSet_cell, DFT.Continuum.Spectral.cell_disjoint, DFT.Continuum.Spectral.mu1_cell, DFT.Continuum.Spectral.cellV, DFT.Continuum.Spectral.linearIndependent_cellV, DFT.Continuum.Spectral.exists_injective_idx, DFT.Continuum.Spectral.exists_top, DFT.Continuum.Spectral.exists_orbitals}
+  \leanok
+  \uses{lem:spec_basis}
+  For every continuous potential $v$ on $[0,1]$ and $N=n+1$ there are $C^2$ functions $\varphi_0,\dots,\varphi_n$,
+  orthonormal in $L^2(0,1)$ and vanishing at the walls, with $-\varphi_j''+v\varphi_j=\lambda_j\varphi_j$ on $[0,1]$,
+  and a number $\Lambda\ge\lambda_j$, such that every state $\psi$ of the box satisfies
+  \[ \Lambda\|\psi\|^2-\sum_j(\Lambda-\lambda_j)\langle\varphi_j,\psi\rangle^2\le\langle\psi,h\psi\rangle. \]
+\end{lemma}
+\begin{proof}
+  \leanok
+  Take $W=v+\|v\|\ge0$. For a state $\psi$ we have $\psi=G(-\psi''+W\psi)$, so $\langle e_i,\psi\rangle=\mu_i\langle
+  e_i,-\psi''+W\psi\rangle$, and Parseval gives $\int\psi'^2+\int W\psi^2=\sum_i\mu_i^{-1}\langle e_i,\psi\rangle^2$.
+  There are infinitely many eigenvectors, since $L^2(0,1)$ contains $N$ orthogonal indicators of disjoint intervals
+  for every $N$. Hence the $N$ largest $\mu_i$ exist, and every other $\mu_i^{-1}$ is at least $\Lambda$, the largest
+  of their inverses. Dropping the other terms of the expansion, which are nonnegative after subtracting
+  $\Lambda\|\psi\|^2$, gives the bound.
+\end{proof}
+
 \section{Any number of particles on a line}
 
 $N=n+1$ bosons or fermions on $[0,1]$ with hard walls: the configuration space is the cube $(0,1)^N$, states are
@@ -380,6 +457,47 @@ walls; the interaction $w$ is continuous and invariant under relabelling, and $v
   and~\ref{thm:lieb_line} apply with $w=0$.
 \end{proof}
 
+\begin{lemma}[The Pauli principle for one orbital]
+  \label{lem:pauli}
+  \lean{DFT.Continuum.Line.avgK, DFT.Continuum.Line.continuous_avgK, DFT.Continuum.Line.avgK_update, DFT.Continuum.Line.mu1_real_univ, DFT.Continuum.Line.integral_avgK, DFT.Continuum.Line.integrable_prod_mu1, DFT.Continuum.Line.gK, DFT.Continuum.Line.gK_apply, DFT.Continuum.Line.continuous_gK, DFT.Continuum.Line.gK_update, DFT.Continuum.Line.pK, DFT.Continuum.Line.continuous_pK, DFT.Continuum.Line.inner_pK, DFT.Continuum.Line.pK_pK_self, DFT.Continuum.Line.double_zero, DFT.Continuum.Line.pK_pK_ne, DFT.Continuum.Line.pauli}
+  \leanok
+  Let $\Phi$ be a fermionic state and $f$ a continuous function with $\int_0^1f^2=1$. With
+  $G_k(x)=\int_0^1f(t)\Phi(x_{k\to t})\,dt$, where $x_{k\to t}$ is $x$ with $x_k$ replaced by $t$, and
+  $P_k\Phi(x)=f(x_k)G_k(x)$,
+  \[ \sum_k\langle\Phi,P_k\Phi\rangle\le\langle\Phi,\Phi\rangle. \]
+\end{lemma}
+\begin{proof}
+  \leanok
+  Averaging a continuous function over one coordinate does not change its integral over the cube. This gives
+  $\langle\Phi,P_k\Phi\rangle=\|P_k\Phi\|^2=\int G_k^2$. For $k\neq l$ the inner product $\langle P_k\Phi,P_l\Phi\rangle$
+  contains $\int\!\int f(t)f(s)\Phi(x_{k\to t,\,l\to s})\,ds\,dt$, which changes sign when $s$ and $t$ are exchanged,
+  by antisymmetry, so it vanishes. Hence $\|\sum_kP_k\Phi\|^2=\sum_k\langle\Phi,P_k\Phi\rangle$, and expanding
+  $0\le\|\Phi-\sum_kP_k\Phi\|^2$ gives the claim.
+\end{proof}
+
+\begin{theorem}[$N$ free fermions: ground states exist, Hohenberg--Kohn unconditional]
+  \label{thm:free_fermions_line}
+  \lean{DFT.Continuum.Line.exists_det_ne, DFT.Continuum.Line.slM, DFT.Continuum.Line.slater, DFT.Continuum.Line.slater_eq_alt, DFT.Continuum.Line.updateRow_slM, DFT.Continuum.Line.cof, DFT.Continuum.Line.slater_mem, DFT.Continuum.Line.slater_update, DFT.Continuum.Line.slater_eq_cof, DFT.Continuum.Line.dk_slater_update, DFT.Continuum.Line.dkk_slater, DFT.Continuum.Line.lapN_slater, DFT.Continuum.Line.Q_slater, DFT.Continuum.Line.integral_pos_of_pt, DFT.Continuum.Line.ip_slater_pos, DFT.Continuum.Line.slice_update_mem, DFT.Continuum.Line.slice_bound, DFT.Continuum.Line.lower_bound_fer, DFT.Continuum.Line.slater_isGS, DFT.Continuum.Line.hk_free_fermions_line, DFT.Continuum.Line.exists_isNGS_free_fer, DFT.Continuum.Line.lieb_free_fermions_line}
+  \leanok
+  \uses{lem:spec_bound, lem:pauli, thm:hk_interacting_fermions_line, thm:lieb_line, thm:free_bosons_line}
+  For $N$ non-interacting fermions on $[0,1]$, every continuous potential has a ground state, the Slater determinant
+  $\det[\varphi_j(x_i)]$ of the $N$ lowest one-particle eigenfunctions, with energy $\lambda_0+\dots+\lambda_n$.
+  Hence Hohenberg--Kohn and its Lieb form hold with no assumption.
+\end{theorem}
+\begin{proof}
+  \leanok
+  As for bosons, the energy is a sum of one-particle slice energies along each coordinate. Lemma~\ref{lem:spec_bound}
+  bounds each slice from below, and after integration the occupation $\sum_k\langle\Phi,P_k\Phi\rangle$ of each
+  $\varphi_j$ appears with the nonnegative weight $\Lambda-\lambda_j$. Lemma~\ref{lem:pauli} bounds it by
+  $\|\Phi\|^2$, which leaves $(\lambda_0+\dots+\lambda_n)\|\Phi\|^2$. For the determinant, the Laplace expansion along
+  row $k$ shows that its slice along $x_k$ is $\sum_j\varphi_j(t)c_{jk}$ with cofactors $c_{jk}$ independent of $x_k$.
+  So $\partial_k^2\det=\sum_j(v(x_k)-\lambda_j)\varphi_j(x_k)c_{jk}$, and $\sum_k\varphi_j(x_k)c_{jk}=\det$ because
+  $\operatorname{adj}(M)M=\det(M)\,I$. The determinant therefore solves $-\Delta\Phi+\sum_kv(x_k)\Phi=(\sum_j\lambda_j)\Phi$
+  on the closed cube, and integration by parts gives its energy. It is not zero, because the $\varphi_j$ are
+  linearly independent on $(0,1)$, so the rows $(\varphi_j(t))_j$ for $t\in(0,1)$ span $\mathbb R^N$ and $N$ of them
+  form an invertible matrix.
+\end{proof}
+
 \begin{lemma}[A smooth sign of the ordering]
   \label{lem:line_chamber}
   \lean{DFT.Continuum.Line.deriv_smoothTransition_of_lt, DFT.Continuum.Line.contDiff_smoothTransition2, DFT.Continuum.Line.exists_deriv_smoothTransition_bound, DFT.Continuum.Line.gapF, DFT.Continuum.Line.chi, DFT.Continuum.Line.Sgn, DFT.Continuum.Line.contDiff_gapF, DFT.Continuum.Line.contDiff_chi, DFT.Continuum.Line.contDiff_Sgn, DFT.Continuum.Line.Sgn_pm, DFT.Continuum.Line.chi_nonneg, DFT.Continuum.Line.chi_le_one, DFT.Continuum.Line.abs_sgn, DFT.Continuum.Line.abs_Sgn_le, DFT.Continuum.Line.chi_eq_one, DFT.Continuum.Line.chi_eq_zero, DFT.Continuum.Line.Far, DFT.Continuum.Line.Far.injective, DFT.Continuum.Line.Far.pm, DFT.Continuum.Line.perm_eq_of_strictMono, DFT.Continuum.Line.Sgn_eq_of_strictMono, DFT.Continuum.Line.exists_strictMono, DFT.Continuum.Line.isOpen_far, DFT.Continuum.Line.Sgn_eventually_const, DFT.Continuum.Line.dk_Sgn_far, DFT.Continuum.Line.Sgn_mul_Sgn_far, DFT.Continuum.Line.gapL, DFT.Continuum.Line.gapF_eq, DFT.Continuum.Line.hasFDerivAt_gapF, DFT.Continuum.Line.abs_gapL_single, DFT.Continuum.Line.abs_dk_chi_le, DFT.Continuum.Line.exists_dk_Sgn_bound, DFT.Continuum.Line.eq_zero_of_collision, DFT.Continuum.Line.abs_le_pair, DFT.Continuum.Line.volume_cube', DFT.Continuum.Line.mu_strip_le, DFT.Continuum.Line.NearS, DFT.Continuum.Line.NearS_eq, DFT.Continuum.Line.measurableSet_pair, DFT.Continuum.Line.measurableSet_NearS, DFT.Continuum.Line.mu_near_le}
@@ -448,4 +566,5 @@ In general, the one assumption left, unique continuation for ground states of $-
 dimensions, is a genuine PDE fact (Carleman/Aronszajn-type unique continuation). On a line it follows from the sign
 structure of the ground state, as above.
 
-Existence of ground states for interacting particles is not formalized (HK presupposes them).
+Existence of ground states is formalized for one particle and for free bosons and fermions. For interacting
+particles it is not formalized, and HK presupposes it.

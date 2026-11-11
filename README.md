@@ -6,7 +6,8 @@ fermions, a **generic Hohenberg–Kohn theorem** (spinless, with non-uv densitie
 **Kohn–Sham theory**: existence and generic uniqueness of Kohn–Sham potentials, and convergence of the
 regularised Kohn–Sham iteration. It then treats time-dependent DFT on lattices and takes first steps to
 the continuum: Hohenberg–Kohn on a general configuration space, conditional on unique continuation, and
-unconditional cases in a box (one particle; any number of interacting bosons or fermions on a line).
+unconditional cases in a box (one particle, and any number of interacting bosons or fermions on a line, with
+ground states proved to exist for free bosons and free fermions).
 
 All proofs use only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`), and there is no `sorry`.
 
@@ -153,7 +154,15 @@ Schrödinger equation.
   of the Lieb functional up to constants at a ground-state density.
   For free bosons ground states exist (`Continuum/Line/Free`): the energy splits into one-particle
   slice energies along each coordinate, so `ψ₀(x₀)⋯ψ₀(xₙ)` is a ground state, and
-  `hk_free_bosons_line` and `lieb_free_bosons_line` hold with no assumption at all. For interacting
+  `hk_free_bosons_line` and `lieb_free_bosons_line` hold with no assumption at all.
+  Free fermions need the whole one-particle spectrum (`Continuum/Spectral`). The Green operator of
+  `-d²/dx² + W` is compact, symmetric and injective on `L²(0, 1)`, so its eigenvectors form a Hilbert
+  basis, and each is a classical `C²` eigenfunction. In this basis the energy of a state is
+  `Σᵢ λᵢ ⟨φᵢ, ψ⟩²`, which gives the bound `Λ ‖ψ‖² − Σⱼ (Λ − λⱼ) ⟨φⱼ, ψ⟩² ≤ ⟨ψ, hψ⟩` for the `N`
+  lowest eigenfunctions (`exists_orbitals`). Applied slice by slice, together with the Pauli
+  principle `Σₖ ⟨Φ, PₖΦ⟩ ≤ ‖Φ‖²` for each orbital (`Line/Pauli`), it shows that every fermionic state
+  has energy at least `λ₀ + ⋯ + λₙ`. The Slater determinant `det[φⱼ(xᵢ)]` reaches this bound and is
+  not zero, so `hk_free_fermions_line` and `lieb_free_fermions_line` hold with no assumption. For interacting
   particles, existence in the `C²` form domain is false in general for merely continuous potentials
   (the ground state is only `C^{1,α}`); it needs Hölder potentials and Schauder theory, or a Sobolev
   form domain.
@@ -257,7 +266,10 @@ the lattice results as a special case. Module paths below are relative to these 
 | `Line/Nodal`, `Line/Bosons` | zero gradient at zeros (smoothed-modulus competitors); bosonic ground states have no zeros; `hk_interacting_bosons_line`: HK for `N` interacting bosons on a line, no extra assumption |
 | `Line/Chamber`, `Line/Fermions` | the smooth sign of the ordering, its `O(1/ε)` derivative bound, `|Φ| ≤ M |xᵢ − xⱼ|`, the near-collision set has measure `O(ε)`; no sign change on the ordered chamber, zeros only at collisions; `hk_interacting_fermions_line`: HK for `N` interacting fermions on a line, no extra assumption |
 | `Line/Free` | `N` free bosons: lower bound `NE₀` by slicing along each coordinate, the product ground state; `hk_free_bosons_line`, `lieb_free_bosons_line`, unconditional |
+| `Line/Pauli`, `Line/FreeFermions` | the Pauli principle for one orbital; `N` free fermions: lower bound `λ₀ + ⋯ + λₙ` slice by slice, the Slater determinant of the lowest orbitals is a ground state (Laplace expansion and the adjugate); `hk_free_fermions_line`, `lieb_free_fermions_line`, unconditional |
 | `Line/Lieb` | the Lieb functional for `N` bosons or fermions on a line: at every ground-state density the subgradient is unique up to constants (`lieb_line`) |
+| `Spectral/Green`, `Spectral/Kernel`, `Spectral/Operator`, `Spectral/Injective` | the Green function of `-d²/dx² + W` (`W ≥ 0`) on `[0, 1]`, and the Green operator on `L²(0, 1)`, compact (Arzelà–Ascoli), symmetric and injective |
+| `Spectral/Eigen`, `Spectral/Basis`, `Spectral/Expand` | eigenvectors are classical `C²` eigenfunctions with positive eigenvalues, the eigenbasis of a compact symmetric injective operator, infinitely many eigenvalues accumulating only at zero, the energy in the eigenbasis, and the one-particle bound for the `N` lowest orbitals (`exists_orbitals`) |
 | `Sobolev/Weak` | weak derivatives on open subsets of the plane: uniqueness, classical case, linearity, limits; chain rule for `|f|` and Kato's inequality (first step of the Perron–Frobenius argument) |
 
 About 20,000 lines of Lean in total.
