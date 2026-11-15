@@ -9,9 +9,9 @@ zero eigenvalue besides the constant potentials, Picard--Lindel\"of gives a uniq
 time, for every density with continuous $\ddot n$ consistent with $\psi_0$. Such initial states form the
 \emph{$v$-representability set} $\Omega$.
 
-This chapter proves their Theorem~1 (local existence and uniqueness of the potential), shows that their
-Theorem~2 (every ground state on a connected lattice is in $\Omega$) is false, and proves Theorem~2 for
-almost every static potential.
+This chapter proves their Theorem~1 (local existence and uniqueness of the potential), shows that the conclusion of
+their Theorem~2 (every ground state on a connected lattice is in $\Omega$) does not hold in general, and proves
+Theorem~2 for almost every static potential.
 
 \section{The initial state}
 
@@ -69,11 +69,11 @@ almost every static potential.
   Theorem~\ref{thm:kMat_shared}.
 \end{proof}
 
-\begin{theorem}[Theorem~2 of Farzanehpour--Tokatly is false]
+\begin{theorem}[Counterexample to Theorem~2 of Farzanehpour--Tokatly: a consistent density no potential produces]
   \label{thm:ft_theorem2_false}
   \lean{DFT.kfb_transpose, DFT.mulVec_eq_zero_of_psd, DFT.ψsq, DFT.vsq0, DFT.wsq, DFT.sum_occ4, DFT.ground_sq,
     DFT.kMat_sq_w, DFT.kfb_sq_w, DFT.ftAcc, DFT.ftDens, DFT.sum_ftAcc, DFT.hasDerivAt_ftDens,
-    DFT.hasDerivAt_ftVel, DFT.ft_theorem2_false, DFT.square_not_mem_omega}
+    DFT.hasDerivAt_ftVel, DFT.ft_theorem2_counterexample, DFT.square_not_mem_omega}
   \leanok
   \uses{thm:square_kMat_degenerate}
   For the ground state $\psi_0$ of Theorem~\ref{thm:square_kMat_degenerate} and $w=(1,1,-1,-1)$, the density
@@ -317,141 +317,6 @@ to continuing a solution is the boundary $\det(K+\mathbf 1\mathbf 1^T)=0$ of $\O
   Theorem~\ref{thm:nlse_global}; the density matches on the whole interval as in Theorem~\ref{thm:td_existence}.
 \end{proof}
 
-\section{Complex hopping}
-
-A Hermitian hopping $A+iB$ ($A$ real symmetric, $B$ real antisymmetric, e.g.\ Peierls phases of a magnetic flux)
-gives, for $\psi=x+iy$, $\dot x=A_vy+Bx$, $\dot y=-A_vx+By$. It is the real symmetric hopping
-$\tilde H=\begin{pmatrix}A&-B\\B&A\end{pmatrix}$ on the doubled configuration space $C\times\{0,1\}$, through the
-embedding $\psi\mapsto((x,y),(y,-x))$, which doubles densities.
-
-\begin{lemma}[Doubling]
-  \label{lem:doubling}
-  \lean{DFT.dblH, DFT.dblN, DFT.dbl, DFT.blk, DFT.proj, DFT.anti,
-    DFT.schrC, DFT.dblH_isSymm, DFT.hamN_dbl, DFT.dblH_mulVec_false,
-    DFT.dblH_mulVec_true, DFT.blk_dblH_mulVec, DFT.dbl_schrC, DFT.proj_schr,
-    DFT.proj_dbl, DFT.anti_dbl, DFT.dbl_proj_of_anti, DFT.tdens_dbl,
-    DFT.anti_schr, DFT.projL, DFT.antiL, DFT.dblL, DFT.proj_hasDerivAt,
-    DFT.anti_hasDerivAt, DFT.dbl_hasDerivAt, DFT.dot_sym, DFT.dot_antisym,
-    DFT.anti_norm_hasDerivAt, DFT.eq_zero_of_Qf_one}
-  \leanok
-  \uses{thm:force_balance}
-  The embedding maps complex-hopping trajectories to doubled ones, and the linear projection maps doubled
-  trajectories back. The component of a doubled trajectory outside the image of the embedding evolves under the
-  conjugate Hamiltonian, so its norm is conserved: a doubled trajectory starting in the image stays there.
-\end{lemma}
-\begin{proof}
-  \leanok
-  Block computations; $\frac{d}{dt}\|q\|^2=2(q_1^TA_vq_2-q_2^TA_vq_1)-2(q_1^TBq_1+q_2^TBq_2)=0$.
-\end{proof}
-
-\begin{theorem}[Lattice TDDFT with complex hopping]
-  \label{thm:td_complex}
-  \lean{DFT.omegaC, DFT.tcurC, DFT.vC, DFT.hnd2, DFT.hsum2,
-    DFT.tdens_eq_of_dbl, DFT.td_existence_complex, DFT.td_uniqueness_complex,
-    DFT.complex_of_dbl, DFT.td_global_complex}
-  \leanok
-  \uses{lem:doubling, thm:td_existence, thm:td_uniqueness, thm:td_global}
-  Theorems~\ref{thm:td_existence}, \ref{thm:td_uniqueness} and~\ref{thm:td_global} hold for Hermitian hopping, with
-  $\Omega$ defined through the doubled system.
-\end{theorem}
-\begin{proof}
-  \leanok
-  Apply them to the doubled system with target $2n(t)$ and initial state $\mathrm{dbl}\,\psi_0$, and project back.
-\end{proof}
-
-\begin{theorem}[Zero flux]
-  \label{thm:omegaC_zero}
-  \lean{DFT.dblH_mul_zero, DFT.dblH_sub_zero, DFT.Nmat_dbl, DFT.Qf_dbl_zero,
-    DFT.kfb_dbl_zero, DFT.kJ_ker_iff, DFT.omegaC_zero}
-  \leanok
-  \uses{thm:td_complex}
-  For $B=0$ the set $\Omega$ of the doubled description is the original one.
-\end{theorem}
-\begin{proof}
-  \leanok
-  $K$ of the doubled state is $2K$; with zero column sums, $(cK+\mathbf 1\mathbf 1^T)w=0$ iff $Kw=0$ and
-  $\sum_iw_i=0$, for any $c\ne0$.
-\end{proof}
-
-\subsection{Starting from a ground state with flux}
-
-With flux the ground states are genuinely complex. In the doubled description $\psi=x+iy$ is the pair $X=(x,y)$,
-$JX=(y,-x)$ ($J$ = multiplication by $i$); $J$ commutes with $\tilde H$, so both are ground states, and every level of
-$\tilde H$ is at least doubly degenerate, which makes the real Krylov criterion useless. The doubled Krylov matrix uses
-both columns $\tilde H^k e_{(c,0)}$ and $\tilde H^k e_{(c,1)}$.
-
-\begin{lemma}[Splitting and the doubled Krylov criterion]
-  \label{lem:flux_tools}
-  \lean{DFT.Jop, DFT.Jop_false, DFT.Jop_true, DFT.dbl_eq_Jop, DFT.dot_Jop,
-    DFT.dot_Jop_self, DFT.dblH_mulVec_Jop, DFT.qf_Jop, DFT.isGroundState_Jop,
-    DFT.Qf_split, DFT.kfb_split, DFT.mem_omega_of_definite_pair, DFT.IsGroundStateC,
-    DFT.kryC, DFT.det_kryC_eq_zero, DFT.Jop_smul, DFT.eigen_unique_of_hstarC}
-  \leanok
-  \uses{thm:generic_ground_mem_omega, lem:doubling}
-  The force-balance form of $\mathrm{dbl}\,\psi$ is $-w^T\mathrm{kMat}(X)w-w^T\mathrm{kMat}(JX)w$. If all doubled Krylov
-  determinants are nonzero, eigenvectors have no complex zeros and eigenvalues are simple over $\mathbb C$.
-\end{lemma}
-\begin{proof}
-  \leanok
-  $Q$ is additive in the two real parts. An eigenvector vanishing at $(c,0)$ and $(c,1)$ is orthogonal to all columns;
-  a second eigenvector minus a suitable $\mu X+\nu JX$ vanishes at both components of some $c$.
-\end{proof}
-
-\begin{theorem}[Ground states with flux lie in $\Omega$, conditional]
-  \label{thm:mem_omegaC_of_hstarC}
-  \lean{DFT.kMat_definite_of_hstarC, DFT.mem_omegaC_of_hstarC, DFT.krylovPolyC,
-    DFT.eval_krylovPolyC, DFT.generic_ground_mem_omegaC}
-  \leanok
-  \uses{lem:flux_tools}
-  Under the doubled Krylov criterion and rigidity, every complex ground state lies in $\Omega$; if the doubled Krylov
-  polynomials are nonzero, this holds outside a closed, nowhere dense, null set of potentials.
-\end{theorem}
-\begin{proof}
-  \leanok
-  A zero mode makes $d\,X$ ($d=\sum_iw_in_i$) a ground state, so $dX=\mu X+\nu JX$; pairing with $X$ at each $c$ gives
-  $d(c)=\mu$, and rigidity gives a constant $w$.
-\end{proof}
-
-\begin{theorem}[TDDFT with flux from the ground state, generic flux]
-  \label{thm:generic_flux}
-  \lean{DFT.dblH_zero_eq, DFT.det_kryC_zero, DFT.dblH_smul_split, DFT.exists_poly_flux,
-    DFT.hstarC_of_hstar, DFT.generic_flux_ground_mem_omegaC}
-  \leanok
-  \uses{thm:mem_omegaC_of_hstarC, thm:generic_td_vrep}
-  Spinless lattice fermions on a connected graph, common-sign hopping $A$, any interaction and any flux pattern $B$:
-  for all but finitely many flux strengths $r$ (hopping $A+irB$), outside a closed, nowhere dense, null set of
-  potentials every ground state lies in $\Omega$.
-\end{theorem}
-\begin{proof}
-  \leanok
-  Without flux the doubled Krylov determinant is the square of the real one (block diagonal). At a potential where all
-  real determinants are nonzero, the doubled determinant is a polynomial in $r$, nonzero at $r=0$, so it has finitely
-  many roots; off them the doubled Krylov polynomials are nonzero.
-\end{proof}
-
-\begin{theorem}[TDDFT with Peierls phases from the ground state]
-  \label{thm:generic_peierls}
-  \lean{DFT.analyticAt_pow_apply, DFT.analyticAt_det, DFT.finite_inter_Icc_of_discrete,
-    DFT.hstarC_of_hstar_analytic, DFT.gamma_neg, DFT.gamma_transpose,
-    DFT.analyticAt_gamma_apply, DFT.peierlsRe, DFT.peierlsIm, DFT.peierlsRe_zero,
-    DFT.peierlsIm_zero, DFT.peierlsRe_isSymm, DFT.peierlsIm_antisymm,
-    DFT.analyticAt_peierlsRe, DFT.analyticAt_peierlsIm, DFT.generic_peierls_ground_mem_omegaC}
-  \leanok
-  \uses{thm:generic_flux}
-  Spinless lattice fermions on a connected graph, symmetric hopping $t$ of a common sign, any interaction, and
-  Peierls phases: the hopping is $t_{ab}e^{i\theta\varphi_{ab}}$ with $\varphi$ antisymmetric. There is a closed set
-  $\Lambda\not\ni 0$ of field strengths without accumulation points (finite in every bounded interval) such that for
-  $\theta\notin\Lambda$, outside a closed, nowhere dense, null set of potentials, every ground state lies in $\Omega$.
-\end{theorem}
-\begin{proof}
-  \leanok
-  The real and imaginary parts $\Gamma(-t\cos\theta\varphi)+V_{\mathrm{int}}$ and $\Gamma(-t\sin\theta\varphi)$ have
-  entries analytic in $\theta$, hence so do the doubled Krylov determinants at a fixed potential (polynomials in the
-  entries). At $\theta=0$ the imaginary part vanishes and the determinant is the square of the real one, nonzero at a
-  suitable potential. By the principle of isolated zeros the product of the determinants vanishes only on a closed
-  discrete set; off it the doubled Krylov polynomials are nonzero and Theorem~\ref{thm:mem_omegaC_of_hstarC} applies.
-\end{proof}
-
 \section{Spin-resolved TDDFT}
 
 With $N_\uparrow$ and $N_\downarrow$ conserved separately, the force-balance matrix of the spin densities
@@ -554,6 +419,42 @@ $o'_j=n_{j\downarrow}$ ($j\ge1$); they carry the same information, and only thei
 \begin{proof}
   \leanok
   The triplet has no double occupancy and is annihilated by the hopping.
+\end{proof}
+
+\begin{theorem}[Uniqueness for the linear Schr\"odinger equation]
+  \label{thm:schr_unique}
+  \lean{DFT.schr_sub, DFT.Qf_one_hasDerivAt_schr, DFT.eq_zero_of_Qf_one_eq_zero, DFT.schr_unique_Ioo,
+    DFT.schr_unique, DFT.schr_unique_eventually}
+  \leanok
+  \uses{def:schr, thm:force_balance, thm:td_existence}
+  Let $H_0$ be symmetric and $v(t)$ any potential path (no regularity of $v$ assumed; solutions are classical,
+  differentiable at every time). Two solutions of the real system $\dot x=H(t)y$, $\dot y=-H(t)x$ of the dynamics
+  section, $H(t)=H_0+\sum_iv_i(t)n_i$, that agree at $t_0$ agree on every open interval containing $t_0$ on which
+  both solve the equation; in particular on $\mathbb R$ and near $t_0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The equation is linear, so the difference $(\delta_x,\delta_y)$ of two solutions solves it. For each fixed $t$
+  the generator is skew, so $\frac{d}{dt}(\|\delta_x\|^2+\|\delta_y\|^2)=2\,\delta_x\cdot H\delta_y
+  -2\,\delta_y\cdot H\delta_x=0$. Hence $\|\delta\|^2$ is
+  constant on the interval, and it vanishes at $t_0$.
+\end{proof}
+
+\begin{theorem}[Frozen densities never change]
+  \label{thm:frozen_unique}
+  \lean{DFT.frozenPath_unique, DFT.tdens_of_frozen, DFT.tdens_of_frozen_Ioo,
+    DFT.hubbard_triplet_frozen_unique}
+  \leanok
+  \uses{thm:frozen, thm:frozen_triplet, thm:schr_unique}
+  Under the hypotheses of Theorem~\ref{thm:frozen}, with $H_0$ symmetric, every solution on $\mathbb R$ through
+  $(x,0)$ at $t_0$ is the frozen path, and its density equals that of $x$ at all times; a solution on an open
+  interval containing $t_0$ has the density of $x$ on that interval. For the Hubbard triplet the density is $(2,2)$
+  at all times ($(1,1)$ per unit norm).
+\end{theorem}
+\begin{proof}
+  \leanok
+  The frozen path solves the equation (Theorem~\ref{thm:frozen}) and starts at $(x,0)$; apply
+  Theorem~\ref{thm:schr_unique}.
 \end{proof}
 
 \section{A reality check: the dimer}
@@ -725,4 +626,173 @@ and densities and currents add up over $k$.
   Purify $\Gamma$ (Lemma~\ref{lem:ens_purify}); each nonzero member is a ground state, so its form is negative
   semidefinite, with constant zero modes only for generic $v_s$; Lemma~\ref{lem:mem_omega_glue} and
   Theorem~\ref{thm:van_leeuwen_ens}.
+\end{proof}
+
+\section{Shared ground states, and the force-balance counterexample in general form}
+
+\begin{lemma}[The force-balance matrix of a pair splits]
+  \label{lem:kfb_split}
+  \lean{DFT.Qf_split, DFT.kfb_split}
+  \leanok
+  \uses{def:schr}
+  For real states $x$, $y$: $Q(A)(x,y)=Q(A)(x,0)+Q(A)(y,0)$, hence $K(x,y)=K(x,0)+K(y,0)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $Q(A)(x,y)=x^TAx+y^TAy$ is a sum of the two real parts, and $K$ is built entrywise from $Q$.
+\end{proof}
+
+\begin{theorem}[Shared ground states lie outside $\Omega$]
+  \label{thm:shared_ground_state_not_mem_omega}
+  \lean{DFT.kfb_real_mulVec, DFT.kfb_real_mulVec_eq_zero, DFT.shared_ground_state_not_mem_omega,
+    DFT.rayleigh_eq_of_ground, DFT.shared_ground_state_pair_not_mem_omega}
+  \leanok
+  \uses{def:schr, thm:smooth_field, lem:support_const_of_shared, thm:isGroundState_eigen, lem:hamN_basic,
+    thm:vfb, lem:kfb_split}
+  For a symmetric $H_0$ and a fixed particle number, a ground state shared by two potentials that differ by more than a
+  constant lies outside $\Omega$; the same for a complex ground state $x+iy$ (each of $x$, $y$ zero or a shared ground
+  state), since $K(x,y)=K(x,0)+K(y,0)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The difference of the potentials is constant on the support of the state, hence a zero mode of $K(x,0)$; it is not
+  constant, so $K+\mathbf 1\mathbf 1^T$ is singular.
+\end{proof}
+
+The pair version of Theorem~\ref{thm:generic_ground_mem_omega} (not used elsewhere in the library):
+
+\begin{lemma}[Pairs with negative semidefinite static forms lie in $\Omega$]
+  \label{lem:mem_omega_of_definite_pair}
+  \lean{DFT.mem_omega_of_definite_pair}
+  \leanok
+  \uses{lem:kfb_split, def:kMat, thm:smooth_field, thm:vfb, thm:generic_ground_mem_omega}
+  For a real symmetric $H$ and real states $x$, $y$ with $w^T\mathrm{kMat}(x)w\le0$ and $w^T\mathrm{kMat}(y)w\le0$
+  for all $w$, where $w^T\mathrm{kMat}(x)w=0$ only for constant $w$, the pair $(x,y)$ lies in $\Omega$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  If $(K(x,y)+\mathbf 1\mathbf 1^T)w=0$, then by Lemma~\ref{lem:kfb_split} and
+  Theorem~\ref{thm:generic_ground_mem_omega}
+  $0=-w^T\mathrm{kMat}(x)w-w^T\mathrm{kMat}(y)w+(\sum_iw_i)^2$, a sum of non-negative terms; so $w$ is constant with
+  zero sum, i.e.\ $w=0$.
+\end{proof}
+
+\begin{theorem}[The force-balance counterexample, general form and normalized state]
+  \label{thm:prop9_general}
+  \lean{DFT.ftAccU, DFT.ftDensU, DFT.kfb_smul_real, DFT.kfb_scaled_w, DFT.hasDerivAt_ftDensU, DFT.hasDerivAt_ftVelU,
+    DFT.sum_ftAccU, DFT.prop9_general, DFT.prop9_paper,
+    DFT.prop9_library_case, DFT.library_statement_from_general, DFT.orthogonal_u_in_range}
+  \leanok
+  \uses{thm:ft_theorem2_false, thm:square_shared_dens, thm:force_balance, lem:gauge, lem:density_c2}
+  The counterexample of Theorem~\ref{thm:ft_theorem2_false} holds for any rescaled ground state $a\psi_{sq}$, $a\ne0$,
+  and any change $u$ of the acceleration with $\langle w,u\rangle\ne0$ and $\sum u=0$; in particular for the
+  normalized ground state $\psi_{sq}/5$ of the paper. For $\langle w,u\rangle=0$ the argument does not apply ($u$ can
+  lie in the range of $K$).
+\end{theorem}
+\begin{proof}
+  \leanok
+  $K$ at $a\psi_{sq}$ is $a^2K$ at $\psi_{sq}$, so $w$ stays its zero mode; project the force balance on $w$.
+\end{proof}
+
+\section{Ground-state ensembles outside the exceptional set are pure}
+
+\begin{lemma}[Purity from a simple eigenvalue]
+  \label{lem:eq_vecMulVec_of_simple}
+  \lean{DFT.mulVec_col_of_mul_eq, DFT.eq_vecMulVec_of_simple, DFT.Ens_eq_singleton_of_simple,
+    DFT.Ens_eq_singleton_of_hstar}
+  \leanok
+  \uses{def:Ens, thm:exists_groundState, thm:isGroundState_eigen, lem:eval_krylovPoly, thm:kMat_definite_of_hstar,
+    lem:hamN_basic}
+  A symmetric matrix $\Gamma$ of trace one with $A\Gamma=E\Gamma$, where the $E$-eigenspace of $A$ is spanned by a unit
+  vector $\psi_0$, equals $\psi_0\psi_0^T$ (positivity is not needed). Hence, if the ground level of $H(v)$ is simple,
+  in particular under (H*) at $v$, the only ground-state ensemble is $\psi_0\psi_0^T$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The columns of $\Gamma$ are multiples of $\psi_0$; symmetry makes the coefficients a multiple of $\psi_0$; the trace
+  fixes the factor.
+\end{proof}
+
+\begin{theorem}[Generic ensembles are pure]
+  \label{thm:generic_Ens_pure}
+  \lean{DFT.generic_Ens_pure}
+  \leanok
+  \uses{lem:eq_vecMulVec_of_simple, def:H0Fw, thm:hstar_lattice_fermions, thm:zeroSet_closed_nowhere,
+    thm:volume_zeroSet}
+  For spinless lattice fermions on a connected graph, with symmetric hopping of a common sign and any
+  configuration-diagonal interaction, outside a closed, nowhere dense, null set of potentials the only ground-state
+  ensemble is the pure ground state.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The zero set of the product of the Krylov polynomials, built as in Theorem~\ref{thm:generic_td_vrep}.
+\end{proof}
+
+\begin{lemma}[Decompositions of a pure state]
+  \label{lem:decomp_pure}
+  \lean{DFT.decomp_pure, DFT.schr_smul, DFT.tdens_smul, DFT.kMat_smul}
+  \leanok
+  \uses{def:schr, def:kMat}
+  If $\psi_0\psi_0^T=\sum_kb_kb_k^T$ with $\psi_0\cdot\psi_0=1$, then $b_k=\alpha_k\psi_0$ with $\alpha_k=b_k\cdot\psi_0$
+  and $\sum_k\alpha_k^2=1$. Scaling a state by $a$ scales the Schr\"odinger vector field by $a$ and the density and the
+  force-balance matrix by $a^2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $\sum_k\alpha_kb_k=\psi_0$ and $\sum_k\alpha_k^2=1$, so $\sum_k(b_k(c)-\alpha_k\psi_0(c))^2=0$ for every configuration $c$.
+\end{proof}
+
+\begin{theorem}[Time-dependent Kohn--Sham for ensembles, independent of the decomposition]
+  \label{thm:td_kohn_sham_ensemble_pure}
+  \lean{DFT.van_leeuwen_ens_of_pure, DFT.td_kohn_sham_ensemble_pure}
+  \leanok
+  \uses{lem:decomp_pure, lem:eq_vecMulVec_of_simple, thm:van_leeuwen_ens, lem:mem_omega_glue, thm:van_leeuwen,
+    thm:kMat_nonpos, thm:kMat_definite_of_hstar, thm:rigid_occF, thm:generic_ground_mem_omega,
+    thm:hstar_lattice_fermions, thm:zeroSet_closed_nowhere, thm:volume_zeroSet, lem:density_c2, def:H0Fw,
+    thm:ks_potential_exists}
+  With one exceptional set $Z$ (closed, nowhere dense, null; constructed as the zero set of the product of the Krylov
+  determinants of the non-interacting Hamiltonian): for every $v_s\notin Z$ the statement of Theorem~\ref{thm:td_kohn_sham} holds for every
+  ground state, the ground-state ensemble of the non-interacting system is pure, $\Gamma=\psi_0\psi_0^T$, and for every
+  decomposition $\Gamma=\sum_kb_kb_k^T$ the members evolve as $\alpha_k\varphi(t)$, with $\varphi$ the pure Kohn--Sham
+  trajectory, under the same Kohn--Sham potential; near $t_0$ this is the only ensemble evolution from $\{b_k\}$ with the
+  prescribed density and a gauge-fixed potential. So outside $Z$ the ensemble formulation adds no case to Theorem~\ref{thm:td_kohn_sham}, and
+  the potential does not depend on the decomposition.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Lemma~\ref{lem:decomp_pure}; existence by scaling the pure trajectory; uniqueness by
+  Theorem~\ref{thm:van_leeuwen_ens} on the glued system; the pure statement by Theorem~\ref{thm:van_leeuwen}, with the
+  ground state in $\Omega$ by Theorems~\ref{thm:kMat_nonpos} and~\ref{thm:kMat_definite_of_hstar}.
+\end{proof}
+
+\section{Frozen densities for complex eigenstates}
+
+\begin{theorem}[Complex frozen eigenstates]
+  \label{thm:frozen_pair}
+  \lean{DFT.frozenPath₂, DFT.frozenPath₂_zero_right, DFT.frozenPath₂_zero, DFT.frozenPath₂_hasDerivAt,
+    DFT.tdens_frozenPath₂, DFT.frozenPath₂_unique, DFT.tdens_of_frozen₂}
+  \leanok
+  \uses{thm:frozen, thm:schr_unique}
+  Let $H_0$ be real symmetric and $x+iy$ an eigenstate ($H_0x=Ex$, $H_0y=Ey$) all of whose configurations have the
+  same occupations. Under any continuous time-dependent potential its density never changes: the solution through
+  $(x,y)$ is the rotation $e^{-i\theta(t)}(x+iy)$, and it is the only solution. With at least two sites the state lies
+  outside $\Omega$ (Theorem~\ref{thm:kfb_eq_zero_of_occ_const}).
+\end{theorem}
+\begin{proof}
+  \leanok
+  As for real eigenstates (Theorem~\ref{thm:frozen}); the density is constant because $N_i$ is diagonal, so
+  configuration by configuration $\cos^2\theta+\sin^2\theta=1$. Uniqueness by Theorem~\ref{thm:schr_unique}.
+\end{proof}
+
+\begin{theorem}[Equal occupations force $K=0$]
+  \label{thm:kfb_eq_zero_of_occ_const}
+  \lean{DFT.dotProduct_comm_occ_const, DFT.kfb_eq_zero_of_occ_const, DFT.not_mem_omega_of_occ_const}
+  \leanok
+  \uses{def:schr, thm:smooth_field, thm:vfb}
+  If all configurations of $(x,y)$ have the same occupations, then $K(x,y)=0$, with no eigenstate condition and no
+  symmetry of $H_0$; with at least two sites $K+\mathbf 1\mathbf 1^T$ is singular, so the state lies outside $\Omega$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Each entry of $K$ is a commutator expectation that vanishes when $N_i$ and $N_j$ act as scalars on the support.
 \end{proof}

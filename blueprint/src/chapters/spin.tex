@@ -286,3 +286,66 @@ applied sector by sector.
 For general lattices the sector Krylov condition is open: in the strong-potential limit the spin
 configurations of each occupation pattern stay degenerate, and are split only at higher order
 (superexchange).
+
+\section{The Hubbard examples are the general two-species Hamiltonian}
+
+\begin{theorem}[Hubbard dimer and triangle]
+  \label{thm:bridge_hubbard}
+  \lean{DFT.Bridge.Hubbard.cfgD, DFT.Bridge.Hubbard.cfgTr, DFT.Bridge.Hubbard.cfgD_bijective,
+    DFT.Bridge.Hubbard.cfgTr_bijective, DFT.Bridge.Hubbard.H0S_dimer,
+    DFT.Bridge.Hubbard.H0S_triangle, DFT.Bridge.Hubbard.occD_eq_occF, DFT.Bridge.Hubbard.occTr_eq_occF,
+    DFT.Bridge.Hubbard.hubD_eq_H0S, DFT.Bridge.Hubbard.hubD_1_4, DFT.Bridge.Hubbard.hubD_tripD,
+    DFT.Bridge.Hubbard.tripD_triplet, DFT.Bridge.Hubbard.tripD_not_singlet}
+  \leanok
+  \uses{def:H0S, thm:hubbard_certificates, thm:frozen_triplet}
+  The hand-typed Hubbard dimer (hopping $t$, on-site interaction $U$) and triangle ($t=1$, $U=4$) at one electron
+  per spin are the general two-species Hamiltonian on the complete graph, entry by entry, and the total occupations
+  are $n_{i\uparrow}+n_{i\downarrow}$. The dimer state of Theorem~\ref{thm:frozen_triplet} is a zero-energy triplet
+  for every $t$, $U$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Entry by entry.
+\end{proof}
+
+\begin{theorem}[One up and one down electron: total-density Hohenberg--Kohn for every potential]
+  \label{thm:two_electron_hk}
+  \lean{DFT.ham2, DFT.two_electron_hk, DFT.hubD_eq_ham_box}
+  \leanok
+  \uses{thm:hk_single_particle, def:ham, thm:frozen_triplet}
+  One up and one down electron on a connected graph $G$, with hopping $t>0$ and any configuration-diagonal
+  interaction, is one particle on the product graph $G\,\square\,G$ in the potential $v_i+v_j+W(i,j)$. A ground state
+  shared by two total-density potentials forces their difference to be constant, for every potential. The Hubbard
+  dimer is this Hamiltonian on two sites.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Theorem~\ref{thm:hk_single_particle} on $G\,\square\,G$; a constant difference of $v_i+v_j$ on the product graph
+  forces a constant difference of $v$.
+\end{proof}
+
+\begin{theorem}[One up and one down electron of the spinful Hamiltonian]
+  \label{thm:two_electron_bridge}
+  \lean{DFT.Bridge.TwoElectron.one_surjective, DFT.Bridge.TwoElectron.oneEquiv, DFT.Bridge.TwoElectron.oneEquiv_apply,
+    DFT.Bridge.TwoElectron.Γ_one,
+    DFT.Bridge.TwoElectron.nTot, DFT.Bridge.TwoElectron.sum_nTot_one, DFT.Bridge.TwoElectron.hamN_H0S_eq_ham2,
+    DFT.Bridge.TwoElectron.hamN_H0S_submatrix, DFT.Bridge.TwoElectron.two_electron_hk_H0S,
+    DFT.Bridge.TwoElectron.two_electron_density_determines_potential,
+    DFT.Bridge.TwoElectron.two_electron_ground_ne_zero, DFT.Bridge.Hubbard.one, DFT.Bridge.Hubbard.one_inj,
+    DFT.Bridge.Hubbard.occF_one, DFT.Bridge.Hubbard.τs_one}
+  \leanok
+  \uses{def:H0S, thm:two_electron_hk, thm:bridge_hubbard, thm:bridge_square, thm:weak_hk, thm:abs_isGroundState,
+    thm:pos_of_nonneg}
+  On any graph, the two-species Hamiltonian with one electron per spin, uniform hopping $t$, any configuration-diagonal
+  interaction and the total-density potential is the Hamiltonian of Theorem~\ref{thm:two_electron_hk}, entry by
+  entry, in the basis (up electron on $a$, down electron on $b$) $\mapsto(a,b)$; no fermion signs appear. Hence, for
+  $t>0$ on a connected graph, a ground state or a ground-state density shared by two total-density potentials forces
+  their difference to be constant, and every ground state has no zero amplitude.
+\end{theorem}
+\begin{proof}
+  \leanok
+  One electron per species: the second quantization of a single-particle matrix is the matrix itself. Reindex, then
+  Theorem~\ref{thm:two_electron_hk} and the weak theorem (Theorem~\ref{thm:weak_hk}). For the amplitudes: $|\psi|$ is
+  a nonnegative ground state on $G\,\square\,G$ (Theorem~\ref{thm:abs_isGroundState}), hence strictly positive
+  (Theorem~\ref{thm:pos_of_nonneg}), since $G\,\square\,G$ is connected.
+\end{proof}

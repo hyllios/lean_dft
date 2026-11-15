@@ -85,13 +85,14 @@ Schrödinger equation.
   Lean the constant is fixed by the gauge `Σᵢ vᵢ(t) = 0`: uniqueness is among potentials obeying it
   (removing the gauge needs the time-dependent phase transformation of `ψ`, not formalised).
 * Their Theorem 2 claims every ground state on a connected lattice is in `Ω`, so that every
-  consistent density is produced by a potential. It is false (`TDDFT/Counterexample`). The ground
-  state `ψ₀ = (0, 2, 1, 4, 2, 0)` of two fermions on the square at `v₀ = (3/4, -3/4, -3/4, 3/4)` is
-  shared with another potential, so `K(ψ₀, 0)` has the non-constant zero mode `w = (1, 1, -1, -1)`
-  (`square_kMat_degenerate`, `kfb_sq_w`). Hence `(ψ₀, 0) ∉ Ω` (`square_not_mem_omega`), and
-  `ft_theorem2_false` gives a consistent density `n(t) = ρ₀ + (t − t₀)²/2 · (q − w)` (right initial
-  density and current, `Σ n̈ = 0`, smooth) that no potential produces from `ψ₀`: force balance at
-  `t₀` would give `w·(q − w) = w·q`, i.e. `|w|² = 0`.
+  consistent density is produced by a potential. It does not hold in general
+  (`TDDFT/Counterexample`). The ground state `ψ₀ = (0, 2, 1, 4, 2, 0)` of two fermions on the
+  square at `v₀ = (3/4, -3/4, -3/4, 3/4)` is shared with another potential, so `K(ψ₀, 0)` has the
+  non-constant zero mode `w = (1, 1, -1, -1)` (`square_kMat_degenerate`, `kfb_sq_w`). Hence
+  `(ψ₀, 0) ∉ Ω` (`square_not_mem_omega`), and `ft_theorem2_counterexample` gives a consistent
+  density `n(t) = ρ₀ + (t − t₀)²/2 · (q − w)` (right initial density and current, `Σ n̈ = 0`,
+  smooth) that no potential produces from `ψ₀`: force balance at `t₀` would give
+  `w·(q − w) = w·q`, i.e. `|w|² = 0`.
 * `generic_ground_mem_omega`: the corrected statement. For almost every static potential, every (real)
   ground state of lattice fermions is in `Ω`, so TDDFT starting from it is well posed.
 * `td_global` (continuation in time): the norm is conserved, so the only way the TDDFT solution can
@@ -100,21 +101,6 @@ Schrödinger equation.
   of the reduced (potential-eliminated) Schrödinger equation that stay in `Ω` are unique on the
   whole interval (`goodOn_unique`); uniqueness among arbitrary potentials is proved only locally
   (`td_uniqueness`).
-* Complex hopping (magnetic flux): `td_existence_complex`, `td_uniqueness_complex`,
-  `td_global_complex`. A Hermitian hopping `A + iB` is the real symmetric hopping
-  `[[A, -B], [B, A]]` on a doubled lattice; the unphysical half has conserved norm, so it stays
-  zero. Without flux nothing changes (`omegaC_zero`).
-* `generic_flux_ground_mem_omegaC`: TDDFT with flux from the ground state. For common-sign hopping
-  `A` and any flux pattern `B`, for all but finitely many flux strengths `r` (hopping `A + irB`),
-  almost every potential has all its (complex) ground states in `Ω`. The proof uses a doubled
-  Krylov criterion (both real components of each configuration); without flux its determinant is
-  the square of the real one, so along the flux family it is a polynomial in `r` that is nonzero
-  at `r = 0`.
-* `generic_peierls_ground_mem_omegaC`: the same with genuine Peierls phases, hopping
-  `t_ab e^{iθ φ_ab}` (any antisymmetric pattern `φ`, field strength `θ`). The doubled Krylov
-  determinant is now real-analytic in `θ` and nonzero at `θ = 0`, so by the principle of isolated
-  zeros the bad field strengths form a closed set without accumulation points (finite in every
-  bounded interval, `0` excluded); off it, almost every potential has all its ground states in `Ω`.
 * Spin-resolved TDDFT (`TDDFT/Spin`): with two conserved particle numbers the force-balance matrix
   of `(n↑, n↓)` always has two zero modes, so the theory is run on `2M - 1` reduced observables with a
   single conserved sum, and all spinless results apply. `generic_ground_mem_omega_spin`: for almost
@@ -215,12 +201,17 @@ the lattice results as a special case. Module paths below are relative to these 
 | `HK/Examples` | HK counterexamples: two fermions on a triangle and on a square |
 | `HK/Gap` | gapped ground states and invisible potential directions |
 | `HK/SquareWall` | HK fails at every gapped point of the plane `v₀+v₂ = v₁+v₃` of the two-fermion square (hidden involution) |
+| `HK/Nondegenerate` | the counterexamples to strong HK (square, two-fermion triangle, frustrated triangle) have non-degenerate ground states, with gap bounds (sum-of-squares certificates) |
+| `HK/SquarePlane` | the plane `v₀+v₂ = v₁+v₃` of the two-fermion square without a gap: every non-constant potential is exceptional, the exceptional set and the shared densities are not closed (also with complex states and ensembles: complex states give no new ensemble densities of a real Hamiltonian); the exact segment of a shared ground state along `(1, 1, −1, −1)` |
 | `Generic/Krylov` | Krylov criterion; (H\*) ⇒ HK on an open dense set |
 | `Generic/NullSets` | zero sets of nonzero polynomials are null; (H\*) ⇒ HK almost everywhere |
 | `Generic/ZeroSetDim` | zero sets of nonzero polynomials have Hausdorff dimension ≤ d − 1; pointwise-Lipschitz maps do not raise Hausdorff dimension |
 | `Generic/DensityDim`, `DensityDim/Gap`, `DensityDim/Fermions` | non-uv densities have Hausdorff dimension ≤ M − 3 (gap from non-degeneracy, gap persistence, Lipschitz density, slicing) |
 | `Generic/RationalFunctions` | rational functions on generic points; simultaneous non-vanishing |
 | `Generic/SquareCertificate` | (H\*) for the square by exact computation in Lean |
+| `Generic/SignGauge` | orbital sign changes: the generic HK theorem for hopping that they bring to a common sign; triangle, 4-cycle |
+| `Generic/ShortestPathSign` | (H\*), generic HK and non-uv densities when all shortest paths between two sites have hopping products of one sign; the class (complete graphs, gauge class, bipartite graphs, the square) |
+| `Generic/Excited` | outside one closed, nowhere dense, null set of potentials no eigenvector has a zero amplitude and every eigenvalue is simple |
 | `Fermions/Configurations` | `N`-particle configurations, occupations |
 | `Fermions/Slater` | Slater determinants in first quantization |
 | `Fermions/SecondQuantization` | second quantization `Γ h` via determinants; `H0F` (uniform) and `H0Fw` (edge-dependent hopping) |
@@ -237,19 +228,25 @@ the lattice results as a special case. Module paths below are relative to these 
 | `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
 | `Spin/Symmetric`, `Spin/HubbardCertificates` | generic HK with a symmetry (sector-wise Krylov condition); total-density HK for the Hubbard dimer and triangle |
 | `Spin/KronSum`, `Spin/SpinResolved`, `Spin/SpinField` | two spin species: Kronecker sums, factorisation of the leading coefficients, spin-resolved generic HK; the same in terms of `(v, B)` |
+| `Spin/TwoElectron` | one up and one down electron (one particle on `G □ G`): total-density HK for every potential, uniform hopping `t > 0` |
 | `TDDFT/ForceBalance` | force-balance matrix at a ground state: f-sum rule, counterexample to Farzanehpour–Tokatly Theorem 2, generic v-representability of ground states |
+| `TDDFT/Prop9General` | the force-balance counterexample in its general and normalized forms |
+| `TDDFT/SharedGround` | ground states shared by two potentials that differ by more than a constant lie outside `Ω` (real and complex); a pair of real states with negative semidefinite `kMat` forms, the first with only constant zero modes, lies in `Ω`; outside the exceptional set the density determines the potential |
 | `TDDFT/Dynamics`, `TDDFT/Existence`, `TDDFT/GroundStart` | continuity and force-balance equations, local existence and uniqueness of the TDDFT potential, TDDFT from generic ground states |
 | `TDDFT/Global` | uniform Picard–Lindelöf steps, norm conservation, blow-up alternative and global uniqueness for lattice TDDFT |
-| `TDDFT/ComplexHopping` | lattice TDDFT with complex (Peierls) hopping via a doubled real system |
-| `TDDFT/FluxGround` | ground states with flux: doubled Krylov criterion, generic flux strengths |
-| `TDDFT/Peierls` | ground states with Peierls phases `t e^{iθφ}`: analytic dependence on the field, isolated bad field strengths |
 | `TDDFT/Spin` | spin-resolved TDDFT: reduced observables with one conserved sum, Krylov shift invariance, generic ground-state start, existence and uniqueness of `(v↑, v↓)` up to one constant per spin |
 | `TDDFT/Frozen` | frozen densities: eigenstates whose configurations share one occupation pattern keep their density under every potential; the Hubbard-dimer triplet lies outside `Ω` for all `t`, `U` |
+| `TDDFT/FrozenUnique`, `TDDFT/FrozenPair` | uniqueness for the linear Schrödinger equation, so frozen densities never change; frozen densities for complex eigenstates |
 | `TDDFT/Dimer` | reality check: one particle on two sites; `Ω = {bond order ≠ 0}`, speed limit, closed-form TD potential, Rabi oscillation outside `Ω` (numerical check in `scripts/dimer_check.py`) |
 | `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
 | `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
+| `TDDFT/EnsemblePure` | ground-state ensembles of a generic Hamiltonian are pure: ensemble time-dependent Kohn–Sham adds no case |
 | `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
 | `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
+| `KohnSham/MyksodaEnsemble` | the limit densities of the regularised Kohn–Sham scheme are ground-state-ensemble densities |
+| `Bridge/Square`, `Bridge/Triangle` | `H0F` is the hand-typed square and triangle minus `4·I`, entry by entry; on the square the generic theorems are not vacuous |
+| `Bridge/SquareHopping` | the square with edge-dependent hopping: an eigenvector vanishing on `01`, `23` with `ψ(02)`, `ψ(13)` not both zero needs `t₁₂² = t₃₀²`; a ground state shared by `v` and `v + ε(1, 1, −1, −1)`, `ε ≠ 0`, needs `t₁₂² = t₃₀²` or `t₀₁ = t₂₃ = 0` (so with four nonzero bonds only `t₁₂² = t₃₀²`; necessary conditions) |
+| `Bridge/Hubbard`, `Bridge/TwoElectron` | the hand-typed Hubbard matrices are the general two-species Hamiltonian `H0S`; one up and one down electron of `H0S` is one particle on `G □ G` |
 
 ### `DFT/Continuum/`
 
@@ -302,14 +299,19 @@ Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Ma
   Krylov condition (spin sectors), proved by exact certificates for the Hubbard dimer and triangle
   (`hubbard_dimer_generic_hk_ae`, `hubbard_triangle_generic_hk_ae`) and checked numerically up to 6
   sites; a proof for all lattices is open (the strong-potential limit is degenerate).
-* Frustrated or complex hopping: the general proof needs hopping amplitudes of a common sign. Frustrated
-  hopping (e.g. π-flux) can genuinely fail.
+* Frustrated or complex hopping: (H\*), the generic HK theorem and the dimension bound need only nonzero
+  hopping such that, for any two sites, all shortest paths between them have hopping products of one sign
+  (`generic_hk_lattice_fermions_shortest`, `dimH_nonUVDens_lattice_fermions_shortest'`); this includes
+  hopping that orbital sign changes bring to a common sign, and on bipartite graphs it is exactly that. The
+  other generic results are stated for hopping of a common sign. Frustrated hopping (e.g. π-flux) can
+  genuinely fail. The library has real hopping only: complex hopping that no gauge makes real (Peierls
+  phases of a magnetic flux other than 0 or π per loop) is not treated.
 * Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
-* Time-dependent DFT: local existence, global uniqueness, the blow-up alternative, complex (Peierls)
-  hopping and spin-resolved densities are proved; how long a given solution actually stays in `Ω` is
-  not controlled. TDDFT for the total density of spinful electrons (spin-independent potential) runs
-  in the same framework, but whether its ground states generically lie in `Ω` is the time-dependent
-  face of the open total-density problem above.
+* Time-dependent DFT: local existence, global uniqueness, the blow-up alternative and spin-resolved
+  densities are proved; how long a given solution actually stays in `Ω` is not controlled. TDDFT for
+  the total density of spinful electrons (spin-independent potential) runs in the same framework, but
+  whether its ground states generically lie in `Ω` is the time-dependent face of the open
+  total-density problem above.
 
 ## License
 
@@ -317,4 +319,4 @@ Apache 2.0 (see `LICENSE`), the same license as Mathlib.
 
 ## Authors
 
-Miguel A. L. Marques. The formalization was developed with the assistance of Claude (Anthropic).
+Miguel A. L. Marques and Stefano Pittalis. The formalization was developed with the assistance of Claude (Anthropic).

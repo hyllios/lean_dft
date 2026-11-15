@@ -228,3 +228,92 @@
   \leanok
   Their overlap matrix is a $0/1$ matrix whose determinant is $\delta_{ST}$.
 \end{proof}
+
+\section{Bridges: hand-typed examples as general Hamiltonians}
+
+\begin{theorem}[The square]
+  \label{thm:bridge_square}
+  \lean{DFT.Bridge.Square.sqG, DFT.Bridge.Square.cfg, DFT.Bridge.Square.H0F_square, DFT.Bridge.Square.occ4_eq_occF,
+    DFT.Bridge.Square.cfg_bijective, DFT.Bridge.Square.isGroundState_reindex, DFT.Bridge.Square.hamN_reindex,
+    DFT.Bridge.Square.isGroundState_H0F_iff, DFT.Bridge.Square.nonUV_H0F_square,
+    DFT.Bridge.Square.generic_hk_square_nonvacuous, DFT.Bridge.Square.square_density_mem_nonUVDens_H0F,
+    DFT.Bridge.Square.nonUVDens_square_nonvacuous, DFT.Bridge.Square.ground_not_mem_omega_H0Fw,
+    DFT.Bridge.Square.ground_mem_omega_square_nonvacuous,
+    DFT.Bridge.Square.exceptional_set_nonempty, DFT.Bridge.Square.sqG_connected, DFT.Bridge.Square.pos,
+    DFT.Bridge.Square.pos_strictMono, DFT.Bridge.Square.τs_cfg, DFT.Bridge.Square.e, DFT.Bridge.Square.qf_reindex,
+    DFT.Bridge.Square.dot_reindex, DFT.Bridge.Square.dens_reindex, DFT.Bridge.Square.kMat_reindex,
+    DFT.Bridge.Square.ψn, DFT.Bridge.Square.ψn_eq, DFT.Bridge.Square.ψn_norm}
+  \leanok
+  \uses{def:H0F, def:H0Fw, def:Conf, thm:hk_fails_square, thm:generic_hk_lattice_fermions, thm:dimH_nonUVDens,
+    thm:generic_ground_mem_omega, thm:square_nondeg, thm:square_shared_dens, thm:kMat_nonpos,
+    thm:ft_theorem2_false, lem:kry_shift}
+  In the basis of two-fermion configurations $01,02,03,12,13,23$, the second-quantized Hamiltonian on the 4-cycle with
+  hopping $1$ and no interaction is the hand-typed square Hamiltonian minus $4\cdot I$, and the occupations agree. Hence
+  ground states correspond, and the square counterexample shows that the exceptional sets of the generic theorems
+  (Theorems~\ref{thm:generic_hk_lattice_fermions}, \ref{thm:dimH_nonUVDens} and~\ref{thm:generic_ground_mem_omega}) are
+  not empty on the square.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Entry by entry; reindexing and a constant shift preserve ground states.
+\end{proof}
+
+\begin{lemma}[The square with edge-dependent hopping, entry by entry]
+  \label{lem:H0Fw_square}
+  \lean{DFT.Bridge.Square.hopSq, DFT.Bridge.Square.H0Fw_square, DFT.Bridge.Square.hamN_H0Fw_row,
+    DFT.Bridge.Square.sq_eq_sq_of_block, DFT.Bridge.Square.shift_sq_cfg}
+  \leanok
+  \uses{def:H0Fw, def:hamN, thm:bridge_square}
+  In the basis $01$, $02$, $03$, $12$, $13$, $23$, the second-quantized Hamiltonian on the 4-cycle with real hopping
+  $t_{ab}$ and a
+  configuration-diagonal interaction $V$ is an explicit $6\times6$ matrix: each off-diagonal entry is $\pm t_{ab}$
+  (fermionic sign), for the hop $a\to b$ that turns one configuration into the other. Also: a $2\times2$ block
+  $\begin{pmatrix}a&b\\b&a\end{pmatrix}$ with a nonzero kernel vector has $a^2=b^2$; the direction $(1,1,-1,-1)$
+  gives $\sum_iw_in_i(c)=2,0,0,0,0,-2$ on the six configurations.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Entry by entry, as for Theorem~\ref{thm:bridge_square}.
+\end{proof}
+
+\begin{theorem}[Zero patterns on the square need a symmetry of the hopping]
+  \label{thm:square_hopping_symmetry}
+  \lean{DFT.Bridge.Square.square_zero_pattern_hopping, DFT.Bridge.Square.square_zero_pattern_hopping',
+    DFT.Bridge.Square.square_shared_hopping, DFT.Bridge.Square.square_shared_hopping_sharp,
+    DFT.Bridge.Square.offdiag_zero_of_diag_ground, DFT.Bridge.Square.hamN_H0Fw_entry}
+  \leanok
+  \uses{lem:H0Fw_square, lem:support_const_of_shared, thm:isGroundState_eigen}
+  Two fermions on the 4-cycle (sites $0,\dots,3$; $t_{12}$, $t_{30}$, $t_{01}$, $t_{23}$ are the paper's $t_{23}$,
+  $t_{41}$, $t_{12}$, $t_{34}$), real symmetric hopping $t_{ab}$, any potential, any configuration-diagonal interaction.
+  An eigenvector that vanishes on $01$ and $23$, with $\psi(02)$ and $\psi(13)$ not both zero, exists only if
+  $t_{12}^2=t_{30}^2$; vanishing on $03$ and $12$ instead needs $t_{01}^2=t_{23}^2$. A ground state shared by $v$ and
+  $v+\varepsilon(1,1,-1,-1)$, $\varepsilon\ne0$, exists only if $t_{12}^2=t_{30}^2$ or $t_{01}=t_{23}=0$ (hence also
+  only if $t_{12}^2=t_{30}^2$ or $t_{01}^2=t_{23}^2$); with all four hoppings nonzero, only $t_{12}^2=t_{30}^2$ is left.
+  These are necessary conditions only.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Rows $01$ and $23$ of the eigenvalue equation give the block $\begin{pmatrix}-t_{12}&t_{30}\\t_{30}&-t_{12}\end{pmatrix}$
+  on $(\psi(02),\psi(13))$; a nonzero kernel vector forces the determinant $t_{12}^2-t_{30}^2$ to vanish. For a shared
+  ground state, $(1,1,-1,-1)\cdot n$ is $2,0,0,0,0,-2$ on the six configurations, so by
+  Lemma~\ref{lem:support_const_of_shared} the support lies in $\{02,03,12,13\}$, or in $\{01\}$, or in $\{23\}$. In the first case
+  either the first statement applies, or $\psi$ lives on $\{03,12\}$. Then, if $\psi(03)\ne0$, row $03$ (which sees
+  only $02$ and $13$) makes the diagonal entry at $03$ equal to the energy, so the basis state at $03$ has the ground
+  energy and is a ground state too; its eigenvalue equation in rows $02$, $13$ gives $t_{23}=t_{01}=0$. The case
+  $\psi(12)\ne0$ is the same. In the other two cases rows $02$, $13$ give the first block on $(\psi(01),\psi(23))$.
+\end{proof}
+
+\begin{theorem}[The triangle]
+  \label{thm:bridge_triangle}
+  \lean{DFT.Bridge.Triangle.cfg, DFT.Bridge.Triangle.cfg_bijective, DFT.Bridge.Triangle.H0F_triangle,
+    DFT.Bridge.Triangle.occ3_eq_occF, DFT.Bridge.Triangle.pos, DFT.Bridge.Triangle.pos_strictMono,
+    DFT.Bridge.Triangle.τs_cfg}
+  \leanok
+  \uses{def:H0F, def:Conf, thm:hk_fails_triangle}
+  The same for two fermions on the triangle: the second-quantized Hamiltonian on the complete graph is the
+  hand-typed triangle Hamiltonian minus $4\cdot I$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Entry by entry.
+\end{proof}

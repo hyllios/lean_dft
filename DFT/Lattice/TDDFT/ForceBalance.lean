@@ -22,10 +22,10 @@ parts of `H0`, such as the interaction, drop out).
 * `kMat_nonpos`: at a ground state `kMat(ψ)` is negative semidefinite.
 * `kMat_mulVec_eq_zero`: if `d` is constant on the support of `ψ`, then `kMat(ψ) w = 0`.
 * `kMat_degenerate_of_nonUV`: every ground state shared by two potentials that differ by more than a
-  constant has a non-constant zero mode. With `hk_fails_square` this disproves Theorem 2 of
-  Farzanehpour–Tokatly ("every ground state on a connected lattice is in the v-representability
-  set"): `square_kMat_degenerate`. Their proof assumes that `v̂ ψ₀ = λ ψ₀` forces `v` constant,
-  which fails when `ψ₀` has zero amplitudes.
+  constant has a non-constant zero mode. With `hk_fails_square` this gives a counterexample to
+  Theorem 2 of Farzanehpour–Tokatly ("every ground state on a connected lattice is in the
+  v-representability set"): `square_kMat_degenerate`. Their proof assumes that `v̂ ψ₀ = λ ψ₀`
+  forces `v` constant, which can fail when `ψ₀` has zero amplitudes.
 * `kMat_definite_of_hstar`, `generic_td_vrep`: the corrected statement. For almost every static
   potential (outside a closed, nowhere dense, null set), every ground state of lattice fermions has
   `kMat(ψ)` negative definite modulo constants, so lattice TDDFT exists starting from it.
@@ -267,7 +267,7 @@ end
 potential `(3/4, -3/4, -3/4, 3/4)`: the ground state `(0, 2, 1, 4, 2, 0)` has a non-constant zero
 mode of the force-balance matrix, although the lattice is connected. The state lies outside `Ω`
 (`square_not_mem_omega`), and a consistent density that no potential produces is constructed in
-`ft_theorem2_false` (both in `TDDFT/Counterexample`). -/
+`ft_theorem2_counterexample` (both in `TDDFT/Counterexample`). -/
 theorem square_kMat_degenerate :
     IsGroundState (hamN H0sq occ4 ![3/4, -3/4, -3/4, 3/4]) ![0, 2, 1, 4, 2, 0] ∧
       ∃ w : Fin 4 → ℝ, (¬ ∃ k, ∀ i, w i = k) ∧ kMat H0sq occ4 ![0, 2, 1, 4, 2, 0] *ᵥ w = 0 := by

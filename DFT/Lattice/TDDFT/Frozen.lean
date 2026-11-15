@@ -136,7 +136,10 @@ Configuration `(a, b)` (up on `a`, down on `b`) has index `2a + b`. -/
 def hubD (t U : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
   !![U, -t, -t, 0; -t, 0, 0, -t; -t, 0, 0, -t; 0, -t, -t, U]
 
-/-- The `S_z = 0` triplet `|↑₀↓₁⟩ - |↓₀↑₁⟩`. -/
+/-- The `S_z = 0` triplet `|↑₀↓₁⟩ - |↓₀↑₁⟩`, with kets written up-spin first,
+`|↑_a ↓_b⟩ = c†_{a↑} c†_{b↓} |0⟩` (configuration `(a, b)`, index `2a + b`, as in `hubD`); here
+`|↓₀↑₁⟩ = c†_{1↑} c†_{0↓} |0⟩` (configuration `(1, 0)`, index 2). With site-ordered kets the same
+vector is `|↑₀↓₁⟩ + |↓₀↑₁⟩`; the ket `|↑₀↓₁⟩ - |↓₀↑₁⟩` read site-ordered would be a singlet. -/
 def tripD : Fin 4 → ℝ := ![0, 1, -1, 0]
 
 lemma hubD_isSymm (t U : ℝ) : (hubD t U).IsSymm := by

@@ -139,7 +139,9 @@ theorem hk_single_particle (hG : G.Connected) {t : ℝ} (ht : 0 < t) {v v' ψ ψ
 On the triangle (complete graph on 3 vertices) with t = −1 (frustrated hopping), the vector
 ψ = (1, −1, 0) is a ground state for both v = (0,0,1) and v' = (0,0,2), so the densities agree,
 yet v − v' is not constant: the single-particle HK theorem fails without `0 < t`.
-Mechanism: the ground state has a node on site 2, and the potential there is invisible. -/
+Mechanism: the ground state has a node on site 2, and the potential there is invisible. The shared
+ground state is non-degenerate for both potentials (`hk_fails_frustrated_nondeg` in
+`HK.Nondegenerate`). -/
 
 lemma qf_triangle (v φ : Fin 3 → ℝ) :
     qf (ham (⊤ : SimpleGraph (Fin 3)) (-1) v) φ =

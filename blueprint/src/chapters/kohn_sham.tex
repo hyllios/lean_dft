@@ -478,3 +478,19 @@ the regularisation parameter.
   Instantiate Theorem~\ref{thm:myksoda_converges} with $F_\varepsilon$ and $T_\varepsilon$, then apply
   Theorem~\ref{thm:density_of_quasi} to both systems.
 \end{proof}
+
+\section{The limit densities are ground-state-ensemble densities}
+
+\begin{theorem}[The regularized Kohn--Sham iteration with ensembles]
+  \label{thm:lattice_myksoda_ensemble}
+  \lean{DFT.ens_of_maximiser, DFT.maximiser_of_lieb_eq, DFT.ens_of_lieb_eq, DFT.lattice_myksoda_ensemble}
+  \leanok
+  \uses{thm:ks_iteration, thm:exists_gs_below, def:Ens, lem:Ens_compact, lem:lieb_basic}
+  In the regularized Kohn--Sham scheme, for every accumulation point $z$, $\rho=z+\varepsilon v$ is the density of a
+  ground-state ensemble of the interacting $H(v)$, and $\rho_{KS}=z+\varepsilon v_{KS}$ of the reference $H(v_{KS})$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The Lieb equality of Theorem~\ref{thm:ks_iteration} makes $v$ a maximizer of $E(\cdot)-(\cdot)\cdot\rho$; a maximizer
+  gives a ground-state ensemble by separation from the compact convex set of ensemble densities.
+\end{proof}

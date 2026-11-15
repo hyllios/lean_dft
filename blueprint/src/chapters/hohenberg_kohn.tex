@@ -87,6 +87,7 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
   Explicit sum of squares:
   $\qf(H,\varphi)-(3-t)\|\varphi\|^2 = (\varphi_0-\varphi_1+\varphi_2)^2+t\varphi_1^2$.
 \end{proof}
+The shared ground state is non-degenerate (Theorem~\ref{thm:triangle_nondeg}).
 
 \begin{theorem}[Two fermions on a square]
   \label{thm:hk_fails_square}
@@ -94,12 +95,14 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
   \leanok
   \uses{def:hamN, def:IsGroundState}
   For two spinless fermions on a square, the potentials $(\tfrac34,-\tfrac34,-\tfrac34,\tfrac34)$ and
-  $(\tfrac54,-\tfrac14,-\tfrac54,\tfrac14)$ share a non-degenerate ground state with fractional occupations.
+  $(\tfrac54,-\tfrac14,-\tfrac54,\tfrac14)$ share a ground state.
 \end{theorem}
 \begin{proof}
   \leanok
   Sum-of-squares certificates obtained from $LDL^T$ decompositions.
 \end{proof}
+Remarks, not part of the Lean statement: the shared ground state $(0,2,1,4,2,0)$ has the fractional density
+$(1,4,4,1)/5$; it is non-degenerate (Theorem~\ref{thm:square_nondeg}).
 
 \section{Gapped ground states}
 
@@ -145,6 +148,86 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
   bounded by $|\varepsilon|m\|\chi\|^2\le g\|\chi\|^2$.
 \end{proof}
 
+\section{Non-degeneracy of the counterexamples}
+
+The square and the two-fermion triangle are the examples of Penz and van~Leeuwen (J.~Chem.~Phys.\ 155,
+244111 (2021), Sec.~III~C: the state $\Psi_A$ of their Eq.~(48) with $s=\tfrac34$, and their Eqs.~(42)--(43)).
+They already state that the shared ground states are non-degenerate and give the two lowest energies in closed
+form. New here is the formal proof of non-degeneracy, with explicit lower bounds on the gap. Gaps are meant in
+the variational sense: the minimum of the Rayleigh quotient on the orthogonal complement of the ground state,
+minus the ground energy. Convention: $H_{0,\mathrm{sq}}$ and $H_{0,\mathrm{tri}}$ are the hopping matrices
+(unit hopping) plus $4I$, as in their Eqs.~(42) and (46). Dropping the $4I$ lowers every energy by $4$ (the
+square's $\tfrac32$ becomes $-\tfrac52$); gaps and non-degeneracy are unaffected.
+
+\begin{theorem}[Gapped ground states without normalisation]
+  \label{thm:eq_smul_of_gap}
+  \lean{DFT.eq_smul_of_gap}
+  \leanok
+  \uses{thm:isGroundState_eigen, lem:decomp}
+  Let $\psi\ne0$ be a ground state of a symmetric $H$, with energy $E=\qf(H,\psi)/\|\psi\|^2$, and suppose
+  $\qf(H,\chi)\ge(E+g)\|\chi\|^2$ for all $\chi\perp\psi$, with $g>0$. Then every ground state $\varphi$ equals
+  $\frac{\ip{\psi}{\varphi}}{\|\psi\|^2}\,\psi$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  As for Theorem~\ref{thm:unique_of_gap}: write $\varphi=a\psi+\chi$ with $\chi\perp\psi$. Then
+  $\qf(H,\varphi)=a^2\qf(H,\psi)+\qf(H,\chi)$ and $\|\varphi\|^2=a^2\|\psi\|^2+\|\chi\|^2$, so minimality of
+  $\varphi$ gives $\qf(H,\chi)\le E\|\chi\|^2$, and the gap forces $g\|\chi\|^2\le0$.
+\end{proof}
+
+\begin{theorem}[The square counterexample is non-degenerate]
+  \label{thm:square_nondeg}
+  \lean{DFT.square_energy₀, DFT.square_energy₁, DFT.square_gap₀, DFT.square_gap₀_sharp, DFT.square_gap₁,
+    DFT.square_gap₁_lt, DFT.hk_fails_square_nondeg}
+  \leanok
+  \uses{thm:hk_fails_square, thm:eq_smul_of_gap, lem:hamN_basic, lem:Qsq}
+  For two fermions on the square (Penz--van~Leeuwen), the shared ground state $\psi=(0,2,1,4,2,0)$ of
+  Theorem~\ref{thm:hk_fails_square}, with energy $\tfrac32$ at both potentials, is the only ground state, up to
+  scale, of both $H(\tfrac34,-\tfrac34,-\tfrac34,\tfrac34)$ and $H(\tfrac54,-\tfrac14,-\tfrac54,\tfrac14)$. The gap,
+  in the variational sense, is exactly $\tfrac12$ for the first potential and lies in $[0.2635,0.264)$ for the
+  second, so it rounds to $0.264$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Gap bounds: $H-(\tfrac32+g)I+\mu\,\psi\psi^T$ is positive semidefinite, with an exact $LDL^T$ certificate
+  (\texttt{scripts/gen\_nondegenerate.py}); on $\chi\perp\psi$ this is the gap inequality. Upper bounds: the
+  vector $(-1,-1,0,0,1,1)\perp\psi$ has energy exactly $2$, and $(191,309,0,0,-309,-500)\perp\psi$ has
+  energy below $\tfrac32+0.264$. Non-degeneracy: Theorem~\ref{thm:eq_smul_of_gap}, with the symmetry of $H_{0,\mathrm{sq}}$
+  (Lemma~\ref{lem:Qsq}). (Not formalised: the second gap
+  is $\tfrac52-\sqrt5\approx0.26393$, from the closed-form energies of Penz and van~Leeuwen, Eqs.~(48)--(49).)
+\end{proof}
+
+\begin{theorem}[The triangle counterexample is non-degenerate]
+  \label{thm:triangle_nondeg}
+  \lean{DFT.H0tri_isSymm, DFT.triangle_gap₁, DFT.triangle_gap₂, DFT.hk_fails_triangle_nondeg}
+  \leanok
+  \uses{thm:hk_fails_triangle, thm:eq_smul_of_gap, lem:hamN_basic}
+  For two fermions on the triangle (Penz--van~Leeuwen), the shared ground state $(1,0,-1)$ of
+  Theorem~\ref{thm:hk_fails_triangle} is the only ground state, up to scale, of both $H(0,-1,0)$ and $H(0,-2,0)$,
+  with gaps at least $0.58$ and $1$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $LDL^T$ certificates as above, then Theorem~\ref{thm:eq_smul_of_gap}. (Not formalised: the gaps are
+  $2-\sqrt2$ and $1$, from the closed-form energies of Penz and van~Leeuwen, text after their Eq.~(44).)
+\end{proof}
+
+\begin{theorem}[The frustrated counterexample is non-degenerate]
+  \label{thm:frustrated_nondeg}
+  \lean{DFT.frustrated_ground₀, DFT.frustrated_ground₁, DFT.frustrated_gap₀, DFT.frustrated_gap₁,
+    DFT.hk_fails_frustrated_nondeg}
+  \leanok
+  \uses{thm:hk_fails_frustrated, thm:eq_smul_of_gap, lem:ham_basic}
+  One particle on the triangle with $t=-1$: the shared ground state $(1,-1,0)$ of
+  Theorem~\ref{thm:hk_fails_frustrated} is the only ground state, up to scale, of both $H(0,0,1)$ and $H(0,0,2)$,
+  with gaps at least $0.58$ and $1$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $LDL^T$ certificates as above, then Theorem~\ref{thm:eq_smul_of_gap}. (Not formalised: the gaps are $2-\sqrt2$
+  and $1$, from the exact spectrum computed in \texttt{scripts/gen\_nondegenerate.py}.)
+\end{proof}
+
 \section{The wall of the two-fermion square}
 
 \begin{lemma}[Hidden involution]
@@ -174,4 +257,238 @@ matrix on $\Conf$ (kinetic energy and interaction) and $n_i(c)$ the occupation o
   $Q\psi$ is again a ground state, so $Q\psi=\pm\psi$ by uniqueness. This forces two vanishing amplitudes,
   and the invisible direction $w=(1,1,-1,-1)$ or $(1,-1,-1,1)$ then follows from
   Theorem~\ref{thm:persist_of_gap}.
+\end{proof}
+
+\begin{theorem}[The wall with a fixed direction]
+  \label{thm:square_wall_unit}
+  \lean{DFT.square_wall_unit}
+  \leanok
+  \uses{lem:Qsq, thm:unique_of_gap, thm:persist_of_gap, lem:hamN_basic}
+  In Theorem~\ref{thm:square_wall} the direction can be taken to be $w=(1,1,-1,-1)$ or $w=(1,-1,-1,1)$. (Without
+  fixing $w$ the value of the bound $|\varepsilon|\le g/2$ has no content, since $w$ can be rescaled.)
+\end{theorem}
+\begin{proof}
+  \leanok
+  The proof of Theorem~\ref{thm:square_wall}, with its witness exposed.
+\end{proof}
+
+\begin{theorem}[Which direction]
+  \label{thm:square_wall_dir}
+  \lean{DFT.square_wall_plus, DFT.square_wall_minus}
+  \leanok
+  \uses{thm:square_wall_unit, lem:ground_sq_plane, thm:unique_of_gap, thm:persist_of_gap}
+  Under the hypotheses of Theorem~\ref{thm:square_wall}, $w=(1,1,-1,-1)$ if $(v_0-v_3)^2\le(v_0-v_1)^2$ and
+  $w=(1,-1,-1,1)$ if $(v_0-v_1)^2\le(v_0-v_3)^2$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  By the gap the ground state is a multiple of the explicit state of Lemma~\ref{lem:ground_sq_plane} for that case,
+  which vanishes on the two configurations that make $w$ invisible.
+\end{proof}
+
+\section{The plane of the two-fermion square, without a gap}
+
+On the plane $v_0+v_2=v_1+v_3$ write $\delta=v_0-v_1$ and $\sigma=v_0-v_3$. A potential $v$ is \emph{exceptional} if
+some ground state of $H(v)$ is also a ground state of $H(v')$ for a $v'$ differing from $v$ by more than a constant
+(Definition~\ref{def:NonUV}). The gap hypothesis of Theorem~\ref{thm:square_wall} excludes the constant potentials,
+at which no ground state is shared (Theorem~\ref{thm:square_plane}). The explicit
+ground states and the failure of uniqueness at the points with $|\delta|\ge|\sigma|$, $\delta\ne0$ (and
+symmetrically) are due to Penz and van~Leeuwen (J.~Chem.~Phys.\ 155, 244111 (2021), Secs.~III~C and IV~B,
+Eqs.~(45)--(49), Fig.~4; $\delta=2s$, $\sigma=2t$); new here are the formal proofs, the behaviour at the constant
+potentials, and its consequence that neither the exceptional set (Theorem~\ref{thm:square_plane}) nor the set of
+densities produced by more than one potential (Theorem~\ref{thm:square_shared_dens}) is closed.
+
+\begin{lemma}[Explicit ground states on the plane]
+  \label{lem:ground_sq_plane}
+  \lean{DFT.sq_plane_sos, DFT.ground_sq_plus, DFT.ground_sq_minus}
+  \leanok
+  \uses{thm:hk_fails_square, def:hamN, def:IsGroundState}
+  Let $v_0+v_2=v_1+v_3$. If $\sigma^2\le\delta^2$, then $(0,2,r-\delta,r+\delta,2,0)$ with $r=\sqrt{\delta^2+4}$ is a
+  ground state of $H(v)$; if $\delta^2\le\sigma^2$, then $(r-\sigma,2,0,0,-2,-(r+\sigma))$ with $r=\sqrt{\sigma^2+4}$ is.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $\qf(H,\varphi)-E\|\varphi\|^2$ with $E=v_0+v_2+4-r$ is an explicit sum of nonnegative terms modulo $r^2=\delta^2+4$; the
+  mixed term is nonnegative because $(r+\sigma)(r-\sigma)-4=\delta^2-\sigma^2\ge0$.
+\end{proof}
+
+\begin{lemma}[Shared ground states and the support]
+  \label{lem:support_const_of_shared}
+  \lean{DFT.support_const_of_shared}
+  \leanok
+  \uses{thm:isGroundState_eigen, lem:hamN_basic}
+  If $\psi$ is a ground state of $H(v)$ and of $H(v')$ ($H_0$ symmetric), then $\sum_i(v_i-v'_i)n_i(c)$ takes one value
+  on the support of $\psi$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Subtract the two eigenvalue equations (the argument inside Theorem~\ref{thm:strong_hk}).
+\end{proof}
+
+\begin{theorem}[The plane: exactly the non-constant potentials are exceptional]
+  \label{thm:square_plane}
+  \lean{DFT.square_plane_shared, DFT.square_plane_exceptional, DFT.square_const_shared,
+    DFT.square_const_not_exceptional, DFT.square_exceptional_not_closed}
+  \leanok
+  \uses{lem:ground_sq_plane, lem:support_const_of_shared, thm:hk_fails_square, lem:Qsq, def:NonUV}
+  Every non-constant potential of the plane $v_0+v_2=v_1+v_3$ is exceptional: some ground state of $H(v)$ is also a
+  ground state of a potential differing from $v$ by more than a constant. No gap is needed. A constant potential is
+  not exceptional. Hence the exceptional set of the square is not closed.
+\end{theorem}
+\begin{proof}
+  \leanok
+  If $\sigma^2\le\delta^2$ (so $\delta\ne0$, since $v$ is not constant), move along $(1,1,-1,-1)$, which keeps $\delta$
+  and shifts $\sigma$ by $2\varepsilon$; choose $\varepsilon=-\sigma$ (or $\delta/2$ if $\sigma=0$) and apply
+  Lemma~\ref{lem:ground_sq_plane} at both potentials. The other case is symmetric. At a constant potential the ground
+  space is spanned by $(0,1,1,1,1,0)$ and $(1,1,0,0,-1,-1)$; by Lemma~\ref{lem:support_const_of_shared} a shared
+  ground state leaves $v'$ constant, or $v'=(p,p,q,q)$ or $(p,q,q,p)$ in the boundary cases, where an explicit trial
+  vector gives $-16\,\psi_c^2(p-q)^2\ge0$ for a nonzero amplitude $\psi_c$. Not closed: $(t,0,0,t)\to0$.
+\end{proof}
+
+\begin{lemma}[The $Q=+1$ state is always an eigenvector on the plane]
+  \label{lem:eigen_sq_plus}
+  \lean{DFT.eigen_sq_plus}
+  \leanok
+  \uses{def:hamN}
+  Let $v_0+v_2=v_1+v_3$, $\delta=v_0-v_1$ and $r^2=\delta^2+4$. Then $(0,2,r-\delta,r+\delta,2,0)$ is an eigenvector
+  of $H(v)$ with eigenvalue $v_1+v_3+4-r$, whatever $\sigma$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Row by row, using $v_2=v_1+v_3-v_0$ and $r^2=\delta^2+4$.
+\end{proof}
+
+\begin{theorem}[The exact segment along a fixed direction]
+  \label{thm:square_segment}
+  \lean{DFT.square_segment_plus, DFT.square_segment_minus, DFT.square_example_segment}
+  \leanok
+  \uses{lem:ground_sq_plane, lem:eigen_sq_plus, def:IsGroundState}
+  Let $v_0+v_2=v_1+v_3$, $\delta=v_0-v_1$, $\sigma=v_0-v_3$. The state $(0,2,r-\delta,r+\delta,2,0)$, $r^2=\delta^2+4$,
+  $r>0$, is a ground state of $H(v+\varepsilon(1,1,-1,-1))$ if and only if $(\sigma+2\varepsilon)^2\le\delta^2$; the
+  state $(r-\sigma,2,0,0,-2,-(r+\sigma))$, $r^2=\sigma^2+4$, $r>0$, is a ground state of $H(v+\varepsilon(1,-1,-1,1))$
+  if and only if $(\delta+2\varepsilon)^2\le\sigma^2$. For the counterexample $v=(3/4,-3/4,-3/4,3/4)$, $\Psi_A$ is a
+  ground state of $H(v+\varepsilon(1,1,-1,-1))$ exactly for $|\varepsilon|\le3/4$, three times the bound $g/2=1/4$ of
+  Theorem~\ref{thm:square_wall_dir} (gap $g=1/2$, Theorem~\ref{thm:square_nondeg}); beyond, it is an eigenvector
+  (Lemma~\ref{lem:eigen_sq_plus}) but not a ground state.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The direction $(1,1,-1,-1)$ keeps the plane and $\delta$ and shifts $\sigma$ by $2\varepsilon$. If
+  $(\sigma+2\varepsilon)^2\le\delta^2$, Lemma~\ref{lem:ground_sq_plane} applies at the moved potential. Otherwise the
+  $Q=-1$ state with $\sigma'=\sigma+2\varepsilon$, $r'=\sqrt{\sigma'^2+4}>r$, is a test vector:
+  $\qf(\varphi)\|\psi\|^2-\qf(\psi)\|\varphi\|^2=16r^2r'^2(r-r')<0$. The other direction is symmetric; the example is
+  $\delta=3/2$, $r=5/2$, $\sigma=0$.
+\end{proof}
+
+\begin{definition}[Densities produced by more than one potential]
+  \label{def:SharedDens}
+  \lean{DFT.SharedDens, DFT.EnsDens, DFT.SharedEnsDens}
+  \leanok
+  \uses{def:hamN, def:IsGroundState}
+  The densities $\rho$ for which there are $v$, $v'$ differing by more than a constant and normalized ground states
+  $\psi$ of $H(v)$ and $\psi'$ of $H(v')$ with density $\rho$ (real pure states; degenerate ground states allowed).
+  The ensemble version: $\rho$ is a convex combination of the densities of finitely many normalized real ground
+  states of $H(v)$, and also of $H(v')$ (the non-uniquely $v$-representable densities of Penz and van~Leeuwen, for
+  real states).
+\end{definition}
+
+\begin{lemma}[Weak Hohenberg--Kohn for ensembles]
+  \label{lem:weak_hk_ens}
+  \lean{DFT.weak_hk_ens, DFT.dens_mem_ensDens, DFT.sharedDens_subset_sharedEnsDens}
+  \leanok
+  \uses{def:SharedDens, lem:hamN_basic}
+  If a normalized ground state $\chi$ of $H(v)$ has the density of a ground-state ensemble of $H(v')$, then $\chi$ is a
+  ground state of $H(v')$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The variational inequalities of $\chi$ against each ensemble state, and of each ensemble state against $\chi$, summed
+  with the weights, give equality; a state of positive weight has the energy of $\chi$ in $H(v')$.
+\end{proof}
+
+\begin{lemma}[A nonzero multiple of a ground state is a ground state]
+  \label{lem:isGroundState_smul}
+  \lean{DFT.isGroundState_smul}
+  \leanok
+  \uses{def:IsGroundState}
+  If $\psi$ is a ground state of $M$ and $a\neq0$, then $a\psi$ is a ground state of $M$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Both sides of the variational inequality scale by $a^2$.
+\end{proof}
+
+\begin{theorem}[The densities produced by more than one potential do not form a closed set]
+  \label{thm:square_shared_dens}
+  \lean{DFT.psiSq, DFT.psiSq_norm, DFT.psiSq_ground, DFT.continuous_dens_psiSq,
+    DFT.psiSq_mem_sharedDens, DFT.psiSq_zero_not_mem_sharedDens, DFT.square_sharedDens_not_closed,
+    DFT.dens_psiSq_zero, DFT.psiSq_zero_not_mem_sharedEnsDens, DFT.square_sharedEnsDens_not_closed,
+    DFT.square_uv_in_closure_nonuv, DFT.square_uvDens_not_relOpen}
+  \leanok
+  \uses{def:SharedDens, lem:ground_sq_plane, thm:square_plane, thm:weak_hk, lem:weak_hk_ens, lem:isGroundState_smul}
+  For two fermions on the square, the set of densities produced by two potentials that differ by more than a constant
+  (Definition~\ref{def:SharedDens}) is not closed, for pure
+  states and for ensembles; and the densities produced by a single potential (uniquely $v$-representable)
+  are not open relative to the ensemble-$v$-representable densities (openness in $\R^4$ would be vacuous,
+  since $\sum_i\rho_i=2$). The
+  normalized state $(0,2,r-t,r+t,2,0)/\sqrt{16+4t^2}$, $r=\sqrt{t^2+4}$, is a ground state at $(t,0,0,t)$ and at
+  $(t,0,0,t)+\tfrac t2(1,1,-1,-1)$; as $t\to0$ its density tends to the uniform density $(\tfrac12,\tfrac12,\tfrac12,
+  \tfrac12)$, which is produced only by constant potentials.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Both potentials lie on the plane with $\delta=t$ and $\sigma^2\le\delta^2$ (Lemma~\ref{lem:ground_sq_plane}). If a
+  potential $v$ has a normalized ground state with the uniform density, the weak Hohenberg--Kohn argument
+  (Theorem~\ref{thm:weak_hk}) makes the uniform-density state at $t=0$, a ground state of the uniform square, a ground
+  state of $H(v)$, and Theorem~\ref{thm:square_plane} forces $v$ to be constant. For ensembles the same with
+  Lemma~\ref{lem:weak_hk_ens}. Complex states are covered by Theorem~\ref{thm:square_shared_dens_complex}.
+\end{proof}
+
+\begin{definition}[Complex ground states and ensembles]
+  \label{def:EnsDensC}
+  \lean{DFT.qfC, DFT.normSqC, DFT.IsGroundStateC, DFT.densC, DFT.EnsDensC, DFT.SharedEnsDensC}
+  \leanok
+  \uses{def:SharedDens}
+  For a complex vector $\psi$ and a complex matrix $M$: $\qf_{\mathbb{C}}(\psi)=\mathrm{Re}\,\langle\psi,M\psi\rangle$,
+  $\|\psi\|^2=\sum_c|\psi(c)|^2$; $\psi\neq0$ is a ground state if it minimizes the Rayleigh quotient over all complex
+  vectors; its density is $\rho_\psi(i)=\sum_c n_i(c)|\psi(c)|^2$. The complex ensemble densities of $H(v)$, viewed
+  as a complex matrix, are the convex combinations of the densities of finitely many normalized complex ground
+  states (a ground-state density matrix is such a combination, by its spectral decomposition); the shared ones are
+  those of two potentials that differ by more than a constant (the non-uniquely $v$-representable densities of Penz
+  and van~Leeuwen, in their setting).
+\end{definition}
+
+\begin{lemma}[Complex states give no new ensemble densities]
+  \label{lem:ensDensC_eq}
+  \lean{DFT.qfC_map_ofReal, DFT.normSqC_eq, DFT.densC_eq, DFT.qfC_ofReal, DFT.normSqC_ofReal, DFT.densC_ofReal,
+    DFT.dotProduct_self_pos, DFT.isGroundStateC_ofReal, DFT.isGroundState_of_C, DFT.dens_smul,
+    DFT.exists_normalized, DFT.densC_eq_two_real, DFT.ensDensC_eq_ensDens, DFT.sharedEnsDensC_eq_sharedEnsDens}
+  \leanok
+  \uses{def:EnsDensC, def:IsGroundState, lem:isGroundState_smul}
+  For a real $H_0$, the complex ensemble densities of $H(v)$ are exactly the real ensemble densities; hence the two
+  sets of shared densities coincide.
+\end{lemma}
+\begin{proof}
+  \leanok
+  A real ground state is a complex one: for $\varphi=a+ib$ the real and imaginary parts add. Conversely write a
+  normalized complex ground state as $\psi=a+ib$ with $a$, $b$ real. Since $H(v)$ is real,
+  $\qf_{\mathbb{C}}(\psi)=\qf(a)+\qf(b)$, $\|\psi\|^2=\|a\|^2+\|b\|^2$ and $|\psi|^2=a^2+b^2$. Minimality against real test
+  vectors gives $\qf_{\mathbb{C}}(\psi)\|a\|^2\le\qf(a)\|\psi\|^2$ and the same for $b$; the two sum to an equality, so each is
+  one, and $a$, $b$ (when nonzero) are real ground states. Thus
+  $\rho_\psi=\|a\|^2\rho_{a/\|a\|}+\|b\|^2\rho_{b/\|b\|}$, and a complex ensemble with weights $w_k$ becomes a real
+  ensemble with weights $w_k\|a_k\|^2$, $w_k\|b_k\|^2$ (Penz and van~Leeuwen, Lemma~3: $D_{\mathbb{C}}=\mathrm{seg}\,D_{\R}$, and Corollary~4: $D=\mathrm{ch}\,D_{\R}$).
+\end{proof}
+
+\begin{theorem}[Penz--van~Leeuwen setting: complex states]
+  \label{thm:square_shared_dens_complex}
+  \lean{DFT.square_sharedEnsDensC_not_closed, DFT.square_uvDensC_not_relOpen}
+  \leanok
+  \uses{thm:square_shared_dens, lem:ensDensC_eq}
+  For two fermions on the square, with complex states and ensembles, the non-uniquely $v$-representable densities do
+  not form a closed set, and the uniquely $v$-representable densities are not open relative to the
+  ensemble-$v$-representable ones.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Theorem~\ref{thm:square_shared_dens} and Lemma~\ref{lem:ensDensC_eq}.
 \end{proof}

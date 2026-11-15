@@ -12,7 +12,8 @@ Two spinless fermions on a triangle (`hk_fails_triangle`) and on a square (`hk_f
 ground states shared by potentials differing by more than a constant (cf. Penz & van Leeuwen,
 J. Chem. Phys. 155, 244111 (2021)). On the triangle one site is always occupied, so its potential
 is invisible (the trivial mechanism); the square has fractional densities. Both ground states are
-non-degenerate (by the sum-of-squares certificates), but the theorems do not state it.
+non-degenerate; this is stated and proved in `HK.Nondegenerate` (`hk_fails_triangle_nondeg`,
+`hk_fails_square_nondeg`; gaps in `square_gap₀`, `square_gap₁`, `triangle_gap₁`, `triangle_gap₂`).
 -/
 
 namespace DFT
@@ -20,11 +21,11 @@ namespace DFT
 section
 open Matrix Finset
 
-/-! ### Counterexample: two spinless fermions on a triangle (PvL Sect. III.3, Eq. 42)
+/-! ### Counterexample: two spinless fermions on a triangle (PvL Sec. III C, Eqs. (42)–(43))
 Configurations (basis) c = {12, 13, 23}; n_i(c) = occupation of site i. H0 = 4·I +
-[[0,−1,1],[−1,0,−1],[1,−1,0]]. With v = (0,−t,0), t > 0, the state (1,0,−1) is the ground state
-(energy 3 − t): ⟨φ,Hφ⟩ − (3−t)|φ|² = (φ₀ − φ₁ + φ₂)² + t φ₁². It never puts particles on {1,3}, so
-site 2 is always occupied and its potential is invisible. -/
+[[0,−1,1],[−1,0,−1],[1,−1,0]] (4·I is a constant shift). With v = (0,−t,0), t > 0, the state
+(1,0,−1) is the ground state (energy 3 − t): ⟨φ,Hφ⟩ − (3−t)|φ|² = (φ₀ − φ₁ + φ₂)² + t φ₁². It never
+puts particles on {1,3}, so site 2 is always occupied and its potential is invisible. -/
 
 /-- occupation n i c: rows = sites 1,2,3; columns = configurations {12},{13},{23} -/
 def occ3 : Fin 3 → Fin 3 → ℝ := ![![1, 1, 0], ![1, 0, 1], ![0, 1, 1]]
@@ -46,7 +47,8 @@ lemma ground_tri {t : ℝ} (ht : 0 < t) : IsGroundState
   simp [dotProduct, Fin.sum_univ_three]
   nlinarith [sq_nonneg (φ 0 - φ 1 + φ 2), sq_nonneg (φ 1), mul_nonneg ht.le (sq_nonneg (φ 1))]
 
-/-- Strong HK fails: two non-equivalent potentials with the same (non-degenerate) ground state. -/
+/-- Strong HK fails: two non-equivalent potentials with the same ground state (non-degenerate:
+`hk_fails_triangle_nondeg` in `HK.Nondegenerate`). -/
 theorem hk_fails_triangle :
     IsGroundState (hamN H0tri occ3 ![0, -1, 0]) ![1, 0, -1] ∧
     IsGroundState (hamN H0tri occ3 ![0, -2, 0]) ![1, 0, -1] ∧
@@ -57,12 +59,16 @@ theorem hk_fails_triangle :
   simp at h0 h1
   linarith
 
-/-! ### Counterexample 2 (PvL Sect. III.3, Eqs. 45–51): two spinless fermions on a square.
-Sites 0–1–2–3–0, hopping −1; basis {01, 02, 03, 12, 13, 23}. Potentials v(t) = (s+t, −s+t, −s−t,
-s−t), s = 3/4. For |t| < s the ground state is Ψ_A ∝ (0, 2, 1, 4, 2, 0), energy 3/2, NON-DEGENERATE,
-density (1,4,4,1)/5: no empty and no full site. Yet t = 0 and t = 1/2 give the same ground state: HK
-fails non-trivially. Ground-state proofs via exact sum-of-squares (LDLᵀ) certificates of H − 3/2
-(one zero pivot = the ground state). -/
+/-! ### Counterexample 2 (PvL Sec. III C, Eqs. (45)–(51)): two spinless fermions on a square.
+Sites 0–1–2–3–0, hopping −1, i.e. hopping amplitude t_ij = 1 in the convention
+T = −Σ t_ij (c†_i c_j + h.c.) (the entries +1 of `H0sq` are fermionic signs); basis
+{01, 02, 03, 12, 13, 23}. Potentials v(t) = (s+t, −s+t, −s−t, s−t), s = 3/4. For |t| < s the
+ground state is Ψ_A ∝ (0, 2, 1, 4, 2, 0), energy 3/2, NON-DEGENERATE (PvL, for all |t| < s;
+formally proved for t = 0 and t = 1/2 in `HK.Nondegenerate`), density (1,4,4,1)/5: no empty and no
+full site. `H0sq` is the hopping matrix plus 4·I, as in PvL Eq. (46); dropping the 4·I lowers every
+energy by 4 (3/2 becomes −5/2). Yet t = 0 and t = 1/2 give the same ground state: HK fails
+non-trivially. Ground-state proofs via exact sum-of-squares (LDLᵀ) certificates of H − 3/2 (one
+zero pivot = the ground state). -/
 
 def occ4 : Fin 4 → Fin 6 → ℝ :=
     ![![1, 1, 1, 0, 0, 0], ![1, 0, 0, 1, 1, 0], ![0, 1, 0, 1, 0, 1], ![0, 0, 1, 0, 1, 1]]
@@ -99,8 +105,9 @@ lemma ground_sq1 : IsGroundState (hamN H0sq occ4 ![5/4, -1/4, -5/4, 1/4]) ![0, 2
       sq_nonneg (φ 2 - 7*φ 3/55 - 27*φ 4/110 + 7*φ 5/55), sq_nonneg (φ 3 - 2*φ 4 + 28*φ 5/27),
       sq_nonneg (φ 5)]
 
-/-- Non-trivial failure of strong HK: non-degenerate ground state, density strictly between 0 and 1.
--/
+/-- Non-trivial failure of strong HK. The shared ground state has density (1,4,4,1)/5, strictly
+between 0 and 1 (a remark, not part of the statement), and is non-degenerate
+(`hk_fails_square_nondeg` in `HK.Nondegenerate`). -/
 theorem hk_fails_square :
     IsGroundState (hamN H0sq occ4 ![3/4, -3/4, -3/4, 3/4]) ![0, 2, 1, 4, 2, 0] ∧
     IsGroundState (hamN H0sq occ4 ![5/4, -1/4, -5/4, 1/4]) ![0, 2, 1, 4, 2, 0] ∧

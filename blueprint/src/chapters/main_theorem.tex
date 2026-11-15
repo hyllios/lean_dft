@@ -58,6 +58,138 @@
   $t_{ab}=t$.
 \end{proof}
 
+\section{Hopping signs up to orbital sign changes}
+
+Changing the sign of the orbital at site $i$, $\hat c_i\mapsto-\hat c_i$, reverses the hopping on every bond at $i$
+and leaves the potential, the interaction and the densities unchanged.
+
+\begin{lemma}[Diagonal sign conjugation]
+  \label{lem:signConj}
+  \lean{DFT.signConj, DFT.signConj_apply, DFT.signConj_add, DFT.signConj_neg, DFT.signConj_diagonal,
+    DFT.hamN_signConj, DFT.qf_signConj, DFT.dot_gauge, DFT.gauge_gauge, DFT.gauge_ne_zero,
+    DFT.isGroundState_signConj, DFT.dens_signConj, DFT.nonUV_signConj}
+  \leanok
+  \uses{def:hamN, def:qf, def:IsGroundState, def:NonUV}
+  Let $\varepsilon_c=\pm1$ and $D=\diag(\varepsilon)$. Then the Hamiltonian $H(v)$ built from $DH_0D$ equals
+  $D\,H(v)\,D$; $\psi$ is a ground
+  state of $DHD$ iff $D\psi$ is a ground state of $H$; $\dens(D\psi)=\dens(\psi)$; and the potentials with a
+  non-uniquely $v$-representable ground state are the same for $H_0$ and $DH_0D$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $D$ is diagonal with $D^2=1$: it commutes with the potential term and preserves the quadratic form and the
+  norm after the substitution $\psi\mapsto D\psi$.
+\end{proof}
+
+\begin{theorem}[Gauge covariance of second quantisation]
+  \label{thm:gamma_signConj}
+  \lean{DFT.confSign, DFT.gaugeHop, DFT.confSign_mul_self, DFT.gaugeHop_gaugeHop, DFT.gamma_signConj,
+    DFT.hopM_gaugeHop, DFT.H0Fw_gaugeHop, DFT.nonUV_H0Fw_gaugeHop}
+  \leanok
+  \uses{lem:gamma_structure, def:H0Fw, lem:signConj}
+  Let $\sigma_i=\pm1$ and $\varepsilon(c)=\prod_{i\in c}\sigma_i$. For every one-body matrix $h$,
+  $\Gamma(\diag(\sigma)\,h\,\diag(\sigma))=\diag(\varepsilon)\,\Gamma(h)\,\diag(\varepsilon)$. Hence the Hamiltonian
+  with hopping $\sigma_a\sigma_bt_{ab}$ is $\diag(\varepsilon)\,H_0\,\diag(\varepsilon)$, for any interaction, and
+  the exceptional potentials of the two Hamiltonians coincide.
+\end{theorem}
+\begin{proof}
+  \leanok
+  In the Leibniz expansion of $\Gamma(h)_{cc'}$, a nonzero term moves one particle from $a\in c$ to $b\in c'$ and
+  matches all others, so $\varepsilon(c)\varepsilon(c')=\sigma_a\sigma_b$; the permutation signs do not involve
+  $\sigma$.
+\end{proof}
+
+\begin{theorem}[Generic Hohenberg--Kohn theorem up to orbital sign changes]
+  \label{thm:generic_hk_gauge}
+  \lean{DFT.generic_hk_lattice_fermions_gauge, DFT.triangle_common_sign, DFT.cycle4_no_common_sign}
+  \leanok
+  \uses{thm:generic_hk_lattice_fermions, thm:gamma_signConj, lem:signConj}
+  Under the hypotheses of Theorem~\ref{thm:generic_hk_lattice_fermions} (symmetric edge-dependent hopping), with
+  the common-sign condition replaced by: signs $\sigma_i=\pm1$ and $s$ exist with $s\,\sigma_a\sigma_bt_{ab}>0$ on
+  every bond, the same conclusion holds. On the triangle every pattern of
+  nonzero hoppings has this property. On a 4-cycle whose four hoppings have a negative product (e.g.\ the square
+  with one negative bond) no such signs exist.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Apply Theorem~\ref{thm:generic_hk_lattice_fermions} to $\sigma_a\sigma_bt_{ab}$ and transfer the exceptional set
+  with Lemma~\ref{lem:signConj} and Theorem~\ref{thm:gamma_signConj}. Triangle: choose $s$ as the sign of
+  $t_{01}t_{02}t_{12}$ and $\sigma=(1,s\,\mathrm{sgn}\,t_{01},s\,\mathrm{sgn}\,t_{02})$. 4-cycle: the product of the
+  four bond values $s\sigma_a\sigma_bt_{ab}$ equals $s^4\,t_{ab}t_{bc}t_{cd}t_{da}\le0$.
+\end{proof}
+
+\section{Hopping signs along shortest paths}
+
+The common sign of the hopping enters the proof of Theorem~\ref{thm:generic_hk_lattice_fermions} only through the
+nonvanishing of the partner route sums (Theorem~\ref{thm:Lval_ne_zero}), which needs less.
+
+\begin{definition}[Shortest paths of one sign]
+  \label{def:ShortestPathSigned}
+  \lean{DFT.ShortestPathSigned, DFT.ShortestPathSigned.ne_zero}
+  \leanok
+  The hopping $t$ on $G$ has \emph{shortest paths of one sign} if for every site $b$ there are signs
+  $\varepsilon_q=\pm1$ with $\varepsilon_q t_{qr}\varepsilon_r>0$ whenever $q$ and $r$ are adjacent and
+  $\operatorname{dist}(b,r)+1=\operatorname{dist}(b,q)$. This forces $t_{qr}\neq0$ on every edge. For such hopping it is
+  equivalent (not formalized) to: for any two sites all shortest paths between them have hopping products of the
+  same sign; the signs
+  of $t$ then form a distance-compatible signed graph (Shahul Hameed, Shijin, Soorya, Germina, Zaslavsky, Linear
+  Algebra Appl.\ 608, 236 (2021)).
+\end{definition}
+
+\begin{theorem}[Generic Hohenberg--Kohn theorem for shortest paths of one sign]
+  \label{thm:generic_hk_shortest}
+  \lean{DFT.Lval_ne_zero_of_shortestPathSigned, DFT.exists_DExp_ne_of_Lval, DFT.exists_good_u_of_Lval,
+    DFT.hstar_lattice_fermions_shortest, DFT.generic_hk_lattice_fermions_shortest,
+    DFT.exists_poly_lattice_fermions_shortest, DFT.dimH_nonUVDens_lattice_fermions_shortest,
+    DFT.dimH_nonUVDens_lattice_fermions_shortest'}
+  \leanok
+  \uses{def:ShortestPathSigned, thm:Lval_ne_zero, thm:exists_DExp_ne, lem:exists_good_u,
+    thm:hstar_lattice_fermions, thm:generic_hk_lattice_fermions, thm:dimH_nonUVDens}
+  Under the hypotheses of Theorem~\ref{thm:generic_hk_lattice_fermions} (symmetric edge-dependent hopping), with
+  the common-sign condition replaced by shortest paths of one sign, (H$^*$) holds, the exceptional potentials lie in
+  a closed, nowhere dense, null set, and the non-uv densities have Hausdorff dimension at most $M-3$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  In the proof of Theorem~\ref{thm:Lval_ne_zero}, multiply the layer-$n$ route sum to the site $q$ by
+  $(-1)^n\varepsilon_\pi\varepsilon_q$ instead of $(-s)^n$: with the target at the highest potential every term
+  is positive. The rest of the proofs of (H$^*$), of Theorem~\ref{thm:generic_hk_lattice_fermions} and of the
+  dimension bound use the sign of the hopping only through this lemma: \texttt{exists\_DExp\_ne\_of\_Lval} and
+  \texttt{exists\_good\_u\_of\_Lval} are the proofs of Theorem~\ref{thm:exists_DExp_ne} and
+  Lemma~\ref{lem:exists_good_u} with the nonvanishing of the partner route sums as a hypothesis.
+\end{proof}
+
+\begin{theorem}[The class of shortest paths of one sign]
+  \label{thm:shortest_class}
+  \lean{DFT.shortestPathSigned_of_common_sign, DFT.shortestPathSigned_gaugeHop, DFT.shortestPathSigned_of_gauge,
+    DFT.shortestPathSigned_top, DFT.k4_shortestPathSigned_not_gauge,
+    DFT.common_sign_of_shortestPathSigned_layered, DFT.dist_ne_of_adj_of_isBipartite,
+    DFT.common_sign_of_shortestPathSigned_bipartite, DFT.not_shortestPathSigned_of_two_paths,
+    DFT.square_not_shortestPathSigned}
+  \leanok
+  \uses{def:ShortestPathSigned, thm:gamma_signConj, thm:generic_hk_gauge}
+  Hopping of a common sign has shortest paths of one sign, and the class is invariant under orbital sign changes;
+  so every hopping that orbital sign changes bring to a common sign is in it, and so is every nonzero hopping on a
+  complete graph. On the complete graph with four sites and nonzero hopping with $t_{01}t_{12}t_{23}t_{30}<0$, no
+  orbital sign changes give a common sign. On a connected graph in which every edge joins two sites whose distances
+  to some site $b$ differ, in particular on every connected bipartite graph, symmetric hopping in the class is
+  brought to positive hopping by orbital sign changes (cf.\ Theorem 5.1 of Shahul Hameed et al.). Two
+  shortest paths $q\to r_1\to b$ and $q\to r_2\to b$ with hopping products of opposite signs exclude the class; in
+  particular the square with symmetric hopping and $t_{01}t_{12}t_{23}t_{30}<0$ is not in it.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Common sign: $\varepsilon_q=1$, or $\varepsilon_q=(-1)^{\operatorname{dist}(b,q)}$ for negative hopping. Orbital
+  sign changes: $\varepsilon\mapsto\sigma\varepsilon$. Complete graph: $\varepsilon_b=1$,
+  $\varepsilon_q=\operatorname{sgn}t_{qb}$. Four sites: the 4-cycle $0\,1\,2\,3$
+  (Theorem~\ref{thm:generic_hk_gauge}). Layered: every edge joins consecutive distance layers of $b$, so the
+  signs $\varepsilon$ of $b$ make every edge positive; a connected bipartite graph is layered around every site,
+  since a 2-colouring fixes the parity of the length of every walk from $b$. Two paths: the product of the four positive
+  quantities $\varepsilon_qt_{qr_1}\varepsilon_{r_1}$, $\varepsilon_{r_1}t_{r_1b}\varepsilon_b$,
+  $\varepsilon_qt_{qr_2}\varepsilon_{r_2}$, $\varepsilon_{r_2}t_{r_2b}\varepsilon_b$ equals
+  $t_{qr_1}t_{r_1b}t_{qr_2}t_{r_2b}$, which would have to be positive.
+\end{proof}
+
 \section{Non-uniquely v-representable densities}
 
 \begin{theorem}[Zero sets of polynomials]
@@ -127,4 +259,38 @@
   most $M-3$ by Theorem~\ref{thm:dimH_zeroSet}. Lemma~\ref{lem:density_gap} and
   Theorem~\ref{thm:dimH_pointwise_lipschitz} transfer the bound to the densities. Countable unions over
   supports, gap sizes and a Lindel\"of cover finish the proof.
+\end{proof}
+
+\section{Excited states, and the density determines the potential}
+
+\begin{theorem}[Excited states outside the exceptional set]
+  \label{thm:excited_no_zero_and_simple}
+  \lean{DFT.excited_no_zero_and_simple}
+  \leanok
+  \uses{thm:hstar_lattice_fermions, lem:det_kry_eq_zero, thm:zeroSet_closed_nowhere, thm:volume_zeroSet,
+    lem:eval_krylovPoly, def:H0Fw, thm:kMat_definite_of_hstar, lem:hamN_basic}
+  For spinless fermions with symmetric hopping of a common sign on a connected graph, outside one closed, nowhere dense,
+  Lebesgue-null set of potentials, no eigenvector of $H(v)$, ground or excited, has a zero amplitude, and every
+  eigenvalue is simple.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Condition (H*) gives full support of every eigenvector. If $\varphi$ and $\psi$ share an eigenvalue, then
+  $\varphi-(\varphi_c/\psi_c)\psi$ is an eigenvector vanishing at $c$, hence zero.
+\end{proof}
+
+\begin{theorem}[The density determines the potential outside the exceptional set]
+  \label{thm:density_determines_potential}
+  \lean{DFT.density_determines_potential}
+  \leanok
+  \uses{thm:generic_hk_lattice_fermions, thm:weak_hk, def:H0Fw}
+  For hopping of a common sign, outside the closed, nowhere dense, null set of
+  Theorem~\ref{thm:generic_hk_lattice_fermions}, a normalized ground
+  state of any other potential $v'$ with the same density as a normalized ground state of $H(v)$ forces $v-v'$ to be
+  constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  By the weak theorem (Theorem~\ref{thm:weak_hk}) the ground state of $H(v)$ is a ground state of $H(v')$; if
+  $v-v'$ were not constant, $v$ would be exceptional.
 \end{proof}

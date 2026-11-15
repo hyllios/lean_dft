@@ -6,7 +6,7 @@ Authors: Miguel A. L. Marques
 import DFT.Lattice.TDDFT.KohnSham
 
 /-!
-# Theorem 2 of Farzanehpour–Tokatly is false
+# Counterexample to Theorem 2 of Farzanehpour–Tokatly
 
 Farzanehpour and Tokatly (PRB 86, 125130 (2012)), Theorem 2, assert that on a connected lattice
 every ground state lies in the v-representability set `Ω`, so that every density consistent with it
@@ -23,7 +23,8 @@ and the dot product with `w` gives `|w|² = 0`.
 * `mulVec_eq_zero_of_psd`: a symmetric positive semidefinite matrix annihilates the vectors on
   which its quadratic form vanishes.
 * `kfb_sq_w`: `K(ψ₀, 0) w = 0`.
-* `ft_theorem2_false`: **the counterexample.**
+* `ft_theorem2_counterexample` (formerly `ft_theorem2_false`, kept as a deprecated alias): **the
+  counterexample.**
 * `square_not_mem_omega`: `(ψ₀, 0) ∉ Ω`.
 -/
 
@@ -129,13 +130,13 @@ lemma hasDerivAt_ftVel (t0 t : ℝ) :
   refine hasDerivAt_pi.2 fun i => ?_
   simpa using ((hasDerivAt_id t).sub_const t0).mul_const (ftAcc i)
 
-/-- **Theorem 2 of Farzanehpour–Tokatly is false.** The ground state `ψ₀` of two fermions on the
-square (at the potential `v₀`) admits a consistent density — smooth, with the right initial density
-and current and `Σ n̈ = 0`, exactly the hypotheses of `td_existence` apart from `ψ₀ ∈ Ω` — that no
-potential produces: there is no trajectory from `(ψ₀, 0)`, driven by any potential `v(t)`, whose
-density equals `n(t)` near `t₀`. So Theorem 2 of Farzanehpour–Tokatly, PRB 86, 125130 (2012), is
-false. -/
-theorem ft_theorem2_false (t0 : ℝ) :
+/-- **Counterexample to Theorem 2 of Farzanehpour–Tokatly.** The ground state `ψ₀` of two fermions
+on the square (at the potential `v₀`) admits a consistent density — smooth, with the right initial
+density and current and `Σ n̈ = 0`, exactly the hypotheses of `td_existence` apart from `ψ₀ ∈ Ω` —
+that no potential produces: there is no trajectory from `(ψ₀, 0)`, driven by any potential `v(t)`,
+whose density equals `n(t)` near `t₀`. So the conclusion of Theorem 2 of Farzanehpour–Tokatly,
+PRB 86, 125130 (2012), does not hold in general. -/
+theorem ft_theorem2_counterexample (t0 : ℝ) :
     IsGroundState (hamN H0sq occ4 vsq0) ψsq ∧
     (∀ t, HasDerivAt (ftDens t0) (fun i => (t - t0) * ftAcc i) t) ∧
     (∀ t, HasDerivAt (fun s => fun i => (s - t0) * ftAcc i) ftAcc t) ∧
@@ -191,6 +192,9 @@ theorem ft_theorem2_false (t0 : ℝ) :
     simp [wsq, Fin.sum_univ_four]
     norm_num
   linarith
+
+@[deprecated ft_theorem2_counterexample (since := "2026-11-13")]
+alias ft_theorem2_false := ft_theorem2_counterexample
 
 /-- **The square ground state lies outside `Ω`.** `w` is a nonzero vector in the kernel of
 `K(ψ₀, 0) + 𝟙𝟙ᵀ`. -/
