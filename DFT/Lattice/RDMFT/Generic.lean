@@ -15,8 +15,8 @@ matrices. The `θ` at which the gapped ground state of `Γ(h) + W` has an idempo
 density matrix lie in a closed, nowhere dense, Lebesgue-null set, provided one elimination
 polynomial is not identically zero (`generic_nonidem`). That proviso is the analogue of hypothesis
 (H*) in the generic Hohenberg–Kohn theorem. It is discharged by a single parameter point at which
-every eigenvalue of `Γ(h) + W` is simple and every eigenvector has a nonzero amplitude on `c` and a
-non-idempotent `γ`.
+`Γ(h) + W` has an orthonormal eigenbasis with distinct eigenvalues whose vectors have nonzero
+overlap with `u` and non-idempotent `γ` (`elimPoly_ne_zero_of_eigenbasis`).
 
 Idempotency is detected by the polynomial `Σ_ij ((γ² - ‖ψ‖² γ)_ij)²` in the amplitudes
 (`idemP`), which is homogeneous of degree 8 (`eval_idemP_smul`) and vanishes on normalised states
@@ -96,11 +96,11 @@ lemma evalMat_hamRP (W : Matrix (Conf M N) (Conf M N) ℝ) (θ : Sym2 (Fin M) �
   simp [evalMat, hamRP, hamR, hΓ, Matrix.sum_apply, add_comm]
 
 /-- **Interacting ground states are generically not Slater determinants** (conditional). If the
-elimination polynomial of one configuration `c` is nonzero, the one-body operators `h = symOf θ`
+elimination polynomial of one vector `u` is nonzero, the one-body operators `h = symOf θ`
 for which the gapped ground state of `Γ(h) + W` has idempotent `γ` lie in a closed, nowhere dense,
 Lebesgue-null set. -/
-theorem generic_nonidem {W : Matrix (Conf M N) (Conf M N) ℝ} (hW : W.IsSymm) {c : Conf M N}
-    (hR : elimPoly (hamRP W) idemP c ≠ 0) :
+theorem generic_nonidem {W : Matrix (Conf M N) (Conf M N) ℝ} (hW : W.IsSymm) {u : Conf M N → ℝ}
+    (hR : elimPoly (hamRP W) idemP u ≠ 0) :
     ∃ Z : Set (Sym2 (Fin M) → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
       {θ | ∃ ψ : Conf M N → ℝ, IsGroundState (hamR W (symOf θ)) ψ ∧ ψ ⬝ᵥ ψ = 1 ∧
         (∃ g : ℝ, 0 < g ∧ ∀ χ, ψ ⬝ᵥ χ = 0 →

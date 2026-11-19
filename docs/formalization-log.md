@@ -177,3 +177,12 @@ standard axioms only.
   on `elimPoly (hamRP W) idemP c ≠ 0`. Numerics (scratch `witness.py`): for random h and diagonal W
   at (4,2), (5,2), (6,3) the spectrum is simple, every eigenvector is non-idempotent and some c has
   all amplitudes nonzero, so the hypothesis should hold. TODO: exact witness certificate.
+- Exact witness (done, 2026-11-19). `Generic/Eliminate` now eliminates with a vector `u`
+  (`adj(H−E) u`) instead of a column, and has `elimPoly_ne_zero_of_eigenbasis` (orthonormal
+  eigenbasis, distinct eigenvalues, `v·u ≠ 0`, `F(αv) ≠ 0`) via `adj(H−E_b) = Π(E_j−E_b) v_b v_bᵀ`.
+  `RDMFT/KohnSham`: `exists_slater_of_idem` (idempotent γ ⇒ ψ = c·Slater). `RDMFT/Witness`:
+  M = 4, N = 2, `W42` = pair hopping to the complementary pair (λ = 240), witness `h = diag a`,
+  a = (−469/2, 329/2, −7/2, 147/2); blocks {01,23},{02,13},{03,12} with δ = −70, −238, −161,
+  rational unit eigenvectors (3,4)/5, (5,12)/13, (8,15)/17, eigenvalues ±250, ±338, ±289; Pfaffian
+  ≠ 0 on every eigenvector, = 0 on Slater determinants (`pf_slaterSub`). Unconditional
+  `generic_nonidem_W42`. Finite facts about `Conf 4 2` by `decide`, except `τs` (`τs_pair`).

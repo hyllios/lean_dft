@@ -82,6 +82,7 @@ import DFT.Lattice.RDMFT.Counting
 import DFT.Lattice.RDMFT.Generic
 import DFT.Lattice.RDMFT.KohnSham
 import DFT.Lattice.RDMFT.Stabilizer
+import DFT.Lattice.RDMFT.Witness
 import DFT.Lattice.Spin.HubbardCertificates
 import DFT.Lattice.Spin.KronSum
 import DFT.Lattice.Spin.SpinField

@@ -384,6 +384,109 @@ theorem not_rdmDetermines_of_idem (hN0 : 0 < N) (hNM : N < M)
   not_rdmDetermines_of_stab hW hh hψ hN hg hgap (rdm_isSymm ψ)
     (rdm_ne_smul_one_of_idem hN0 hNM hN hidem) (gamma_rdm_mulVec_of_idem hN hidem)
 
+/-! ### Idempotent `γ` means a Slater determinant -/
+
+/-- **A normalised state with idempotent `γ` is a Slater determinant**, up to a scalar. -/
+theorem exists_slater_of_idem {ψ : Conf M N → ℝ} (hN : ψ ⬝ᵥ ψ = 1)
+    (hidem : rdm ψ * rdm ψ = rdm ψ) :
+    ∃ (φ : Fin M → Fin M → ℝ) (S : Conf M N) (c : ℝ),
+      (∀ a b, ∑ x, φ a x * φ b x = if a = b then 1 else 0) ∧ ψ = c • slaterSub φ S := by
+  classical
+  set γ := rdm ψ
+  obtain ⟨ε, φ, hφ, hON⟩ := exists_eigenbasis γ (rdm_isSymm ψ)
+  have hnφ : ∀ a, φ a ⬝ᵥ φ a = 1 := fun a => by simpa [dotProduct] using hON a a
+  -- the eigenvalues are 0 or 1
+  have hε01 : ∀ a, ε a = 0 ∨ ε a = 1 := by
+    intro a
+    have h1 : (γ * γ) *ᵥ φ a = (ε a * ε a) • φ a := by
+      rw [← Matrix.mulVec_mulVec, hφ, Matrix.mulVec_smul, hφ, smul_smul]
+    rw [hidem, hφ] at h1
+    have h2 := congrArg (φ a ⬝ᵥ ·) h1
+    simp only [dotProduct_smul, hnφ, smul_eq_mul, mul_one] at h2
+    have h3 : ε a * (ε a - 1) = 0 := by rw [mul_sub, mul_one, ← h2, sub_self]
+    rcases mul_eq_zero.mp h3 with h | h
+    · exact Or.inl h
+    · exact Or.inr (by linarith)
+  -- `Σ ε = tr γ = N`
+  have hsum : ∑ a, ε a = N := by
+    have htr := trace_rdm ψ
+    rw [hN, mul_one] at htr
+    rw [← htr]
+    have hεa : ∀ a, ε a = φ a ⬝ᵥ (γ *ᵥ φ a) := fun a => by
+      rw [hφ, dotProduct_smul, hnφ, smul_eq_mul, mul_one]
+    simp_rw [hεa]
+    simp only [dotProduct, Matrix.mulVec, Finset.mul_sum]
+    calc ∑ a, ∑ i, ∑ j, φ a i * (γ i j * φ a j)
+        = ∑ i, ∑ j, γ i j * ∑ a, φ a i * φ a j := by
+          rw [Finset.sum_comm]; refine Finset.sum_congr rfl fun i _ => ?_
+          rw [Finset.sum_comm]; refine Finset.sum_congr rfl fun j _ => ?_
+          rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun a _ => ?_; ring
+      _ = ∑ i, γ i i := by simp [complete_of_orthonormal hON]
+  set S1 : Finset (Fin M) := Finset.univ.filter (fun a => ε a = 1)
+  have hcardN : S1.card = N := by
+    have hite : ∀ a, ε a = if ε a = 1 then 1 else 0 := fun a => by
+      rcases hε01 a with h | h <;> simp [h]
+    have : (S1.card : ℝ) = N := by
+      rw [← hsum, Finset.sum_congr rfl (fun a _ => hite a), Finset.sum_boole]
+    exact_mod_cast this
+  -- the Slater basis of the natural orbitals
+  set P := slaterMat (N := N) φ with hP
+  have hPt : Pᵀ * P = 1 := slaterMat_orth hON
+  have hPP : P * Pᵀ = 1 := mul_eq_one_comm.mp hPt
+  have hGP : (Γ γ : Matrix (Conf M N) (Conf M N) ℝ) * P = P * diagonal (orbEnergy ε) := by
+    ext s S
+    have := congrFun (slaterSub_eigen γ hφ S) s
+    simp only [mulVec, dotProduct, Pi.smul_apply, smul_eq_mul] at this
+    rw [Matrix.mul_apply, Matrix.mul_apply]
+    simp only [hP, slaterMat, diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq',
+      Finset.mem_univ, ite_true]
+    rw [this, mul_comm]
+  set cv := Pᵀ *ᵥ ψ
+  have hψP : ψ = P *ᵥ cv := by rw [Matrix.mulVec_mulVec, hPP, Matrix.one_mulVec]
+  have hcS : ∀ S, orbEnergy ε S * cv S = N * cv S := by
+    have h1 : (Γ γ : Matrix (Conf M N) (Conf M N) ℝ) *ᵥ ψ = (N : ℝ) • ψ :=
+      gamma_rdm_mulVec_of_idem hN hidem
+    rw [hψP, Matrix.mulVec_mulVec, hGP, ← Matrix.mulVec_mulVec] at h1
+    have h2 := congrArg (Pᵀ *ᵥ ·) h1
+    simp only [Matrix.mulVec_mulVec, ← Matrix.mul_assoc, hPt, Matrix.one_mul,
+      Matrix.mulVec_smul, Matrix.one_mulVec] at h2
+    intro S
+    have := congrFun h2 S
+    simpa [Matrix.mulVec_diagonal] using this
+  -- only the configuration `S1` carries weight
+  have hsupp : ∀ S : Conf M N, cv S ≠ 0 → S.1 = S1 := by
+    intro S hS
+    have hE : orbEnergy ε S = N := mul_right_cancel₀ hS (hcS S)
+    rw [orbEnergy_eq_sum] at hE
+    have hcardS : (S.1.card : ℝ) = N := by exact_mod_cast S.2
+    have h0 : ∑ a ∈ S.1, (1 - ε a) = 0 := by
+      rw [Finset.sum_sub_distrib, Finset.sum_const, nsmul_eq_mul, mul_one, hcardS, hE, sub_self]
+    have hall : ∀ a ∈ S.1, ε a = 1 := fun a ha => by
+      have := (Finset.sum_eq_zero_iff_of_nonneg
+        (fun b _ => by rcases hε01 b with h | h <;> simp [h])).mp h0 a ha
+      linarith
+    apply Finset.eq_of_subset_of_card_le
+    · intro a ha; simp [S1, hall a ha]
+    · rw [hcardN, S.2]
+  have hψ0 : ψ ≠ 0 := by intro h; rw [h] at hN; simp at hN
+  obtain ⟨S0, hS0⟩ : ∃ S, cv S ≠ 0 := by
+    by_contra hc
+    push Not at hc
+    apply hψ0
+    rw [hψP, show cv = 0 from funext hc, Matrix.mulVec_zero]
+  refine ⟨φ, S0, cv S0, hON, ?_⟩
+  rw [hψP]
+  funext s
+  simp only [Matrix.mulVec, dotProduct, Pi.smul_apply, smul_eq_mul]
+  rw [Finset.sum_eq_single S0]
+  · simp only [hP, slaterMat]; ring
+  · intro S _ hS
+    have : cv S = 0 := by
+      by_contra hc
+      exact hS (Subtype.ext ((hsupp S hc).trans (hsupp S0 hS0).symm))
+    simp [this]
+  · intro h; exact absurd (Finset.mem_univ _) h
+
 end
 
 end DFT
