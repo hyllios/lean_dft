@@ -14,6 +14,9 @@ import Mathlib.Tactic
   without division).
 * `isGroundState_eigen`: a ground state of a symmetric matrix is an eigenvector with eigenvalue
   `qf/‖ψ‖²`.
+* `qf_smul`: `⟨rχ, H rχ⟩ = r² ⟨χ, H χ⟩`.
+* `mulVec_eq_zero_of_psd`: a symmetric positive semidefinite matrix annihilates every vector on
+  which its quadratic form vanishes.
 -/
 
 namespace DFT
@@ -81,6 +84,34 @@ theorem isGroundState_eigen {M : Matrix V V ℝ} (hM : M.IsSymm) {ψ : V → ℝ
   rw [← hdef] at hi
   rw [Pi.smul_apply, smul_eq_mul]
   field_simp
+  linarith
+
+omit [DecidableEq V] in
+lemma qf_smul (H : Matrix V V ℝ) (r : ℝ) (χ : V → ℝ) : qf H (r • χ) = r ^ 2 * qf H χ := by
+  simp only [qf, mulVec_smul, smul_dotProduct, dotProduct_smul, smul_eq_mul]; ring
+
+omit [DecidableEq V] in
+/-- A symmetric positive semidefinite matrix annihilates every vector on which its quadratic
+form vanishes. -/
+lemma mulVec_eq_zero_of_psd {K : Matrix V V ℝ} (hS : Kᵀ = K)
+    (hpsd : ∀ u, 0 ≤ u ⬝ᵥ (K *ᵥ u)) {w : V → ℝ} (hw : w ⬝ᵥ (K *ᵥ w) = 0) : K *ᵥ w = 0 := by
+  classical
+  funext i
+  set e : V → ℝ := Pi.single i 1
+  have hwK : w ⬝ᵥ (K *ᵥ e) = (K *ᵥ w) i := by
+    rw [dotProduct_mulVec, ← mulVec_transpose, hS]
+    simp [e, dotProduct, Pi.single_apply]
+  have heK : e ⬝ᵥ (K *ᵥ w) = (K *ᵥ w) i := by simp [e, dotProduct, Pi.single_apply]
+  have hee : e ⬝ᵥ (K *ᵥ e) = K i i := by
+    simp [e, dotProduct, mulVec, Pi.single_apply]
+  have key : ∀ s : ℝ, 0 ≤ (2 * (K *ᵥ w) i) * s + K i i * s ^ 2 := by
+    intro s
+    have h := hpsd (w + s • e)
+    simp only [mulVec_add, mulVec_smul, dotProduct_add, add_dotProduct, dotProduct_smul,
+      smul_dotProduct, smul_eq_mul, hw, hwK, heK, hee] at h
+    nlinarith [h]
+  have := lin_coeff_zero key
+  simp only [Pi.zero_apply]
   linarith
 
 end

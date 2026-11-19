@@ -36,9 +36,6 @@ lemma HasGap.mono {H : Matrix C C ℝ} {ψ : C → ℝ} {g g' : ℝ} (h : HasGap
   have := h χ hχ
   nlinarith [dot_self_nonneg χ]
 
-lemma qf_smul (H : Matrix C C ℝ) (r : ℝ) (χ : C → ℝ) : qf H (r • χ) = r ^ 2 * qf H χ := by
-  simp only [qf, mulVec_smul, smul_dotProduct, dotProduct_smul, smul_eq_mul]; ring
-
 lemma sq_le_dot_self (χ : C → ℝ) (c : C) : χ c ^ 2 ≤ χ ⬝ᵥ χ := by
   rw [sq]
   exact Finset.single_le_sum (f := fun j => χ j * χ j) (fun j _ => mul_self_nonneg _)

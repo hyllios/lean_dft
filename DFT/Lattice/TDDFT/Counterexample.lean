@@ -20,8 +20,6 @@ With `w = (1, 1, -1, -1)` the force-balance matrix `K = K(ψ₀, 0)` has `K w = 
 and the dot product with `w` gives `|w|² = 0`.
 
 * `kfb_transpose`: `K(ψ)` is symmetric (for symmetric `H₀`).
-* `mulVec_eq_zero_of_psd`: a symmetric positive semidefinite matrix annihilates the vectors on
-  which its quadratic form vanishes.
 * `kfb_sq_w`: `K(ψ₀, 0) w = 0`.
 * `ft_theorem2_counterexample` (formerly `ft_theorem2_false`, kept as a deprecated alias): **the
   counterexample.**
@@ -50,28 +48,6 @@ lemma kfb_transpose {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ
     rw [← Qf_transpose (Nmat n i * H0 * Nmat n j), transpose_mul, transpose_mul,
       Nmat_transpose, Nmat_transpose, hH0.eq, mul_assoc]
   rw [h1, h2]
-
-/-- A symmetric positive semidefinite matrix annihilates every vector on which its quadratic
-form vanishes. -/
-lemma mulVec_eq_zero_of_psd {K : Matrix V V ℝ} (hS : Kᵀ = K)
-    (hpsd : ∀ u, 0 ≤ u ⬝ᵥ (K *ᵥ u)) {w : V → ℝ} (hw : w ⬝ᵥ (K *ᵥ w) = 0) : K *ᵥ w = 0 := by
-  funext i
-  set e : V → ℝ := Pi.single i 1
-  have hwK : w ⬝ᵥ (K *ᵥ e) = (K *ᵥ w) i := by
-    rw [dotProduct_mulVec, ← mulVec_transpose, hS]
-    simp [e, dotProduct, Pi.single_apply]
-  have heK : e ⬝ᵥ (K *ᵥ w) = (K *ᵥ w) i := by simp [e, dotProduct, Pi.single_apply]
-  have hee : e ⬝ᵥ (K *ᵥ e) = K i i := by
-    simp [e, dotProduct, mulVec, Pi.single_apply]
-  have key : ∀ s : ℝ, 0 ≤ (2 * (K *ᵥ w) i) * s + K i i * s ^ 2 := by
-    intro s
-    have h := hpsd (w + s • e)
-    simp only [mulVec_add, mulVec_smul, dotProduct_add, add_dotProduct, dotProduct_smul,
-      smul_dotProduct, smul_eq_mul, hw, hwK, heK, hee] at h
-    nlinarith [h]
-  have := lin_coeff_zero key
-  simp only [Pi.zero_apply]
-  linarith
 
 end general
 

@@ -150,3 +150,30 @@ infrastructure) → B6 (pure algebra) → B2/B3 → B4 → B5 → B7. Each miles
   condition ∃ s, s·t_ab > 0 on edges. `generic_hk_lattice_fermions_w`; the uniform theorem is a corollary.
 - CI: docgen-action ran doc-gen on dependencies even with `api-docs: false` (OOM); blueprint, checkdecls and
   Jekyll are now explicit workflow steps; runner pinned to ubuntu-24.04 (setup-ruby vs ubuntu-26.04).
+
+## RDMFT on a lattice (2026-11-19)
+`H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
+standard axioms only.
+- `RDMFT/Basic`: `gammaL`, `rdm`, `qf_gamma` (`⟨ψ,Γ(h)ψ⟩ = Σ h_ij γ_ij`), `hamR`, `gilbert_weak`.
+- `RDMFT/Stabilizer`: `TrivialStab`, `RDMDetermines`; `rdmDetermines_of_trivialStab`; for a gapped
+  ground state `persist_of_eigen` and `not_rdmDetermines_of_stab` (non-scalar `d` with
+  `Γ(d)ψ = cψ` ⇒ `γ` does not determine `h`).
+- `RDMFT/Counting`: `exists_stab` (rank–nullity on `Sym2 (Fin M) → ℝ` modulo `ℝψ`) when
+  `C(M,N) + 1 ≤ C(M+1,2)`; `not_rdmDetermines_of_cases` for `N ∈ {1, 2, M-2, M-1}` and `(6,3)`.
+  Numerics (scratch script): generic stabilizer is trivial for (7,3), (7,4), (8,4) and for bosons.
+- Ideas: Sylvester criterion for two bosons / singlets; idempotency no-go for Kohn–Sham; generic
+  theorem via minors of `[Γ(E_ij)ψ]`; Green's function HK (needs `c, c†` between `N` and `N±1`).
+- `RDMFT/KohnSham` (done): `gamma_transpose`, `rdm_isSymm`; Pauli `0 ≤ γ ≤ 1` (`qf_gamma_nonneg`,
+  `qf_gamma_rank_one_le`, both from `qf_gamma_ge`); `rdm_slater_mulVec`, `rdm_slater_idem`;
+  `rdm_idem_of_gap` (aufbau + `unique_of_gap`); `not_ks_of_not_idem`.
+- `RDMFT/KohnSham`, idempotency section: `gamma_one`, `trace_rdm`; `gamma_rdm_mulVec_of_idem`
+  (idempotent γ ⇒ `Γ(γ)ψ = Nψ`, via Pauli and PSD-zero on the many-body space);
+  `not_idem_of_trivialStab`; `not_rdmDetermines_of_idem`. Full genericity (a.e. `(h, W)`) still open:
+  needs an eigenvalue-free polynomial certificate of "ψ is a Slater determinant" plus a witness.
+- `Generic/Eliminate` (done): abstract elimination. `R_c = det q_c(H)`, `q_c(E) = F(adj(H−E)_{·c})`;
+  `adj_col_eq_smul` (columns ∝ gapped GS), `aeval_mulVec_of_eigen`, `eval_elimPoly_eq_zero`,
+  `generic_avoid` (closed, nowhere dense, null if `R_c ≠ 0`). No resultant API needed.
+- `RDMFT/Generic` (done): `idemP` (degree 8), `hamRP` (h = symOf θ), `generic_nonidem` conditional
+  on `elimPoly (hamRP W) idemP c ≠ 0`. Numerics (scratch `witness.py`): for random h and diagonal W
+  at (4,2), (5,2), (6,3) the spectrum is simple, every eigenvector is non-idempotent and some c has
+  all amplitudes nonzero, so the hypothesis should hold. TODO: exact witness certificate.

@@ -46,6 +46,7 @@ import DFT.Lattice.Fermions.Slater
 import DFT.Lattice.Generic.DensityDim
 import DFT.Lattice.Generic.DensityDim.Fermions
 import DFT.Lattice.Generic.DensityDim.Gap
+import DFT.Lattice.Generic.Eliminate
 import DFT.Lattice.Generic.Excited
 import DFT.Lattice.Generic.Krylov
 import DFT.Lattice.Generic.NullSets
@@ -76,6 +77,11 @@ import DFT.Lattice.PathSum.FreeFermions
 import DFT.Lattice.PathSum.Resonance
 import DFT.Lattice.PathSum.ResonantPoint
 import DFT.Lattice.PathSum.RouteSums
+import DFT.Lattice.RDMFT.Basic
+import DFT.Lattice.RDMFT.Counting
+import DFT.Lattice.RDMFT.Generic
+import DFT.Lattice.RDMFT.KohnSham
+import DFT.Lattice.RDMFT.Stabilizer
 import DFT.Lattice.Spin.HubbardCertificates
 import DFT.Lattice.Spin.KronSum
 import DFT.Lattice.Spin.SpinField
