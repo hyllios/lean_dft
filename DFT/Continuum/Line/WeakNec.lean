@@ -125,18 +125,16 @@ lemma integral_abs_rhoN_sub {P Φ : Cfg n → ℝ} (hP : MemLp P 2 (μN n)) (hΦ
   rw [← integral_sub h1 h2]
   exact abs_integral_le_integral_abs
 
-/-- **The densities of the truncations converge in `L¹`.** -/
-lemma tendsto_rhoN_trunc {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) :
-    Tendsto (fun M => ∫ t, |rhoN (trunc M Φ) t - rhoN Φ t| ∂μ1) atTop (𝓝 0) := by
+/-- **The squares of the truncations converge in `L¹`.** -/
+lemma tendsto_abs_sq_trunc {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) :
+    Tendsto (fun M => ∫ x, |trunc M Φ x ^ 2 - Φ x ^ 2| ∂μN n) atTop (𝓝 0) := by
   set D : ℕ → ℝ := fun M => ∫ x, (Φ x - trunc M Φ x) ^ 2 ∂μN n
   set S := ∫ x, Φ x ^ 2 ∂μN n
   have hD := tendsto_trunc hΦ
   have hPm : ∀ M, MemLp (trunc M Φ) 2 (μN n) := fun M => memLp_cont (continuous_trunc M Φ)
-  have bound : ∀ M, ∫ t, |rhoN (trunc M Φ) t - rhoN Φ t| ∂μ1 ≤
-      (n + 1) * (√(D M) * √(2 * D M + 8 * S)) := by
+  have bound : ∀ M, ∫ x, |trunc M Φ x ^ 2 - Φ x ^ 2| ∂μN n ≤
+      √(D M) * √(2 * D M + 8 * S) := by
     intro M
-    refine (integral_abs_rhoN_sub (hPm M) hΦ).trans ?_
-    refine mul_le_mul_of_nonneg_left ?_ (by positivity)
     have hd : MemLp (fun x => trunc M Φ x - Φ x) 2 (μN n) := (hPm M).sub hΦ
     have hs : MemLp (fun x => trunc M Φ x + Φ x) 2 (μN n) := (hPm M).add hΦ
     have h := integral_mul_le_Lp_mul_Lq_of_nonneg (μ := μN n) Real.HolderConjugate.two_two
@@ -163,10 +161,18 @@ lemma tendsto_rhoN_trunc {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) :
       _ ≤ √(D M) * √(2 * D M + 8 * S) := by
           rw [e1, ← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow]
           gcongr
-  have hlim : Tendsto (fun M => (n + 1 : ℝ) * (√(D M) * √(2 * D M + 8 * S))) atTop (𝓝 0) := by
-    have := ((hD.sqrt).mul (((hD.const_mul 2).add_const (8 * S)).sqrt)).const_mul ((n : ℝ) + 1)
+  have hlim : Tendsto (fun M => √(D M) * √(2 * D M + 8 * S)) atTop (𝓝 0) := by
+    have := (hD.sqrt).mul (((hD.const_mul 2).add_const (8 * S)).sqrt)
     simpa using this
-  exact squeeze_zero (fun M => integral_nonneg fun t => abs_nonneg _) bound hlim
+  exact squeeze_zero (fun M => integral_nonneg fun x => abs_nonneg _) bound hlim
+
+/-- **The densities of the truncations converge in `L¹`.** -/
+lemma tendsto_rhoN_trunc {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) :
+    Tendsto (fun M => ∫ t, |rhoN (trunc M Φ) t - rhoN Φ t| ∂μ1) atTop (𝓝 0) := by
+  have h := (tendsto_abs_sq_trunc hΦ).const_mul ((n : ℝ) + 1)
+  rw [mul_zero] at h
+  exact squeeze_zero (fun M => integral_nonneg fun t => abs_nonneg _)
+    (fun M => integral_abs_rhoN_sub (memLp_cont (continuous_trunc M Φ)) hΦ) h
 
 /-! ### The regularised square roots -/
 

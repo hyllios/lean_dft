@@ -28,6 +28,7 @@ import DFT.Continuum.Line.Smooth
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Line.Unique
 import DFT.Continuum.Line.Weak
+import DFT.Continuum.Line.WeakHK
 import DFT.Continuum.Line.WeakNec
 import DFT.Continuum.Line.WeakRep
 import DFT.Continuum.Sine.Coeff

@@ -274,9 +274,17 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `tendsto_rhoN_trunc` (L¹, Hölder), regularised `u = √(ρ_M + ε) - √ε`
     (`integral_deriv_ureg_le`), **`sqrt_dens_H1W`**, **`lieb_characterisation`**: `ρ` is the
     density of a normalised `H¹₀` state iff `ρ(v) = ∫ v g²` with `g ∈ H10`, `∫ g² = N`.
+- DONE (2026-11-21) `Line/WeakHK`: the `H¹₀` setting has the same physics as the `C²` one.
+  `gsE_le_QW` (truncations: `Q(P_M) ≤ T_W + ∫ V P_M²`, `tendsto_pot_trunc`), **`gsE_W_eq`**,
+  **`liebF_W_eq`** (all continuous `v`); `isNGS_le_QW` (a `C²` NGS minimises over `H¹₀`);
+  `ae_eq_zero_of_integral_alt`, **`sep_lineW`**, `rigidL_lineW`; `parsevalW_pair`, `Bf_cNW`,
+  `sum_lam_le`, `adm_cNW`, `Fn_le_QW`, `ae_eq_of_cN_eq`; **`gsW_ae_eq`** (smooth `V`: every `H¹₀`
+  ground state is a.e. a `C²` ground state — its coefficients minimise `Fn`, then `ser_min2`);
+  **`exists_isGS_W`**, **`exists_unique_gs_W`** (a.e. up to a constant), **`hk_line_W`**,
+  **`lieb_line_W`**. (`tendsto_abs_sq_trunc` factored out of `Line/WeakNec`.)
 - Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
   `Line/HardCore`, `Line/Density`, `Line/Weak`, `Line/WeakRep`, `Line/Closure`, `Line/Complete`,
-  `Line/WeakNec`; spin-1/2 electrons (Lieb–Mattis); HK/Lieb/existence on `settingW` itself.
+  `Line/WeakNec`, `Line/WeakHK`; spin-1/2 electrons (Lieb–Mattis).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
