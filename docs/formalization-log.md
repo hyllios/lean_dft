@@ -230,17 +230,40 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     sharper `‖D^i s_m‖ ≤ Dc (1+πW)^i`, `contDiff_ser2`, `ser_min2`, **`exists_isGS_kernel`**
     (needs only `Σ b_l Π(1+l_j)^r < ∞`, some `r ∈ (1/2, 2]`).
   - `Sine/Decay`: `integral_mul_cos_ibp` (two IBPs), `integral_cons`/`integral_swap_cons`
-    (Fubini by `Fin.cons`), `contDiff_deriv_snd`, **`coef_decay`**: smooth family over a compact
+    (Fubini by `Fin.cons`), `contDiff_deriv_snd`, **`coef_decay`**: `C^{2d}` family over a compact
     parameter set ⇒ `|∫ F cosP_l| ≤ C Π(1+l_j)^{-2}` (induction on `d`, parametric).
   - `Sine/General`: `sn_mul_sn`, `smd_mul_smd` (2^{N} cosine terms at distinct admissible
     indices `cixM`), `Ker_bound_of_coef`, **`kernel_of_smooth`** (r = 3/4);
     **`exists_isGS_smooth`**, `exists_unique_gs_smooth`, **`hk_line_smooth`**,
-    **`lieb_line_smooth`** (hyp.: `LN v + w = F` on closed cube, `F` C^∞),
+    **`lieb_line_smooth`** (hyp.: `LN v + w = F` on closed cube, `F` C^{2N}),
     `exists_unique_gs_hardcore_smooth`; `pairU u = ½Σ_{i≠j} u(x_i−x_j)`:
-    **`hk_line_pair`**, **`lieb_line_pair`**, `exists_unique_gs_pair` (v = f on [0,1], f, u C^∞).
+    **`hk_line_pair`**, **`lieb_line_pair`**, `exists_unique_gs_pair` (v = f on [0,1], f, u C^{2N}).
+  - (2026-11-21, later) Hypotheses weakened from C^∞ to `ContDiff ℝ (2 * (n + 1))`: the
+    induction in `coef_decay` spends two `t`-derivatives per coordinate.
+- DONE (2026-11-21) `Line/Density`: necessity half of Lieb's `√ρ ∈ H¹` characterisation. For any
+  `Φ ∈ Dom τ n`: `rhoN Φ t = N ∫ Φ(t,y)² dy` is the density (`dens_eq_rhoN`), and
+  **`sqrt_dens_H1`**: `ρ ≥ 0`, `ρ(0) = ρ(1) = 0`, `∫ρ = N‖Φ‖²`, `ρ` is `C¹` (`rhoD`, differentiation
+  under the integral), `(√ρ)' = ρ'/(2√ρ)` where `ρ > 0`, and `∫₀¹ ρ'²/(4ρ) ≤ Σ_k ∫|∂_kΦ|²`
+  (Cauchy–Schwarz in `y` via `discrim_le_zero`, exchange symmetry of `|∂_kΦ|²`).
+- DONE (2026-11-21) `Line/Weak`: the `H¹₀` state space on the cube, without Sobolev theory.
+  `IsWD k Φ G`: `G ∈ L²` and `∫ Φ ∂ₖφ = -∫ G φ` for every `C¹` `φ` (not only those vanishing on
+  the walls, which encodes the zero trace); linear (`add`, `const_mul`, `sum`), unique a.e.
+  (`IsOpen.ae_eq_zero_of_integral_contDiff_smul_eq_zero`). `DomW τ n` (L², all weak derivatives,
+  exchange symmetry a.e.), `dW` (chosen representative), `settingW` (kinetic energy
+  `Σ_k ∫ dW_k ψ dW_k φ`). `integral_cube_ins` (Fubini, integrable `F`). `Dom_le_DomW`,
+  `dW_ae_eq_dk`, `h0W_eq`, **`liebF_W_le`** (Lieb on `H¹₀` ≤ Lieb on `C²`).
+- DONE (2026-11-21) `Line/WeakRep`: sufficiency half of Lieb's characterisation on `H¹₀`.
+  `H10 g` := `AbsolutelyContinuousOnInterval g 0 1`, `g 0 = g 1 = 0`, `∫₀¹ g'² < ∞` (Mathlib's AC
+  FTC/IBP). `H10.clamp` (continuous version), `H10.mul_C1`; `tens`, `memLp_tens`
+  (`Integrable.fintype_prod`), **`isWD_tens`** (weak derivative of `Π f_j(x_j)`, by Fubini and
+  `AbsolutelyContinuousOnInterval.integral_mul_deriv_eq_deriv_mul`); `prodS_memW`, `slater_memW`,
+  `harriman` (Harriman orbitals of a continuous `H10` `g`); **`nrepW`**, **`liebF_W_ne_top`**,
+  **`nrepW_of_sqrt`**: every `ρ ≥ 0` with `√ρ ∈ H10`, `∫ρ = N` is the density of a normalised
+  `H¹₀` state (bosons and fermions).
 - Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
-  `Line/HardCore`; spin-1/2 electrons (Lieb–Mattis); weaken C^∞ to C^{2N} in `coef_decay`;
-  `√ρ ∈ H¹` representability (needs a larger state space).
+  `Line/HardCore`, `Line/Density`, `Line/Weak`, `Line/WeakRep`; spin-1/2 electrons (Lieb–Mattis);
+  necessity of `√ρ ∈ H¹` for `H¹₀` states (proved for `C²` states in `Line/Density`; for `DomW`
+  needs approximation by `C²` states, e.g. sine truncations, plus weak lower semicontinuity).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

@@ -118,28 +118,28 @@ lemma abs_integral_mu1_le {f : ℝ → ℝ} {C : ℝ} (h : ∀ t ∈ Icc (0 : �
 
 /-! ### Smooth families -/
 
-lemma contDiff_cons {d : ℕ} :
-    ContDiff ℝ ∞ (fun p : ℝ × (Fin d → ℝ) => (Fin.cons p.1 p.2 : Fin (d + 1) → ℝ)) := by
+lemma contDiff_cons {d : ℕ} {k : WithTop ℕ∞} :
+    ContDiff ℝ k (fun p : ℝ × (Fin d → ℝ) => (Fin.cons p.1 p.2 : Fin (d + 1) → ℝ)) := by
   refine contDiff_pi.2 fun i => ?_
   refine Fin.cases ?_ (fun j => ?_) i
-  · simpa using (contDiff_fst : ContDiff ℝ ∞ fun p : ℝ × (Fin d → ℝ) => p.1)
-  · simpa using contDiff_pi.1 (contDiff_snd : ContDiff ℝ ∞
+  · simpa using (contDiff_fst : ContDiff ℝ k fun p : ℝ × (Fin d → ℝ) => p.1)
+  · simpa using contDiff_pi.1 (contDiff_snd : ContDiff ℝ k
       fun p : ℝ × (Fin d → ℝ) => p.2) j
 
-/-- The partial derivative in a scalar variable of a smooth family is a smooth family. -/
+/-- The partial derivative in a scalar variable of a `C^{k+1}` family is a `C^k` family. -/
 lemma contDiff_deriv_snd {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {f : E → ℝ → ℝ}
-    (hf : ContDiff ℝ ∞ fun p : E × ℝ => f p.1 p.2) :
-    ContDiff ℝ ∞ fun p : E × ℝ => deriv (f p.1) p.2 := by
-  have hf' : ContDiff ℝ ∞ fun q : (E × ℝ) × ℝ => f q.1.1 q.2 :=
+    {k : WithTop ℕ∞} (hf : ContDiff ℝ (k + 1) fun p : E × ℝ => f p.1 p.2) :
+    ContDiff ℝ k fun p : E × ℝ => deriv (f p.1) p.2 := by
+  have hf' : ContDiff ℝ (k + 1) fun q : (E × ℝ) × ℝ => f q.1.1 q.2 :=
     hf.comp ((contDiff_fst.comp contDiff_fst).prodMk contDiff_snd)
-  have h := ContDiff.fderiv (n := ∞) (m := ∞) (f := fun (p : E × ℝ) (s : ℝ) => f p.1 s)
-    (g := fun p => p.2) hf' contDiff_snd (by simp)
+  have h := ContDiff.fderiv (m := k + 1) (n := k)
+    (f := fun (p : E × ℝ) (s : ℝ) => f p.1 s) (g := fun p => p.2) hf' contDiff_snd le_rfl
   exact h.clm_apply contDiff_const
 
 lemma hasDerivAt_of_family {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {f : E → ℝ → ℝ}
-    (hf : ContDiff ℝ ∞ fun p : E × ℝ => f p.1 p.2) (q : E) (t : ℝ) :
+    {k : WithTop ℕ∞} (hf : ContDiff ℝ (k + 1) fun p : E × ℝ => f p.1 p.2) (q : E) (t : ℝ) :
     HasDerivAt (f q) (deriv (f q) t) t := by
-  have h : ContDiff ℝ ∞ (f q) := hf.comp (contDiff_const.prodMk contDiff_id)
+  have h : ContDiff ℝ (k + 1) (f q) := hf.comp (contDiff_const.prodMk contDiff_id)
   exact ((h.differentiable (by simp)) t).hasDerivAt
 
 /-! ### The decay of cosine coefficients -/
@@ -166,11 +166,11 @@ lemma inv_pi_sq_le_rho {k : ℕ} (hk : 0 < k) : ((π * k) ^ 2)⁻¹ ≤ rho k :=
   refine inv_anti₀ (by positivity) (pow_le_pow_left₀ (by positivity) ?_ 2)
   nlinarith [Real.pi_gt_three]
 
-/-- **Decay of cosine coefficients**: for a smooth family `F(z, ·)` and `z` in a compact set,
+/-- **Decay of cosine coefficients**: for a `C^{2d}` family `F(z, ·)` and `z` in a compact set,
 `|∫ F(z, y) Π_j cos(π l_j y_j) dy| ≤ C Π_j (1 + l_j)^{-2}`. -/
 theorem coef_decay : ∀ (d : ℕ) {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] {S : Set E},
     IsCompact S → ∀ {F : E → (Fin d → ℝ) → ℝ},
-    ContDiff ℝ ∞ (fun p : E × (Fin d → ℝ) => F p.1 p.2) →
+    ContDiff ℝ (2 * d : ℕ) (fun p : E × (Fin d → ℝ) => F p.1 p.2) →
     ∃ C, 0 ≤ C ∧ ∀ z ∈ S, ∀ l : Fin d → ℕ,
       |∫ y, F z y * cosP l y ∂piM d| ≤ C * ∏ j, rho (l j) := by
   intro d
@@ -189,22 +189,28 @@ theorem coef_decay : ∀ (d : ℕ) {E : Type} [NormedAddCommGroup E] [NormedSpac
     intro E _ _ S hS F hF
     -- the slices and their derivatives in the first coordinate
     set f : E × (Fin d → ℝ) → ℝ → ℝ := fun q t => F q.1 (Fin.cons t q.2) with hfdef
-    have hf : ContDiff ℝ ∞ fun p : (E × (Fin d → ℝ)) × ℝ => f p.1 p.2 :=
+    have hf : ContDiff ℝ ((2 * d + 1 : ℕ) + 1) fun p : (E × (Fin d → ℝ)) × ℝ => f p.1 p.2 :=
+      (show ((2 * (d + 1) : ℕ) : WithTop ℕ∞) = (2 * d + 1 : ℕ) + 1 by
+        rw [show 2 * (d + 1) = (2 * d + 1) + 1 by ring]; rfl) ▸
       hF.comp ((contDiff_fst.comp contDiff_fst).prodMk (contDiff_cons.comp
         (contDiff_snd.prodMk (contDiff_snd.comp contDiff_fst))))
     have hf1 := contDiff_deriv_snd hf
     set f1 : E × (Fin d → ℝ) → ℝ → ℝ := fun q t => deriv (f q) t with hf1def
-    have hf2 := contDiff_deriv_snd (f := f1) hf1
+    have hf2 := contDiff_deriv_snd (f := f1) (k := (2 * d : ℕ)) (by exact_mod_cast hf1)
     set f2 : E × (Fin d → ℝ) → ℝ → ℝ := fun q t => deriv (f1 q) t with hf2def
     -- as families over the parameters `(z, t)`
-    have hfam : ∀ {g : E × (Fin d → ℝ) → ℝ → ℝ},
-        ContDiff ℝ ∞ (fun p : (E × (Fin d → ℝ)) × ℝ => g p.1 p.2) →
-        ContDiff ℝ ∞ (fun p : (E × ℝ) × (Fin d → ℝ) => g (p.1.1, p.2) p.1.2) := fun hg =>
+    have hfam : ∀ {k : WithTop ℕ∞} {g : E × (Fin d → ℝ) → ℝ → ℝ},
+        ContDiff ℝ k (fun p : (E × (Fin d → ℝ)) × ℝ => g p.1 p.2) →
+        ContDiff ℝ k (fun p : (E × ℝ) × (Fin d → ℝ) => g (p.1.1, p.2) p.1.2) := fun hg =>
       hg.comp (((contDiff_fst.comp contDiff_fst).prodMk contDiff_snd).prodMk
         (contDiff_snd.comp contDiff_fst))
     have hS' : IsCompact (S ×ˢ Icc (0 : ℝ) 1) := hS.prod isCompact_Icc
-    obtain ⟨C0, hC0, h0⟩ := ih (F := fun q y => f (q.1, y) q.2) hS' (hfam hf)
-    obtain ⟨C1, hC1, h1⟩ := ih (F := fun q y => f1 (q.1, y) q.2) hS' (hfam hf1)
+    have hle0 : ((2 * d : ℕ) : WithTop ℕ∞) ≤ (2 * d + 1 : ℕ) := by
+      exact_mod_cast (show 2 * d ≤ 2 * d + 1 by omega)
+    have hle1 : ((2 * d : ℕ) : WithTop ℕ∞) ≤ (2 * d + 1 : ℕ) + 1 :=
+      hle0.trans (le_self_add)
+    obtain ⟨C0, hC0, h0⟩ := ih (F := fun q y => f (q.1, y) q.2) hS' (hfam (hf.of_le hle1))
+    obtain ⟨C1, hC1, h1⟩ := ih (F := fun q y => f1 (q.1, y) q.2) hS' (hfam (hf1.of_le hle0))
     obtain ⟨C2, hC2, h2⟩ := ih (F := fun q y => f2 (q.1, y) q.2) hS' (hfam hf2)
     refine ⟨max C0 (2 * C1 + C2), by positivity, fun z hz l => ?_⟩
     obtain ⟨k, l', rfl⟩ : ∃ k l', l = (Fin.cons k l' : Fin (d + 1) → ℕ) :=
@@ -213,8 +219,8 @@ theorem coef_decay : ∀ (d : ℕ) {E : Type} [NormedAddCommGroup E] [NormedSpac
     simp only [Fin.cons_zero, Fin.cons_succ]
     set P := ∏ j, rho (l' j)
     have hP : 0 ≤ P := Finset.prod_nonneg fun j _ => (rho_pos _).le
-    have hcont : ∀ {g : E × (Fin d → ℝ) → ℝ → ℝ},
-        ContDiff ℝ ∞ (fun p : (E × (Fin d → ℝ)) × ℝ => g p.1 p.2) →
+    have hcont : ∀ {o : WithTop ℕ∞} {g : E × (Fin d → ℝ) → ℝ → ℝ},
+        ContDiff ℝ o (fun p : (E × (Fin d → ℝ)) × ℝ => g p.1 p.2) →
         Continuous fun p : ℝ × (Fin d → ℝ) => g (z, p.2) p.1 := fun hg =>
       hg.continuous.comp ((continuous_const.prodMk continuous_snd).prodMk continuous_fst)
     -- the coefficient as an iterated integral
@@ -244,11 +250,11 @@ theorem coef_decay : ∀ (d : ℕ) {E : Type} [NormedAddCommGroup E] [NormedSpac
       rw [hr, one_mul]
       exact h.trans (mul_le_mul_of_nonneg_right (le_max_left _ _) hP)
     · -- integrate by parts in the first coordinate
-      have hsw : ∀ {g : E × (Fin d → ℝ) → ℝ → ℝ},
-          ContDiff ℝ ∞ (fun p : (E × (Fin d → ℝ)) × ℝ => g p.1 p.2) →
+      have hsw : ∀ {o : WithTop ℕ∞} {g : E × (Fin d → ℝ) → ℝ → ℝ},
+          ContDiff ℝ o (fun p : (E × (Fin d → ℝ)) × ℝ => g p.1 p.2) →
           ∫ t, Real.cos (π * k * t) * ∫ y, g (z, y) t * cosP l' y ∂piM d ∂μ1 =
             ∫ y, cosP l' y * ∫ t, g (z, y) t * Real.cos (π * k * t) ∂μ1 ∂piM d := by
-        intro g hg
+        intro o g hg
         have e1 : ∀ t, Real.cos (π * k * t) * ∫ y, g (z, y) t * cosP l' y ∂piM d =
             ∫ y, g (z, y) t * Real.cos (π * k * t) * cosP l' y ∂piM d := fun t => by
           rw [← integral_const_mul]; congr 1; funext y; ring
@@ -263,7 +269,8 @@ theorem coef_decay : ∀ (d : ℕ) {E : Type} [NormedAddCommGroup E] [NormedSpac
             ∫ t, f2 (z, y) t * Real.cos (π * k * t) ∂μ1) / (π * k) ^ 2 := fun y =>
         integral_mul_cos_ibp (g := f (z, y)) (g1 := f1 (z, y)) (g2 := f2 (z, y))
           (fun t => hasDerivAt_of_family (f := f) hf (z, y) t)
-          (fun t => hasDerivAt_of_family (f := f1) hf1 (z, y) t)
+          (fun t => hasDerivAt_of_family (f := f1) (k := (2 * d : ℕ)) (by exact_mod_cast hf1)
+            (z, y) t)
           (hf2.continuous.comp (continuous_const.prodMk continuous_id)) hk
       rw [hsw hf]
       simp only [hibp]

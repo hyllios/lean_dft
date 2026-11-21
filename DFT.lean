@@ -12,6 +12,7 @@ import DFT.Continuum.General.Lieb
 import DFT.Continuum.Line.Basic
 import DFT.Continuum.Line.Bosons
 import DFT.Continuum.Line.Chamber
+import DFT.Continuum.Line.Density
 import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions
@@ -24,6 +25,8 @@ import DFT.Continuum.Line.Represent
 import DFT.Continuum.Line.Smooth
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Line.Unique
+import DFT.Continuum.Line.Weak
+import DFT.Continuum.Line.WeakRep
 import DFT.Continuum.Sine.Coeff
 import DFT.Continuum.Sine.Cube
 import DFT.Continuum.Sine.Decay
