@@ -307,12 +307,27 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `a + b = N`, `a ≥ b ≥ 1`, `Σ v(x_k) + w` `C^{2N}`.
 - Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
   `Line/HardCore`, `Line/Density`, `Line/Weak*`, `Line/Closure`, `Line/Complete`, `Line/Young*`,
-  `Line/LiebMattis*`; spin space itself (spin-orbital wave functions, `S²` via the Dirac
-  identity) to derive, rather than define via Fock's condition, the spatial description of spin.
+  `Line/LiebMattis*`, `Line/Spin*`.
 - DONE (2026-11-21) `Line/LiebMattisSpin`: total spin via Fock's highest-weight condition
   (`HW a ψ`: type `(a, N-a)` and `altY (a+1) ψ = 0`, i.e. `S₊ψ = 0`); `Espin` = inf energy at total
   spin `S = a - N/2`; **`gs_highest_weight`** (the `S_z` sector ground state has `S = |S_z|`, else
   `S₊` lowers `E(a+1, b-1)` to `E(a, b)`); **`lieb_mattis_spin`**: `E(S) < E(S+1)`.
+- DONE (2026-11-21) Genuine spin space (removes the Fock-condition definition).
+  - `Line/SpinAlg`: spin configurations `SpinC n = Fin (n+1) → Bool`; `S₊, S₋, S_z, S²` as linear
+    maps on `SpinC n → V`; commutators, `S2_eq` (`S² = S₋S₊ + S_z² + S_z`), `S2_comm_Sp`,
+    `adj_Sp` (S₊ adjoint to S₋ for any bilinear form), `S_z` sector projections `Pc`, relabelling.
+  - `Line/SpinStates`: `D0` (C², zero on the walls), bilinear energy/norm forms `BQ`, `Bip`
+    (cube-congruent, relabel-invariant); `Ferm` (Ψ(σs, σx) = sgn σ Ψ(s, x)).
+  - `Line/SpinBridge`: `FermD`; `sector_reduce` (a fermionic sector is one spatial function of type
+    `(c, N-c)`, `mem_DomY_sc`); ladder identities `ladder_Sp/Sm` (‖S₊u‖ = (S(S+1) − M² − M)‖u‖ for
+    both forms); `Strong` (Schrödinger equation) closed under sums, relabelling; `lift` of a
+    spatial type-`(a, b)` function to a fermionic spin-orbital state (`lift_sc`).
+  - `Line/LiebMattisTotal`: `EspinT a` = inf energy over fermionic spin-orbital states with
+    `S²Ψ = S(S+1)Ψ`, `S = a − N/2`. `lower_bound` (sectors above S empty; S₊ carries every sector to
+    the top one with the same positive factor on energy and norm); `upper_bound` (lift of the
+    sector ground state has `S₊ = 0` by `lieb_mattis`, so total spin exactly S);
+    **`Espin_total_eq`** (E(S) = sector ground-state energy), **`lieb_mattis_total`**:
+    `E(S) < E(S+1)` for `S ≥ 0`. Standard axioms only.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

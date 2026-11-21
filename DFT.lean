@@ -24,10 +24,14 @@ import DFT.Continuum.Line.Lieb
 import DFT.Continuum.Line.LiebMattis
 import DFT.Continuum.Line.LiebMattisSign
 import DFT.Continuum.Line.LiebMattisSpin
+import DFT.Continuum.Line.LiebMattisTotal
 import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Pauli
 import DFT.Continuum.Line.Represent
 import DFT.Continuum.Line.Smooth
+import DFT.Continuum.Line.SpinAlg
+import DFT.Continuum.Line.SpinBridge
+import DFT.Continuum.Line.SpinStates
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Line.Unique
 import DFT.Continuum.Line.Weak
