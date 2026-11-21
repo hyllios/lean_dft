@@ -21,6 +21,8 @@ import DFT.Continuum.Line.FreeFermions
 import DFT.Continuum.Line.HardCore
 import DFT.Continuum.Line.Hopf
 import DFT.Continuum.Line.Lieb
+import DFT.Continuum.Line.LiebMattis
+import DFT.Continuum.Line.LiebMattisSign
 import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Pauli
 import DFT.Continuum.Line.Represent
@@ -31,6 +33,10 @@ import DFT.Continuum.Line.Weak
 import DFT.Continuum.Line.WeakHK
 import DFT.Continuum.Line.WeakNec
 import DFT.Continuum.Line.WeakRep
+import DFT.Continuum.Line.Young
+import DFT.Continuum.Line.YoungPos
+import DFT.Continuum.Line.YoungSign
+import DFT.Continuum.Line.YoungStrong
 import DFT.Continuum.Sine.Coeff
 import DFT.Continuum.Sine.Cube
 import DFT.Continuum.Sine.Decay

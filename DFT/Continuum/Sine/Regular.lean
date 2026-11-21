@@ -291,17 +291,19 @@ lemma ser_face (c : (Fin (n + 1) → ℕ) → ℝ) (x : Cfg n) (j : Fin (n + 1))
     (h : x j = 0 ∨ x j = 1) : ser c x = 0 := by
   simp [ser, fun m => smd_face m x j h]
 
-lemma ser_pm {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : InS τ c)
-    (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) : ser c (pm σ x) = ch τ σ * ser c x := by
+lemma ser_pm {τ : SymT n} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : InS τ c)
+    (σ : Equiv.Perm (Fin (n + 1))) (hσ : τ.G σ) (x : Cfg n) :
+    ser c (pm σ x) = τ.χ σ * ser c x := by
   rw [ser, ser, ← (pmIe σ).tsum_eq, ← tsum_mul_left]
   refine tsum_congr fun m => ?_
   change c (pmI σ m) * smd (pmI σ m) (pm σ x) = _
-  rw [hc σ m, smd_pm]; ring
+  rw [hc σ hσ m, smd_pm]; ring
 
 /-- The sine series lies in the domain. -/
 theorem ser_mem {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ}
-    (hc : ∀ q, Summable fun m => (wt m : ℝ) ^ q * |c m|) (hS : InS τ c) : ser c ∈ Dom τ n :=
-  ⟨contDiff_ser hc, ser_pm hS, ser_face c⟩
+    (hc : ∀ q, Summable fun m => (wt m : ℝ) ^ q * |c m|) (hS : InS τ.toSym c) :
+    ser c ∈ Dom τ n :=
+  ⟨contDiff_ser hc, fun σ x => ser_pm hS σ trivial x, ser_face c⟩
 
 /-- **The coefficients of the sine series are `c`.** -/
 theorem cN_ser {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => |c m|)
@@ -344,7 +346,7 @@ include hb0 hbS hK hbs
 
 /-- **The minimiser is a function in the domain**: `Φ = Σ c_m s_m ∈ Dom` with `cN Φ = c`. -/
 theorem ser_min (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat} {a : (Fin (n + 1) → ℕ) → ℝ}
-    (ha : Adm τ a) (hmin : Fn V a = E0 V τ) :
+    (ha : Adm τ.toSym a) (hmin : Fn V a = E0 V τ.toSym) :
     ser a ∈ Dom τ n ∧ ∀ m, cN m (ser a) = a m := by
   have hEL := euler_lagrange hb0 hbS hK hVs ha hmin
   have hq := summable_wt_pow_mul (nw_ne_top hb0 hbS hK hbs hEL ha.sq)

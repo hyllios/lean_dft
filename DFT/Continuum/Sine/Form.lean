@@ -350,9 +350,19 @@ lemma ksq_pm (σ : Equiv.Perm (Fin (n + 1))) (m : Fin (n + 1) → ℕ) : ksq (pm
   simp only [ksq, pmI]
   exact Equiv.sum_comp σ (fun i => (m i + 1) ^ 2)
 
-/-- The sequences of exchange symmetry `τ`. -/
-def InS (τ : Stat) (c : (Fin (n + 1) → ℕ) → ℝ) : Prop :=
-  ∀ σ m, c (pmI σ m) = ch τ σ * c m
+/-- A symmetry type: a set `G` of relabellings and a character `χ` on it. -/
+structure SymT (n : ℕ) where
+  /-- The relabellings under which states transform. -/
+  G : Equiv.Perm (Fin (n + 1)) → Prop
+  /-- The character. -/
+  χ : Equiv.Perm (Fin (n + 1)) → ℝ
+
+/-- Full exchange symmetry `τ` as a symmetry type. -/
+noncomputable def _root_.DFT.Continuum.Line.Stat.toSym (τ : Stat) : SymT n := ⟨fun _ => True, ch τ⟩
+
+/-- The sequences of symmetry type `τ`. -/
+def InS (τ : SymT n) (c : (Fin (n + 1) → ℕ) → ℝ) : Prop :=
+  ∀ σ, τ.G σ → ∀ m, c (pmI σ m) = τ.χ σ * c m
 
 lemma Ker_pm {V : Cfg n → ℝ} (hVs : ∀ σ x, V (pm σ x) = V x) (σ : Equiv.Perm (Fin (n + 1)))
     (m' m : Fin (n + 1) → ℕ) : Ker V (pmI σ m') (pmI σ m) = Ker V m' m := by
@@ -361,15 +371,15 @@ lemma Ker_pm {V : Cfg n → ℝ} (hVs : ∀ σ x, V (pm σ x) = V x) (σ : Equiv
   rfl
 
 /-- The kernel preserves the exchange symmetry. -/
-lemma Kc_InS {V : Cfg n → ℝ} (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat}
+lemma Kc_InS {V : Cfg n → ℝ} (hVs : ∀ σ x, V (pm σ x) = V x) {τ : SymT n}
     {c : (Fin (n + 1) → ℕ) → ℝ} (hc : InS τ c) : InS τ (Kc V c) := by
-  intro σ m'
+  intro σ hσ m'
   simp only [Kc]
   rw [← (pmIe σ).tsum_eq]
-  simp only [pmIe, Equiv.coe_fn_mk, Ker_pm hVs, hc σ, ← tsum_mul_left]
+  simp only [pmIe, Equiv.coe_fn_mk, Ker_pm hVs, hc σ hσ, ← tsum_mul_left]
   congr 1; funext m; ring
 
-lemma cN_InS {τ : Stat} {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) : InS τ fun m => cN m φ :=
-  fun σ m => cN_pm hφ σ m
+lemma cN_InS {τ : Stat} {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) : InS τ.toSym fun m => cN m φ :=
+  fun σ _ m => cN_pm hφ σ m
 
 end DFT.Continuum.Sine

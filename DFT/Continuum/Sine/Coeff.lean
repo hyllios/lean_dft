@@ -139,15 +139,16 @@ lemma cN_eq (m : Fin (n + 1) → ℕ) (f : Cfg n → ℝ) : cN m f = ∫ x, smd 
 
 variable {τ : Stat}
 
-/-- `⟨s_m, -Δφ⟩ = π² |k|² ⟨s_m, φ⟩`. -/
-lemma cN_lap {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) (m : Fin (n + 1) → ℕ) :
+/-- `⟨s_m, -Δφ⟩ = π² |k|² ⟨s_m, φ⟩`, for `φ` `C²` and vanishing on the walls. -/
+lemma cN_lap0 {φ : Cfg n → ℝ} (hφ2 : ContDiff ℝ 2 φ)
+    (hφw : ∀ x k, (x k = 0 ∨ x k = 1) → φ x = 0) (m : Fin (n + 1) → ℕ) :
     cN m (fun x => -lapN φ x) = π ^ 2 * ksq m * cN m φ := by
   have hs := contDiff_smd m
-  have hc := hφ.1.continuous
+  have hc := hφ2.continuous
   have hj : ∀ j, ∫ x, smd m x * dkk j φ x ∂μN n = -(π * (m j + 1 : ℕ)) ^ 2 * cN m φ := by
     intro j
-    have a := ibpN' hφ.1 hs (smd_face m) j
-    have b := ibpN hs hφ j
+    have a := ibpN' hφ2 hs (smd_face m) j
+    have b := ibpN0 hs hφ2 hφw j
     have e : ∫ x, dk j φ x * dk j (smd m) x ∂μN n = ∫ x, dk j (smd m) x * dk j φ x ∂μN n :=
       integral_congr_ae (ae_of_all _ fun x => mul_comm _ _)
     rw [cN_eq, ← integral_const_mul]
@@ -161,7 +162,7 @@ lemma cN_lap {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) (m : Fin (n + 1) → �
   have e : (fun x => smd m x * -lapN φ x) = fun x => -∑ j, smd m x * dkk j φ x := by
     funext x; simp only [lapN, Finset.mul_sum, mul_neg]
   rw [e, integral_neg, integral_finsetSum (f := fun j x => smd m x * dkk j φ x) _ fun j _ =>
-    integrableN (hs.continuous.mul (continuous_dkk hφ.1 j))]
+    integrableN (hs.continuous.mul (continuous_dkk hφ2 j))]
   simp only [hj, ksq, ← cN_eq]
   push_cast
   rw [← Finset.sum_mul, Finset.mul_sum, ← neg_mul, ← Finset.sum_neg_distrib]
@@ -169,28 +170,45 @@ lemma cN_lap {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) (m : Fin (n + 1) → �
   refine Finset.sum_congr rfl fun j _ => ?_
   ring
 
-/-- **The kinetic energy in the sine basis**: `∫ |∇φ|² = Σ_m π² |k|² ⟨s_m, φ⟩²`. -/
-theorem hasSum_kin {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) :
+lemma cN_lap {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) (m : Fin (n + 1) → ℕ) :
+    cN m (fun x => -lapN φ x) = π ^ 2 * ksq m * cN m φ :=
+  cN_lap0 hφ.1 hφ.2.2 m
+
+/-- **The kinetic energy in the sine basis**, for `φ` `C²` and vanishing on the walls. -/
+theorem hasSum_kin0 {φ : Cfg n → ℝ} (hφ2 : ContDiff ℝ 2 φ)
+    (hφw : ∀ x k, (x k = 0 ∨ x k = 1) → φ x = 0) :
     HasSum (fun m => π ^ 2 * ksq m * cN m φ ^ 2) (∫ x, ∑ k, dk k φ x * dk k φ x ∂μN n) := by
-  have hc := hφ.1.continuous
+  have hc := hφ2.continuous
+  have hd : ∀ k, Continuous (dk k φ) := fun k => (contDiff_dk hφ2 k).continuous
   have hpair := hasSum_pair_cube (f := fun x => -lapN φ x) (g := φ)
-    (continuous_lapN hφ.1).neg hc
+    (continuous_lapN hφ2).neg hc
   have hkin : ∫ x, ∑ k, dk k φ x * dk k φ x ∂μN n = ∫ x, -lapN φ x * φ x ∂μN n := by
     rw [integral_finsetSum (f := fun k x => dk k φ x * dk k φ x) _
-      fun k _ => integrableN ((cont_dk hφ k).mul (cont_dk hφ k))]
-    simp only [ibpN hφ.1 hφ]
+      fun k _ => integrableN ((hd k).mul (hd k))]
+    simp only [ibpN0 hφ2 hφ2 hφw]
     rw [Finset.sum_neg_distrib, ← integral_finsetSum (f := fun k x => dkk k φ x * φ x) _
-      fun k _ => integrableN ((continuous_dkk hφ.1 k).mul hc), ← integral_neg]
+      fun k _ => integrableN ((continuous_dkk hφ2 k).mul hc), ← integral_neg]
     congr 1; funext x; simp only [lapN, Finset.sum_mul, neg_mul]
   rw [hkin, muN_eq]
   refine hpair.congr_fun fun m => ?_
   change π ^ 2 * ksq m * cN m φ ^ 2 = cN m (fun x => -lapN φ x) * cN m φ
-  rw [cN_lap hφ]; ring
+  rw [cN_lap0 hφ2 hφw]; ring
+
+/-- **The kinetic energy in the sine basis**: `∫ |∇φ|² = Σ_m π² |k|² ⟨s_m, φ⟩²`. -/
+theorem hasSum_kin {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) :
+    HasSum (fun m => π ^ 2 * ksq m * cN m φ ^ 2) (∫ x, ∑ k, dk k φ x * dk k φ x ∂μN n) :=
+  hasSum_kin0 hφ.1 hφ.2.2
 
 /-! ### Relabelling -/
 
 /-- Relabelling of multi-indices. -/
 def pmI (σ : Equiv.Perm (Fin (n + 1))) (m : Fin (n + 1) → ℕ) : Fin (n + 1) → ℕ := fun i => m (σ i)
+
+lemma pmI_pmI (σ ρ : Equiv.Perm (Fin (n + 1))) (m : Fin (n + 1) → ℕ) :
+    pmI σ (pmI ρ m) = pmI (ρ * σ) m := by
+  funext i; simp [pmI]
+
+lemma pmI_one (m : Fin (n + 1) → ℕ) : pmI 1 m = m := rfl
 
 lemma smd_pm (σ : Equiv.Perm (Fin (n + 1))) (m : Fin (n + 1) → ℕ) (x : Cfg n) :
     smd (pmI σ m) (pm σ x) = smd m x := by

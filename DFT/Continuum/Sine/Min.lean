@@ -38,13 +38,13 @@ noncomputable def lam (m : Fin (n + 1) → ℕ) : ℝ := π ^ 2 * ksq m
 lemma lam_nonneg (m : Fin (n + 1) → ℕ) : 0 ≤ lam m := by unfold lam; positivity
 
 /-- Admissible sequences: square summable, finite kinetic energy, exchange symmetry `τ`. -/
-structure Dir (τ : Stat) (c : (Fin (n + 1) → ℕ) → ℝ) : Prop where
+structure Dir (τ : SymT n) (c : (Fin (n + 1) → ℕ) → ℝ) : Prop where
   sq : Summable fun m => c m ^ 2
   kin : Summable fun m => lam m * c m ^ 2
   sym : InS τ c
 
 /-- Normalised admissible sequences. -/
-structure Adm (τ : Stat) (c : (Fin (n + 1) → ℕ) → ℝ) : Prop extends Dir τ c where
+structure Adm (τ : SymT n) (c : (Fin (n + 1) → ℕ) → ℝ) : Prop extends Dir τ c where
   norm : ∑' m, c m ^ 2 = 1
 
 /-- The energy of a coefficient sequence. -/
@@ -52,14 +52,14 @@ noncomputable def Fn (V : Cfg n → ℝ) (c : (Fin (n + 1) → ℕ) → ℝ) : �
   ∑' m, lam m * c m ^ 2 + Bf V c c
 
 /-- The ground-state energy in coefficient space. -/
-noncomputable def E0 (V : Cfg n → ℝ) (τ : Stat) : ℝ := sInf (Fn V '' {c | Adm τ c})
+noncomputable def E0 (V : Cfg n → ℝ) (τ : SymT n) : ℝ := sInf (Fn V '' {c | Adm τ c})
 
-lemma InS_smul {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : InS τ c) (a : ℝ) :
-    InS τ fun m => a * c m := fun σ m => by
-  change a * c (pmI σ m) = ch τ σ * (a * c m)
-  rw [hc σ m]; ring
+lemma InS_smul {τ : SymT n} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : InS τ c) (a : ℝ) :
+    InS τ fun m => a * c m := fun σ hσ m => by
+  change a * c (pmI σ m) = τ.χ σ * (a * c m)
+  rw [hc σ hσ m]; ring
 
-lemma Dir_smul {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Dir τ c) (a : ℝ) :
+lemma Dir_smul {τ : SymT n} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Dir τ c) (a : ℝ) :
     Dir τ fun m => a * c m :=
   ⟨by simpa [mul_pow] using hc.sq.mul_left (a ^ 2),
     by simpa [mul_pow, mul_left_comm] using hc.kin.mul_left (a ^ 2), InS_smul hc.sym a⟩
@@ -84,7 +84,7 @@ lemma abs_Bf_le {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m 
   exact Real.sqrt_le_sqrt (by nlinarith)
 
 /-- The energy is bounded below on normalised sequences. -/
-lemma Fn_ge_neg {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Adm τ c) : -√(C0 b) ≤ Fn V c := by
+lemma Fn_ge_neg {τ : SymT n} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Adm τ c) : -√(C0 b) ≤ Fn V c := by
   have h1 := abs_Bf_le hb0 hbS hK hc.sq
   rw [hc.norm, mul_one] at h1
   have h2 : 0 ≤ ∑' m, lam m * c m ^ 2 :=
@@ -92,7 +92,7 @@ lemma Fn_ge_neg {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Adm τ c) 
   rw [Fn]
   linarith [neg_abs_le (Bf V c c)]
 
-lemma bddBelow_Fn (τ : Stat) : BddBelow (Fn V '' {c | Adm τ c}) :=
+lemma bddBelow_Fn (τ : SymT n) : BddBelow (Fn V '' {c | Adm τ c}) :=
   ⟨-√(C0 b), by rintro _ ⟨c, hc, rfl⟩; exact Fn_ge_neg hb0 hbS hK hc⟩
 
 omit hb0 hbS hK in
@@ -100,7 +100,7 @@ lemma Kc_zero (V : Cfg n → ℝ) : Kc V (fun _ => (0 : ℝ)) = fun _ => 0 := by
   funext m'; simp [Kc]
 
 /-- **`F(c) ≥ E₀ Σ c²`** for every admissible direction. -/
-lemma Fn_ge {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Dir τ c) :
+lemma Fn_ge {τ : SymT n} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Dir τ c) :
     E0 V τ * ∑' m, c m ^ 2 ≤ Fn V c := by
   rcases (tsum_nonneg fun m => sq_nonneg (c m)).lt_or_eq with hN | hN
   · obtain ⟨a, ha_def⟩ : ∃ a : ℝ, a = (√(∑' m, c m ^ 2))⁻¹ := ⟨_, rfl⟩
@@ -230,14 +230,14 @@ lemma tendsto_l2 {d : ℕ → (Fin (n + 1) → ℕ) → ℝ} {a : (Fin (n + 1) �
   linarith
 
 
-lemma Dir_add {τ : Stat} {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Dir τ c) (hd : Dir τ d) :
+lemma Dir_add {τ : SymT n} {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Dir τ c) (hd : Dir τ d) :
     Dir τ fun m => c m + d m :=
   ⟨Summable.of_nonneg_of_le (fun m => sq_nonneg _)
       (fun m => by nlinarith [sq_nonneg (c m - d m)]) ((hc.sq.add hd.sq).mul_left 2),
     Summable.of_nonneg_of_le (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _))
       (fun m => by nlinarith [mul_nonneg (lam_nonneg m) (sq_nonneg (c m - d m))])
       ((hc.kin.add hd.kin).mul_left 2),
-    fun σ m => by simp only [hc.sym σ m, hd.sym σ m]; ring⟩
+    fun σ hσ m => by simp only [hc.sym σ hσ m, hd.sym σ hσ m]; ring⟩
 
 lemma summable_lam_mul {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => lam m * c m ^ 2)
     (hd : Summable fun m => lam m * d m ^ 2) : Summable fun m => lam m * c m * d m := by
@@ -299,7 +299,7 @@ lemma abs_Bf_sub_le {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m =
 
 /-- **The minimiser** (direct method): if some normalised admissible sequence exists, the energy
 attains its infimum `E₀`. -/
-theorem exists_min {τ : Stat} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm τ c) :
+theorem exists_min {τ : SymT n} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm τ c) :
     ∃ c, Adm τ c ∧ Fn V c = E0 V τ := by
   have hbdd := bddBelow_Fn hb0 hbS hK (V := V) τ
   obtain ⟨c0, hc0⟩ := hne
@@ -337,9 +337,9 @@ theorem exists_min {τ : Stat} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm
   have has := lim_sum_le hlim' (w := fun _ => 1) (B := 1) (fun _ => zero_le_one)
     (fun j => by simpa using (hd j).sq) (fun j => by simpa using (hd j).norm.le)
   simp only [one_mul] at has
-  have hsym : InS τ a := fun σ m =>
+  have hsym : InS τ a := fun σ hσ m =>
     tendsto_nhds_unique (hlim' (pmI σ m))
-      (by simpa only [(hd _).sym σ m] using (hlim' m).const_mul (ch τ σ))
+      (by simpa only [(hd _).sym σ hσ m] using (hlim' m).const_mul (τ.χ σ))
   have hM0 : 0 ≤ M := (tsum_nonneg fun m => mul_nonneg (lam_nonneg m) (sq_nonneg (a m))).trans hak.2
   have hnorm : ∑' m, a m ^ 2 = 1 := by
     refine le_antisymm has.2 (le_of_forall_pos_lt_add fun ε hε => ?_)
@@ -426,13 +426,13 @@ lemma Bf_comm_of_fin {a e : (Fin (n + 1) → ℕ) → ℝ} (ha : Summable fun m 
   exact tsum_congr fun m => by rw [Ker_symm]; ring
 
 /-- **The Euler–Lagrange equation** `λ_m c_m + (Kc)_m = E₀ c_m` for a minimiser. -/
-theorem euler_lagrange (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat} {a : (Fin (n + 1) → ℕ) → ℝ}
+theorem euler_lagrange (hVs : ∀ σ x, V (pm σ x) = V x) {τ : SymT n} {a : (Fin (n + 1) → ℕ) → ℝ}
     (ha : Adm τ a) (hmin : Fn V a = E0 V τ) (m : Fin (n + 1) → ℕ) :
     lam m * a m + Kc V a m = E0 V τ * a m := by
   set f : (Fin (n + 1) → ℕ) → ℝ := fun m => lam m * a m + Kc V a m - E0 V τ * a m with hf
-  have hfS : InS τ f := fun σ m => by
+  have hfS : InS τ f := fun σ hσ m => by
     simp only [hf]
-    rw [lam_pm, ha.sym σ m, Kc_InS hVs ha.sym σ m]; ring
+    rw [lam_pm, ha.sym σ hσ m, Kc_InS hVs ha.sym σ hσ m]; ring
   suffices h : ∀ K, ∀ m ∈ box K, f m = 0 by
     have := h _ m (mem_box_sup m)
     simp only [hf] at this
@@ -440,9 +440,9 @@ theorem euler_lagrange (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat} {a : (Fin
   intro K
   set e : (Fin (n + 1) → ℕ) → ℝ := fun m => if m ∈ box K then f m else 0 with he_def
   have he0 : ∀ m ∉ box K, e m = 0 := fun m hm => by simp [he_def, hm]
-  have heS : InS τ e := fun σ m => by
+  have heS : InS τ e := fun σ hσ m => by
     simp only [he_def, mem_box_pm]
-    split_ifs <;> simp [hfS σ m]
+    split_ifs <;> simp [hfS σ hσ m]
   have heD : Dir τ e := ⟨summable_of_ne_finset_zero (s := box K) fun m hm => by simp [he0 m hm],
     summable_of_ne_finset_zero (s := box K) fun m hm => by simp [he0 m hm], heS⟩
   have hcomm := Bf_comm_of_fin hb0 hbS hK ha.sq he0

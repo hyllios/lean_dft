@@ -207,12 +207,6 @@ theorem tendsto_trunc {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) :
 
 /-! ### The truncations are `C²` states -/
 
-lemma pmI_pmI (σ ρ : Equiv.Perm (Fin (n + 1))) (m : Fin (n + 1) → ℕ) :
-    pmI σ (pmI ρ m) = pmI (ρ * σ) m := by
-  funext i; simp [pmI]
-
-lemma pmI_one (m : Fin (n + 1) → ℕ) : pmI 1 m = m := rfl
-
 lemma pmI_mem_boxI {M : ℕ} (σ : Equiv.Perm (Fin (n + 1))) {m : Fin (n + 1) → ℕ} :
     pmI σ m ∈ boxI n M ↔ m ∈ boxI n M := by
   simp only [mem_boxI, pmI]

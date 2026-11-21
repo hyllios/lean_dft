@@ -415,7 +415,7 @@ include hb0 hbS hK
 
 /-- **The minimiser is a function in the domain**, under polynomial decay. -/
 theorem ser_min2 (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat} {a : (Fin (n + 1) → ℕ) → ℝ}
-    (ha : Adm τ a) (hmin : Fn V a = E0 V τ) {r : ℝ} (hr : 1 / 2 < r) (hr2 : r ≤ 2)
+    (ha : Adm τ.toSym a) (hmin : Fn V a = E0 V τ.toSym) {r : ℝ} (hr : 1 / 2 < r) (hr2 : r ≤ 2)
     (hG : Summable fun l => b l * om r l) :
     ser a ∈ Dom τ n ∧ ∀ m, cN m (ser a) = a m := by
   have hEL := euler_lagrange hb0 hbS hK hVs ha hmin
@@ -423,7 +423,7 @@ theorem ser_min2 (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat} {a : (Fin (n + 
   have h0 : Summable fun m => |a m| := Summable.of_nonneg_of_le (fun m => abs_nonneg _)
     (fun m => le_mul_of_one_le_left (abs_nonneg _)
       (one_le_pow₀ (by exact_mod_cast one_le_wt m))) hq
-  exact ⟨⟨contDiff_ser2 hq, ser_pm ha.sym, ser_face a⟩, cN_ser h0⟩
+  exact ⟨⟨contDiff_ser2 hq, fun σ x => ser_pm ha.sym σ trivial x, ser_face a⟩, cN_ser h0⟩
 
 end minimiser
 
@@ -447,7 +447,7 @@ theorem exists_isGS_kernel {τ : Stat} (hws : ∀ σ x, w (pm σ x) = w x) (hb0 
   have hcoef' : (fun m => cN m (ser a)) = a := funext hcoef
   have hip : ip (μ := μN n) (ser a) (ser a) = 1 := by
     rw [ip_eq_tsum hΦ.1.continuous]; simp only [hcoef]; exact ha.norm
-  have hQ : Q (setting τ n w hw) v (ser a) = E0 V τ := by
+  have hQ : Q (setting τ n w hw) v (ser a) = E0 V τ.toSym := by
     rw [Q_eq_Fn hw v hΦ, hcoef', hmin]
   refine ⟨ser a, ⟨hΦ, hip ▸ one_pos, fun φ hφ => ?_⟩, hip⟩
   rw [hQ, hip, mul_one, Q_eq_Fn hw v hφ, ip_eq_tsum hφ.1.continuous]

@@ -282,9 +282,33 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
   ground state is a.e. a `C²` ground state — its coefficients minimise `Fn`, then `ser_min2`);
   **`exists_isGS_W`**, **`exists_unique_gs_W`** (a.e. up to a constant), **`hk_line_W`**,
   **`lieb_line_W`**. (`tendsto_abs_sq_trunc` factored out of `Line/WeakNec`.)
+- DONE (2026-11-21) **Lieb–Mattis on a line** (spatial form).
+  - Refactor: `Sine/Form` `SymT n` (relabelling set `G` + character `χ`), `Stat.toSym`; `InS`,
+    `Dir`, `Adm`, `E0`, `exists_min`, `euler_lagrange`, `ser_pm` generic in `SymT`;
+    `ibpN0`, `cN_lap0`, `hasSum_kin0` (only `C²` + walls); `pmI_pmI`, `pmI_one` moved to Coeff.
+  - `Line/Young`: `DomS s`, `settingS s`, Young subgroup `YG a`, `ymix a` (antisymmetric within
+    `{0..a-1}` and `{a..n}`), `exists_adm_ymix` (Young-antisymmetrised `δ_{m₀}`), `ser_min2S`,
+    **`exists_isGS_smoothS`**.
+  - `Line/YoungStrong`: `altY`, `eq_zero_of_integral_altY`, **`strong_eq_Y`**, `RY` (ordered
+    within groups, open convex), `eq_zero_of_collisionY`, `exists_YG_mem_RY` (sort within groups:
+    shift group 2 by 2, full sort, initial-segment argument).
+  - `Line/YoungSign`: `sign_mul'`, `SY` (same-group sign product), `gA = SY · SC` (Vandermonde),
+    `SY_pm` (a.e.), `tl a Φ = SY·|Φ|` (continuous, `tl² = Φ²`), `abs_sub_line` (Lipschitz along
+    lines: `S` jumps only where `Φ = 0`), `measurable_line_deriv`, `abs_Gt_le`
+    (`norm_deriv_le_of_lipschitzOn`), **`isWD_tl`** (AC IBP along lines).
+  - `Line/YoungPos`: `bessel_wd`, `sum_lam_le_wd`, **`tl_ae_gs`** (`S·|Φ|` is a.e. a `C²` GS:
+    coefficients minimise `Fn`), **`gs_sign_RY`** (strict sign on `RY`; Hopf with automatic
+    critical zeros), **`gs_unique_Y`** (nondegeneracy). No Nodal/Chamber adaptation needed.
+  - `Line/LiebMattisSign`: `NoSame`, `SY_eventually`, `exists_injective_near`, `SY_pm'`
+    (cross collisions allowed), `gs_SY_pos`, `SY_mul_SY_succ` (`SY a·SY(a+1) = Rlow·Rhigh`).
+  - `Line/LiebMattis`: `lapN_altY`, `Q_altY` (lowered state `f = altY a g` has energy `E'`),
+    configurations `rk1`, `rk2` (spin-down particles but the last sit on spin-up ones; `rk2`
+    moves spin-up `a-1` to the top), `sign_altY`, **`lieb_mattis`**: `E(a, b) < E(a+1, b-1)` for
+    `a + b = N`, `a ≥ b ≥ 1`, `Σ v(x_k) + w` `C^{2N}`.
 - Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
-  `Line/HardCore`, `Line/Density`, `Line/Weak`, `Line/WeakRep`, `Line/Closure`, `Line/Complete`,
-  `Line/WeakNec`, `Line/WeakHK`; spin-1/2 electrons (Lieb–Mattis).
+  `Line/HardCore`, `Line/Density`, `Line/Weak*`, `Line/Closure`, `Line/Complete`, `Line/Young*`,
+  `Line/LiebMattis*`; spin-operator form of Lieb–Mattis (`E(S) < E(S+1)`: spin space, `S²`,
+  `S_z` sectors ↔ mixed symmetry).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

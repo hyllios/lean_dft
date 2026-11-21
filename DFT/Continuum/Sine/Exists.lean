@@ -39,7 +39,7 @@ lemma ip_eq_tsum {φ : Cfg n → ℝ} (hφ : Continuous φ) :
     ip (μ := μN n) φ φ = ∑' m, cN m φ ^ 2 := (hasSum_ip hφ).tsum_eq.symm
 
 /-- The sine coefficients of a state in the domain are admissible. -/
-lemma Dir_cN {τ : Stat} {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) : Dir τ fun m => cN m φ :=
+lemma Dir_cN {τ : Stat} {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) : Dir τ.toSym fun m => cN m φ :=
   ⟨(hasSum_ip hφ.1.continuous).summable, by simpa [lam] using (hasSum_kin hφ).summable,
     cN_InS hφ⟩
 
@@ -73,7 +73,7 @@ lemma exists_dom_pos (τ : Stat) : ∃ Ψ ∈ Dom τ n, 0 < ip (μ := μN n) Ψ 
     exact ⟨Ψ, hΨ.1, hΨ.2.1⟩
 
 /-- Normalised admissible sequences exist. -/
-lemma exists_adm (τ : Stat) : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm τ c := by
+lemma exists_adm (τ : Stat) : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm τ.toSym c := by
   obtain ⟨Ψ, hΨ, hpos⟩ := exists_dom_pos (n := n) τ
   set a := (√(ip (μ := μN n) Ψ Ψ))⁻¹
   refine ⟨fun m => a * cN m Ψ, Dir_smul (Dir_cN hΨ) a, ?_⟩
@@ -103,7 +103,7 @@ theorem exists_isGS_line {τ : Stat} (hws : ∀ σ x, w (pm σ x) = w x)
   have hcoef' : (fun m => cN m (ser a)) = a := funext hcoef
   have hip : ip (μ := μN n) (ser a) (ser a) = 1 := by
     rw [ip_eq_tsum hΦ.1.continuous]; simp only [hcoef]; exact ha.norm
-  have hQ : Q (setting τ n w hw) v (ser a) = E0 V τ := by
+  have hQ : Q (setting τ n w hw) v (ser a) = E0 V τ.toSym := by
     rw [Q_eq_Fn hw v hΦ, hcoef', hmin]
   refine ⟨ser a, ⟨hΦ, hip ▸ one_pos, fun φ hφ => ?_⟩, hip⟩
   rw [hQ, hip, mul_one, Q_eq_Fn hw v hφ, ip_eq_tsum hφ.1.continuous]

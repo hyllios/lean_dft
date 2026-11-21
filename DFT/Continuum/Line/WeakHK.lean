@@ -280,11 +280,11 @@ lemma sum_lam_le {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (s : Finset (Fin 
   simpa [lam, kinW] using h
 
 lemma adm_cNW {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (h1 : ∫ x, Ψ x ^ 2 ∂μN n = 1) :
-    Adm τ fun m => cN m Ψ :=
+    Adm τ.toSym fun m => cN m Ψ :=
   { sq := (parsevalW hΨ.1).summable
     kin := summable_of_sum_le (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _))
       (sum_lam_le hΨ)
-    sym := fun σ m => cN_pmW hΨ σ m
+    sym := fun σ _ m => cN_pmW hΨ σ m
     norm := by rw [(parsevalW hΨ.1).tsum_eq, h1] }
 
 lemma Fn_le_QW {w : Cfg n → ℝ} {hw : Continuous w} (v : Pot) {Ψ : Cfg n → ℝ}
@@ -325,7 +325,7 @@ theorem gsW_ae_eq {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW τ n w hw) v Ψ) :
   have hc0' : (fun m => cN m (ser a0)) = a0 := funext hc0
   have hip0 : ip (μ := μN n) (ser a0) (ser a0) = 1 := by
     rw [ip_eq_tsum hΦ0.1.continuous]; simp only [hc0]; exact ha0.norm
-  have hQ0 : Q (settingW τ n w hw) v (ser a0) = E0 V τ := by
+  have hQ0 : Q (settingW τ n w hw) v (ser a0) = E0 V τ.toSym := by
     rw [QW_eq_Q v hΦ0, Q_eq_Fn hw v hΦ0, hc0', hmin0]
   -- normalise `Ψ`
   have hs := hΨ.2.1
@@ -339,13 +339,13 @@ theorem gsW_ae_eq {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW τ n w hw) v Ψ) :
   set a := fun m => cN m (c • Ψ)
   have ha := adm_cNW hΨ1.1 hsq1
   -- `E₀ ≤ Fn a ≤ Q(cΨ) ≤ Q(Φ₀) = E₀`
-  have hE1 : E0 V τ ≤ Fn V a := csInf_le (bddBelow_Fn hb0 hbS hK τ) ⟨a, ha, rfl⟩
+  have hE1 : E0 V τ.toSym ≤ Fn V a := csInf_le (bddBelow_Fn hb0 hbS hK τ.toSym) ⟨a, ha, rfl⟩
   have hE2 : Fn V a ≤ Q (settingW τ n w hw) v (c • Ψ) := Fn_le_QW v hΨ1.1
-  have hE3 : Q (settingW τ n w hw) v (c • Ψ) ≤ E0 V τ := by
+  have hE3 : Q (settingW τ n w hw) v (c • Ψ) ≤ E0 V τ.toSym := by
     have := hΨ1.2.2 (ser a0) (Dom_le_DomW hΦ0)
     rwa [hip0, hip1, mul_one, mul_one, hQ0] at this
-  have hmin : Fn V a = E0 V τ := le_antisymm (hE2.trans hE3) hE1
-  have hQ1 : Q (settingW τ n w hw) v (c • Ψ) = E0 V τ := le_antisymm hE3 (hE1.trans hE2)
+  have hmin : Fn V a = E0 V τ.toSym := le_antisymm (hE2.trans hE3) hE1
+  have hQ1 : Q (settingW τ n w hw) v (c • Ψ) = E0 V τ.toSym := le_antisymm hE3 (hE1.trans hE2)
   obtain ⟨hΦ1, hc1⟩ := ser_min2 hb0 hbS hK hVs ha hmin (by norm_num) (by norm_num) hG
   have hc1' : (fun m => cN m (ser a)) = a := funext hc1
   have hip' : ip (μ := μN n) (ser a) (ser a) = 1 := by

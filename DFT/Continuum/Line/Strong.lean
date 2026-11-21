@@ -61,25 +61,34 @@ lemma hasDerivAt_insertNth {ψ : Cfg n → ℝ} (hψ : Differentiable ℝ ψ) (k
 lemma integral_unit' {f : ℝ → ℝ} : ∫ x in (0 : ℝ)..1, f x = ∫ x in Ioo (0 : ℝ) 1, f x := by
   rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
 
-/-- **Integration by parts along coordinate `k`.** -/
-lemma ibpN {Φ φ : Cfg n → ℝ} (hΦ : ContDiff ℝ 2 Φ) (hφ : φ ∈ Dom τ n) (k : Fin (n + 1)) :
+/-- **Integration by parts along coordinate `k`**, against a `C²` function vanishing on the
+walls. -/
+lemma ibpN0 {Φ φ : Cfg n → ℝ} (hΦ : ContDiff ℝ 2 Φ) (hφ2 : ContDiff ℝ 2 φ)
+    (hφw : ∀ x k, (x k = 0 ∨ x k = 1) → φ x = 0) (k : Fin (n + 1)) :
     ∫ x, dk k Φ x * dk k φ x ∂μN n = -∫ x, dkk k Φ x * φ x ∂μN n := by
   have hdc : Continuous (dk k Φ) := (contDiff_dk hΦ k).continuous
-  rw [integral_cube_insertNth (F := fun x => dk k Φ x * dk k φ x) (hdc.mul (cont_dk hφ k)) k,
+  have hdφ : Continuous (dk k φ) := (contDiff_dk hφ2 k).continuous
+  rw [integral_cube_insertNth (F := fun x => dk k Φ x * dk k φ x) (hdc.mul hdφ) k,
     integral_cube_insertNth (F := fun x => dkk k Φ x * φ x)
-      ((continuous_dkk hΦ k).mul hφ.1.continuous) k, ← integral_neg]
+      ((continuous_dkk hΦ k).mul hφ2.continuous) k, ← integral_neg]
   congr 1; funext y
   have hd1 : Differentiable ℝ (dk k Φ) := (contDiff_dk hΦ k).differentiable one_ne_zero
   have h := intervalIntegral.integral_mul_deriv_eq_deriv_mul (a := 0) (b := 1)
     (u := fun t => dk k Φ (Fin.insertNth k t y)) (u' := fun t => dkk k Φ (Fin.insertNth k t y))
     (v := fun t => φ (Fin.insertNth k t y)) (v' := fun t => dk k φ (Fin.insertNth k t y))
-    (fun t _ => hasDerivAt_insertNth hd1 k y t) (fun t _ => hasDerivAt_insertNth (diffF hφ) k y t)
+    (fun t _ => hasDerivAt_insertNth hd1 k y t)
+    (fun t _ => hasDerivAt_insertNth (hφ2.differentiable (by norm_num)) k y t)
     (((continuous_dkk hΦ k).comp (by fun_prop)).intervalIntegrable _ _)
-    (((cont_dk hφ k).comp (by fun_prop)).intervalIntegrable _ _)
-  have h0 : φ (Fin.insertNth k 0 y) = 0 := hφ.2.2 _ k (Or.inl (by simp))
-  have h1 : φ (Fin.insertNth k 1 y) = 0 := hφ.2.2 _ k (Or.inr (by simp))
+    ((hdφ.comp (by fun_prop)).intervalIntegrable _ _)
+  have h0 : φ (Fin.insertNth k 0 y) = 0 := hφw _ k (Or.inl (by simp))
+  have h1 : φ (Fin.insertNth k 1 y) = 0 := hφw _ k (Or.inr (by simp))
   rw [h0, h1, mul_zero, mul_zero, sub_zero, zero_sub, integral_unit', integral_unit'] at h
   rw [h]
+
+/-- **Integration by parts along coordinate `k`.** -/
+lemma ibpN {Φ φ : Cfg n → ℝ} (hΦ : ContDiff ℝ 2 Φ) (hφ : φ ∈ Dom τ n) (k : Fin (n + 1)) :
+    ∫ x, dk k Φ x * dk k φ x ∂μN n = -∫ x, dkk k Φ x * φ x ∂μN n :=
+  ibpN0 hΦ hφ.1 hφ.2.2 k
 
 /-! ### Relabelling and derivatives -/
 
