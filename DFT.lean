@@ -19,14 +19,17 @@ import DFT.Continuum.Line.Hopf
 import DFT.Continuum.Line.Lieb
 import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Pauli
+import DFT.Continuum.Line.Represent
 import DFT.Continuum.Line.Smooth
 import DFT.Continuum.Line.Strong
+import DFT.Continuum.Line.Unique
 import DFT.Continuum.Sine.Coeff
 import DFT.Continuum.Sine.Cube
 import DFT.Continuum.Sine.Exists
 import DFT.Continuum.Sine.Form
 import DFT.Continuum.Sine.Kernel
 import DFT.Continuum.Sine.Min
+import DFT.Continuum.Sine.Mirror
 import DFT.Continuum.Sine.OneD
 import DFT.Continuum.Sine.Regular
 import DFT.Continuum.Sine.Schur

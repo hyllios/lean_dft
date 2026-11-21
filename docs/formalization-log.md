@@ -195,8 +195,23 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
   unconditional HK and Lieb for interacting bosons/fermions with `w` relabelling invariant and
   `Σ v(x_k) + w` a cosine series on the closed cube with `Σ |β_l| (1+|l|)^s < ∞` ∀ s.
   All `Sine/*` imported in `DFT.lean`; deprecation lint pass done; whole project builds.
-- Possible follow-ups: blueprint entries for `Sine/*`; a friendlier sufficient condition for the
-  cosine-series hypothesis (e.g. `V` extends to a smooth even 2-periodic function).
+- DONE (2026-11-21) `Sine/Mirror`: `CosClass` (closed under +, finite sums, scalars;
+  `CosClass.of_family` via `HasSum.tsum_fiberwise`), one-body `v(t) = Σ a_l cos(πlt)`, mirror pairs
+  `u(x_i - x_j) + u(x_i + x_j)` with `u(d) = Σ b_l cos(πld)`, `pairW u = ½Σ_{i≠j}[…]` ⇒
+  **`hk_line_mirror`**, **`lieb_line_mirror`**. Note: a generic smooth `u(x_i - x_j)` is NOT in the
+  class (its `sin·sin` part has cosine coefficients ~ `1/l²`).
+- DONE (2026-11-21) `Line/Unique`: `isGS_add_smul` (general setting: ground states + null states form
+  a linear space), `gs_ne_zero_stat`, **`gs_unique_line`** (any continuous `v`, any continuous
+  relabelling-invariant `w`, bosons or fermions: two ground states are proportional on the closed
+  cube); `Sine.exists_unique_gs_line`.
+- DONE (2026-11-21) `Line/Represent`: `integral_prod_cube`; Slater det of orthonormal orbitals:
+  `integral_W_slater`, `integral_slater_sq` (= N!), `integral_LN_slater` (= N! ∫ v Σφ²);
+  **`nrep_bos`** (product `Π g(x_k)`), **`nrep_fer`** (real Harriman orbitals `g·eH(F)`,
+  `F = ∫₀ˣ g²`, `eH` = 1 if N odd + pairs `√2 cos(2π(k+1)u − pπ/2)`, `Σ eH² = N`, index type
+  `Hix N = Fin (N%2) ⊕ Fin (N/2) × Fin 2`); **`liebF_ne_top`**: Lieb functional finite at every
+  `ρ = N g²` with `g ∈ C²`, `g(0) = g(1) = 0`, `∫ g² = 1`.
+- Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`;
+  hard-core bosons (Tonks–Girardeau); spin-1/2 electrons (Lieb–Mattis); general smooth `V`.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

@@ -5,6 +5,7 @@ Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Sine.Regular
 import DFT.Continuum.Line.FreeFermions
+import DFT.Continuum.Line.Unique
 
 /-!
 # Interacting ground states on a line exist
@@ -18,6 +19,7 @@ closed cube, a cosine series `Σ_l β_l Π_j cos(π l_j x_j)` with `Σ_l |β_l| 
   energy `Fn V` and `Σ cN²` of the sine coefficients.
 * `exists_isGS_line`: **a normalised ground state exists** (the series of the minimiser of
   `Sine/Min`, which is in the domain by `Sine/Regular`).
+* `exists_unique_gs_line`: the ground state exists and is unique up to a factor on the closed cube.
 * `hk_line_sine`, `lieb_line_sine`: **unconditional Hohenberg–Kohn and Lieb** in this class.
 -/
 
@@ -101,6 +103,16 @@ theorem exists_isGS_line {τ : Stat} (hws : ∀ σ x, w (pm σ x) = w x)
   refine ⟨ser a, ⟨hΦ, hip ▸ one_pos, fun φ hφ => ?_⟩, hip⟩
   rw [hQ, hip, mul_one, Q_eq_Fn hw v hφ, ip_eq_tsum hφ.1.continuous]
   exact Fn_ge hβ hV (Dir_cN hφ)
+
+/-- **Existence and uniqueness**: a normalised ground state exists, and every ground state of `v`
+is a multiple of it on the closed cube. -/
+theorem exists_unique_gs_line {τ : Stat} (hws : ∀ σ x, w (pm σ x) = w x)
+    (hβ : ∀ s : ℕ, Summable fun l => |β l| * (1 + (sz l : ℝ)) ^ s)
+    (hV : ∀ x ∈ CubeC n, LN n v x + w x = ∑' l, β l * cosM l x) :
+    ∃ Φ, IsGS (setting τ n w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 ∧
+      ∀ Ψ, IsGS (setting τ n w hw) v Ψ → ∃ c : ℝ, ∀ x ∈ CubeC n, Ψ x = c * Φ x := by
+  obtain ⟨Φ, hΦ, hip⟩ := exists_isGS_line (τ := τ) (hw := hw) hws hβ hV
+  exact ⟨Φ, hΦ, hip, fun Ψ hΨ => gs_unique_line hws hΨ hΦ⟩
 
 /-- A normalised ground state as an `IsNGS`. -/
 theorem exists_isNGS_line {τ : Stat} (hws : ∀ σ x, w (pm σ x) = w x)
