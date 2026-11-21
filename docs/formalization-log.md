@@ -151,6 +151,53 @@ infrastructure) → B6 (pure algebra) → B2/B3 → B4 → B5 → B7. Each miles
 - CI: docgen-action ran doc-gen on dependencies even with `api-docs: false` (OOM); blueprint, checkdecls and
   Jekyll are now explicit workflow steps; runner pinned to ubuntu-24.04 (setup-ruby vs ubuntu-26.04).
 
+## Existence of interacting ground states on a line, reflection-compatible data (plan, 2026-11-11)
+Goal: `∃ Φ, IsGS (setting τ n w hw) v Φ` when `V(x) = Σₖ v(xₖ) + w(x)` is a cosine series
+`Σ_l β_l Π_j cos(π l_j x_j)` with `Σ (1+|l|)^s |β_l| < ∞` for all `s` (even 2-periodic extension smooth).
+Work in the sine basis `s_m(x) = Π_j √2 sin(π k_j x_j)`, `k = m + 1`, of `L²(cube)`.
+- S1 `Sine/OneD`: 1D sines orthonormal, complete in `L²(0,1)` (each eigenfunction of the W = 0 Green
+  operator is a multiple of a sine, via two Wronskians).
+- S2 `Sine/Cube`: products orthonormal and complete in `L²(cube)` (induction on N with Fubini).
+- S3 `Sine/Coeff`: for `φ ∈ Dom`, `∫|∇φ|² = Σ π²|k|² c_m²` and `⟨φ,Vφ⟩` through the basis.
+- S4 `Sine/Min`: direct method in coefficient space within the (anti)symmetric subspace; minimiser,
+  Euler–Lagrange `π²|k|² c + Kc = E c` (K commutes with relabelling).
+- S5 `Sine/Potential`: kernel `K(m',m) = Σ_l β_l Π_j κ(k'_j,l_j,k_j)`, `κ ≠ 0 ⇒ k' ≤ k + l`; Schur bound
+  in weighted ℓ² (in ℝ≥0∞).
+- S6 `Sine/Regular`: bootstrap `c ∈ h^s ⇒ c ∈ h^{s+1}`; `Σ |k|² |c_m| < ∞` once `s ≥ N + 3`;
+  the series is C², vanishes on faces, has the right symmetry and coefficients ⇒ ground state.
+- S7 `Line/Exists`: unconditional HK and Lieb for interacting bosons and fermions in this class.
+Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
+- DONE S1 `Sine/OneD`: sines orthonormal, complete (`sn_complete`), Hilbert basis `sb`, `parseval1`.
+- DONE S2 `Sine/Cube`: `smd`, `smd_orthonormal`, `parseval` (ℝ≥0∞, induction on d), `hasSum_sq_cube`,
+  `hasSum_pair_cube`.
+- DONE S3 `Sine/Coeff`: `muN_eq`, `dkk_smd`, `ibpN'`, `cN_lap`, `hasSum_kin`, `pmI`, `cN_pm`.
+- DONE S5 `Sine/Kernel`, `Sine/Schur`, `Sine/Form`: `kap_eq`, `abs_kap_le`, `Ker_eq`, `abs_Ker_le`;
+  `tsum_mul_sq_le`, `tsum_mul_le_sq`, `schur`, `tsum_pi_prod`, `tsum_adm_le(')`, `wt_le`;
+  `nw_Kc_le` (weighted Schur bound), `summable_Ker_mul`, `tsum_Kc_sq_le`, `Kc_add`, `Kc_smul`,
+  `Bf`, `Bf_sq_le`, `Bf_sub_left/right`, `Kc_cN`, `Bf_cN` (= ∫ V φ²), `Ker_pm`, `Kc_InS`, `cN_InS`.
+- DONE S4 `Sine/Min` (2026-11-21): `lam`, `Dir`, `Adm`, `Fn`, `E0`, `Fn_ge`; direct method with
+  `box K` (= `piFinset (range K)`), `out K`, `lam_ge` (λ ≥ K+1 outside), `tail_le`, `lim_sum_le`,
+  `sum_box_ge`, `tendsto_l2`, `abs_Bf_sub_le` ⇒ **`exists_min`** (needs `∃ c, Adm τ c`). Euler–Lagrange:
+  `Dir_add`, `Fn_add_smul`, `tsum_sq_add_smul`, `Bf_comm_of_fin` (finite support), test direction =
+  residual truncated to `box K` (box is permutation invariant, no symmetrised delta needed), `discr_le`
+  ⇒ **`euler_lagrange`**: `λ_m c_m + Kc c m = E₀ c_m` (needs `V ∘ pm σ = V`). Gotcha: in sums over a
+  subtype of multi-indices write `lam (n := n) m`, else elaboration loops (whnf timeout).
+- DONE S6 `Sine/Regular` (2026-11-21): `wt_sq_le_lam` (W² ≤ (n+1)λ/π²), `nw_add_two_ne_top`,
+  **`nw_ne_top`** (bootstrap, all weighted norms finite); `tsum_wt_inv_ne_top`,
+  **`summable_wt_pow_mul`** (Σ W^q |c| < ∞ ∀q); `norm_iteratedFDeriv_sn_le`, `..._factor_le`,
+  **`norm_iteratedFDeriv_smd_le`** (`norm_iteratedFDeriv_prod_le`, crude bound
+  `Dc n i (1+πW)^{i(n+1)}`); `ser c x = Σ' c_m smd m x`, **`contDiff_ser`** (`contDiff_tsum`),
+  `ser_pm`, `ser_face`, `ser_mem`, **`cN_ser`** (`integral_tsum_of_summable_integral_norm`);
+  **`ser_min`**: the minimiser `a` gives `ser a ∈ Dom τ n` with `cN (ser a) = a`.
+- DONE S7 `Sine/Exists` (2026-11-21): `hasSum_ip`, `ip_eq_tsum`, `Dir_cN`, **`Q_eq_Fn`** (energy of
+  `φ ∈ Dom` = `Fn (LN v + w) (cN φ)`), `exists_dom_pos` (from `prodS_isGS` / `slater_isGS`),
+  `exists_adm`; **`exists_isGS_line`**, `exists_isNGS_line`, **`hk_line_sine`**, **`lieb_line_sine`**:
+  unconditional HK and Lieb for interacting bosons/fermions with `w` relabelling invariant and
+  `Σ v(x_k) + w` a cosine series on the closed cube with `Σ |β_l| (1+|l|)^s < ∞` ∀ s.
+  All `Sine/*` imported in `DFT.lean`; deprecation lint pass done; whole project builds.
+- Possible follow-ups: blueprint entries for `Sine/*`; a friendlier sufficient condition for the
+  cosine-series hypothesis (e.g. `V` extends to a smooth even 2-periodic function).
+
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
 standard axioms only.
@@ -186,3 +233,21 @@ standard axioms only.
   rational unit eigenvectors (3,4)/5, (5,12)/13, (8,15)/17, eigenvalues ±250, ±338, ±289; Pfaffian
   ≠ 0 on every eigenvector, = 0 on Slater determinants (`pf_slaterSub`). Unconditional
   `generic_nonidem_W42`. Finite facts about `Conf 4 2` by `decide`, except `τs` (`τs_pair`).
+
+## Next steps (plan, 2026-11-19)
+Recommended order: N5, then N6 (or N1/N2 first as quick wins).
+- N1 Sylvester criterion. Two bosons, and two-electron singlets with spin-independent `h`: the
+  stabilizer equation is `dS + Sd = cS`, with a non-scalar solution iff two eigenvalues of `S` sum to
+  zero. Gives generic RDMFT-HK exactly where `RDMFT/Counting` says nothing.
+- N2 Witness over a family of interactions. Make `W` a parameter next to `h` in `hamRP`. The
+  `W42` witness then gives genericity in `(h, W)` jointly for any linear family containing `W42`.
+- N3 Generic RDMFT-HK (trivial stabilizer) outside the counting cases. Numerically generic for
+  (7,3), (7,4), (8,4). Use `Generic/Eliminate` with a rank condition on `[Γ(E_ij)ψ]` as `F`. The
+  witness is the hard part (35 to 70 configurations).
+- N4 Blueprint entries for `RDMFT/*` and `Generic/Eliminate`.
+- N5 Creation/annihilation maps between sectors, `c_i† : (Conf M N → ℝ) → (Conf M (N+1) → ℝ)` with
+  fermionic signs, and an interaction defined on all sectors. Then (a) static HK for the Green's
+  function: equal `γ` and equal first particle moments ⇒ `h = h'` (no constant; `W` cancels);
+  (b) the Question-A representability theorem (Lehmann form, sum rules, generalized Pauli
+  constraints, rank budgets; dilation proof). Background in `../G-representability/HANDOFF.md`.
+- N6 Sine plan: done 2026-11-21 (S1–S7, unconditional HK and Lieb for interacting particles on a line).
