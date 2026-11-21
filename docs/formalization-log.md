@@ -220,8 +220,27 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
   **`gs_unique_hardcore`** (any continuous symmetric `w`), `exists_unique_gs_hardcore` (cosine
   class), `nrep_hardcore`, `liebF_hc_ne_top`, **`tonks_girardeau`** (w = 0: `gA·det φ_j(x_i)` of
   the N lowest orbitals is the hard-core GS, `|·| = |det|`, norm N!, density N!·Σφ_j², unique).
+- DONE (2026-11-21) **General smooth `V`** (removes the cosine-series hypothesis):
+  - Refactor: `Form`/`Min`/`Regular` now take an abstract kernel bound `hb0 hbS hK`
+    (`b ≥ 0`, `Σ b < ∞`, `|Ker V m' m| ≤ Σ_l b_l [adm m' l m]`); cosine series supply it via
+    `abs_Ker_le` (`Exists`: `b = |β|`). `Regular` keeps the all-`s` bootstrap with extra `hbs`.
+  - `Sine/Mixed`: product weights `om r m = Π (m_j+1)^r`, `om_le_of_adm`, `om_le_lam`
+    (`δ(n+1) ≤ 2`), `nW_Kc_le` (Schur in `ℓ²(ω_r)`), `nW_step`/`nW_raise`/**`nW_lam_ne_top`**
+    (r raised by `2/(n+1)` per step), **`summable_wt_sq_mul`** (`r > 1/2` ⇒ `Σ W²|c| < ∞`),
+    sharper `‖D^i s_m‖ ≤ Dc (1+πW)^i`, `contDiff_ser2`, `ser_min2`, **`exists_isGS_kernel`**
+    (needs only `Σ b_l Π(1+l_j)^r < ∞`, some `r ∈ (1/2, 2]`).
+  - `Sine/Decay`: `integral_mul_cos_ibp` (two IBPs), `integral_cons`/`integral_swap_cons`
+    (Fubini by `Fin.cons`), `contDiff_deriv_snd`, **`coef_decay`**: smooth family over a compact
+    parameter set ⇒ `|∫ F cosP_l| ≤ C Π(1+l_j)^{-2}` (induction on `d`, parametric).
+  - `Sine/General`: `sn_mul_sn`, `smd_mul_smd` (2^{N} cosine terms at distinct admissible
+    indices `cixM`), `Ker_bound_of_coef`, **`kernel_of_smooth`** (r = 3/4);
+    **`exists_isGS_smooth`**, `exists_unique_gs_smooth`, **`hk_line_smooth`**,
+    **`lieb_line_smooth`** (hyp.: `LN v + w = F` on closed cube, `F` C^∞),
+    `exists_unique_gs_hardcore_smooth`; `pairU u = ½Σ_{i≠j} u(x_i−x_j)`:
+    **`hk_line_pair`**, **`lieb_line_pair`**, `exists_unique_gs_pair` (v = f on [0,1], f, u C^∞).
 - Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
-  `Line/HardCore`; spin-1/2 electrons (Lieb–Mattis); general smooth `V`.
+  `Line/HardCore`; spin-1/2 electrons (Lieb–Mattis); weaken C^∞ to C^{2N} in `coef_decay`;
+  `√ρ ∈ H¹` representability (needs a larger state space).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

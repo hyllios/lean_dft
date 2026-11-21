@@ -57,10 +57,10 @@ lemma nw_mono {s t : ℕ} (hst : s ≤ t) (c : (Fin (n + 1) → ℕ) → ℝ) : 
 
 section boot
 
-variable {V : Cfg n → ℝ} {β : (Fin (n + 1) → ℕ) → ℝ}
-  (hβ : ∀ s : ℕ, Summable fun l => |β l| * (1 + (sz l : ℝ)) ^ s)
-  (hV : ∀ x ∈ CubeC n, V x = ∑' l, β l * cosM l x)
-include hβ hV
+variable {V : Cfg n → ℝ} {b : (Fin (n + 1) → ℕ) → ℝ} (hb0 : ∀ l, 0 ≤ b l) (hbS : Summable b)
+  (hK : ∀ m' m, |Ker V m' m| ≤ ∑' l, b l * (if adm m' l m then 1 else 0))
+  (hbs : ∀ s : ℕ, Summable fun l => b l * (1 + (sz l : ℝ)) ^ s)
+include hb0 hbS hK hbs
 
 /-- **One bootstrap step**: a solution of `λ c + Kc = E c` in `h^s` lies in `h^{s+2}`. -/
 lemma nw_add_two_ne_top {c : (Fin (n + 1) → ℕ) → ℝ} {E : ℝ}
@@ -95,12 +95,13 @@ lemma nw_add_two_ne_top {c : (Fin (n + 1) → ℕ) → ℝ} {E : ℝ}
           rw [mul_pow, hL]
           exact mul_le_mul_of_nonneg_left hQ (sq_nonneg _)
       _ = _ := by ring
-  have hK := nw_Kc_le hβ hV s c
+  have hKc := nw_Kc_le hb0 hbS hK s c
   refine ne_top_of_le_ne_top ?_ (tsum_le_tsum hpt)
   rw [tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left]
   refine ENNReal.add_ne_top.2 ⟨ENNReal.mul_ne_top ENNReal.ofReal_ne_top hs,
-    ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ne_top_of_le_ne_top ?_ hK)⟩
-  exact ENNReal.mul_ne_top (ENNReal.pow_ne_top (ENNReal.mul_ne_top (by simp) (Gam_ne_top hβ s))) hs
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ne_top_of_le_ne_top ?_ hKc)⟩
+  exact ENNReal.mul_ne_top (ENNReal.pow_ne_top (ENNReal.mul_ne_top (by simp)
+    (Gam_ne_top hb0 (hbs s)))) hs
 
 /-- **The bootstrap**: every weighted norm of a square-summable solution is finite. -/
 theorem nw_ne_top {c : (Fin (n + 1) → ℕ) → ℝ} {E : ℝ}
@@ -109,7 +110,7 @@ theorem nw_ne_top {c : (Fin (n + 1) → ℕ) → ℝ} {E : ℝ}
   have h2 : ∀ j, nw (2 * j) c ≠ ⊤ := fun j => by
     induction j with
     | zero => exact nw_zero_ne_top hc
-    | succ j ih => exact nw_add_two_ne_top hβ hV hEL ih
+    | succ j ih => exact nw_add_two_ne_top hb0 hbS hK hbs hEL ih
   exact ne_top_of_le_ne_top (h2 s) (nw_mono (by omega) c)
 
 end boot
@@ -336,17 +337,17 @@ theorem cN_ser {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => |c m|
 
 section minimiser
 
-variable {V : Cfg n → ℝ} {β : (Fin (n + 1) → ℕ) → ℝ}
-  (hβ : ∀ s : ℕ, Summable fun l => |β l| * (1 + (sz l : ℝ)) ^ s)
-  (hV : ∀ x ∈ CubeC n, V x = ∑' l, β l * cosM l x)
-include hβ hV
+variable {V : Cfg n → ℝ} {b : (Fin (n + 1) → ℕ) → ℝ} (hb0 : ∀ l, 0 ≤ b l) (hbS : Summable b)
+  (hK : ∀ m' m, |Ker V m' m| ≤ ∑' l, b l * (if adm m' l m then 1 else 0))
+  (hbs : ∀ s : ℕ, Summable fun l => b l * (1 + (sz l : ℝ)) ^ s)
+include hb0 hbS hK hbs
 
 /-- **The minimiser is a function in the domain**: `Φ = Σ c_m s_m ∈ Dom` with `cN Φ = c`. -/
 theorem ser_min (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat} {a : (Fin (n + 1) → ℕ) → ℝ}
     (ha : Adm τ a) (hmin : Fn V a = E0 V τ) :
     ser a ∈ Dom τ n ∧ ∀ m, cN m (ser a) = a m := by
-  have hEL := euler_lagrange hβ hV hVs ha hmin
-  have hq := summable_wt_pow_mul (nw_ne_top hβ hV hEL ha.sq)
+  have hEL := euler_lagrange hb0 hbS hK hVs ha hmin
+  have hq := summable_wt_pow_mul (nw_ne_top hb0 hbS hK hbs hEL ha.sq)
   have h0 : Summable fun m => |a m| := by simpa using hq 0
   exact ⟨ser_mem hq ha.sym, cN_ser h0⟩
 

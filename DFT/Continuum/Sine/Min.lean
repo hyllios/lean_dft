@@ -72,21 +72,20 @@ lemma Fn_smul (V : Cfg n → ℝ) (c : (Fin (n + 1) → ℕ) → ℝ) (a : ℝ) 
 
 section energy
 
-variable {V : Cfg n → ℝ} {β : (Fin (n + 1) → ℕ) → ℝ}
-  (hβ : ∀ s : ℕ, Summable fun l => |β l| * (1 + (sz l : ℝ)) ^ s)
-  (hV : ∀ x ∈ CubeC n, V x = ∑' l, β l * cosM l x)
-include hβ hV
+variable {V : Cfg n → ℝ} {b : (Fin (n + 1) → ℕ) → ℝ} (hb0 : ∀ l, 0 ≤ b l) (hbS : Summable b)
+  (hK : ∀ m' m, |Ker V m' m| ≤ ∑' l, b l * (if adm m' l m then 1 else 0))
+include hb0 hbS hK
 
 lemma abs_Bf_le {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2) :
-    |Bf V c c| ≤ √(C0 β) * ∑' m, c m ^ 2 := by
-  have h := Bf_sq_le hβ hV hc hc
+    |Bf V c c| ≤ √(C0 b) * ∑' m, c m ^ 2 := by
+  have h := Bf_sq_le hb0 hbS hK hc hc
   have h0 : 0 ≤ ∑' m, c m ^ 2 := tsum_nonneg fun m => sq_nonneg _
   rw [← Real.sqrt_sq (abs_nonneg _), sq_abs, ← Real.sqrt_sq h0, ← Real.sqrt_mul (C0_nonneg)]
   exact Real.sqrt_le_sqrt (by nlinarith)
 
 /-- The energy is bounded below on normalised sequences. -/
-lemma Fn_ge_neg {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Adm τ c) : -√(C0 β) ≤ Fn V c := by
-  have h1 := abs_Bf_le hβ hV hc.sq
+lemma Fn_ge_neg {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Adm τ c) : -√(C0 b) ≤ Fn V c := by
+  have h1 := abs_Bf_le hb0 hbS hK hc.sq
   rw [hc.norm, mul_one] at h1
   have h2 : 0 ≤ ∑' m, lam m * c m ^ 2 :=
     tsum_nonneg fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _)
@@ -94,9 +93,9 @@ lemma Fn_ge_neg {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Adm τ c) 
   linarith [neg_abs_le (Bf V c c)]
 
 lemma bddBelow_Fn (τ : Stat) : BddBelow (Fn V '' {c | Adm τ c}) :=
-  ⟨-√(C0 β), by rintro _ ⟨c, hc, rfl⟩; exact Fn_ge_neg hβ hV hc⟩
+  ⟨-√(C0 b), by rintro _ ⟨c, hc, rfl⟩; exact Fn_ge_neg hb0 hbS hK hc⟩
 
-omit hβ hV in
+omit hb0 hbS hK in
 lemma Kc_zero (V : Cfg n → ℝ) : Kc V (fun _ => (0 : ℝ)) = fun _ => 0 := by
   funext m'; simp [Kc]
 
@@ -110,7 +109,7 @@ lemma Fn_ge {τ : Stat} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Dir τ c) :
     have hadm : Adm τ fun m => a * c m := by
       refine ⟨Dir_smul hc a, ?_⟩
       simp only [mul_pow]; rw [tsum_mul_left, ha]
-    have h := csInf_le (bddBelow_Fn hβ hV τ) ⟨_, hadm, rfl⟩
+    have h := csInf_le (bddBelow_Fn hb0 hbS hK τ) ⟨_, hadm, rfl⟩
     rw [Fn_smul] at h
     calc E0 V τ * ∑' m, c m ^ 2 ≤ a ^ 2 * Fn V c * ∑' m, c m ^ 2 :=
           mul_le_mul_of_nonneg_right h hN.le
@@ -277,32 +276,32 @@ lemma mem_box_sup (m : Fin (n + 1) → ℕ) : m ∈ box (Finset.univ.sup m + 1) 
 
 section minimiser
 
-variable {V : Cfg n → ℝ} {β : (Fin (n + 1) → ℕ) → ℝ}
-  (hβ : ∀ s : ℕ, Summable fun l => |β l| * (1 + (sz l : ℝ)) ^ s)
-  (hV : ∀ x ∈ CubeC n, V x = ∑' l, β l * cosM l x)
-include hβ hV
+variable {V : Cfg n → ℝ} {b : (Fin (n + 1) → ℕ) → ℝ} (hb0 : ∀ l, 0 ≤ b l) (hbS : Summable b)
+  (hK : ∀ m' m, |Ker V m' m| ≤ ∑' l, b l * (if adm m' l m then 1 else 0))
+include hb0 hbS hK
 
 lemma abs_Bf_le' {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
     (hd : Summable fun m => d m ^ 2) :
-    |Bf V c d| ≤ √(C0 β * (∑' m, c m ^ 2) * ∑' m, d m ^ 2) :=
-  Real.abs_le_sqrt (Bf_sq_le hβ hV hc hd)
+    |Bf V c d| ≤ √(C0 b * (∑' m, c m ^ 2) * ∑' m, d m ^ 2) :=
+  Real.abs_le_sqrt (Bf_sq_le hb0 hbS hK hc hd)
 
 /-- Continuity of the potential energy in `ℓ²`. -/
 lemma abs_Bf_sub_le {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
     (hd : Summable fun m => d m ^ 2) :
-    |Bf V c c - Bf V d d| ≤ √(C0 β * (∑' m, (c m - d m) ^ 2) * ∑' m, c m ^ 2) +
-      √(C0 β * (∑' m, d m ^ 2) * ∑' m, (c m - d m) ^ 2) := by
+    |Bf V c c - Bf V d d| ≤ √(C0 b * (∑' m, (c m - d m) ^ 2) * ∑' m, c m ^ 2) +
+      √(C0 b * (∑' m, d m ^ 2) * ∑' m, (c m - d m) ^ 2) := by
   have hcd := summable_sub_sq hc hd
   have e : Bf V c c - Bf V d d = Bf V (fun m => c m - d m) c + Bf V d (fun m => c m - d m) := by
-    rw [← Bf_sub_left hβ hV hc hd hc, ← Bf_sub_right hβ hV hd hc hd]; ring
+    rw [← Bf_sub_left hb0 hbS hK hc hd hc, ← Bf_sub_right hb0 hbS hK hd hc hd]; ring
   rw [e]
-  exact (abs_add_le _ _).trans (add_le_add (abs_Bf_le' hβ hV hcd hc) (abs_Bf_le' hβ hV hd hcd))
+  exact (abs_add_le _ _).trans
+    (add_le_add (abs_Bf_le' hb0 hbS hK hcd hc) (abs_Bf_le' hb0 hbS hK hd hcd))
 
 /-- **The minimiser** (direct method): if some normalised admissible sequence exists, the energy
 attains its infimum `E₀`. -/
 theorem exists_min {τ : Stat} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm τ c) :
     ∃ c, Adm τ c ∧ Fn V c = E0 V τ := by
-  have hbdd := bddBelow_Fn hβ hV (V := V) τ
+  have hbdd := bddBelow_Fn hb0 hbS hK (V := V) τ
   obtain ⟨c0, hc0⟩ := hne
   have hSne : (Fn V '' {c | Adm τ c}).Nonempty := ⟨_, c0, hc0, rfl⟩
   have hseq : ∀ j : ℕ, ∃ c, Adm τ c ∧ Fn V c < E0 V τ + 1 / ((j : ℝ) + 1) := fun j => by
@@ -312,9 +311,9 @@ theorem exists_min {τ : Stat} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm
     exact ⟨c, hc, h⟩
   choose c hc hcE using hseq
   have hcE' : ∀ j, E0 V τ ≤ Fn V (c j) := fun j => csInf_le hbdd ⟨_, hc j, rfl⟩
-  set M := E0 V τ + 1 + √(C0 β) with hM
+  set M := E0 V τ + 1 + √(C0 b) with hM
   have hkin : ∀ j, ∑' m, lam m * c j m ^ 2 ≤ M := fun j => by
-    have h1 := abs_Bf_le hβ hV (hc j).sq
+    have h1 := abs_Bf_le hb0 hbS hK (hc j).sq
     rw [(hc j).norm, mul_one] at h1
     have h2 : 1 / ((j : ℝ) + 1) ≤ 1 := by
       rw [div_le_one (by positivity)]; linarith [(j.cast_nonneg : (0 : ℝ) ≤ j)]
@@ -357,13 +356,13 @@ theorem exists_min {τ : Stat} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm
   have hl2 := tendsto_l2 hlim' (fun j => (hd j).sq) (fun j => (hd j).kin) hdM has.1 hak.1 hak.2
   have hB : Tendsto (fun j => Bf V (d j) (d j)) atTop (𝓝 (Bf V a a)) := by
     rw [tendsto_iff_norm_sub_tendsto_zero]
-    have hb : Tendsto (fun j => √(C0 β * (∑' m, (d j m - a m) ^ 2) * 1) +
-        √(C0 β * 1 * ∑' m, (d j m - a m) ^ 2)) atTop (𝓝 0) := by
-      have h1 := ((tendsto_const_nhds (x := C0 β)).mul hl2).mul_const 1
-      have h2 := (tendsto_const_nhds (x := C0 β * 1)).mul hl2
+    have hb : Tendsto (fun j => √(C0 b * (∑' m, (d j m - a m) ^ 2) * 1) +
+        √(C0 b * 1 * ∑' m, (d j m - a m) ^ 2)) atTop (𝓝 0) := by
+      have h1 := ((tendsto_const_nhds (x := C0 b)).mul hl2).mul_const 1
+      have h2 := (tendsto_const_nhds (x := C0 b * 1)).mul hl2
       simpa using h1.sqrt.add h2.sqrt
     refine squeeze_zero (fun j => norm_nonneg _) (fun j => ?_) hb
-    have := abs_Bf_sub_le hβ hV (hd j).sq ha.sq
+    have := abs_Bf_sub_le hb0 hbS hK (hd j).sq ha.sq
     rwa [(hd j).norm, hnorm] at this
   have hF : Tendsto (fun j => Fn V (d j)) atTop (𝓝 (E0 V τ)) := by
     have hup : Tendsto (fun j : ℕ => E0 V τ + 1 / ((j : ℝ) + 1)) atTop (𝓝 (E0 V τ)) := by
@@ -393,17 +392,17 @@ lemma Fn_add_smul {a e : (Fin (n + 1) → ℕ) → ℝ} (ha : Summable fun m => 
     Fn V (fun m => a m + t * e m) =
       Fn V a + t * (∑' m, 2 * (lam m * a m * e m) + (Bf V a e + Bf V e a)) + t ^ 2 * Fn V e := by
   have hte : Summable fun m => (t * e m) ^ 2 := by simpa [mul_pow] using he.mul_left (t ^ 2)
-  have hK : Kc V (fun m => a m + t * e m) = fun m => Kc V a m + t * Kc V e m := by
-    rw [Kc_add hβ hV ha hte, Kc_smul]
-  have hKa := summable_Kc_sq hβ hV ha
-  have hKe := summable_Kc_sq hβ hV he
+  have hKs : Kc V (fun m => a m + t * e m) = fun m => Kc V a m + t * Kc V e m := by
+    rw [Kc_add hb0 hbS hK ha hte, Kc_smul]
+  have hKa := summable_Kc_sq hb0 hbS hK ha
+  have hKe := summable_Kc_sq hb0 hbS hK he
   have e1 : ∑' m, lam m * (a m + t * e m) ^ 2 = ∑' m, lam m * a m ^ 2 +
       t * ∑' m, 2 * (lam m * a m * e m) + t ^ 2 * ∑' m, lam m * e m ^ 2 := by
     rw [← tsum_quad hak ((summable_lam_mul hak hek).mul_left 2) hek]
     exact tsum_congr fun m => by ring
   have e2 : Bf V (fun m => a m + t * e m) (fun m => a m + t * e m) =
       Bf V a a + t * (Bf V a e + Bf V e a) + t ^ 2 * Bf V e e := by
-    simp only [Bf, hK]
+    simp only [Bf, hKs]
     rw [← (summable_mul_of_sq ha hKe).tsum_add (summable_mul_of_sq he hKa),
       ← tsum_quad (summable_mul_of_sq ha hKa)
         ((summable_mul_of_sq ha hKe).add (summable_mul_of_sq he hKa)) (summable_mul_of_sq he hKe)]
@@ -417,7 +416,7 @@ lemma Bf_comm_of_fin {a e : (Fin (n + 1) → ℕ) → ℝ} (ha : Summable fun m 
   have hKe : ∀ m, Kc V e m = ∑ m' ∈ T, Ker V m m' * e m' := fun m =>
     tsum_eq_sum fun m' hm' => by simp [he m' hm']
   have hs : ∀ m' ∈ T, Summable fun m => a m * (Ker V m m' * e m') := fun m' _ => by
-    have := (summable_Ker_mul hβ hV ha m').mul_right (e m')
+    have := (summable_Ker_mul hb0 hbS hK ha m').mul_right (e m')
     refine this.congr fun m => ?_
     rw [Ker_symm]; ring
   simp only [Bf, hKe, Finset.mul_sum]
@@ -446,17 +445,17 @@ theorem euler_lagrange (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat} {a : (Fin
     split_ifs <;> simp [hfS σ m]
   have heD : Dir τ e := ⟨summable_of_ne_finset_zero (s := box K) fun m hm => by simp [he0 m hm],
     summable_of_ne_finset_zero (s := box K) fun m hm => by simp [he0 m hm], heS⟩
-  have hcomm := Bf_comm_of_fin hβ hV ha.sq he0
+  have hcomm := Bf_comm_of_fin hb0 hbS hK ha.sq he0
   set b := ∑' m, lam m * a m * e m + Bf V e a - E0 V τ * ∑' m, a m * e m with hb
   set cc := Fn V e - E0 V τ * ∑' m, e m ^ 2 with hcc
   have hg : ∀ t : ℝ, 0 ≤ 0 + 2 * t * b + t ^ 2 * cc := fun t => by
-    have h := Fn_ge hβ hV (Dir_add ha.toDir (Dir_smul heD t))
-    rw [Fn_add_smul hβ hV ha.sq ha.kin heD.sq heD.kin, tsum_sq_add_smul ha.sq heD.sq, hmin,
+    have h := Fn_ge hb0 hbS hK (Dir_add ha.toDir (Dir_smul heD t))
+    rw [Fn_add_smul hb0 hbS hK ha.sq ha.kin heD.sq heD.kin, tsum_sq_add_smul ha.sq heD.sq, hmin,
       ha.norm, hcomm] at h
     simp only [hb, hcc, tsum_mul_left] at h ⊢
     nlinarith
   have hb0 : b = 0 := by
-    have := discr_le (Fn_ge hβ hV heD |> sub_nonneg.2) hg
+    have := discr_le (Fn_ge hb0 hbS hK heD |> sub_nonneg.2) hg
     nlinarith [sq_nonneg b]
   have hbsum : b = ∑ m ∈ box K, f m ^ 2 := by
     have s1 : ∑' m, lam m * a m * e m = ∑ m ∈ box K, lam m * a m * e m :=

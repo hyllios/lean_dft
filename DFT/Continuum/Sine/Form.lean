@@ -8,10 +8,12 @@ import DFT.Continuum.Sine.Schur
 /-!
 # The potential acting on coefficient sequences
 
-For a cosine-series potential with `Σ_l |β_l| (1 + |l|)^s < ∞`, the kernel `K` acts on coefficient
-sequences, `(Kc)_{m'} = Σ_m K(m', m) c_m`, and is bounded on every weighted space:
+For a potential whose kernel is dominated by nonnegative weights,
+`|K(m', m)| ≤ Σ_l b_l [adm m' l m]` (for a cosine series, `b_l = |β_l|`: `abs_Ker_le`), with
+`Σ_l b_l (1 + |l|)^s < ∞`, the kernel `K` acts on coefficient sequences,
+`(Kc)_{m'} = Σ_m K(m', m) c_m`, and is bounded on every weighted space:
 
-`Σ_{m'} W(m')^{2s} (Kc)_{m'}² ≤ (3^{n+1} Γ_s)² Σ_m W(m)^{2s} c_m²`,  `Γ_s = Σ_l |β_l| (1 + |l|)^s`.
+`Σ_{m'} W(m')^{2s} (Kc)_{m'}² ≤ (3^{n+1} Γ_s)² Σ_m W(m)^{2s} c_m²`,  `Γ_s = Σ_l b_l (1 + |l|)^s`.
 
 The proof combines the kernel bound with `W(m') ≤ W(m)(1 + |l|)` for admissible `l` and the Schur
 test. Everything is stated in `ℝ≥0∞`.
@@ -60,25 +62,27 @@ noncomputable def Kc (V : Cfg n → ℝ) (c : (Fin (n + 1) → ℕ) → ℝ) (m'
 
 section bound
 
-variable {V : Cfg n → ℝ} {β : (Fin (n + 1) → ℕ) → ℝ}
-  (hβ : ∀ s : ℕ, Summable fun l => |β l| * (1 + (sz l : ℝ)) ^ s)
-  (hV : ∀ x ∈ CubeC n, V x = ∑' l, β l * cosM l x)
+variable {V : Cfg n → ℝ} {b : (Fin (n + 1) → ℕ) → ℝ} (hb0 : ∀ l, 0 ≤ b l) (hbS : Summable b)
+  (hK : ∀ m' m, |Ker V m' m| ≤ ∑' l, b l * (if adm m' l m then 1 else 0))
 
-/-- `Γ_s = Σ_l |β_l| (1 + |l|)^s`. -/
-noncomputable def Gam (β : (Fin (n + 1) → ℕ) → ℝ) (s : ℕ) : ℝ≥0∞ :=
-  ∑' l, ENNReal.ofReal (|β l| * (1 + (sz l : ℝ)) ^ s)
+/-- `Γ_s = Σ_l b_l (1 + |l|)^s`. -/
+noncomputable def Gam (b : (Fin (n + 1) → ℕ) → ℝ) (s : ℕ) : ℝ≥0∞ :=
+  ∑' l, ENNReal.ofReal (b l * (1 + (sz l : ℝ)) ^ s)
 
-include hβ in
-lemma Gam_ne_top (s : ℕ) : Gam β s ≠ ⊤ := by
-  rw [Gam, ← ENNReal.ofReal_tsum_of_nonneg (fun l => by positivity) (hβ s)]
+lemma Gam_ne_top (hb0 : ∀ l, 0 ≤ b l) {s : ℕ}
+    (hs : Summable fun l => b l * (1 + (sz l : ℝ)) ^ s) : Gam b s ≠ ⊤ := by
+  rw [Gam, ← ENNReal.ofReal_tsum_of_nonneg (fun l => mul_nonneg (hb0 l) (by positivity)) hs]
   exact ENNReal.ofReal_ne_top
 
-/-- The majorant `A_s(m', m) = Σ_l |β_l| (1 + |l|)^s [adm m' l m]`. -/
-noncomputable def Amaj (β : (Fin (n + 1) → ℕ) → ℝ) (s : ℕ) (m' m : Fin (n + 1) → ℕ) : ℝ≥0∞ :=
-  ∑' l, ENNReal.ofReal (|β l| * (1 + (sz l : ℝ)) ^ s) * (if adm m' l m then 1 else 0)
+include hb0 hbS in
+lemma Gam_zero_ne_top : Gam b 0 ≠ ⊤ := Gam_ne_top hb0 (by simpa using hbS)
+
+/-- The majorant `A_s(m', m) = Σ_l b_l (1 + |l|)^s [adm m' l m]`. -/
+noncomputable def Amaj (b : (Fin (n + 1) → ℕ) → ℝ) (s : ℕ) (m' m : Fin (n + 1) → ℕ) : ℝ≥0∞ :=
+  ∑' l, ENNReal.ofReal (b l * (1 + (sz l : ℝ)) ^ s) * (if adm m' l m then 1 else 0)
 
 lemma Amaj_row (s : ℕ) (m' : Fin (n + 1) → ℕ) :
-    ∑' m, Amaj β s m' m ≤ 3 ^ (n + 1) * Gam β s := by
+    ∑' m, Amaj b s m' m ≤ 3 ^ (n + 1) * Gam b s := by
   simp only [Amaj]
   rw [tsum_comm]
   simp only [ENNReal.tsum_mul_left]
@@ -87,7 +91,7 @@ lemma Amaj_row (s : ℕ) (m' : Fin (n + 1) → ℕ) :
   rw [mul_comm]; exact mul_le_mul_left (tsum_adm_le m' l) _
 
 lemma Amaj_col (s : ℕ) (m : Fin (n + 1) → ℕ) :
-    ∑' m', Amaj β s m' m ≤ 3 ^ (n + 1) * Gam β s := by
+    ∑' m', Amaj b s m' m ≤ 3 ^ (n + 1) * Gam b s := by
   simp only [Amaj]
   rw [tsum_comm]
   simp only [ENNReal.tsum_mul_left]
@@ -95,44 +99,45 @@ lemma Amaj_col (s : ℕ) (m : Fin (n + 1) → ℕ) :
   refine tsum_le_tsum fun l => ?_
   rw [mul_comm]; exact mul_le_mul_left (tsum_adm_le' l m) _
 
-include hβ hV in
+include hb0 hbS hK in
 /-- The weighted kernel bound: `W(m')^s |K(m', m)| ≤ A_s(m', m) W(m)^s`. -/
 lemma ofReal_wt_Ker_le (s : ℕ) (m' m : Fin (n + 1) → ℕ) :
     ENNReal.ofReal ((wt m' : ℝ) ^ s * |Ker V m' m|) ≤
-      Amaj β s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s) := by
-  have h0 : Summable fun l => |β l| := by simpa using hβ 0
-  have hK := abs_Ker_le h0 hV m' m
-  have hs : Summable fun l => |β l| * (if adm m' l m then 1 else 0) :=
-    Summable.of_nonneg_of_le (fun l => by positivity) (fun l => by split_ifs <;> simp) h0
+      Amaj b s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s) := by
+  have h0 := hbS
+  have hK := hK m' m
+  have hs : Summable fun l => b l * (if adm m' l m then 1 else 0) :=
+    Summable.of_nonneg_of_le (fun l => mul_nonneg (hb0 l) (by split_ifs <;> norm_num))
+      (fun l => by split_ifs <;> simp [hb0 l]) h0
   calc ENNReal.ofReal ((wt m' : ℝ) ^ s * |Ker V m' m|)
-      ≤ ENNReal.ofReal ((wt m' : ℝ) ^ s * ∑' l, |β l| * (if adm m' l m then 1 else 0)) :=
+      ≤ ENNReal.ofReal ((wt m' : ℝ) ^ s * ∑' l, b l * (if adm m' l m then 1 else 0)) :=
         ENNReal.ofReal_le_ofReal (mul_le_mul_of_nonneg_left hK (by positivity))
-    _ = ∑' l, ENNReal.ofReal ((wt m' : ℝ) ^ s * (|β l| * (if adm m' l m then 1 else 0))) := by
-        rw [← tsum_mul_left, ENNReal.ofReal_tsum_of_nonneg (fun l => by positivity)
-          (hs.mul_left _)]
-    _ ≤ ∑' l, ENNReal.ofReal (|β l| * (1 + (sz l : ℝ)) ^ s) * (if adm m' l m then 1 else 0) *
+    _ = ∑' l, ENNReal.ofReal ((wt m' : ℝ) ^ s * (b l * (if adm m' l m then 1 else 0))) := by
+        rw [← tsum_mul_left, ENNReal.ofReal_tsum_of_nonneg (fun l => mul_nonneg (by positivity)
+          (mul_nonneg (hb0 l) (by split_ifs <;> norm_num))) (hs.mul_left _)]
+    _ ≤ ∑' l, ENNReal.ofReal (b l * (1 + (sz l : ℝ)) ^ s) * (if adm m' l m then 1 else 0) *
           ENNReal.ofReal ((wt m : ℝ) ^ s) := by
         refine tsum_le_tsum fun l => ?_
         split_ifs with h
-        · rw [mul_one, mul_one, ← ENNReal.ofReal_mul (by positivity)]
+        · rw [mul_one, mul_one, ← ENNReal.ofReal_mul (mul_nonneg (hb0 l) (by positivity))]
           refine ENNReal.ofReal_le_ofReal ?_
           have hw : (wt m' : ℝ) ≤ wt m * (1 + sz l) := by exact_mod_cast wt_le h
           have hw' : (wt m' : ℝ) ^ s ≤ (wt m * (1 + sz l)) ^ s :=
             pow_le_pow_left₀ (by positivity) hw s
           rw [mul_pow] at hw'
-          nlinarith [abs_nonneg (β l), pow_nonneg (by positivity : (0 : ℝ) ≤ wt m) s,
+          nlinarith [hb0 l, pow_nonneg (by positivity : (0 : ℝ) ≤ wt m) s,
             pow_nonneg (by positivity : (0 : ℝ) ≤ 1 + sz l) s]
         · simp
-    _ = Amaj β s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s) := by
+    _ = Amaj b s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s) := by
         rw [Amaj, ENNReal.tsum_mul_right]
 
-include hβ hV in
+include hb0 hbS hK in
 /-- **The weighted bound**: `Σ W^{2s} (Kc)² ≤ (3^{n+1} Γ_s)² Σ W^{2s} c²`. -/
 theorem nw_Kc_le (s : ℕ) (c : (Fin (n + 1) → ℕ) → ℝ) :
-    nw s (Kc V c) ≤ (3 ^ (n + 1) * Gam β s) ^ 2 * nw s c := by
+    nw s (Kc V c) ≤ (3 ^ (n + 1) * Gam b s) ^ 2 * nw s c := by
   rw [nw_eq, nw_eq]
   have hpt : ∀ m', ENNReal.ofReal ((wt m' : ℝ) ^ s * |Kc V c m'|) ≤
-      ∑' m, Amaj β s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s * |c m|) := by
+      ∑' m, Amaj b s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s * |c m|) := by
     intro m'
     calc ENNReal.ofReal ((wt m' : ℝ) ^ s * |Kc V c m'|)
         = ENNReal.ofReal ((wt m' : ℝ) ^ s) * ENNReal.ofReal |Kc V c m'| :=
@@ -144,20 +149,20 @@ theorem nw_Kc_le (s : ℕ) (c : (Fin (n + 1) → ℕ) → ℝ) :
           refine tsum_congr fun m => ?_
           rw [abs_mul, ENNReal.ofReal_mul (abs_nonneg _), ← mul_assoc,
             ← ENNReal.ofReal_mul (by positivity)]
-      _ ≤ ∑' m, Amaj β s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s) * ENNReal.ofReal |c m| :=
-          tsum_le_tsum fun m => by gcongr; exact ofReal_wt_Ker_le hβ hV s m' m
+      _ ≤ ∑' m, Amaj b s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s) * ENNReal.ofReal |c m| :=
+          tsum_le_tsum fun m => by gcongr; exact ofReal_wt_Ker_le hb0 hbS hK s m' m
       _ = _ := by
           refine tsum_congr fun m => ?_
           rw [mul_assoc, ← ENNReal.ofReal_mul (by positivity)]
   calc ∑' m', ENNReal.ofReal ((wt m' : ℝ) ^ s * |Kc V c m'|) ^ 2
-      ≤ ∑' m', (∑' m, Amaj β s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s * |c m|)) ^ 2 :=
+      ≤ ∑' m', (∑' m, Amaj b s m' m * ENNReal.ofReal ((wt m : ℝ) ^ s * |c m|)) ^ 2 :=
         tsum_le_tsum fun m' => pow_le_pow_left' (hpt m') 2
-    _ ≤ 3 ^ (n + 1) * Gam β s * (3 ^ (n + 1) * Gam β s) *
+    _ ≤ 3 ^ (n + 1) * Gam b s * (3 ^ (n + 1) * Gam b s) *
           ∑' m, ENNReal.ofReal ((wt m : ℝ) ^ s * |c m|) ^ 2 :=
         schur _ _ (Amaj_row s) (Amaj_col s)
     _ = _ := by ring
 
-lemma Amaj_le_Gam (s : ℕ) (m' m : Fin (n + 1) → ℕ) : Amaj β s m' m ≤ Gam β s :=
+lemma Amaj_le_Gam (s : ℕ) (m' m : Fin (n + 1) → ℕ) : Amaj b s m' m ≤ Gam b s :=
   tsum_le_tsum fun l => by split_ifs <;> simp
 
 lemma nw_zero (c : (Fin (n + 1) → ℕ) → ℝ) : nw 0 c = ∑' m, ENNReal.ofReal (c m ^ 2) := by
@@ -173,65 +178,65 @@ lemma summable_sq_of_nw {c : (Fin (n + 1) → ℕ) → ℝ} (h : nw 0 c ≠ ⊤)
   refine summable_of_ofReal_abs ?_
   simpa [nw_zero, abs_sq] using h
 
-include hβ hV in
+include hb0 hbS hK in
 lemma summable_Ker_mul {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
     (m' : Fin (n + 1) → ℕ) : Summable fun m => Ker V m' m * c m := by
   refine summable_of_ofReal_abs ?_
   have hle : ∑' m, ENNReal.ofReal |Ker V m' m * c m| ≤
-      ∑' m, Amaj β 0 m' m * ENNReal.ofReal |c m| := by
+      ∑' m, Amaj b 0 m' m * ENNReal.ofReal |c m| := by
     refine tsum_le_tsum fun m => ?_
-    have := ofReal_wt_Ker_le hβ hV 0 m' m
+    have := ofReal_wt_Ker_le hb0 hbS hK 0 m' m
     simp only [pow_zero, one_mul, ENNReal.ofReal_one, mul_one] at this
     rw [abs_mul, ENNReal.ofReal_mul (abs_nonneg _)]
     gcongr
   refine ne_top_of_le_ne_top ?_ hle
-  have hsq := tsum_mul_sq_le (fun m => Amaj β 0 m' m) (fun m => ENNReal.ofReal |c m|)
+  have hsq := tsum_mul_sq_le (fun m => Amaj b 0 m' m) (fun m => ENNReal.ofReal |c m|)
   have hU : ∑' m, ENNReal.ofReal |c m| ^ 2 ≠ ⊤ := by
     have := nw_zero_ne_top hc
     rw [nw_zero] at this
     simpa [← ENNReal.ofReal_pow (abs_nonneg _), sq_abs] using this
-  have hb : ∑' m, Amaj β 0 m' m * ENNReal.ofReal |c m| ^ 2 ≤
-      Gam β 0 * ∑' m, ENNReal.ofReal |c m| ^ 2 := by
+  have hb : ∑' m, Amaj b 0 m' m * ENNReal.ofReal |c m| ^ 2 ≤
+      Gam b 0 * ∑' m, ENNReal.ofReal |c m| ^ 2 := by
     rw [← ENNReal.tsum_mul_left]
     exact tsum_le_tsum fun m => by gcongr; exact Amaj_le_Gam 0 m' m
-  have hfin : (∑' m, Amaj β 0 m' m) * ∑' m, Amaj β 0 m' m * ENNReal.ofReal |c m| ^ 2 ≠ ⊤ :=
-    ENNReal.mul_ne_top (ne_top_of_le_ne_top (ENNReal.mul_ne_top (by simp) (Gam_ne_top hβ 0))
-      (Amaj_row 0 m')) (ne_top_of_le_ne_top (ENNReal.mul_ne_top (Gam_ne_top hβ 0) hU) hb)
+  have hfin : (∑' m, Amaj b 0 m' m) * ∑' m, Amaj b 0 m' m * ENNReal.ofReal |c m| ^ 2 ≠ ⊤ :=
+    ENNReal.mul_ne_top (ne_top_of_le_ne_top (ENNReal.mul_ne_top (by simp) (Gam_zero_ne_top hb0 hbS))
+      (Amaj_row 0 m')) (ne_top_of_le_ne_top (ENNReal.mul_ne_top (Gam_zero_ne_top hb0 hbS) hU) hb)
   intro htop
   rw [htop, ENNReal.top_pow two_ne_zero] at hsq
   exact hfin (top_le_iff.1 hsq)
 
-include hβ hV in
+include hb0 hbS hK in
 lemma summable_Kc_sq {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2) :
     Summable fun m => Kc V c m ^ 2 := by
-  refine summable_sq_of_nw (ne_top_of_le_ne_top ?_ (nw_Kc_le hβ hV 0 c))
-  exact ENNReal.mul_ne_top (ENNReal.pow_ne_top (ENNReal.mul_ne_top (by simp) (Gam_ne_top hβ 0)))
-    (nw_zero_ne_top hc)
+  refine summable_sq_of_nw (ne_top_of_le_ne_top ?_ (nw_Kc_le hb0 hbS hK 0 c))
+  exact ENNReal.mul_ne_top (ENNReal.pow_ne_top (ENNReal.mul_ne_top (by simp)
+    (Gam_zero_ne_top hb0 hbS))) (nw_zero_ne_top hc)
 
 /-- The constant of the unweighted bound. -/
-noncomputable def C0 (β : (Fin (n + 1) → ℕ) → ℝ) : ℝ := ((3 ^ (n + 1) * Gam β 0) ^ 2).toReal
+noncomputable def C0 (b : (Fin (n + 1) → ℕ) → ℝ) : ℝ := ((3 ^ (n + 1) * Gam b 0) ^ 2).toReal
 
-include hβ hV in
+include hb0 hbS hK in
 lemma tsum_Kc_sq_le {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2) :
-    ∑' m, Kc V c m ^ 2 ≤ C0 β * ∑' m, c m ^ 2 := by
-  have h := nw_Kc_le hβ hV 0 c
+    ∑' m, Kc V c m ^ 2 ≤ C0 b * ∑' m, c m ^ 2 := by
+  have h := nw_Kc_le hb0 hbS hK 0 c
   rw [nw_zero, nw_zero, ← ENNReal.ofReal_tsum_of_nonneg (fun m => sq_nonneg _)
-    (summable_Kc_sq hβ hV hc), ← ENNReal.ofReal_tsum_of_nonneg (fun m => sq_nonneg _) hc] at h
-  have hne : (3 ^ (n + 1) * Gam β 0) ^ 2 ≠ ⊤ :=
-    ENNReal.pow_ne_top (ENNReal.mul_ne_top (by simp) (Gam_ne_top hβ 0))
+    (summable_Kc_sq hb0 hbS hK hc), ← ENNReal.ofReal_tsum_of_nonneg (fun m => sq_nonneg _) hc] at h
+  have hne : (3 ^ (n + 1) * Gam b 0) ^ 2 ≠ ⊤ :=
+    ENNReal.pow_ne_top (ENNReal.mul_ne_top (by simp) (Gam_zero_ne_top hb0 hbS))
   rw [← ENNReal.ofReal_toReal hne, ← ENNReal.ofReal_mul ENNReal.toReal_nonneg] at h
   exact (ENNReal.ofReal_le_ofReal_iff (mul_nonneg ENNReal.toReal_nonneg
     (tsum_nonneg fun m => sq_nonneg _))).1 h
 
-lemma C0_nonneg : 0 ≤ C0 β := ENNReal.toReal_nonneg
+lemma C0_nonneg : 0 ≤ C0 b := ENNReal.toReal_nonneg
 
-include hβ hV in
+include hb0 hbS hK in
 lemma Kc_add {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
     (hd : Summable fun m => d m ^ 2) :
     Kc V (fun m => c m + d m) = fun m => Kc V c m + Kc V d m := by
   funext m'
   simp only [Kc, mul_add]
-  exact (summable_Ker_mul hβ hV hc m').tsum_add (summable_Ker_mul hβ hV hd m')
+  exact (summable_Ker_mul hb0 hbS hK hc m').tsum_add (summable_Ker_mul hb0 hbS hK hd m')
 
 lemma Kc_smul (t : ℝ) (c : (Fin (n + 1) → ℕ) → ℝ) :
     Kc V (fun m => t * c m) = fun m => t * Kc V c m := by
@@ -271,26 +276,26 @@ lemma tsum_mul_sq_le_real {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable f
   exact (ENNReal.ofReal_le_ofReal_iff (mul_nonneg (tsum_nonneg fun m => sq_nonneg _)
     (tsum_nonneg fun m => sq_nonneg _))).1 h3
 
-include hβ hV in
+include hb0 hbS hK in
 lemma Bf_sq_le {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
     (hd : Summable fun m => d m ^ 2) :
-    Bf V c d ^ 2 ≤ C0 β * (∑' m, c m ^ 2) * ∑' m, d m ^ 2 := by
-  have h := tsum_mul_sq_le_real hc (summable_Kc_sq hβ hV hd)
-  have h2 := tsum_Kc_sq_le hβ hV hd
+    Bf V c d ^ 2 ≤ C0 b * (∑' m, c m ^ 2) * ∑' m, d m ^ 2 := by
+  have h := tsum_mul_sq_le_real hc (summable_Kc_sq hb0 hbS hK hd)
+  have h2 := tsum_Kc_sq_le hb0 hbS hK hd
   calc Bf V c d ^ 2 ≤ (∑' m, c m ^ 2) * ∑' m, Kc V d m ^ 2 := h
-    _ ≤ (∑' m, c m ^ 2) * (C0 β * ∑' m, d m ^ 2) :=
+    _ ≤ (∑' m, c m ^ 2) * (C0 b * ∑' m, d m ^ 2) :=
         mul_le_mul_of_nonneg_left h2 (tsum_nonneg fun m => sq_nonneg _)
     _ = _ := by ring
 
-include hβ hV in
+include hb0 hbS hK in
 lemma Bf_sub_left {c c' d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
     (hc' : Summable fun m => c' m ^ 2) (hd : Summable fun m => d m ^ 2) :
     Bf V c d - Bf V c' d = Bf V (fun m => c m - c' m) d := by
   simp only [Bf, sub_mul]
-  exact ((summable_mul_of_sq hc (summable_Kc_sq hβ hV hd)).tsum_sub
-    (summable_mul_of_sq hc' (summable_Kc_sq hβ hV hd))).symm
+  exact ((summable_mul_of_sq hc (summable_Kc_sq hb0 hbS hK hd)).tsum_sub
+    (summable_mul_of_sq hc' (summable_Kc_sq hb0 hbS hK hd))).symm
 
-include hβ hV in
+include hb0 hbS hK in
 lemma Bf_sub_right {c d d' : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
     (hd : Summable fun m => d m ^ 2) (hd' : Summable fun m => d' m ^ 2) :
     Bf V c d - Bf V c d' = Bf V c (fun m => d m - d' m) := by
@@ -298,13 +303,13 @@ lemma Bf_sub_right {c d d' : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m
   have e : (fun m => d m - d' m) = fun m => d m + (-1) * d' m := by funext m; ring
   rw [e]
   simp only [Bf]
-  rw [Kc_add hβ hV hd hneg, Kc_smul]
+  rw [Kc_add hb0 hbS hK hd hneg, Kc_smul]
   simp only [mul_add]
-  rw [(summable_mul_of_sq hc (summable_Kc_sq hβ hV hd)).tsum_add]
+  rw [(summable_mul_of_sq hc (summable_Kc_sq hb0 hbS hK hd)).tsum_add]
   · rw [show (∑' m, c m * (-1 * Kc V d' m)) = -∑' m, c m * Kc V d' m by
       rw [← tsum_neg]; congr 1; funext m; ring]
     ring
-  · have := summable_mul_of_sq hc (summable_Kc_sq hβ hV hd')
+  · have := summable_mul_of_sq hc (summable_Kc_sq hb0 hbS hK hd')
     simpa [mul_neg, neg_mul, one_mul] using this.neg
 
 end bound
