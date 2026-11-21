@@ -210,7 +210,7 @@ the lattice results as a special case. Module paths below are relative to these 
 | `Generic/RationalFunctions` | rational functions on generic points; simultaneous non-vanishing |
 | `Generic/SquareCertificate` | (H\*) for the square by exact computation in Lean |
 | `Generic/SignGauge` | orbital sign changes: the generic HK theorem for hopping that they bring to a common sign; triangle, 4-cycle |
-| `Generic/ShortestPathSign` | (H\*), generic HK and non-uv densities when all shortest paths between two sites have hopping products of one sign; the class (complete graphs, gauge class, bipartite graphs, the square) |
+| `Generic/ShortestPathSign` | (H\*), generic HK and the dimension bound when all shortest paths between two sites have hopping products of one sign; the class (complete graphs, gauge class, bipartite graphs, the square) |
 | `Generic/Excited` | outside one closed, nowhere dense, null set of potentials no eigenvector has a zero amplitude and every eigenvalue is simple |
 | `Fermions/Configurations` | `N`-particle configurations, occupations |
 | `Fermions/Slater` | Slater determinants in first quantization |
@@ -246,6 +246,7 @@ the lattice results as a special case. Module paths below are relative to these 
 | `KohnSham/MyksodaEnsemble` | the limit densities of the regularised Kohn–Sham scheme are ground-state-ensemble densities |
 | `Bridge/Square`, `Bridge/Triangle` | `H0F` is the hand-typed square and triangle minus `4·I`, entry by entry; on the square the generic theorems are not vacuous |
 | `Bridge/SquareHopping` | the square with edge-dependent hopping: an eigenvector vanishing on `01`, `23` with `ψ(02)`, `ψ(13)` not both zero needs `t₁₂² = t₃₀²`; a ground state shared by `v` and `v + ε(1, 1, −1, −1)`, `ε ≠ 0`, needs `t₁₂² = t₃₀²` or `t₀₁ = t₂₃ = 0` (so with four nonzero bonds only `t₁₂² = t₃₀²`; necessary conditions) |
+| `Bridge/FrustratedSquare`, `Bridge/FrustratedSquareCertificates` | the square with one negative bond (`t₀₁ < 0 < t₁₂, t₂₃, t₃₀`, any magnitudes), `0 < N < 4`, any diagonal interaction: (H\*), generic HK and the dimension bound by exact leading-coefficient certificates; with orbital sign changes, generic HK and the dimension bound for every nonzero hopping on the square |
 | `Bridge/Hubbard`, `Bridge/TwoElectron` | the hand-typed Hubbard matrices are the general two-species Hamiltonian `H0S`; one up and one down electron of `H0S` is one particle on `G □ G` |
 
 ### `DFT/Continuum/`
@@ -302,11 +303,16 @@ Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Ma
 * Frustrated or complex hopping: (H\*), the generic HK theorem and the dimension bound need only nonzero
   hopping such that, for any two sites, all shortest paths between them have hopping products of one sign
   (`generic_hk_lattice_fermions_shortest`, `dimH_nonUVDens_lattice_fermions_shortest'`); this includes
-  hopping that orbital sign changes bring to a common sign, and on bipartite graphs it is exactly that. The
-  other generic results are stated for hopping of a common sign. Frustrated hopping (e.g. π-flux) can
-  genuinely fail. The library has real hopping only: complex hopping that no gauge makes real (Peierls
-  phases of a magnetic flux other than 0 or π per loop) is not treated.
-* Codimension ≥ 2 of the non-uniquely v-representable densities: proved on paper, not formalized.
+  hopping that orbital sign changes bring to a common sign, and on bipartite graphs it is exactly that.
+  Outside this class, the same three results hold on the square with one negative bond (π flux, `t₀₁ < 0`)
+  for `0 < N < 4`, by exact leading-coefficient certificates (`hstar_frustrated_square`,
+  `generic_hk_frustrated_square`, `dimH_nonUVDens_frustrated_square'`); with orbital sign changes, the
+  generic HK theorem and the dimension bound then hold on the square for every nonzero hopping
+  (`generic_hk_square_of_ne_zero`, `dimH_nonUVDens_square_of_ne_zero`). On the square, (H\*) itself is
+  formalized only for the sign patterns above; on other graphs, the three results are open for hopping
+  outside this class, and the other generic results are stated for hopping of a common sign. The library has real
+  hopping only: complex hopping that no gauge makes real (Peierls phases of a magnetic flux other than 0 or
+  π per loop) is not treated.
 * Time-dependent DFT: local existence, global uniqueness, the blow-up alternative and spin-resolved
   densities are proved; how long a given solution actually stays in `Ω` is not controlled. TDDFT for
   the total density of spinful electrons (spin-independent potential) runs in the same framework, but

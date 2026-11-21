@@ -32,6 +32,8 @@ import DFT.Continuum.Spectral.Operator
 import DFT.Lattice.Basic.GroundState
 import DFT.Lattice.Basic.SingleParticle
 import DFT.Lattice.Basic.Spectral
+import DFT.Lattice.Bridge.FrustratedSquare
+import DFT.Lattice.Bridge.FrustratedSquareCertificates
 import DFT.Lattice.Bridge.Hubbard
 import DFT.Lattice.Bridge.Square
 import DFT.Lattice.Bridge.SquareHopping
@@ -92,6 +94,7 @@ import DFT.Lattice.Spin.TwoElectron
 import DFT.Lattice.StrongPotential.LeadingCoefficient
 import DFT.Lattice.StrongPotential.PowerSums
 import DFT.Lattice.StrongPotential.Resolvent
+import DFT.Lattice.StrongPotential.TopTable
 import DFT.Lattice.TDDFT.Counterexample
 import DFT.Lattice.TDDFT.Dimer
 import DFT.Lattice.TDDFT.Dynamics
