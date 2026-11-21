@@ -260,10 +260,23 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
   `harriman` (Harriman orbitals of a continuous `H10` `g`); **`nrepW`**, **`liebF_W_ne_top`**,
   **`nrepW_of_sqrt`**: every `ρ ≥ 0` with `√ρ ∈ H10`, `∫ρ = N` is the density of a normalised
   `H¹₀` state (bosons and fermions).
+- DONE (2026-11-21) Necessity on `H¹₀`, hence **Lieb's characterisation on a line**.
+  - `Line/Closure`: cosines `cs k`, `sn_ibp` (AC integration by parts against sines),
+    **`h1_closure`**: `C¹` `u_j` with `u_j(0)=u_j(1)=0`, `∫u_j'² ≤ C`, `u_j → f` in `L²(0,1)` ⇒
+    `f` has an `H10` representative with `∫g'² ≤ C` (sine coefficients + Bessel for cosines; `h`
+    built as an `lp`-sum via `OrthogonalFamily.linearIsometry`; `g = ∫₀ˣ h`, Lebesgue
+    differentiation; `g = f` by `sn_complete`).
+  - `Line/Complete`: `HN = L²(cube)`, `eN`, completeness (`eN_complete`, via continuous Parseval
+    `hasSum_sq_cube` + fundamental lemma), Hilbert basis `bN`, `parsevalW`; truncations `trunc M`
+    over boxes `boxI`: `tendsto_trunc` (L²), `trunc_mem` (C² states, same symmetry), `kin_trunc_le`
+    (Bessel for `cmd k m = cos ⊗ sines`, `dk_cmd`, tested in `IsWD`).
+  - `Line/WeakNec`: `integral_cube_cons'` (Fubini, integrable), `dens_eq_rhoNW`,
+    `tendsto_rhoN_trunc` (L¹, Hölder), regularised `u = √(ρ_M + ε) - √ε`
+    (`integral_deriv_ureg_le`), **`sqrt_dens_H1W`**, **`lieb_characterisation`**: `ρ` is the
+    density of a normalised `H¹₀` state iff `ρ(v) = ∫ v g²` with `g ∈ H10`, `∫ g² = N`.
 - Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
-  `Line/HardCore`, `Line/Density`, `Line/Weak`, `Line/WeakRep`; spin-1/2 electrons (Lieb–Mattis);
-  necessity of `√ρ ∈ H¹` for `H¹₀` states (proved for `C²` states in `Line/Density`; for `DomW`
-  needs approximation by `C²` states, e.g. sine truncations, plus weak lower semicontinuity).
+  `Line/HardCore`, `Line/Density`, `Line/Weak`, `Line/WeakRep`, `Line/Closure`, `Line/Complete`,
+  `Line/WeakNec`; spin-1/2 electrons (Lieb–Mattis); HK/Lieb/existence on `settingW` itself.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
