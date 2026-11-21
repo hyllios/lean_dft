@@ -27,6 +27,10 @@ Results:
   with the same energy, against `lieb_mattis`.
 * `lieb_mattis_spin`: **`E(S) < E(S + 1)`** for `S ≥ 0`: `Espin a < Espin (a + 1)` whenever
   `a ≥ N - a ≥ 1`.
+
+This is the elementary, purely spatial formulation. `Line/LiebMattisTotal` (`C²` states) and
+`Line/SpinWeak` (`H¹₀` states) derive the same statement from spin-orbital wave functions and the
+total-spin operator `S²`, without taking Fock's condition as a definition.
 -/
 
 namespace DFT.Continuum.Line

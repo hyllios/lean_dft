@@ -168,38 +168,34 @@ lemma card_sector_pos {c : ℕ} (hc : c ≤ n + 1) :
 
 /-! ### The ladder -/
 
-section ladder
+section ladderG
 
-variable (B : D0 n →ₗ[ℝ] D0 n →ₗ[ℝ] ℝ) (hBs : ∀ f g, B f g = B g f)
-  (hBc : ∀ f g g' : D0 n, (∀ x ∈ Cube n, (g : Cfg n → ℝ) x = (g' : Cfg n → ℝ) x) → B f g = B f g')
-  {u : SpinC n → D0 n} {c : ℕ} (hc : Pc c u = u) {lam : ℝ}
-  (heig : ∀ s, ∀ x ∈ Cube n, ev x (S2 u s) = lam * ev x (u s))
-include hBc hc heig
+variable {V : Type*} [AddCommGroup V] [Module ℝ V] (B : V →ₗ[ℝ] V →ₗ[ℝ] ℝ)
+  {u : SpinC n → V} {c : ℕ} (hc : Pc c u = u) {lam : ℝ}
+  (hB2 : ∀ s, B (u s) (S2 u s) = lam * B (u s) (u s))
 
-omit hc in
-lemma B_S2 (s : SpinC n) : B (u s) (S2 u s) = lam * B (u s) (u s) := by
-  rw [hBc (u s) (S2 u s) (lam • u s) fun x hx => by
-    have := heig s x hx; simpa using this, map_smul, smul_eq_mul]
-
-omit hBc heig in
-lemma B_Sz_sector (s : SpinC n) (r : ℕ → ℝ) :
+omit [AddCommGroup V] [Module ℝ V] in
+lemma B_Sz_sector {V : Type*} [AddCommGroup V] [Module ℝ V] (B : V →ₗ[ℝ] V →ₗ[ℝ] ℝ)
+    {u : SpinC n → V} {c : ℕ} (hc : Pc c u = u) (s : SpinC n) (r : ℕ → ℝ) :
     B (u s) (r (nup s) • u s) = r c * B (u s) (u s) := by
   by_cases hs : nup s = c
   · rw [hs, map_smul, smul_eq_mul]
   · have : u s = 0 := by rw [← hc]; simp [Pc_apply, hs]
     simp [this]
 
-/-- **`S₊` along a multiplet.** -/
-lemma ladder_Sp :
+include hc hB2
+
+/-- **`S₊` along a multiplet**, for any bilinear form. -/
+lemma ladder_Sp_gen :
     ∑ s, B (Sp u s) (Sp u s) =
       (lam - ((c : ℝ) - ((n : ℝ) + 1) / 2) ^ 2 - ((c : ℝ) - ((n : ℝ) + 1) / 2)) *
         ∑ s, B (u s) (u s) := by
   rw [adj_Sp B u (Sp u), Finset.mul_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
-  have hS2 := congrArg (fun T : Module.End ℝ (SpinC n → D0 n) => T u s) (S2_eq (n := n) (V := D0 n))
+  have hS2 := congrArg (fun T : Module.End ℝ (SpinC n → V) => T u s) (S2_eq (n := n) (V := V))
   simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply] at hS2
   have hSm : Sm (Sp u) s = S2 u s - Sz (Sz u) s - Sz u s := by rw [hS2]; abel
-  rw [hSm, map_sub, map_sub, B_S2 B hBc heig]
+  rw [hSm, map_sub, map_sub, hB2]
   have h1 : Sz (Sz u) s = (fun k : ℕ => ((k : ℝ) - ((n : ℝ) + 1) / 2) ^ 2) (nup s) • u s := by
     simp only [Sz_apply, smul_smul, Mz]; congr 1; ring
   have h2 : Sz u s = (fun k : ℕ => (k : ℝ) - ((n : ℝ) + 1) / 2) (nup s) • u s := by
@@ -208,23 +204,22 @@ lemma ladder_Sp :
     B_Sz_sector B hc s (fun k : ℕ => (k : ℝ) - ((n : ℝ) + 1) / 2)]
   ring
 
-include hBs in
-/-- **`S₋` along a multiplet.** -/
-lemma ladder_Sm :
+/-- **`S₋` along a multiplet**, for any symmetric bilinear form. -/
+lemma ladder_Sm_gen (hBs : ∀ f g, B f g = B g f) :
     ∑ s, B (Sm u s) (Sm u s) =
       (lam - ((c : ℝ) - ((n : ℝ) + 1) / 2) ^ 2 + ((c : ℝ) - ((n : ℝ) + 1) / 2)) *
         ∑ s, B (u s) (u s) := by
   rw [← adj_Sp B (Sm u) u, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [hBs]
-  have hS2 := congrArg (fun T : Module.End ℝ (SpinC n → D0 n) => T u s) (S2_eq (n := n) (V := D0 n))
+  have hS2 := congrArg (fun T : Module.End ℝ (SpinC n → V) => T u s) (S2_eq (n := n) (V := V))
   simp only [LinearMap.add_apply, Module.End.mul_apply, Pi.add_apply] at hS2
-  have hc2 := congrFun (comm_Sp_Sm (n := n) (V := D0 n) u) s
+  have hc2 := congrFun (comm_Sp_Sm (n := n) (V := V) u) s
   simp only [Pi.sub_apply, Pi.smul_apply] at hc2
   have hSm' : Sm (Sp u) s = S2 u s - Sz (Sz u) s - Sz u s := by rw [hS2]; abel
   have hSp : Sp (Sm u) s = S2 u s - Sz (Sz u) s + Sz u s := by
     rw [sub_eq_iff_eq_add.1 hc2, hSm', two_smul]; abel
-  rw [hSp, map_add, map_sub, B_S2 B hBc heig]
+  rw [hSp, map_add, map_sub, hB2]
   have h1 : Sz (Sz u) s = (fun k : ℕ => ((k : ℝ) - ((n : ℝ) + 1) / 2) ^ 2) (nup s) • u s := by
     simp only [Sz_apply, smul_smul, Mz]; congr 1; ring
   have h2 : Sz u s = (fun k : ℕ => (k : ℝ) - ((n : ℝ) + 1) / 2) (nup s) • u s := by
@@ -232,6 +227,37 @@ lemma ladder_Sm :
   rw [h1, h2, B_Sz_sector B hc s (fun k : ℕ => ((k : ℝ) - ((n : ℝ) + 1) / 2) ^ 2),
     B_Sz_sector B hc s (fun k : ℕ => (k : ℝ) - ((n : ℝ) + 1) / 2)]
   ring
+
+end ladderG
+
+section ladder
+
+variable (B : D0 n →ₗ[ℝ] D0 n →ₗ[ℝ] ℝ) (hBs : ∀ f g, B f g = B g f)
+  (hBc : ∀ f g g' : D0 n, (∀ x ∈ Cube n, (g : Cfg n → ℝ) x = (g' : Cfg n → ℝ) x) → B f g = B f g')
+  {u : SpinC n → D0 n} {c : ℕ} (hc : Pc c u = u) {lam : ℝ}
+  (heig : ∀ s, ∀ x ∈ Cube n, ev x (S2 u s) = lam * ev x (u s))
+include hBc heig
+
+lemma B_S2 (s : SpinC n) : B (u s) (S2 u s) = lam * B (u s) (u s) := by
+  rw [hBc (u s) (S2 u s) (lam • u s) fun x hx => by
+    have := heig s x hx; simpa using this, map_smul, smul_eq_mul]
+
+include hc
+
+/-- **`S₊` along a multiplet.** -/
+lemma ladder_Sp :
+    ∑ s, B (Sp u s) (Sp u s) =
+      (lam - ((c : ℝ) - ((n : ℝ) + 1) / 2) ^ 2 - ((c : ℝ) - ((n : ℝ) + 1) / 2)) *
+        ∑ s, B (u s) (u s) :=
+  ladder_Sp_gen B hc (B_S2 B hBc heig)
+
+include hBs in
+/-- **`S₋` along a multiplet.** -/
+lemma ladder_Sm :
+    ∑ s, B (Sm u s) (Sm u s) =
+      (lam - ((c : ℝ) - ((n : ℝ) + 1) / 2) ^ 2 + ((c : ℝ) - ((n : ℝ) + 1) / 2)) *
+        ∑ s, B (u s) (u s) :=
+  ladder_Sm_gen B hc (B_S2 B hBc heig) hBs
 
 end ladder
 

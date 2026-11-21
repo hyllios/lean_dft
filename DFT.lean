@@ -32,6 +32,7 @@ import DFT.Continuum.Line.Smooth
 import DFT.Continuum.Line.SpinAlg
 import DFT.Continuum.Line.SpinBridge
 import DFT.Continuum.Line.SpinStates
+import DFT.Continuum.Line.SpinWeak
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Line.Unique
 import DFT.Continuum.Line.Weak

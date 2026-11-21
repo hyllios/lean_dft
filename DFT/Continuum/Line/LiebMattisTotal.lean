@@ -45,13 +45,13 @@ def SpinClass (a : ℕ) (u : SpinC n → D0 n) : Prop :=
 noncomputable def EspinT (w : Cfg n → ℝ) (hw : Continuous w) (v : Pot) (a : ℕ) : EReal :=
   ⨅ (u : SpinC n → D0 n) (_ : SpinClass a u), ((QS w hw v u / ipS u : ℝ) : EReal)
 
-section main
+/-! ### The multiplet lower bound, for any pair of forms -/
 
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} (hws : ∀ σ x, w (pm σ x) = w x)
+section multiplet
 
-/-! ### Sectors -/
+variable {V : Type*} [AddCommGroup V] [Module ℝ V]
 
-lemma sum_sectors (B : D0 n →ₗ[ℝ] D0 n →ₗ[ℝ] ℝ) (u : SpinC n → D0 n) :
+lemma sum_sectors (B : V →ₗ[ℝ] V →ₗ[ℝ] ℝ) (u : SpinC n → V) :
     ∑ s, B (u s) (u s) = ∑ c ∈ Finset.range (n + 2), ∑ s, B (Pc c u s) (Pc c u s) := by
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun s _ => ?_
@@ -62,85 +62,106 @@ lemma sum_sectors (B : D0 n →ₗ[ℝ] D0 n →ₗ[ℝ] ℝ) (u : SpinC n → D
   have hs : nup s ∈ Finset.range (n + 2) := Finset.mem_range.2 (by have := nup_le s; omega)
   simp only [Finset.sum_ite_eq, hs, ite_true]
 
-include hws in
-/-- **The lower bound** along a multiplet of total spin `S' = a' - N/2 ≥ 0`. -/
-theorem lower_bound {a' : ℕ} (ha' : ((n : ℝ) + 1) / 2 ≤ a') (ha'N : a' ≤ n + 1) {E' : ℝ}
-    (hE' : ∀ f ∈ DomY a' n, E' * ip (μ := μN n) f f ≤ Q (settingS (ymix a') w hw) v f)
-    {u : SpinC n → D0 n} (hF : FermD u) (heig : EigC (lamS n a') u) :
-    E' * ipS u ≤ QS w hw v u := by
+/-- **The lower bound along a multiplet** of total spin `S' = a' - N/2 ≥ 0`, abstractly: a class
+`P` of states of total spin `S'`, closed under `S₊` and the sector projections, with energy and
+norm forms; if the top sector `S_z = S'` satisfies `E' ‖·‖ ≤ energy`, so does every state. -/
+theorem multiplet_lb (BQ' Bi' : V →ₗ[ℝ] V →ₗ[ℝ] ℝ) (hBis : ∀ f g, Bi' f g = Bi' g f)
+    (hnn : ∀ f, 0 ≤ Bi' f f) (hz : ∀ f, Bi' f f = 0 → BQ' f f = 0)
+    (P : (SpinC n → V) → Prop) (hPSp : ∀ u, P u → P (Sp u))
+    (hPPc : ∀ u c, P u → P (Pc c u)) {a' : ℕ} (ha' : ((n : ℝ) + 1) / 2 ≤ a')
+    (hQ2 : ∀ u, P u → ∀ s, BQ' (u s) (S2 u s) = lamS n a' * BQ' (u s) (u s))
+    (hI2 : ∀ u, P u → ∀ s, Bi' (u s) (S2 u s) = lamS n a' * Bi' (u s) (u s)) {E' : ℝ}
+    (hbase : ∀ u, P u → Pc a' u = u → E' * ∑ s, Bi' (u s) (u s) ≤ ∑ s, BQ' (u s) (u s))
+    {u : SpinC n → V} (hu : P u) : E' * ∑ s, Bi' (u s) (u s) ≤ ∑ s, BQ' (u s) (u s) := by
   set S' : ℝ := (a' : ℝ) - ((n : ℝ) + 1) / 2
   have hS' : 0 ≤ S' := by simp only [S']; linarith
   have hlam : lamS n a' = S' * (S' + 1) := rfl
-  -- the two forms satisfy the hypotheses of the ladder
-  have hBQc := BQ_congr w hw v
-  have hBic := Bip_congr (n := n)
-  have hBQs := BQ_symm w hw v
-  have hBis := Bip_symm (n := n)
+  have hsn : ∀ φ : SpinC n → V, 0 ≤ ∑ s, Bi' (φ s) (φ s) := fun φ =>
+    Finset.sum_nonneg fun s _ => hnn _
+  have hzero : ∀ φ : SpinC n → V, ∑ s, Bi' (φ s) (φ s) = 0 → ∑ s, BQ' (φ s) (φ s) = 0 :=
+    fun φ h => Finset.sum_eq_zero fun s hs =>
+      hz _ ((Finset.sum_eq_zero_iff_of_nonneg fun s _ => hnn (φ s)).1 h s hs)
   -- sectors at and below the top
-  have key : ∀ k c (φ : SpinC n → D0 n), c + k = a' → FermD φ → Pc c φ = φ →
-      EigC (lamS n a') φ → E' * ipS φ ≤ QS w hw v φ := by
+  have key : ∀ k c (φ : SpinC n → V), c + k = a' → P φ → Pc c φ = φ →
+      E' * ∑ s, Bi' (φ s) (φ s) ≤ ∑ s, BQ' (φ s) (φ s) := by
     intro k
     induction k with
     | zero =>
-      intro c φ hck hφ hc _
+      intro c φ hck hφ hc
       simp only [add_zero] at hck
       subst hck
-      rw [QS, ipS, sector_reduce (BQ w hw v) (fun f σ => BQ_pm hws f σ) hφ hc,
-        sector_reduce Bip (fun f σ => Bip_pm f σ) hφ hc]
-      have h := hE' _ (mem_DomY_sc hφ c)
-      have hK := (card_sector_pos (n := n) (c := c) (by omega)).le
-      change E' * (_ * ip (μ := μN n) _ _) ≤ _ * Q (settingS (ymix c) w hw) v _
-      nlinarith
+      exact hbase φ hφ hc
     | succ k ih =>
-      intro c φ hck hφ hc heigφ
-      rcases (ipS_nonneg φ).eq_or_lt with h0 | hpos
-      · rw [← h0, QS_eq_zero_of_ipS h0.symm, mul_zero]
+      intro c φ hck hφ hc
+      rcases (hsn φ).eq_or_lt with h0 | hpos
+      · rw [← h0, hzero φ h0.symm, mul_zero]
       set M : ℝ := (c : ℝ) - ((n : ℝ) + 1) / 2
       have hSM : S' - M = k + 1 := by
         simp only [S', M]; have : (c : ℝ) + (k + 1 : ℕ) = a' := by exact_mod_cast hck
         push_cast at this; linarith
-      have hm := ladder_Sm Bip hBis hBic hc heigφ
-      have hp := ladder_Sp Bip hBic hc heigφ
-      have hq := ladder_Sp (BQ w hw v) hBQc hc heigφ
-      change ipS (Sm φ) = _ * ipS φ at hm
-      change ipS (Sp φ) = _ * ipS φ at hp
-      change QS w hw v (Sp φ) = _ * QS w hw v φ at hq
+      have hm := ladder_Sm_gen Bi' hc (hI2 φ hφ) hBis
+      have hp := ladder_Sp_gen Bi' hc (hI2 φ hφ)
+      have hq := ladder_Sp_gen BQ' hc (hQ2 φ hφ)
       have hcm : 0 ≤ lamS n a' - M ^ 2 + M := by
-        have := ipS_nonneg (Sm φ)
+        have := hsn (Sm φ)
         rw [hm] at this
         exact nonneg_of_mul_nonneg_left this hpos
       have hcp : 0 < lamS n a' - M ^ 2 - M := by
         rw [hlam] at hcm ⊢
         have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg k
         nlinarith
-      have hIH := ih (c + 1) (Sp φ) (by omega) (FermD_Sp hφ) (by rw [← Sp_Pc, hc])
-        (EigC_Sp heigφ)
+      have hIH := ih (c + 1) (Sp φ) (by omega) (hPSp φ hφ) (by rw [← Sp_Pc, hc])
       rw [hp, hq, ← mul_assoc, mul_comm E', mul_assoc] at hIH
       exact le_of_mul_le_mul_left hIH hcp
   -- sectors above the top are empty
-  have above : ∀ c, a' < c → ipS (Pc c u) = 0 := by
+  have above : ∀ c, a' < c → ∑ s, Bi' (Pc c u s) (Pc c u s) = 0 := by
     intro c hc
-    have hφ := FermD_Pc hF c
-    have hPc : Pc c (Pc c u) = Pc c u := Pc_Pc c u
-    have hp := ladder_Sp Bip hBic hPc (EigC_Pc heig c)
-    change ipS (Sp (Pc c u)) = _ * ipS (Pc c u) at hp
+    have hφ := hPPc u c hu
+    have hp := ladder_Sp_gen Bi' (Pc_Pc c u) (hI2 _ hφ)
     set M : ℝ := (c : ℝ) - ((n : ℝ) + 1) / 2
     have hMS : S' < M := by
       simp only [S', M]; have : (a' : ℝ) < c := by exact_mod_cast hc
       linarith
     have hneg : lamS n a' - M ^ 2 - M < 0 := by rw [hlam]; nlinarith
-    have hnn := ipS_nonneg (Sp (Pc c u))
-    rw [hp] at hnn
-    exact le_antisymm (nonpos_of_mul_nonneg_right hnn hneg) (ipS_nonneg _)
-  -- sum over sectors
-  have hsec : ∀ c ∈ Finset.range (n + 2), E' * ipS (Pc c u) ≤ QS w hw v (Pc c u) := by
+    have hnn' := hsn (Sp (Pc c u))
+    rw [hp] at hnn'
+    exact le_antisymm (nonpos_of_mul_nonneg_right hnn' hneg) (hsn _)
+  have hsec : ∀ c ∈ Finset.range (n + 2),
+      E' * ∑ s, Bi' (Pc c u s) (Pc c u s) ≤ ∑ s, BQ' (Pc c u s) (Pc c u s) := by
     intro c _
     by_cases hc : c ≤ a'
-    · exact key (a' - c) c (Pc c u) (by omega) (FermD_Pc hF c) (Pc_Pc c u) (EigC_Pc heig c)
+    · exact key (a' - c) c (Pc c u) (by omega) (hPPc u c hu) (Pc_Pc c u)
     · have h0 := above c (by omega)
-      rw [h0, QS_eq_zero_of_ipS h0, mul_zero]
-  rw [QS, ipS, sum_sectors (BQ w hw v), sum_sectors Bip, Finset.mul_sum]
+      rw [h0, hzero _ h0, mul_zero]
+  rw [sum_sectors BQ', sum_sectors Bi', Finset.mul_sum]
   exact Finset.sum_le_sum hsec
+
+end multiplet
+
+section main
+
+variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} (hws : ∀ σ x, w (pm σ x) = w x)
+
+include hws in
+/-- **The lower bound** along a multiplet of total spin `S' = a' - N/2 ≥ 0`. -/
+theorem lower_bound {a' : ℕ} (ha' : ((n : ℝ) + 1) / 2 ≤ a') (ha'N : a' ≤ n + 1) {E' : ℝ}
+    (hE' : ∀ f ∈ DomY a' n, E' * ip (μ := μN n) f f ≤ Q (settingS (ymix a') w hw) v f)
+    {u : SpinC n → D0 n} (hF : FermD u) (heig : EigC (lamS n a') u) :
+    E' * ipS u ≤ QS w hw v u := by
+  refine multiplet_lb (BQ w hw v) Bip Bip_symm Bip_self_nonneg (fun f h => ?_)
+    (fun u => FermD u ∧ EigC (lamS n a') u) (fun u hu => ⟨FermD_Sp hu.1, EigC_Sp hu.2⟩)
+    (fun u c hu => ⟨FermD_Pc hu.1 c, EigC_Pc hu.2 c⟩) ha'
+    (fun u hu s => B_S2 _ (BQ_congr w hw v) hu.2 s) (fun u hu s => B_S2 _ Bip_congr hu.2 s)
+    (fun φ hφ hc => ?_) ⟨hF, heig⟩
+  · rw [BQ_congr w hw v f f 0 (fun x hx => by rw [eq_zero_of_Bip h x hx]; rfl)]
+    simp
+  · change E' * ipS φ ≤ QS w hw v φ
+    rw [QS, ipS, sector_reduce (BQ w hw v) (fun f σ => BQ_pm hws f σ) hφ.1 hc,
+      sector_reduce Bip (fun f σ => Bip_pm f σ) hφ.1 hc]
+    have h := hE' _ (mem_DomY_sc hφ.1 a')
+    have hK := (card_sector_pos (n := n) (c := a') ha'N).le
+    change E' * (_ * ip (μ := μN n) _ _) ≤ _ * Q (settingS (ymix a') w hw) v _
+    nlinarith
 
 /-! ### The upper bound -/
 

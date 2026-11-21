@@ -305,9 +305,7 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     configurations `rk1`, `rk2` (spin-down particles but the last sit on spin-up ones; `rk2`
     moves spin-up `a-1` to the top), `sign_altY`, **`lieb_mattis`**: `E(a, b) < E(a+1, b-1)` for
     `a + b = N`, `a ≥ b ≥ 1`, `Σ v(x_k) + w` `C^{2N}`.
-- Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
-  `Line/HardCore`, `Line/Density`, `Line/Weak*`, `Line/Closure`, `Line/Complete`, `Line/Young*`,
-  `Line/LiebMattis*`, `Line/Spin*`.
+- Blueprint entries for the line work: done (see below).
 - DONE (2026-11-21) `Line/LiebMattisSpin`: total spin via Fock's highest-weight condition
   (`HW a ψ`: type `(a, N-a)` and `altY (a+1) ψ = 0`, i.e. `S₊ψ = 0`); `Espin` = inf energy at total
   spin `S = a - N/2`; **`gs_highest_weight`** (the `S_z` sector ground state has `S = |S_z|`, else
@@ -328,6 +326,19 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     sector ground state has `S₊ = 0` by `lieb_mattis`, so total spin exactly S);
     **`Espin_total_eq`** (E(S) = sector ground-state energy), **`lieb_mattis_total`**:
     `E(S) < E(S+1)` for `S ≥ 0`. Standard axioms only.
+- DONE (2026-11-21) 1D loose ends.
+  - Ladder and multiplet bound made generic in the component space and the two bilinear forms
+    (`ladder_Sp_gen`, `ladder_Sm_gen`, `multiplet_lb`); `lower_bound` is now an instance.
+  - `Line/SpinWeak`: spin-orbital states with `H¹₀` components (`W0`: L², weak derivatives, zero
+    trace, no symmetry). `IsWD.comp_pm`/`dW_pm` (weak derivatives under relabelling), forms `BQW`,
+    `BipW` (a.e.-congruent, relabel invariant), `FermW`, `EigW` (a.e.), `sector_reduce_W`,
+    `sector_lb_W` (mixed-symmetry H¹₀ function: energy ≥ E(a,b)·norm via sine coefficients and
+    `Fn_ge`), `EspinW`, `EspinW_le_EspinT`, `lower_bound_W`, **`EspinW_eq`**,
+    **`lieb_mattis_total_W`**.
+  - `Line/LiebMattisSpin` kept as the elementary spatial form, with a pointer to the derived one.
+  - Blueprint: new sections "Interacting particles on a line" (Sine existence, smooth V, uniqueness,
+    N-representability, H¹₀ HK/Lieb, hard core) and "Spin on a line: Lieb–Mattis" in
+    `continuum.tex`; all 89 cited declarations checked; PDF compiles.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

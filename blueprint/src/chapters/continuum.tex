@@ -566,5 +566,174 @@ In general, the one assumption left, unique continuation for ground states of $-
 dimensions, is a genuine PDE fact (Carleman/Aronszajn-type unique continuation). On a line it follows from the sign
 structure of the ground state, as above.
 
-Existence of ground states is formalized for one particle and for free bosons and fermions. For interacting
-particles it is not formalized, and HK presupposes it.
+Existence of ground states for interacting particles is the subject of the next section.
+
+\section{Interacting particles on a line: existence, uniqueness, representability}
+
+Throughout, $N=n+1$ particles live on $[0,1]$ with Dirichlet walls, the interaction $w$ is continuous and
+invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
+
+\begin{theorem}[Ground states exist: the sine basis]
+  \label{thm:line_sine_exists}
+  \lean{DFT.Continuum.Sine.sn_complete, DFT.Continuum.Sine.parseval1, DFT.Continuum.Sine.parseval, DFT.Continuum.Sine.hasSum_kin, DFT.Continuum.Sine.exists_min, DFT.Continuum.Sine.euler_lagrange, DFT.Continuum.Sine.Ker_eq, DFT.Continuum.Sine.abs_Ker_le, DFT.Continuum.Sine.ser_min, DFT.Continuum.Sine.exists_isGS_line, DFT.Continuum.Sine.hk_line_sine, DFT.Continuum.Sine.lieb_line_sine}
+  \leanok
+  \uses{thm:hk_interacting_bosons_line, thm:hk_interacting_fermions_line, thm:lieb_line}
+  If $V$ is, on the closed cube, a cosine series $\sum_l\beta_l\prod_j\cos(\pi l_jx_j)$ with
+  $\sum_l|\beta_l|(1+|l|)^s<\infty$ for all $s$, then bosonic and fermionic ground states exist. Hence HK and the
+  Lieb-functional statements hold unconditionally for this class.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Products of sines form a Hilbert basis of $L^2$ of the cube (completeness in one dimension through the
+  Green operator of $-d^2/dx^2$, then Fubini). In coefficient space the energy is
+  $\sum_m\pi^2|m+1|^2c_m^2+\langle c,Kc\rangle$, with $K$ bounded by a Schur estimate. The direct method gives a
+  normalised minimiser in the symmetric or antisymmetric subspace. The Euler--Lagrange equation and the kernel
+  bound bootstrap the decay of $c$ until the sine series converges in $C^2$; its sum is a classical ground state.
+\end{proof}
+
+\begin{theorem}[Ground states exist for smooth potentials]
+  \label{thm:line_smooth}
+  \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}
+  \leanok
+  \uses{thm:line_sine_exists}
+  If $V$ agrees on the closed cube with a $C^{2N}$ function, bosonic and fermionic ground states exist, are
+  unique up to a factor, and HK and the Lieb-functional statements hold. This covers smooth $v$ together with any
+  smooth pair interaction $\sum_{i<j}u(x_i-x_j)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Integrating by parts twice in each variable bounds the cosine coefficients of a $C^{2N}$ function well enough to
+  give the kernel estimate. With product weights $\prod_j(m_j+1)^r$ the bootstrap of
+  Theorem~\ref{thm:line_sine_exists} goes through.
+\end{proof}
+
+\begin{theorem}[Uniqueness of the ground state]
+  \label{thm:line_unique}
+  \lean{DFT.Continuum.Line.gs_unique_line}
+  \leanok
+  \uses{thm:hk_interacting_bosons_line, thm:hk_interacting_fermions_line}
+  Bosonic and fermionic ground states on a line are unique up to a factor.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A combination of two ground states vanishing at a collision-free point is a ground state with a zero away from
+  collisions, so it vanishes identically.
+\end{proof}
+
+\begin{theorem}[$N$-representability]
+  \label{thm:line_nrep}
+  \lean{DFT.Continuum.Line.nrep_bos, DFT.Continuum.Line.nrep_fer, DFT.Continuum.Line.liebF_ne_top, DFT.Continuum.Line.sqrt_dens_H1, DFT.Continuum.Line.nrepW_of_sqrt, DFT.Continuum.Line.h1_closure, DFT.Continuum.Line.parsevalW, DFT.Continuum.Line.sqrt_dens_H1W, DFT.Continuum.Line.lieb_characterisation}
+  \leanok
+  \uses{thm:lieb_line}
+  Over the states of finite kinetic energy ($H^1_0$ of the cube, weak derivatives tested against all $C^1$
+  functions), a function $\rho$ is the density of a normalised state iff $\rho=g^2$ with $g\in H^1_0(0,1)$ and
+  $\int g^2=N$. For $C^2$ states and $C^2$ $g$ the same construction (Harriman orbitals) gives a bosonic or
+  fermionic state with density $g^2$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Sufficiency: Harriman's orbitals $g(x)e^{2\pi ik\Phi(x)}$, $\Phi$ the cumulative distribution of $g^2/N$, written
+  as real sines and cosines; their Slater determinant (or symmetric product) has density $g^2$. Necessity:
+  $\partial_x\sqrt\rho$ is controlled by Cauchy--Schwarz on the marginal, after approximating the state by its
+  sine truncations.
+\end{proof}
+
+\begin{theorem}[HK and Lieb over states of finite kinetic energy]
+  \label{thm:line_weak_hk}
+  \lean{DFT.Continuum.Line.DomW, DFT.Continuum.Line.settingW, DFT.Continuum.Line.gsE_W_eq, DFT.Continuum.Line.liebF_W_eq, DFT.Continuum.Line.gsW_ae_eq, DFT.Continuum.Line.exists_unique_gs_W, DFT.Continuum.Line.hk_line_W, DFT.Continuum.Line.lieb_line_W}
+  \leanok
+  \uses{thm:line_smooth, thm:line_nrep}
+  For $V$ as in Theorem~\ref{thm:line_smooth}, the ground-state energy and the Lieb functional are the same over
+  $H^1_0$ states as over $C^2$ states. $H^1_0$ ground states agree a.e.\ with the classical one, and HK holds.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Sine truncations of an $H^1_0$ state lie in the $C^2$ domain and converge in energy. An $H^1_0$ ground state has
+  minimising sine coefficients, which the bootstrap turns into a classical ground state.
+\end{proof}
+
+\begin{theorem}[Hard-core bosons]
+  \label{thm:line_hardcore}
+  \lean{DFT.Continuum.Line.hk_hardcore_line, DFT.Continuum.Line.lieb_hardcore_line, DFT.Continuum.Line.exists_unique_gs_hardcore, DFT.Continuum.Line.nrep_hardcore, DFT.Continuum.Line.tonks_girardeau}
+  \leanok
+  \uses{thm:hk_interacting_fermions_line, thm:line_unique}
+  Bosons with an infinitely repulsive contact interaction (the Girardeau image of fermions) satisfy HK, the Lieb
+  statements, existence and uniqueness. For $w=0$ the ground state is the Tonks--Girardeau gas, $|$free-fermion
+  Slater determinant$|$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Multiplication by the sign of the Vandermonde determinant is an isometry between the two settings that
+  preserves energy and density.
+\end{proof}
+
+\section{Spin on a line: the Lieb--Mattis theorem}
+
+Spin-$\tfrac12$ fermions with a spin-independent Hamiltonian. The spatial sector with $a$ spins up and $b=N-a$
+down consists of functions antisymmetric within the first $a$ and within the last $b$ particles (mixed symmetry
+$(a,b)$, Young subgroup $\mathrm{YG}_a$).
+
+\begin{lemma}[Mixed symmetry: existence, positivity, nondegeneracy]
+  \label{lem:line_mixed}
+  \lean{DFT.Continuum.Line.DomY, DFT.Continuum.Line.exists_isGS_smoothS, DFT.Continuum.Line.strong_eq_Y, DFT.Continuum.Line.isWD_tl, DFT.Continuum.Line.tl_ae_gs, DFT.Continuum.Line.gs_sign_RY, DFT.Continuum.Line.gs_unique_Y}
+  \leanok
+  \uses{thm:line_smooth, lem:line_hopf}
+  For $V$ as in Theorem~\ref{thm:line_smooth}, every sector $(a,b)$ has a ground state. On the region where each
+  group is ordered it has a strict sign, and it is unique up to a factor.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Existence as in Theorem~\ref{thm:line_smooth}, with the Young subgroup in place of the full symmetric group.
+  The competitor $\tilde\Phi=S\,|\Phi|$ ($S$ the sign of the Young ordering) has weak derivatives bounded by those
+  of $\Phi$, so its sine coefficients are minimising and it is a.e.\ a classical ground state. That ground state
+  is $\ge0$ on the ordered region, so Hopf's lemma makes it strictly positive there.
+\end{proof}
+
+\begin{theorem}[Lieb--Mattis, spatial form]
+  \label{thm:lieb_mattis}
+  \lean{DFT.Continuum.Line.gs_SY_pos, DFT.Continuum.Line.lieb_mattis}
+  \leanok
+  \uses{lem:line_mixed}
+  For $a\ge b\ge1$, $E(a,b)<E(a+1,b-1)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Antisymmetrising the ground state $\Psi$ of $(a+1,b-1)$ over the extra particle gives a state of type $(a,b)$
+  with the same energy per norm, so $E(a,b)\le E(a+1,b-1)$. Equality would make it a ground state of $(a,b)$, of
+  strict sign on the ordered region. Evaluating at two configurations where a spin-down particle coincides with a
+  spin-up one gives opposite signs.
+\end{proof}
+
+\begin{theorem}[Lieb--Mattis for the total spin]
+  \label{thm:lieb_mattis_total}
+  \lean{DFT.Continuum.Line.SpinC, DFT.Continuum.Line.Sp, DFT.Continuum.Line.Sm, DFT.Continuum.Line.Sz, DFT.Continuum.Line.S2, DFT.Continuum.Line.S2_eq, DFT.Continuum.Line.S2_comm_Sp, DFT.Continuum.Line.adj_Sp, DFT.Continuum.Line.Pc, DFT.Continuum.Line.Ferm, DFT.Continuum.Line.sector_reduce, DFT.Continuum.Line.ladder_Sp_gen, DFT.Continuum.Line.ladder_Sm_gen, DFT.Continuum.Line.lift, DFT.Continuum.Line.EspinT, DFT.Continuum.Line.multiplet_lb, DFT.Continuum.Line.lower_bound, DFT.Continuum.Line.upper_bound, DFT.Continuum.Line.Espin_total_eq, DFT.Continuum.Line.lieb_mattis_total}
+  \leanok
+  \uses{thm:lieb_mattis}
+  Let $E(S)$ be the lowest energy of a fermionic spin-orbital state $\Psi(s,x)$ with $C^2$ components vanishing on
+  the walls and $S^2\Psi=S(S+1)\Psi$, $S^2=\tfrac12(S_+S_-+S_-S_+)+S_z^2$ acting on the spins. For $S=a-N/2\ge0$
+  with $b\ge1$, $E(S)$ is the ground-state energy of the spatial sector $(a,b)$, and $E(S)<E(S+1)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A fermionic state splits into $S_z$ sectors, and the sector with $c$ spins up is determined by one spatial
+  function of mixed symmetry $(c,N-c)$. On a state of total spin $S$ in the sector $M$, $S_+$ multiplies energy and
+  norm by the same factor $S(S+1)-M(M+1)$. This factor is positive below the top and kills the sectors above it,
+  so the energy is at least $E(a,b)$. Conversely, the sector ground state lifted to a spin-orbital state has
+  $S_+\Psi=0$, since otherwise $S_+\Psi$ would be a state of type $(a+1,b-1)$ with energy $E(a,b)$, against
+  Theorem~\ref{thm:lieb_mattis}.
+\end{proof}
+
+\begin{theorem}[Lieb--Mattis over states of finite kinetic energy]
+  \label{thm:lieb_mattis_total_W}
+  \lean{DFT.Continuum.Line.W0, DFT.Continuum.Line.IsWD.comp_pm, DFT.Continuum.Line.BQW, DFT.Continuum.Line.BipW, DFT.Continuum.Line.FermW, DFT.Continuum.Line.EigW, DFT.Continuum.Line.sector_reduce_W, DFT.Continuum.Line.sector_lb_W, DFT.Continuum.Line.EspinW, DFT.Continuum.Line.EspinW_le_EspinT, DFT.Continuum.Line.lower_bound_W, DFT.Continuum.Line.EspinW_eq, DFT.Continuum.Line.lieb_mattis_total_W}
+  \leanok
+  \uses{thm:lieb_mattis_total, thm:line_weak_hk}
+  The same holds when the components only lie in $H^1_0$ of the cube, with antisymmetry and $S^2\Psi=S(S+1)\Psi$
+  almost everywhere: $E(S)$ is unchanged and $E(S)<E(S+1)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The multiplet argument of Theorem~\ref{thm:lieb_mattis_total} only uses two bilinear forms, so it applies to
+  the weak energy form and the $L^2$ product. The top sector is an $H^1_0$ function of mixed symmetry, whose sine
+  coefficients give energy at least $E(a,b)$ per norm. The $C^2$ states give the upper bound.
+\end{proof}
