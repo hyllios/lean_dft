@@ -15,6 +15,7 @@ import DFT.Continuum.Line.Chamber
 import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions
+import DFT.Continuum.Line.HardCore
 import DFT.Continuum.Line.Hopf
 import DFT.Continuum.Line.Lieb
 import DFT.Continuum.Line.Nodal

@@ -210,8 +210,18 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
   `F = ∫₀ˣ g²`, `eH` = 1 if N odd + pairs `√2 cos(2π(k+1)u − pπ/2)`, `Σ eH² = N`, index type
   `Hix N = Fin (N%2) ⊕ Fin (N/2) × Fin 2`); **`liebF_ne_top`**: Lieb functional finite at every
   `ρ = N g²` with `g ∈ C²`, `g(0) = g(1) = 0`, `∫ g² = 1`.
-- Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`;
-  hard-core bosons (Tonks–Girardeau); spin-1/2 electrons (Lieb–Mattis); general smooth `V`.
+- DONE (2026-11-21) `Line/HardCore` (Tonks–Girardeau): Girardeau sign `gA = sign det vandermonde`
+  (`gA_pm`: picks up `sgn σ`; `±1` and locally constant off collisions; `0` at collisions);
+  `mulA ψ = gA·ψ`; `DomHC = (DomF n).map mulA`, intrinsically **`mem_DomHC_iff`** (vanishes at
+  collisions and `gA·φ ∈ DomF`); symmetric, vanishes on walls. `settingHC n w hw` uses the same
+  `h0N` (fderiv-based `dk`, a.e. equal to `gA·dk ψ` since collisions are null). Girardeau map
+  preserves `ip`, `h0`, `pf`, `Q`, `dens`, `gsE`, **`liebF_hc`** (Lieb functionals equal);
+  `isGS_hc_iff`, `isNGS_hc_iff`. Headlines: **`hk_hardcore_line`**, **`lieb_hardcore_line`**,
+  **`gs_unique_hardcore`** (any continuous symmetric `w`), `exists_unique_gs_hardcore` (cosine
+  class), `nrep_hardcore`, `liebF_hc_ne_top`, **`tonks_girardeau`** (w = 0: `gA·det φ_j(x_i)` of
+  the N lowest orbitals is the hard-core GS, `|·| = |det|`, norm N!, density N!·Σφ_j², unique).
+- Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
+  `Line/HardCore`; spin-1/2 electrons (Lieb–Mattis); general smooth `V`.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
