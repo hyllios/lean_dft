@@ -307,8 +307,12 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `a + b = N`, `a ≥ b ≥ 1`, `Σ v(x_k) + w` `C^{2N}`.
 - Possible follow-ups: blueprint entries for `Sine/*`, `Line/Unique`, `Line/Represent`,
   `Line/HardCore`, `Line/Density`, `Line/Weak*`, `Line/Closure`, `Line/Complete`, `Line/Young*`,
-  `Line/LiebMattis*`; spin-operator form of Lieb–Mattis (`E(S) < E(S+1)`: spin space, `S²`,
-  `S_z` sectors ↔ mixed symmetry).
+  `Line/LiebMattis*`; spin space itself (spin-orbital wave functions, `S²` via the Dirac
+  identity) to derive, rather than define via Fock's condition, the spatial description of spin.
+- DONE (2026-11-21) `Line/LiebMattisSpin`: total spin via Fock's highest-weight condition
+  (`HW a ψ`: type `(a, N-a)` and `altY (a+1) ψ = 0`, i.e. `S₊ψ = 0`); `Espin` = inf energy at total
+  spin `S = a - N/2`; **`gs_highest_weight`** (the `S_z` sector ground state has `S = |S_z|`, else
+  `S₊` lowers `E(a+1, b-1)` to `E(a, b)`); **`lieb_mattis_spin`**: `E(S) < E(S+1)`.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
