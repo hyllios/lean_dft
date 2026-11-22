@@ -339,6 +339,17 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
   - Blueprint: new sections "Interacting particles on a line" (Sine existence, smooth V, uniqueness,
     N-representability, H¹₀ HK/Lieb, hard core) and "Spin on a line: Lieb–Mattis" in
     `continuum.tex`; all 89 cited declarations checked; PDF compiles.
+- DONE (2026-11-23) `Line/VRep`: v-representability on the line (items 1 and 2 of the plan).
+  - Abstract: `PureDens`/`EnsDens` (finite mixtures of normalised GSs), `PureVRep`/`EnsVRep`,
+    `pureDens_of_ensDens` (GS densities unique ⇒ ensemble = pure), `dens_eq_of_ae_smul`.
+  - **`ensDens_iff_line`, `ensVRep_iff_line`** (C², any continuous v), `ensDens_iff_W` (H¹₀, smooth V).
+  - `contDiff_rhoN` (C² state ⇒ C² density), `rhoN_pos` (GS density > 0 on (0,1)),
+    **`gs_density`** (C², > 0 inside, 0 at walls, ∫ = N, dens = ∫ v ρ).
+  - Obstructions: `not_pureDens_of_zero`, `not_pureDens_of_not_contDiffAt` (+ `W` versions via
+    `gsW_ae_eq`). Examples: **`sinDens_not_vrep`** (N·2sin²(2πx): C²-N-rep, not v-rep for any
+    continuous v), **`tentDens_not_vrep`** (N·12min(x,1−x)²: H¹₀-N-rep, not v-rep on H¹₀ for smooth V).
+  - Caveat: on H¹₀ with merely continuous v, GS regularity is not proven, so H¹₀ statements carry the
+    smooth-V hypothesis. Next: item 3 (exact N=1 characterisation), item 4 (density of v-rep).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

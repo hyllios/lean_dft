@@ -35,6 +35,7 @@ import DFT.Continuum.Line.SpinStates
 import DFT.Continuum.Line.SpinWeak
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Line.Unique
+import DFT.Continuum.Line.VRep
 import DFT.Continuum.Line.Weak
 import DFT.Continuum.Line.WeakHK
 import DFT.Continuum.Line.WeakNec

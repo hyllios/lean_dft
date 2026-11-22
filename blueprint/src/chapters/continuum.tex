@@ -652,6 +652,25 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   minimising sine coefficients, which the bootstrap turns into a classical ground state.
 \end{proof}
 
+\begin{theorem}[$v$-representability on a line]
+  \label{thm:line_vrep}
+  \lean{DFT.Continuum.PureDens, DFT.Continuum.EnsDens, DFT.Continuum.PureVRep, DFT.Continuum.EnsVRep, DFT.Continuum.pureDens_of_ensDens, DFT.Continuum.dens_eq_of_ae_smul, DFT.Continuum.Line.ensDens_iff_line, DFT.Continuum.Line.ensVRep_iff_line, DFT.Continuum.Line.ensDens_iff_W, DFT.Continuum.Line.contDiff_rhoN, DFT.Continuum.Line.rhoN_pos, DFT.Continuum.Line.gs_density, DFT.Continuum.Line.not_pureDens_of_zero, DFT.Continuum.Line.not_pureDens_of_not_contDiffAt, DFT.Continuum.Line.not_pureDensW_of_zero, DFT.Continuum.Line.not_pureDensW_of_not_contDiffAt, DFT.Continuum.Line.sinDens_not_vrep, DFT.Continuum.Line.tentDens_not_vrep}
+  \leanok
+  \uses{thm:line_unique, thm:line_nrep, thm:line_weak_hk}
+  On a line, a density is ensemble $v$-representable iff it is pure-state $v$-representable (over $C^2$ states for
+  every continuous $v$, over $H^1_0$ states for $V$ as in Theorem~\ref{thm:line_smooth}). The density of a
+  normalised ground state is $C^2$, strictly positive on $(0,1)$ and zero at the walls. Hence $N\cdot 2\sin^2(2\pi
+  x)$ (an interior zero) is the density of a $C^2$ state but of no ground state, and $N\cdot 12\min(x,1-x)^2$ (a
+  kink) is the density of an $H^1_0$ state but of no $H^1_0$ ground state of a smooth potential.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Ground states are nondegenerate, so all ground-state ensembles of $v$ have the same density. The density is $C^2$
+  by differentiating twice under the integral over the other particles, and positive because the ground state has no
+  zeros at collision-free points. A density functional $v\mapsto\int v f$ with $f$ continuous determines $f$ on
+  $(0,1)$.
+\end{proof}
+
 \begin{theorem}[Hard-core bosons]
   \label{thm:line_hardcore}
   \lean{DFT.Continuum.Line.hk_hardcore_line, DFT.Continuum.Line.lieb_hardcore_line, DFT.Continuum.Line.exists_unique_gs_hardcore, DFT.Continuum.Line.nrep_hardcore, DFT.Continuum.Line.tonks_girardeau}
