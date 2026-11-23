@@ -34,6 +34,7 @@ import DFT.Continuum.Line.HardCore
 import DFT.Continuum.Line.Hopf
 import DFT.Continuum.Line.Invariant
 import DFT.Continuum.Line.Lieb
+import DFT.Continuum.Line.LiebCont
 import DFT.Continuum.Line.LiebMattis
 import DFT.Continuum.Line.LiebMattisSign
 import DFT.Continuum.Line.LiebMattisSpin

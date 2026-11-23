@@ -832,6 +832,22 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   cover the cube up to a null set. Conull would give $\Psi=0$.
 \end{proof}
 
+\begin{theorem}[HK and the Lieb functional on $H^1_0$, continuous potentials]
+  \label{thm:line_lieb_cont}
+  \lean{DFT.Continuum.Line.ucpW_cont, DFT.Continuum.Line.hk_line_W_cont_stat, DFT.Continuum.Line.lieb_line_W_cont_of, DFT.Continuum.Line.lieb_line_W_cont}
+  \leanok
+  \uses{thm:line_ucp_bos, thm:line_ucp_fer}
+  For $N$ bosons or fermions on $[0,1]$ with continuous $v$ and continuous $w$, a normalised $H^1_0$ ground state $\psi$
+  exists. At its density the Lieb functional equals $\langle\psi,(T+W)\psi\rangle$, $-v$ is a subgradient, and every
+  other subgradient $-v'$ has $v-v'$ constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Existence is Theorem~\ref{thm:line_sine_exists} in its continuous form. The value and the subgradient hold for any
+  normalised ground state. Uniqueness of the subgradient is Hohenberg--Kohn in Lieb's form, from unique continuation
+  (Theorems~\ref{thm:line_ucp_bos} and~\ref{thm:line_ucp_fer}).
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}

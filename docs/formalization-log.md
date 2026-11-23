@@ -470,6 +470,10 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `etaD` = etaS · Π_{i≠j}(xᵢ−xⱼ), `logData_ball` (|etaD| has a positive minimum on a closed
     ball in UC), **`gs_ne_zero_W_fer`**, **`ucpW_fer`**, **`hk_line_W_cont_fer`**: HK on H¹₀ for
     fermions with continuous v and w. Standard axioms. The fermion plan (f1)–(f4) is complete.
+  - Lieb DONE: `Line/LiebCont`: `ucpW_cont` (either statistics), `hk_line_W_cont_stat`,
+    **`lieb_line_W_cont_of`** (any normalised H¹₀ GS: F(ρ_ψ) = ⟨ψ,(T+W)ψ⟩, −v subgradient, unique
+    up to constants), **`lieb_line_W_cont`** (exists for every continuous v, w; no hws). Standard
+    axioms.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
