@@ -281,7 +281,7 @@ theorem log_estimate_fer (hΨ : IsGS (settingW .fer n w hw) v Ψ)
             (div_nonneg (le_max_right _ _) hε.le)
       _ = L * |x j.succ - x j.castSucc| := by ring
   have hφ : H1W φ := h1W_logTest (h1W_of_mem hD) hη hηw hε
-  exact log_estimate_of_eq hw hD (ae_of_all _ hu0) hη hηw hε hC0 hC
+  exact log_estimate_of_eq hw (h1W_of_mem hD) (ae_of_all _ hu0) hη hηw hε hC0 hC
     (eq_PhiB hΨ hφ hφs hL0 hL)
 
 end equation

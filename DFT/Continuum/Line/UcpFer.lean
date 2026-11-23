@@ -202,9 +202,10 @@ theorem logData_ball (hΨ : IsGS (settingW .fer n w hw) v Ψ) {x0 : Cfg n} {R : 
   -- `|η|` attains a positive minimum on the compact ball
   obtain ⟨xm, hxm, hmin⟩ := (isCompact_closedBall x0 R).exists_isMinOn
     ⟨x0, mem_closedBall_self hR⟩ (continuous_abs.comp contDiff_etaD.continuous).continuousOn
-  refine ⟨PhiB_mem hΨ.1, ae_of_all _ (PhiB_nonneg Ψ), isClosed_closedBall.measurableSet,
-    fun x hx => (hsub hx).1, convex_closedBall x0 R, etaD, contDiff_etaD.continuous, |etaD xm|,
-    abs_pos.2 (etaD_ne_zero (hsub hxm)), fun x hx => hmin hx, K, hK, fun ε hε => ?_⟩
+  refine ⟨h1W_of_mem (PhiB_mem hΨ.1), ae_of_all _ (PhiB_nonneg Ψ),
+    isClosed_closedBall.measurableSet, fun x hx => (hsub hx).1, convex_closedBall x0 R, etaD,
+    contDiff_etaD.continuous, |etaD xm|, abs_pos.2 (etaD_ne_zero (hsub hxm)),
+    fun x hx => hmin hx, K, hK, fun ε hε => ?_⟩
   exact log_estimate_fer hΨ contDiff_etaD etaD_pm etaD_wall etaD_diag hε (le_max_right C 0) hC'
 
 /-- **Fermionic `H¹₀` ground states of continuous potentials are nonzero almost everywhere.** -/

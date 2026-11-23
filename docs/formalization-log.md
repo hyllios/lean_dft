@@ -488,6 +488,16 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `isGS_WS_of_isNGS`, `cN_pmWS`, `adm_cNWS`, `Fn_le_QWS`, `serWS_mem`,
     **`exists_isNGS_WS_cont`**, **`exists_isNGS_WY_cont`**. `sum_lam_le` now takes `H1W`,
     `kinW_serW` any `Dir s`.
+  - P2 DONE: `LogData.mem` and `log_estimate_of_eq` now take `H1W u` (no bosonic symmetry).
+    `Line/YoungChamber`: `PairS`, **`isWD_pairs_of_bound`** (restriction to pair inequalities),
+    `pY`, `RY_eq` (RY = cube ∩ PairS pY), `trunc_pmY`, `trunc_planeY`, **`isWD_RY`**, `shiftY`,
+    **`YG_eq_of_mem_RY`** (unique sorting relabelling in YG, via the shift-by-2 trick and
+    `perm_eq_of_strictMono`), `exists_YG_sort`. `Line/YoungGS`: `sumY`, `sumY_sort`, `isWD_sumY`,
+    `uY`, `PhiY` = altY a uY, `PhiBY`, `sgnY`, `sorted_Y`, `PhiY_mem`, `abs_PhiY`, `PhiBY_ae_eq_abs`,
+    `kinW_PhiY_le`, **`isGS_PhiY`**, `phiY` (test functions), `dW_phiY_ae`, **`eq_PhiBY`**,
+    **`log_estimate_Y`**. `Line/UcpY`: `ae_of_ae_RY`, `etaY` = etaS · Π_{i≠j same group}(xᵢ−xⱼ),
+    `logData_ballY`, **`gs_ne_zero_WY`**: every H¹₀ GS of mixed symmetry (a, N−a) is ≠ 0 a.e.,
+    continuous v and w. Standard axioms. (UcpFer could now be derived as the case a = N.)
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

@@ -53,6 +53,7 @@ import DFT.Continuum.Line.Strong
 import DFT.Continuum.Line.Translate
 import DFT.Continuum.Line.UcpBos
 import DFT.Continuum.Line.UcpFer
+import DFT.Continuum.Line.UcpY
 import DFT.Continuum.Line.Unique
 import DFT.Continuum.Line.VRep
 import DFT.Continuum.Line.Weak
@@ -61,6 +62,8 @@ import DFT.Continuum.Line.WeakNec
 import DFT.Continuum.Line.WeakRep
 import DFT.Continuum.Line.WeakS
 import DFT.Continuum.Line.Young
+import DFT.Continuum.Line.YoungChamber
+import DFT.Continuum.Line.YoungGS
 import DFT.Continuum.Line.YoungPos
 import DFT.Continuum.Line.YoungSign
 import DFT.Continuum.Line.YoungStrong

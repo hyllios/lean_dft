@@ -240,7 +240,7 @@ lemma convex_Qa (a : ℝ) : Convex ℝ (Qa n a) := convex_pi fun _ _ => convex_I
 /-- The data of a uniform logarithmic estimate on a convex set `P` of the cube, with a cutoff
 bounded below on `P`. -/
 structure LogData (u : Cfg n → ℝ) (P : Set (Cfg n)) : Prop where
-  mem : u ∈ DomW .bos n
+  mem : H1W u
   nonneg : ∀ᵐ x ∂μN n, 0 ≤ u x
   meas : MeasurableSet P
   sub : P ⊆ Cube n
@@ -258,8 +258,8 @@ theorem LogData.grad_L1_bound {P : Set (Cfg n)} (hL : LogData u P) (k : Fin (n +
   refine ⟨(1 + K / c ^ 2) / 2, by positivity, fun ε hε => ?_⟩
   set q : Cfg n → ℝ := fun y => dW k u y / (u y + ε)
   have hq : MemLp q 2 (μN n) := by
-    refine (memLp_dW hD k).of_le_mul (c := 1 / ε)
-      ((memLp_dW hD k).aestronglyMeasurable.aemeasurable.div
+    refine (dW_spec (hD.2 k)).1.of_le_mul (c := 1 / ε)
+      ((dW_spec (hD.2 k)).1.aestronglyMeasurable.aemeasurable.div
         (hD.1.aestronglyMeasurable.aemeasurable.add_const ε)).aestronglyMeasurable ?_
     filter_upwards [hu0] with x h0
     have hp : 0 < u x + ε := by linarith
@@ -345,7 +345,7 @@ theorem LogData.bad_null {P : Set (Cfg n)} (hL : LogData u P) (k : Fin (n + 1)) 
           rw [div_eq_inv_mul, ← one_div] at this
           exact this)
     have hwD :=
-      isWD_comp (h1W_of_mem hD) (hasDerivAt_Lg hε) (continuous_Lg' hε) (Lg'_le hε) Lg_zero k
+      isWD_comp hD (hasDerivAt_Lg hε) (continuous_Lg' hε) (Lg'_le hε) Lg_zero k
     have htr := translate_lintegral_le hwL hwD hh (measurableSet_SP hL.meas h k) hL.meas
       hQc (SP_segment hL.conv hh k)
     have hint : ∫⁻ x in S, ‖wε (x + h • e) - wε x‖ₑ ≤ ENNReal.ofReal (h * B) := by
@@ -459,7 +459,7 @@ theorem logData_Qa (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN
     have h2 : 0 ≤ ∫ x, etaS (n := n) x ^ 2 ∂μN n := integral_nonneg fun x => sq_nonneg _
     have h3 : 0 ≤ C' := le_max_right _ _
     positivity
-  exact ⟨hu.1, hu0, measurableSet_Qa a, Qa_sub_cube ha, convex_Qa a, etaS,
+  exact ⟨h1W_of_mem hu.1, hu0, measurableSet_Qa a, Qa_sub_cube ha, convex_Qa a, etaS,
     contDiff_etaS.continuous, _, hc, fun x hx => (etaS_ge ha ha2 hx).trans (le_abs_self _), K, hK,
     fun ε hε => log_estimate hu hu0 contDiff_etaS etaS_pm etaS_wall hε (le_max_right C 0) hC'⟩
 

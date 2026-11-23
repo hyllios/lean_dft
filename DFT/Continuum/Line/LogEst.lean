@@ -166,7 +166,7 @@ noncomputable def logTest (η u : Cfg n → ℝ) (ε : ℝ) (x : Cfg n) : ℝ :=
 function satisfying the weak Schrödinger equation with eigenvalue `E` against the single test
 function `logTest η u ε`, where `|E - V| ≤ C` a.e. and `η ∈ C¹` vanishes on the walls. Then
 `Σ_k ∫ η² (∂ₖu/(u+ε))² ≤ 4 Σ_k ∫ (∂ₖη)² + 2C ∫ η²`. -/
-theorem log_estimate_of_eq (hw : Continuous w) (hD : u ∈ DomW .bos n)
+theorem log_estimate_of_eq (hw : Continuous w) (hD : H1W u)
     (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
     {η : Cfg n → ℝ} (hη : ContDiff ℝ 1 η)
     (hηw : ∀ x k, (x k = 0 ∨ x k = 1) → η x = 0) {ε : ℝ} (hε : 0 < ε) {E C : ℝ} (hC0 : 0 ≤ C)
@@ -188,7 +188,7 @@ theorem log_estimate_of_eq (hw : Continuous w) (hD : u ∈ DomW .bos n)
     hum.aestronglyMeasurable) (1 / ε) (ae_of_all _ fun x => by
       rw [Real.norm_eq_abs]; exact abs_Gr_le hε _)
   have hg : ∀ k, IsWD k g (fun x => 1 / (|u x| + ε) ^ 2 * dW k u x) := fun k =>
-    isWD_comp (h1W_of_mem hD) (hasDerivAt_Gr hε) (continuous_Gr' hε) (Gr'_le hε) Gr_zero k
+    isWD_comp hD (hasDerivAt_Gr hε) (continuous_Gr' hε) (Gr'_le hε) Gr_zero k
   set φ : Cfg n → ℝ := fun x => ε⁻¹ * ζ x + (-1) * (ζ x * g x)
   have hφe : logTest η u ε = φ := rfl
   rw [hφe] at hel
@@ -205,8 +205,8 @@ theorem log_estimate_of_eq (hw : Continuous w) (hD : u ∈ DomW .bos n)
   obtain ⟨Bη, hBη⟩ := ae_bound_cont hη.continuous
   set A : Fin (n + 1) → Cfg n → ℝ := fun k x => η x * (dW k u x / (u x + ε))
   have hAL : ∀ k, MemLp (A k) 2 (μN n) := fun k => by
-    refine (memLp_dW hD k).of_le_mul (c := Bη / ε) (hη.continuous.aemeasurable.mul
-      ((memLp_dW hD k).aestronglyMeasurable.aemeasurable.div
+    refine (dW_spec (hD.2 k)).1.of_le_mul (c := Bη / ε) (hη.continuous.aemeasurable.mul
+      ((dW_spec (hD.2 k)).1.aestronglyMeasurable.aemeasurable.div
         (hum.aestronglyMeasurable.aemeasurable.add_const ε))).aestronglyMeasurable ?_
     filter_upwards [hBη, hu0] with x hx h0
     have hp : 0 < u x + ε := by linarith
@@ -353,7 +353,7 @@ theorem log_estimate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂�
     filter_upwards [hD.2.2 σ] with x hx
     simp only [ch_bos, one_mul] at hx ⊢
     simp only [logTest, hηs, hx]
-  exact log_estimate_of_eq hw hD hu0 hη hηw hε hC0 hC (euler_lagrange hu hφD)
+  exact log_estimate_of_eq hw (h1W_of_mem hD) hu0 hη hηw hε hC0 hC (euler_lagrange hu hφD)
 
 end estimate
 
