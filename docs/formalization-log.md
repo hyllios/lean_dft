@@ -411,6 +411,13 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     **`isGS_abs`** (bosons: |Ψ| is a GS). Fermions (chamber sign) deferred; for UcpW it may suffice
     to run (d)–(e) on the bosonic |Ψ| restricted to the chamber.
     Next: (d) the log estimate for a nonnegative GS u (needs cutoff products η²/(u+ε)).
+  - (d) DONE: `Line/LogEst`: `dk_mul`, `IsWD.mul_C1` (product rule with C¹ functions — easy since
+    IsWD tests against all C¹ functions), `oddExt`, `hasDerivAt_oddExt`, `Gr` (odd extension of
+    1/ε − 1/(t+ε)), **`log_estimate`**: Σ∫η²(∂u/(u+ε))² ≤ 4Σ∫(∂η)² + 2C∫η² for u ≥ 0 bosonic
+    H¹₀ GS, symmetric C¹ η vanishing on walls (symmetric η keeps the test function in DomW .bos;
+    for (e) use η = Σ_σ η₀∘pm σ). Next (e): w_ε = oddExt log(1+t/ε) ∘ u ∈ H¹₀ with
+    ∂w_ε = ∂u/(u+ε); Poincaré–Wirtinger on sub-cubes (needs strong local H¹ approximation or a
+    direct proof for IsWD functions), then the dichotomy u = 0 / u > 0 a.e. per sub-cube, chain.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

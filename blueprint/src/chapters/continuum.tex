@@ -684,6 +684,23 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   convergence. The potential energy and the norm only see $\Psi^2=|\Psi|^2$.
 \end{proof}
 
+\begin{lemma}[Logarithmic estimate]
+  \label{lem:line_logest}
+  \lean{DFT.Continuum.Line.dk_mul, DFT.Continuum.Line.IsWD.mul_C1, DFT.Continuum.Line.oddExt, DFT.Continuum.Line.hasDerivAt_oddExt, DFT.Continuum.Line.Gr, DFT.Continuum.Line.log_estimate}
+  \leanok
+  \uses{lem:line_absW}
+  Let $u\ge0$ be a bosonic $H^1_0$ ground state with energy $E$ and $|V-E|\le C$. For every symmetric $C^1$ cutoff
+  $\eta$ vanishing on the walls and every $\varepsilon>0$,
+  $\sum_k\int\eta^2\big(\partial_ku/(u+\varepsilon)\big)^2\le4\sum_k\int(\partial_k\eta)^2+2C\int\eta^2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Test the weak Schr\"odinger equation with $\eta^2/(u+\varepsilon)=\eta^2/\varepsilon-\eta^2G(u)$, $G$ the odd extension of
+  $1/\varepsilon-1/(t+\varepsilon)$ (chain rule and product rule). With $A_k=\eta\,\partial_ku/(u+\varepsilon)$ this gives
+  $\sum\int(2A_k\partial_k\eta-A_k^2)=\int(E-V)u\eta^2/(u+\varepsilon)\ge-C\int\eta^2$; conclude with
+  $2ab\le a^2/2+2b^2$.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}
