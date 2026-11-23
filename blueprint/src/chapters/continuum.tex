@@ -671,6 +671,24 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $(0,1)$.
 \end{proof}
 
+\begin{theorem}[$v$-representable densities of one particle, exactly]
+  \label{thm:box_vrep}
+  \lean{DFT.Continuum.Box.BoxRep, DFT.Continuum.Box.gs_data', DFT.Continuum.Box.estar_eq_zero, DFT.Continuum.Box.isGS_of_boxRep, DFT.Continuum.Box.pureVRep_box_iff, DFT.Continuum.Box.quartG, DFT.Continuum.Box.quartDens, DFT.Continuum.Box.quartDens_not_vrep}
+  \leanok
+  \uses{thm:box_exists, lem:picone_eq, thm:line_vrep}
+  For one particle in the box, $\rho$ is the density of a normalised ground state of a continuous potential iff
+  $\rho=g^2$ with $g\in C^2$, $g(0)=g(1)=0$, $g>0$ on $(0,1)$, $\int g^2=1$, and $g''=q\,g$ on $(0,1)$ for a continuous
+  $q$ on $[0,1]$ (so $g''/g$ extends continuously). Then $g$ is a ground state of $q$ with energy $0$. In particular
+  $30x^2(1-x)^2$ is the density of a $C^2$ state but is not $v$-representable: $g''/g=-2/(x(1-x))$ is unbounded.
+\end{theorem}
+\begin{proof}
+  \leanok
+  ($\Leftarrow$) Let $\psi>0$ be the shooting ground state of $q$, with energy $E^*$. The Wronskian
+  $g\psi'-g'\psi$ vanishes at both walls and has derivative $-E^*g\psi$, so $E^*=0$; integrating by parts, $g$ has
+  energy $0$. ($\Rightarrow$) A ground state $\varphi$ of $v$ has energy $E^*$, so by the equality case of Picone it is a
+  multiple of the shooting solution; take $g=\pm\varphi$ and $q=v-E^*$.
+\end{proof}
+
 \begin{theorem}[Hard-core bosons]
   \label{thm:line_hardcore}
   \lean{DFT.Continuum.Line.hk_hardcore_line, DFT.Continuum.Line.lieb_hardcore_line, DFT.Continuum.Line.exists_unique_gs_hardcore, DFT.Continuum.Line.nrep_hardcore, DFT.Continuum.Line.tonks_girardeau}

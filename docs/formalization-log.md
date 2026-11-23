@@ -350,6 +350,13 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     continuous v), **`tentDens_not_vrep`** (N·12min(x,1−x)²: H¹₀-N-rep, not v-rep on H¹₀ for smooth V).
   - Caveat: on H¹₀ with merely continuous v, GS regularity is not proven, so H¹₀ statements carry the
     smooth-V hypothesis. Next: item 3 (exact N=1 characterisation), item 4 (density of v-rep).
+- DONE (2026-11-23) `Box/VRep`: item 3, exact N=1 characterisation (box, C² states, continuous v).
+  - `BoxRep g q`: g ∈ Dom, g > 0 on (0,1), ∫g² = 1, g'' = q g on (0,1).
+  - `estar_eq_zero` (Wronskian g ψ' − g' ψ with the shooting GS ψ of q: E*·∫gψ = 0),
+    `isGS_of_boxRep` (g is a GS of q, energy 0), **`pureVRep_box_iff`** (⇒ via `picone_eq`).
+  - **`quartDens_not_vrep`**: 30x²(1−x)² is N-rep (C² state √30 x(1−x)) but not v-rep
+    (g''/g = −2/(x(1−x)) unbounded vs |q| ≤ ‖q‖ at x = 1/(‖q‖+2)).
+  - Next: item 4 (v-rep densities dense, Brøndsted–Rockafellar).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

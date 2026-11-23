@@ -6,6 +6,7 @@ import DFT.Continuum.Box.Picone
 import DFT.Continuum.Box.PiconeEq
 import DFT.Continuum.Box.Solve
 import DFT.Continuum.Box.Sturm
+import DFT.Continuum.Box.VRep
 import DFT.Continuum.General.FromLattice
 import DFT.Continuum.General.HK
 import DFT.Continuum.General.Lieb
