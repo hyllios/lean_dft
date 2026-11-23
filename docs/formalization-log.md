@@ -406,6 +406,11 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `abs_integral_mul_le`, `exists_ae_subseq` (L² ⇒ a.e. subsequence via convergence in measure),
     **`isWD_comp`**: ∂ₖ(G∘Φ) = G'(Φ)∂ₖΦ for G ∈ C¹, |G'| ≤ L, G(0) = 0.
     Next: products with smooth cutoffs (needed in (d)), then (c) |Ψ| via G_ε(t) = √(t²+ε²) − ε.
+  - (c) bosons DONE: `Line/AbsW`: `rsgn`, `Geps`, **`isWD_abs`** (∂ₖ|Φ| = sgn(Φ)∂ₖΦ),
+    `abs_mem_DomW` (|Φ| ∈ DomW .bos for either statistics), `kinW_abs_le` (Kato),
+    **`isGS_abs`** (bosons: |Ψ| is a GS). Fermions (chamber sign) deferred; for UcpW it may suffice
+    to run (d)–(e) on the bosonic |Ψ| restricted to the chamber.
+    Next: (d) the log estimate for a nonnegative GS u (needs cutoff products η²/(u+ε)).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

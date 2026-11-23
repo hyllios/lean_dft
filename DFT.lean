@@ -16,6 +16,7 @@ import DFT.Continuum.General.Lieb
 import DFT.Continuum.Line.Basic
 import DFT.Continuum.Line.Bosons
 import DFT.Continuum.Line.Chamber
+import DFT.Continuum.Line.AbsW
 import DFT.Continuum.Line.Chain
 import DFT.Continuum.Line.Closure
 import DFT.Continuum.Line.Complete

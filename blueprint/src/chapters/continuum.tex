@@ -670,6 +670,20 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   and $G'(\Phi)\varphi\cdot\partial_kP_M$ converges by weak convergence.
 \end{proof}
 
+\begin{lemma}[$|\Phi|$ in $H^1_0$; Perron--Frobenius, first step]
+  \label{lem:line_absW}
+  \lean{DFT.Continuum.Line.rsgn, DFT.Continuum.Line.Geps, DFT.Continuum.Line.isWD_abs, DFT.Continuum.Line.abs_mem_DomW, DFT.Continuum.Line.kinW_abs_le, DFT.Continuum.Line.isGS_abs}
+  \leanok
+  \uses{lem:line_chain}
+  For $\Phi\in H^1_0$, $|\Phi|$ is a bosonic $H^1_0$ state with weak derivatives $\operatorname{sgn}(\Phi)\,\partial_k\Phi$,
+  so $T(|\Phi|)\le T(\Phi)$. For bosons, $|\Psi|$ is a ground state whenever $\Psi$ is.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Apply the chain rule to $G_\varepsilon(t)=\sqrt{t^2+\varepsilon^2}-\varepsilon$ and let $\varepsilon\to0$ by dominated
+  convergence. The potential energy and the norm only see $\Psi^2=|\Psi|^2$.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}
