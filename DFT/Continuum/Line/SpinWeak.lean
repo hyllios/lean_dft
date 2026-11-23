@@ -451,7 +451,8 @@ theorem sector_lb_W {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v 
   have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
   obtain ⟨b, hb0, hbS, hK, hG⟩ := kernel_of_smooth hVc hF hVF
   -- `E(a) ≤ E0`
-  obtain ⟨a0, ha0, hmin0⟩ := (kBd_of_kernel hb0 hbS hK).exists_min (V := V) (exists_adm_ymix (n := n) a)
+  obtain ⟨a0, ha0, hmin0⟩ :=
+    (kBd_of_kernel hb0 hbS hK).exists_min (V := V) (exists_adm_ymix (n := n) a)
   obtain ⟨hΦ0, hc0⟩ := ser_min2S hb0 hbS hK hVs ha0 hmin0 (by norm_num) (by norm_num) hG
   have hip0 : ip (μ := μN n) (ser a0) (ser a0) = 1 := by
     rw [ip_eq_tsum hΦ0.1.continuous]; simp only [hc0]; exact ha0.norm

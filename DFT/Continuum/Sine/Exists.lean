@@ -98,7 +98,8 @@ theorem exists_isGS_line {τ : Stat} (hws : ∀ σ x, w (pm σ x) = w x)
   set V : Cfg n → ℝ := fun x => LN n v x + w x
   have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
   have hK := abs_Ker_le (sumAbs hβ) hV
-  obtain ⟨a, ha, hmin⟩ := (kBd_of_kernel (fun l => abs_nonneg (β l)) (sumAbs hβ) hK).exists_min (exists_adm τ)
+  obtain ⟨a, ha, hmin⟩ :=
+    (kBd_of_kernel (fun l => abs_nonneg (β l)) (sumAbs hβ) hK).exists_min (exists_adm τ)
   obtain ⟨hΦ, hcoef⟩ := ser_min (fun l => abs_nonneg (β l)) (sumAbs hβ) hK hβ hVs ha hmin
   have hcoef' : (fun m => cN m (ser a)) = a := funext hcoef
   have hip : ip (μ := μN n) (ser a) (ser a) = 1 := by

@@ -747,13 +747,12 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   there, hence constant (intermediate values). Exhaust the cube by boxes.
 \end{proof}
 
-\begin{theorem}[Unique continuation and HK on $H^1_0$ for bosons, continuous potentials]
+\begin{theorem}[Unique continuation on $H^1_0$ for bosons, continuous potentials]
   \label{thm:line_ucp_bos}
-  \lean{DFT.Continuum.Line.gs_ne_zero_W_bos, DFT.Continuum.Line.ucpW_bos, DFT.Continuum.Line.hk_line_W_cont_bos}
+  \lean{DFT.Continuum.Line.gs_ne_zero_W_bos, DFT.Continuum.Line.ucpW_bos}
   \leanok
   \uses{lem:line_invariant, lem:line_zeroset, lem:line_absW, thm:line_hk_cont_ucp}
   For bosons on $[0,1]$ with continuous $v$ and $w$, every $H^1_0$ ground state is nonzero almost everywhere.
-  Hence ground states of $v$ and $v'$ with the same density force $v-v'$ to be constant.
 \end{theorem}
 \begin{proof}
   \leanok
@@ -852,13 +851,14 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   sine truncations.
 \end{proof}
 
-\begin{theorem}[HK and Lieb over states of finite kinetic energy]
+\begin{theorem}[Smooth potentials over states of finite kinetic energy]
   \label{thm:line_weak_hk}
-  \lean{DFT.Continuum.Line.DomW, DFT.Continuum.Line.settingW, DFT.Continuum.Line.gsE_W_eq, DFT.Continuum.Line.liebF_W_eq, DFT.Continuum.Line.gsW_ae_eq, DFT.Continuum.Line.exists_unique_gs_W, DFT.Continuum.Line.hk_line_W, DFT.Continuum.Line.lieb_line_W}
+  \lean{DFT.Continuum.Line.DomW, DFT.Continuum.Line.settingW, DFT.Continuum.Line.gsE_W_eq, DFT.Continuum.Line.liebF_W_eq, DFT.Continuum.Line.gsW_ae_eq, DFT.Continuum.Line.exists_unique_gs_W}
   \leanok
   \uses{thm:line_smooth, thm:line_nrep}
   For $V$ as in Theorem~\ref{thm:line_smooth}, the ground-state energy and the Lieb functional are the same over
-  $H^1_0$ states as over $C^2$ states. $H^1_0$ ground states agree a.e.\ with the classical one, and HK holds.
+  $H^1_0$ states as over $C^2$ states, and $H^1_0$ ground states agree a.e.\ with the classical one. (HK and the
+  Lieb functional on $H^1_0$ hold for all continuous potentials, Theorem~\ref{thm:line_lieb_cont}.)
 \end{theorem}
 \begin{proof}
   \leanok

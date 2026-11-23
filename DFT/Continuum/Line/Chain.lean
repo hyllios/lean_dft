@@ -137,7 +137,8 @@ theorem isWD_comp {Φ : Cfg n → ℝ} (hΦ : H1W Φ) {G G' : ℝ → ℝ}
     have h1 : MemLp (fun x => G' (P (ns j) x) - G' (Φ x)) 2 (μN n) :=
       (memLp_cont (hG'c.comp (hPc _))).sub hG'Φ
     simpa only [D, mul_comm] using memLp_mul_cont hφ.continuous h1
-  have hdP : ∀ j, MemLp (dk k (P (ns j))) 2 (μN n) := fun j => memLp_cont (continuous_dk_of_C1 ((hP2 _).of_le (by norm_num)) k)
+  have hdP : ∀ j, MemLp (dk k (P (ns j))) 2 (μN n) := fun j =>
+    memLp_cont (continuous_dk_of_C1 ((hP2 _).of_le (by norm_num)) k)
   have hsplit : ∀ j, ∫ x, G' (P (ns j) x) * dk k (P (ns j)) x * φ x ∂μN n =
       ∫ x, D j x * dk k (P (ns j)) x ∂μN n + ∫ x, g2 x * dk k (P (ns j)) x ∂μN n := fun j => by
     rw [← integral_add (int_mul_L2 (hDm j) (hdP j)) (int_mul_L2 hg2 (hdP j))]

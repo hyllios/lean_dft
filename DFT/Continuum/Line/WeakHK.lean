@@ -20,8 +20,9 @@ physics:
   (`Fn_le_QW`), so the regularity theory of `Sine/Mixed` applies.
 * `sep_lineW`: separation for `H¹₀` states.
 
-With these, `exists_isGS_W`, `exists_unique_gs_W`, `hk_line_W` and `lieb_line_W` give existence,
-uniqueness (a.e., up to a constant), Hohenberg–Kohn and the Lieb functional on `H¹₀`.
+With these, `exists_isGS_W` and `exists_unique_gs_W` give existence and uniqueness (a.e., up to a
+constant) on `H¹₀`. Hohenberg–Kohn and the Lieb functional on `H¹₀` hold for all continuous
+potentials (`Line/LiebCont`).
 -/
 
 namespace DFT.Continuum.Line
@@ -340,7 +341,8 @@ theorem gsW_ae_eq {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW τ n w hw) v Ψ) :
   set a := fun m => cN m (c • Ψ)
   have ha := adm_cNW hΨ1.1 hsq1
   -- `E₀ ≤ Fn a ≤ Q(cΨ) ≤ Q(Φ₀) = E₀`
-  have hE1 : E0 V τ.toSym ≤ Fn V a := csInf_le ((kBd_of_kernel hb0 hbS hK).bddBelow_Fn τ.toSym) ⟨a, ha, rfl⟩
+  have hE1 : E0 V τ.toSym ≤ Fn V a :=
+    csInf_le ((kBd_of_kernel hb0 hbS hK).bddBelow_Fn τ.toSym) ⟨a, ha, rfl⟩
   have hE2 : Fn V a ≤ Q (settingW τ n w hw) v (c • Ψ) := Fn_le_QW v hΨ1.1
   have hE3 : Q (settingW τ n w hw) v (c • Ψ) ≤ E0 V τ.toSym := by
     have := hΨ1.2.2 (ser a0) (Dom_le_DomW hΦ0)
@@ -437,43 +439,6 @@ theorem exists_unique_gs_W :
   refine ⟨c, ?_⟩
   filter_upwards [h2, ae_restrict_mem measurableSet_cube] with x hx hxC
   rw [hx, hc x (cube_subset hxC)]; rfl
-
-/-- **Hohenberg–Kohn on `H¹₀`**: the ground state of `v` exists, and ground states of `v` and of
-any continuous `v'` with the same norm and density force `v - v'` to be constant. -/
-theorem hk_line_W (v' : Pot) :
-    (∃ Φ, IsGS (settingW τ n w hw) v Φ) ∧ ∀ Ψ Ψ', IsGS (settingW τ n w hw) v Ψ →
-      IsGS (settingW τ n w hw) v' Ψ' → ip (μ := μN n) Ψ Ψ = ip (μ := μN n) Ψ' Ψ' →
-      dens (settingW τ n w hw) Ψ = dens (settingW τ n w hw) Ψ' → ∃ k : ℝ, v - v' = k • one := by
-  refine ⟨(exists_isGS_W hws hF hVF).imp fun _ h => h.1, fun Ψ Ψ' hΨ hΨ' hn hd => ?_⟩
-  obtain ⟨Φ, hΦ, hae⟩ := gsW_ae_eq hws hF hVF hΨ
-  have hucp : ∀ᵐ x ∂μN n, Ψ x ≠ 0 := by
-    filter_upwards [hae, ucp_line_stat hws hΦ] with x h1 h2
-    rw [h1]; exact h2
-  exact hk_of_ucp (sep_lineW w hw) (rigidL_lineW w hw) hΨ hΨ' hn hd hucp
-
-/-- **The Lieb functional on `H¹₀`**: a normalised `C²` ground state `ψ` is a ground state on
-`H¹₀`; at its density the Lieb functional equals `⟨ψ, (T + W) ψ⟩`, `-v` is a subgradient, and every
-other subgradient `-v'` has `v - v'` constant. -/
-theorem lieb_line_W :
-    ∃ ψ, IsNGS (settingW τ n w hw) v ψ ∧
-      liebF (settingW τ n w hw) (dens (settingW τ n w hw) ψ) =
-        (((settingW τ n w hw).h0 ψ ψ : ℝ) : EReal) ∧
-      (∀ ρ : Pot → ℝ, (((settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v - ρ v : ℝ) :
-        EReal) ≤ liebF (settingW τ n w hw) ρ) ∧
-      ∀ v' : Pot, (∀ ρ : Pot → ℝ,
-        (((settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v' - ρ v' : ℝ) : EReal) ≤
-          liebF (settingW τ n w hw) ρ) → ∃ k : ℝ, v - v' = k • one := by
-  obtain ⟨ψ, hψW, hD⟩ := exists_isNGS_W hws hF hVF (τ := τ) (hw := hw)
-  have hψ : IsNGS (setting τ n w hw) v ψ :=
-    ⟨⟨hD, hψW.1.2⟩, fun φ hφ => by
-      have := hψW.2 φ ⟨Dom_le_DomW hφ.1, hφ.2⟩
-      rwa [QW_eq_Q v hD, QW_eq_Q v hφ.1] at this⟩
-  have hL := lieb_line hws hψ
-  have hh : (settingW τ n w hw).h0 ψ ψ = (setting τ n w hw).h0 ψ ψ := h0W_eq hD hD
-  have hd : dens (settingW τ n w hw) ψ = dens (setting τ n w hw) ψ := rfl
-  refine ⟨ψ, hψW, ?_⟩
-  rw [liebF_W_eq, hh, hd]
-  exact hL
 
 end gs
 

@@ -7,7 +7,7 @@ import DFT.Continuum.Line.Invariant
 import DFT.Continuum.Line.ContHK
 
 /-!
-# Unique continuation for bosonic `H¹₀` ground states, and Hohenberg–Kohn
+# Unique continuation for bosonic `H¹₀` ground states
 
 For bosons on the line with any continuous one-body potential `v` and continuous interaction
 `w`, every `H¹₀` ground state is nonzero almost everywhere (`gs_ne_zero_W_bos`):
@@ -17,8 +17,8 @@ For bosons on the line with any continuous one-body potential `v` and continuous
   through Moser's logarithmic estimate);
 * an invariant set is null or conull (`null_or_conull`); conull would make `|Ψ| = 0`.
 
-Hence `UcpW .bos` holds (`ucpW_bos`), and **Hohenberg–Kohn holds on `H¹₀` for bosons with
-continuous potentials** (`hk_line_W_cont_bos`), with no smoothness assumption.
+Hence `UcpW .bos` holds (`ucpW_bos`), with no smoothness assumption; Hohenberg–Kohn follows in
+`Line/LiebCont` (`hk_line_W_cont_stat`).
 -/
 
 namespace DFT.Continuum.Line
@@ -65,15 +65,5 @@ theorem gs_ne_zero_W_bos {v : Pot} {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW .b
 /-- **Unique continuation for bosonic `H¹₀` ground states.** -/
 theorem ucpW_bos (w : Cfg n → ℝ) (hw : Continuous w) : UcpW .bos n w hw :=
   fun _ _ hΨ => gs_ne_zero_W_bos hΨ
-
-/-- **Hohenberg–Kohn on `H¹₀` for bosons with continuous potentials.** For every continuous
-one-body potential `v` and continuous interaction `w`, ground states exist, and ground states of
-`v` and `v'` with the same norm and density force `v - v'` to be constant. -/
-theorem hk_line_W_cont_bos (v v' : Pot) :
-    (∃ Φ, IsGS (settingW .bos n w hw) v Φ) ∧ ∀ Ψ Ψ', IsGS (settingW .bos n w hw) v Ψ →
-      IsGS (settingW .bos n w hw) v' Ψ' → ip (μ := μN n) Ψ Ψ = ip (μ := μN n) Ψ' Ψ' →
-      dens (settingW .bos n w hw) Ψ = dens (settingW .bos n w hw) Ψ' →
-        ∃ k : ℝ, v - v' = k • one :=
-  hk_line_W_cont (ucpW_bos w hw) v v'
 
 end DFT.Continuum.Line

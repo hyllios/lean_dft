@@ -574,4 +574,7 @@ Recommended order: N5, then N6 (or N1/N2 first as quick wins).
   `Line/UcpY`). Deleted `Line/ChamberGS`, `Line/FerGS`, `Line/FerLog`, `Line/UcpFer` and the
   fermionic part of `Line/HalfSpace` (`fer_plane`, `isWD_half`). `isWD_half_of_bound` and
   `abs_le_of_plane'` moved to `Line/HalfSpace`, `null_or_conull_of_local` to `Line/Invariant`.
-
+- Superseded statements removed: `hk_line_W`, `lieb_line_W` (smooth V, symmetric w) and
+  `hk_line_W_cont_bos`/`hk_line_W_cont_fer`, all covered by `hk_line_W_cont_stat` and
+  `lieb_line_W_cont` (continuous v, w). The smooth-V regularity results (`gsW_ae_eq`,
+  `exists_unique_gs_W`) stay.
