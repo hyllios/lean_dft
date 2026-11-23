@@ -104,6 +104,24 @@ $d(y)\le d(z)+1$ whenever $A_{yz}\neq0$, $y\ne z$ (a ``distance from $c$'').
   Combine the factorisation with Theorem~\ref{thm:krylovPoly_ne_zero_of_top}.
 \end{proof}
 
+\begin{theorem}[(H$^*$) from a table of leading coefficients]
+  \label{thm:krylovPoly_ne_zero_of_table}
+  \lean{DFT.top_coeff_eq_det, DFT.det_equivFin_ne_zero, DFT.T_eq_of_table, DFT.krylovPoly_ne_zero_of_table}
+  \leanok
+  \uses{def:T, thm:det_top, thm:krylovPoly_ne_zero_of_top}
+  The leading coefficient of the free Krylov determinant equals $\det[T_{\mathrm{ord}(j)}(y)]_{y,j}$, and putting
+  the columns in the order $k=0,\dots,n-1$, with $n$ the number of configurations, changes it at most by a sign. Hence,
+  if in some basis of the configurations a table $T_k(y)$, $k<n$, with $T_0(y)=[y=c]$ satisfies the recursion of
+  Definition~\ref{def:T} and $\det[T_k(y)]_{y,k}\neq0$, then $P_c\neq0$ for every interaction. No sign
+  condition on $A$ enters.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Leibniz expansion as in Theorem~\ref{thm:det_top}: the top coefficient of each product of entries is the
+  product of the $T_{\mathrm{ord}(j)}(y)$. The table equals $T$ by induction on $k$. Conclude with
+  Theorem~\ref{thm:krylovPoly_ne_zero_of_top}.
+\end{proof}
+
 \begin{theorem}[Uniqueness of power-sum coefficients]
   \label{thm:ps_unique}
   \lean{DFT.eval_weighted_sum, DFT.ps_unique}
