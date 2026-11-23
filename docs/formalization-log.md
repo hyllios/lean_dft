@@ -428,6 +428,10 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     (e3) translation-invariant indicator ⇒ equals a.e. its average against a continuous bump,
          which is continuous and {0,1}-valued on a connected set ⇒ constant; a → 0.
     (e4) assemble UcpW for bosons (|Ψ| GS ≥ 0, nonzero) and HK on H¹₀ for continuous v.
+    (e2) DONE `Line/ZeroSet`: `translate_lintegral_le` (∫_S|f(x+heₖ)−f(x)| ≤ h∫_T|∂ₖf|, lower
+         integrals), `Lg` (odd log(1+t/ε)), `etaS` = Πsin(πxⱼ), `Qa`, `Sa`, `grad_L1_bound`
+         (∫_{Qa}|∂ₖ log(u+ε)| ≤ B uniformly in ε), `bad_null` (Chebyshev, ε → 0),
+         **`zero_set_translate`**: a.e. x ∈ Sa, u(x) = 0 ↔ u(x+heₖ) = 0.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

@@ -714,6 +714,23 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   swap the integrals and use the weak derivative against $g(\cdot-se_k)$; conclude with the fundamental lemma.
 \end{proof}
 
+\begin{lemma}[The zero set of a nonnegative ground state is translation invariant]
+  \label{lem:line_zeroset}
+  \lean{DFT.Continuum.Line.translate_lintegral_le, DFT.Continuum.Line.Lg, DFT.Continuum.Line.etaS, DFT.Continuum.Line.Qa, DFT.Continuum.Line.etaS_ge, DFT.Continuum.Line.Sa, DFT.Continuum.Line.grad_L1_bound, DFT.Continuum.Line.bad_null, DFT.Continuum.Line.zero_set_translate}
+  \leanok
+  \uses{lem:line_logest, lem:line_translate}
+  Let $u\ge0$ be a bosonic $H^1_0$ ground state, $0<a\le1/2$ and $h\ge0$. For almost every $x$ with $x$ and $x+he_k$
+  in $[a,1-a]^N$, $u(x)=0$ if and only if $u(x+he_k)=0$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Let $w_\varepsilon=\log(1+u/\varepsilon)$. The translation identity gives
+  $\int_S|w_\varepsilon(x+he_k)-w_\varepsilon(x)|\le h\int_{[a,1-a]^N}|\partial_kw_\varepsilon|$, and the logarithmic estimate with
+  $\eta=\prod_j\sin(\pi x_j)\ge\sin(\pi a)^N$ on $[a,1-a]^N$ bounds the right side by $hB$ uniformly in $\varepsilon$. Where $u$
+  vanishes at one end and is $\ge\delta$ at the other, $|w_\varepsilon(x+he_k)-w_\varepsilon(x)|\ge\log(1+\delta/\varepsilon)$; by
+  Chebyshev this set has measure at most $hB/\log(1+\delta/\varepsilon)\to0$.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}

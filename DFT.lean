@@ -55,6 +55,7 @@ import DFT.Continuum.Line.Young
 import DFT.Continuum.Line.YoungPos
 import DFT.Continuum.Line.YoungSign
 import DFT.Continuum.Line.YoungStrong
+import DFT.Continuum.Line.ZeroSet
 import DFT.Continuum.Sine.Coeff
 import DFT.Continuum.Sine.Cont
 import DFT.Continuum.Sine.Cube
