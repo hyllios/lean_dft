@@ -18,13 +18,10 @@ import DFT.Continuum.Line.Basic
 import DFT.Continuum.Line.Bosons
 import DFT.Continuum.Line.Chain
 import DFT.Continuum.Line.Chamber
-import DFT.Continuum.Line.ChamberGS
 import DFT.Continuum.Line.Closure
 import DFT.Continuum.Line.Complete
 import DFT.Continuum.Line.ContHK
 import DFT.Continuum.Line.Density
-import DFT.Continuum.Line.FerGS
-import DFT.Continuum.Line.FerLog
 import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions
@@ -54,7 +51,6 @@ import DFT.Continuum.Line.SpinWeak
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Line.Translate
 import DFT.Continuum.Line.UcpBos
-import DFT.Continuum.Line.UcpFer
 import DFT.Continuum.Line.UcpY
 import DFT.Continuum.Line.Unique
 import DFT.Continuum.Line.VRep

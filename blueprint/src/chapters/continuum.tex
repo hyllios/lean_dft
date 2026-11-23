@@ -575,7 +575,7 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
 
 \begin{theorem}[Ground states exist: the sine basis]
   \label{thm:line_sine_exists}
-  \lean{DFT.Continuum.Sine.sn_complete, DFT.Continuum.Sine.parseval1, DFT.Continuum.Sine.parseval, DFT.Continuum.Sine.hasSum_kin, DFT.Continuum.Sine.exists_min, DFT.Continuum.Sine.euler_lagrange, DFT.Continuum.Sine.Ker_eq, DFT.Continuum.Sine.abs_Ker_le, DFT.Continuum.Sine.ser_min, DFT.Continuum.Sine.exists_isGS_line, DFT.Continuum.Sine.hk_line_sine, DFT.Continuum.Sine.lieb_line_sine}
+  \lean{DFT.Continuum.Sine.sn_complete, DFT.Continuum.Sine.parseval1, DFT.Continuum.Sine.parseval, DFT.Continuum.Sine.hasSum_kin, DFT.Continuum.Sine.KBd.exists_min, DFT.Continuum.Sine.KBd.euler_lagrange, DFT.Continuum.Sine.Ker_eq, DFT.Continuum.Sine.abs_Ker_le, DFT.Continuum.Sine.ser_min, DFT.Continuum.Sine.exists_isGS_line, DFT.Continuum.Sine.hk_line_sine, DFT.Continuum.Sine.lieb_line_sine}
   \leanok
   \uses{thm:hk_interacting_bosons_line, thm:hk_interacting_fermions_line, thm:lieb_line}
   If $V$ is, on the closed cube, a cosine series $\sum_l\beta_l\prod_j\cos(\pi l_jx_j)$ with
@@ -761,75 +761,32 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   conull would give $|\Psi|=0$.
 \end{proof}
 
-\begin{lemma}[Antisymmetric states restricted to a half-space]
+\begin{lemma}[Restriction to a half-space]
   \label{lem:line_halfspace}
-  \lean{DFT.Continuum.Line.deriv_smoothTransition_bound, DFT.Continuum.Line.Hij, DFT.Continuum.Line.cutH, DFT.Continuum.Line.dk_cutH, DFT.Continuum.Line.abs_le_of_plane, DFT.Continuum.Line.isWD_half_C1, DFT.Continuum.Line.fer_plane, DFT.Continuum.Line.isWD_half}
+  \lean{DFT.Continuum.Line.deriv_smoothTransition_bound, DFT.Continuum.Line.Hij, DFT.Continuum.Line.cutH, DFT.Continuum.Line.dk_cutH, DFT.Continuum.Line.abs_le_of_plane, DFT.Continuum.Line.abs_le_of_plane', DFT.Continuum.Line.isWD_half_C1, DFT.Continuum.Line.isWD_half_of_bound}
   \leanok
   \uses{lem:line_h1_approx}
-  For a fermionic $H^1_0$ state $\Phi$ and $i\ne j$, $\mathbf 1_{x_i<x_j}\Phi$ has weak derivatives
-  $\mathbf 1_{x_i<x_j}\partial_k\Phi$: antisymmetric states vanish on the collision planes in the weak sense.
+  Let $F\in L^2$ have weak derivative $G=\partial_kF$, with $|F|\le L|x_j-x_i|$ a.e. Then $\mathbf 1_{x_i<x_j}F$ has weak
+  derivative $\mathbf 1_{x_i<x_j}G$. This applies to $C^1$ functions vanishing on the plane $x_i=x_j$.
 \end{lemma}
 \begin{proof}
   \leanok
   For a $C^1$ function vanishing on the walls and on $x_i=x_j$, test against $\theta((x_j-x_i)/\delta)\varphi$ with $\theta$ a
   smooth step; the boundary term is $O(1)$ on a strip of width $\delta$ because $|P|\le L(x_j-x_i)$ (mean value theorem),
-  so it vanishes as $\delta\to0$. In general, pass to the limit through the $C^2$ sine truncations, which converge in
-  $L^2$ with weakly convergent derivatives.
+  so it vanishes as $\delta\to0$. The same cutoffs work for weakly differentiable $F$ under the bound.
 \end{proof}
 
-\begin{theorem}[A fermionic ground state nonnegative on the ordered chamber]
-  \label{thm:line_fer_chamber}
-  \lean{DFT.Continuum.Line.H1W, DFT.Continuum.Line.h1W_of_mem, DFT.Continuum.Line.contDiff_trunc, DFT.Continuum.Line.trunc_wall, DFT.Continuum.Line.isWD_half_of_bound, DFT.Continuum.Line.Ord, DFT.Continuum.Line.isWD_chamber_of_bound, DFT.Continuum.Line.isWD_chamber, DFT.Continuum.Line.uC, DFT.Continuum.Line.PhiF, DFT.Continuum.Line.PhiF_eq_of_mem, DFT.Continuum.Line.PhiF_mem, DFT.Continuum.Line.abs_PhiF, DFT.Continuum.Line.kinW_PhiF_le, DFT.Continuum.Line.isGS_PhiF}
-  \leanok
-  \uses{lem:line_halfspace, lem:line_absW}
-  Let $\Psi$ be a fermionic $H^1_0$ ground state and $C=\{x_0<\dots<x_N\}$. Then $\mathbf 1_C\Psi$ has weak derivatives
-  $\mathbf 1_C\partial_k\Psi$, and the antisymmetrisation $\Phi=\sum_\sigma\operatorname{sgn}\sigma\,(\mathbf 1_C|\Psi|)\circ\sigma$ is again a
-  fermionic ground state, with $|\Phi|=|\Psi|$ a.e.\ and $\Phi=|\Psi|\ge0$ on $C$.
-\end{theorem}
-\begin{proof}
-  \leanok
-  The truncations of $\Psi$ are $C^2$ and vanish linearly at collisions, so restricting them to $C$ (one adjacent
-  pair at a time, as in Lemma~\ref{lem:line_halfspace}) commutes with weak derivatives; pass to the limit. The chain
-  rule gives $|\mathbf 1_C\Psi|\in H^1$, relabelling gives $\Phi$. At a configuration without collisions only the sorting
-  permutation contributes, so $|\Phi|=|\Psi|$ and $|\partial_k\Phi|\le|\partial_k\Psi|$, hence $Q(\Phi)\le Q(\Psi)$.
-\end{proof}
-
-\begin{lemma}[Logarithmic estimate for fermions]
-  \label{lem:line_logest_fer}
-  \lean{DFT.Continuum.Line.sum_sort, DFT.Continuum.Line.sgnC, DFT.Continuum.Line.PhiB, DFT.Continuum.Line.PhiB_mem, DFT.Continuum.Line.PhiB_ae_eq_abs, DFT.Continuum.Line.phiF, DFT.Continuum.Line.phiF_mem, DFT.Continuum.Line.dW_phiF_ae, DFT.Continuum.Line.eq_PhiB, DFT.Continuum.Line.log_estimate_fer}
-  \leanok
-  \uses{thm:line_fer_chamber, lem:line_logest}
-  Let $\Psi$ be a fermionic $H^1_0$ ground state with energy $E$, $|V-E|\le C$, and $B=\sum_\sigma(\mathbf 1_C|\Psi|)\circ\sigma$
-  (so $B=|\Psi|$ a.e.). For every symmetric $C^1$ cutoff $\eta$ vanishing on the walls and on the diagonals and every
-  $\varepsilon>0$, $\sum_k\int\eta^2\big(\partial_kB/(B+\varepsilon)\big)^2\le4\sum_k\int(\partial_k\eta)^2+2C\int\eta^2$.
-\end{lemma}
-\begin{proof}
-  \leanok
-  With $S$ the sign of the sorting permutation, $\Phi=SB$ and $\partial_k\Phi=S\,\partial_kB$ off the collisions. A
-  symmetric $\varphi\in H^1$ vanishing linearly on the adjacent diagonals gives the fermionic state
-  $\sum_\sigma\operatorname{sgn}\sigma\,(\mathbf 1_C\varphi)\circ\sigma=S\varphi$ with derivatives $S\,\partial_k\varphi$. Testing the
-  Euler--Lagrange equation of $\Phi$ with it, $S^2=1$ shows that $B$ satisfies the bosonic weak equation with energy
-  $E$ against $\varphi$. The test function $\eta^2/(B+\varepsilon)$ of Lemma~\ref{lem:line_logest} is of this kind, and
-  that proof only uses the equation for it.
-\end{proof}
-
-\begin{theorem}[Unique continuation and HK on $H^1_0$ for fermions, continuous potentials]
+\begin{theorem}[Unique continuation on $H^1_0$ for fermions, continuous potentials]
   \label{thm:line_ucp_fer}
-  \lean{DFT.Continuum.Line.null_or_conull_of_local, DFT.Continuum.Line.UC, DFT.Continuum.Line.isPreconnected_UC, DFT.Continuum.Line.ae_of_ae_chamber, DFT.Continuum.Line.Dg, DFT.Continuum.Line.etaD, DFT.Continuum.Line.etaD_diag, DFT.Continuum.Line.etaD_ne_zero, DFT.Continuum.Line.logData_ball, DFT.Continuum.Line.gs_ne_zero_W_fer, DFT.Continuum.Line.ucpW_fer, DFT.Continuum.Line.hk_line_W_cont_fer}
+  \lean{DFT.Continuum.Line.DomW_fer_eq, DFT.Continuum.Line.isGS_fer_Y, DFT.Continuum.Line.gs_ne_zero_W_fer, DFT.Continuum.Line.ucpW_fer}
   \leanok
-  \uses{lem:line_logest_fer, lem:line_zeroset, lem:line_invariant, thm:line_hk_cont_ucp}
+  \uses{thm:line_ucp_young}
   For fermions on $[0,1]$ with continuous $v$ and $w$, every $H^1_0$ ground state is nonzero almost everywhere.
-  Hence ground states of $v$ and $v'$ with the same density force $v-v'$ to be constant.
 \end{theorem}
 \begin{proof}
   \leanok
-  Let $B=|\Psi|$ be the bosonic companion and $\eta=\prod_j\sin(\pi x_j)\prod_{i\ne j}(x_i-x_j)$, symmetric and zero on
-  the walls and the diagonals. On a closed ball inside the open chamber $U=(0,1)^N\cap\{x_0<\dots<x_N\}$, $|\eta|$ has a
-  positive minimum, so Lemma~\ref{lem:line_logest_fer} and the argument of Lemma~\ref{lem:line_zeroset} make the zero
-  set of $B$ translation invariant there, and the tent-kernel argument of Lemma~\ref{lem:line_invariant} makes it
-  null or conull on the concentric ball of half the radius. $U$ is convex, so the sets where it is locally null and
-  locally conull are disjoint open sets covering $U$, and one is empty. $B$ is symmetric and the relabelled chambers
-  cover the cube up to a null set. Conull would give $\Psi=0$.
+  Fermionic states are the states of Young symmetry $(N,0)$, with the same energy form and coupling, so this is the
+  case $a=N$ of Theorem~\ref{thm:line_ucp_young}.
 \end{proof}
 
 \begin{theorem}[HK and the Lieb functional on $H^1_0$, continuous potentials]
@@ -1087,17 +1044,24 @@ $(a,b)$, Young subgroup $\mathrm{YG}_a$).
 
 \begin{theorem}[Unique continuation for ground states of mixed symmetry]
   \label{thm:line_ucp_young}
-  \lean{DFT.Continuum.Line.isWD_pairs_of_bound, DFT.Continuum.Line.isWD_RY, DFT.Continuum.Line.YG_eq_of_mem_RY, DFT.Continuum.Line.sumY, DFT.Continuum.Line.PhiY, DFT.Continuum.Line.PhiBY, DFT.Continuum.Line.isGS_PhiY, DFT.Continuum.Line.PhiBY_ae_eq_abs, DFT.Continuum.Line.eq_PhiBY, DFT.Continuum.Line.log_estimate_Y, DFT.Continuum.Line.etaY, DFT.Continuum.Line.ae_of_ae_RY, DFT.Continuum.Line.gs_ne_zero_WY}
+  \lean{DFT.Continuum.Line.H1W, DFT.Continuum.Line.h1W_of_mem, DFT.Continuum.Line.contDiff_trunc, DFT.Continuum.Line.trunc_wall, DFT.Continuum.Line.null_or_conull_of_local, DFT.Continuum.Line.isWD_pairs_of_bound, DFT.Continuum.Line.isWD_RY, DFT.Continuum.Line.YG_eq_of_mem_RY, DFT.Continuum.Line.sumY, DFT.Continuum.Line.PhiY, DFT.Continuum.Line.PhiBY, DFT.Continuum.Line.isGS_PhiY, DFT.Continuum.Line.PhiBY_ae_eq_abs, DFT.Continuum.Line.eq_PhiBY, DFT.Continuum.Line.log_estimate_Y, DFT.Continuum.Line.etaY, DFT.Continuum.Line.ae_of_ae_RY, DFT.Continuum.Line.gs_ne_zero_WY}
   \leanok
-  \uses{thm:line_young_exists, thm:line_ucp_fer}
+  \uses{thm:line_young_exists, lem:line_halfspace, lem:line_absW, lem:line_logest, lem:line_zeroset, lem:line_invariant}
   For continuous $v$ and $w$, every $H^1_0$ ground state of Young symmetry $(a,N-a)$ is nonzero almost everywhere.
 \end{theorem}
 \begin{proof}
   \leanok
-  The fermionic argument of Theorem~\ref{thm:line_ucp_fer} with the Young group in place of all relabellings and
-  the chamber $R_Y$ (each group ordered) in place of the ordered chamber. Restriction to $R_Y$ commutes with weak
-  derivatives because the truncations vanish on same-group planes. The sorting relabelling is unique, after
-  shifting the second group by $2$. The cutoff vanishes on the walls and the same-group diagonals.
+  Let $R_Y$ be the chamber where each group is ordered, $u=\mathbf 1_{R_Y}|\Psi|$, $\Phi=\sum_{\sigma\in Y_a}\operatorname{sgn}\sigma\,
+  u\circ\sigma$ and $B=\sum_{\sigma\in Y_a}u\circ\sigma=|\Psi|$. Restriction to $R_Y$ commutes with weak derivatives
+  (Lemma~\ref{lem:line_halfspace}, one same-group pair at a time, through the truncations), and the sorting relabelling
+  in $Y_a$ is unique (shift the second group by $2$). So $\Phi$ is again a ground state, $\Phi=SB$ with $S$ the sorting
+  sign, and testing its Euler--Lagrange equation with $S\varphi$ shows that $B$ satisfies the weak equation against
+  $Y_a$-symmetric $\varphi$ vanishing on same-group planes. This gives the logarithmic estimate of
+  Lemma~\ref{lem:line_logest} for $\eta=\prod_j\sin(\pi x_j)\prod_{i\ne j\text{ same group}}(x_i-x_j)$, bounded below on closed
+  balls in $R_Y$. By Lemmas~\ref{lem:line_zeroset} and~\ref{lem:line_invariant} the zero set of $B$ is null or conull
+  near each point of $R_Y$; $R_Y$ is convex, so the sets where it is locally null and locally conull are disjoint open
+  sets covering it, and one is empty. $B$ is $Y_a$-symmetric and the relabelled chambers cover the cube up to a null
+  set. Conull would give $\Psi=0$.
 \end{proof}
 
 \begin{theorem}[HK and the Lieb functional in a spin sector]

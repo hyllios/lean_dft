@@ -8,7 +8,7 @@ import DFT.Continuum.Line.YoungChamber
 /-!
 # Ground states of mixed symmetry: the chamber state and the logarithmic estimate
 
-The Young analogue of `Line/FerGS` and `Line/FerLog`. For `Ψ ∈ DomWS (ymix a)` let
+The chamber construction for the Young symmetry. For `Ψ ∈ DomWS (ymix a)` let
 `u = 1_{RY} |Ψ|`, `Φ = Σ_{σ ∈ YG a} sgn σ · u ∘ σ` (`PhiY`) and `B = Σ_{σ ∈ YG a} u ∘ σ`
 (`PhiBY`, `= |Ψ|` a.e.).
 

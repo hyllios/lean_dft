@@ -3,7 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Line.UcpFer
+import DFT.Continuum.Line.UcpY
 
 /-!
 # Hohenberg–Kohn and the Lieb functional on `H¹₀` for continuous potentials

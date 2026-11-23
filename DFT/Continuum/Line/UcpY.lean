@@ -4,16 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Line.YoungGS
-import DFT.Continuum.Line.UcpFer
+import DFT.Continuum.Line.UcpBos
 
 /-!
 # Unique continuation for `H¹₀` ground states of mixed symmetry
 
 For the Young symmetry `ymix a` (the spatial part of a spin-½ state with `a` spins up), any
 continuous `v` and continuous `w`, every `H¹₀` ground state is nonzero almost everywhere
-(**`gs_ne_zero_WY`**). The proof is that of `Line/UcpFer` with the Young chamber `RY` (open and
-convex) and the cutoff `η = Π_j sin(πxⱼ) · Π_{i ≠ j same group}(xᵢ - xⱼ)` (`etaY`).
+(**`gs_ne_zero_WY`**). The proof follows `Line/UcpBos` on the Young chamber `RY` (open and
+convex), with the companion `B = |Ψ|` of `Line/YoungGS` and the cutoff
+`η = Π_j sin(πxⱼ) · Π_{i ≠ j same group}(xᵢ - xⱼ)` (`etaY`), which vanishes on the walls and on the
+same-group diagonals and is bounded below on closed balls in `RY` (`logData_ballY`); local
+constancy of the zero set spreads through the convex chamber (`null_or_conull_of_local`).
 
+* **`gs_ne_zero_W_fer`**, **`ucpW_fer`**: fermions are the case `a = N` (`DomW_fer_eq`,
+  `isGS_fer_Y`).
 * `ae_of_ae_RY`: a `YG a`-invariant statement that holds a.e. in `RY` holds a.e. in the cube;
 * `logData_ballY`: the logarithmic data for the companion `B = |Ψ|` on closed balls in `RY`.
 -/
@@ -201,5 +206,30 @@ theorem gs_ne_zero_WY (hΨ : IsGS (settingWS (ymix a) w hw) v Ψ) : ∀ᵐ x ∂
     exact abs_ne_zero.1 this
 
 end ucp
+
+/-! ### Fermions: the case `a = N` -/
+
+/-- Fermionic states are the Young states with all particles in one group. -/
+lemma DomW_fer_eq : DomW .fer n = DomWS (ymix (n := n) (n + 1)) := by
+  ext Φ
+  refine ⟨fun h => ⟨h.1, h.2.1, fun σ _ => h.2.2 σ⟩, fun h => ⟨h.1, h.2.1, fun σ => h.2.2 σ ?_⟩⟩
+  intro i
+  exact ⟨fun _ => i.isLt, fun _ => (σ i).isLt⟩
+
+lemma isGS_fer_Y {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n → ℝ}
+    (hΨ : IsGS (settingW .fer n w hw) v Ψ) : IsGS (settingWS (ymix (n + 1)) w hw) v Ψ := by
+  have hD : ∀ φ, φ ∈ DomWS (ymix (n := n) (n + 1)) ↔ φ ∈ DomW .fer n := fun φ => by
+    rw [DomW_fer_eq]
+  exact ⟨(hD Ψ).2 hΨ.1, hΨ.2.1, fun φ hφ => hΨ.2.2 φ ((hD φ).1 hφ)⟩
+
+/-- **Fermionic `H¹₀` ground states of continuous potentials are nonzero almost everywhere.** -/
+theorem gs_ne_zero_W_fer {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n → ℝ}
+    (hΨ : IsGS (settingW .fer n w hw) v Ψ) : ∀ᵐ x ∂μN n, Ψ x ≠ 0 :=
+  gs_ne_zero_WY (isGS_fer_Y hΨ)
+
+/-- **Unique continuation for fermionic `H¹₀` ground states.** -/
+theorem ucpW_fer (w : Cfg n → ℝ) (hw : Continuous w) : UcpW .fer n w hw :=
+  fun _ _ hΨ => gs_ne_zero_W_fer hΨ
+
 
 end DFT.Continuum.Line

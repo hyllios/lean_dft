@@ -6,17 +6,15 @@ Authors: Miguel A. L. Marques
 import DFT.Continuum.Line.Invariant
 
 /-!
-# Restricting antisymmetric `H¹₀` states to a half-space
+# Restricting `H¹₀` functions to a half-space
 
-For a fermionic `H¹₀` state `Φ` and `i ≠ j`, the restriction `1_{xᵢ < xⱼ} Φ` (extended by zero) has
-weak derivatives `1_{xᵢ < xⱼ} ∂ₖΦ` (`isWD_half`): antisymmetric states vanish on the collision
-planes in the weak sense.
-
-* `isWD_half_C1`: for a `C¹` function vanishing on the walls and on the plane `xᵢ = xⱼ`; proof
-  with the cutoffs `θ((xⱼ - xᵢ)/δ)` (`θ` the smooth step), the boundary term being controlled by
-  `|P(x)| ≤ L (xⱼ - xᵢ)` (mean value theorem towards the plane).
-* `isWD_half`: the general case, through the `C²` truncations (`trunc_mem`), which converge in
-  `L²` with weakly convergent derivatives (`tendsto_trunc`, `tendsto_trunc_dk`).
+* `isWD_half_C1`: for a `C¹` function vanishing on the walls and on the plane `xᵢ = xⱼ`, the
+  restriction `1_{xᵢ < xⱼ} P` has weak derivatives `1_{xᵢ < xⱼ} ∂ₖP`; proof with the cutoffs
+  `θ((xⱼ - xᵢ)/δ)` (`θ` the smooth step), the boundary term being controlled by
+  `|P(x)| ≤ L (xⱼ - xᵢ)` (mean value theorem towards the plane, `abs_le_of_plane`).
+* `abs_le_of_plane'`: the a.e. form `|P| ≤ C |xⱼ - xᵢ|` on the cube.
+* `isWD_half_of_bound`: the same restriction for a weakly differentiable `F` with
+  `|F| ≤ L |xⱼ - xᵢ|`.
 -/
 
 namespace DFT.Continuum.Line
@@ -288,54 +286,132 @@ theorem isWD_half_C1 {P : Cfg n → ℝ} (hP : ContDiff ℝ 1 P)
   rw [heq] at hlim
   exact tendsto_nhds_unique hlim L3.neg
 
-/-! ### The fermionic case -/
+/-! ### Functions vanishing linearly on the plane -/
 
-/-- A fermionic `C²` state vanishes on the collision plane `xᵢ = xⱼ`. -/
-lemma fer_plane {P : Cfg n → ℝ} (hP : P ∈ Dom .fer n) {i j : Fin (n + 1)} (hij : i ≠ j) (x : Cfg n)
-    (hx : x i = x j) : P x = 0 := by
-  have h := hP.2.1 (Equiv.swap i j) x
-  have hpm : pm (Equiv.swap i j) x = x := by
-    funext l
-    simp only [pm_apply]
-    by_cases hli : l = i
-    · subst hli; simp [hx]
-    · by_cases hlj : l = j
-      · subst hlj; simp [hx]
-      · rw [Equiv.swap_apply_of_ne_of_ne hli hlj]
-  rw [hpm, ch_fer, sgn, Equiv.Perm.sign_swap hij] at h
-  simp only [Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one, neg_mul, one_mul] at h
-  linarith
+/-- A `C¹` function vanishing on the plane `xᵢ = xⱼ` is `O(|xⱼ - xᵢ|)` on the cube. -/
+lemma abs_le_of_plane' {P : Cfg n → ℝ} (hP : ContDiff ℝ 1 P) {i j : Fin (n + 1)} (hij : i ≠ j)
+    (hplane : ∀ x, x i = x j → P x = 0) :
+    ∃ C, 0 ≤ C ∧ ∀ᵐ x ∂μN n, |P x| ≤ C * |x j - x i| := by
+  obtain ⟨C1, hC1, h1⟩ := abs_le_of_plane hP hij hplane
+  obtain ⟨C2, hC2, h2⟩ := abs_le_of_plane hP hij.symm fun x hx => hplane x hx.symm
+  refine ⟨max C1 C2, le_max_of_le_left hC1, ?_⟩
+  filter_upwards [ae_restrict_mem measurableSet_cube] with x hx
+  rcases le_total (x i) (x j) with h | h
+  · rw [abs_of_nonneg (sub_nonneg.2 h)]
+    exact (h1 x (cube_subset hx) h).trans
+      (mul_le_mul_of_nonneg_right (le_max_left _ _) (sub_nonneg.2 h))
+  · rw [abs_of_nonpos (sub_nonpos.2 h), neg_sub]
+    exact (h2 x (cube_subset hx) h).trans
+      (mul_le_mul_of_nonneg_right (le_max_right _ _) (sub_nonneg.2 h))
 
-/-- **Antisymmetric `H¹₀` states restricted to a half-space.** For a fermionic `H¹₀` state `Φ`
-and `i ≠ j`, `1_{xᵢ < xⱼ} Φ` has weak derivatives `1_{xᵢ < xⱼ} ∂ₖΦ`. -/
-theorem isWD_half {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW .fer n) {i j : Fin (n + 1)} (hij : i ≠ j)
-    (k : Fin (n + 1)) : IsWD k ((Hij i j).indicator Φ) ((Hij i j).indicator (dW k Φ)) := by
+/-- **Half-space restriction for functions vanishing linearly on the plane.** -/
+theorem isWD_half_of_bound {F G : Cfg n → ℝ} {k : Fin (n + 1)} (hF : MemLp F 2 (μN n))
+    (hG : IsWD k F G) {i j : Fin (n + 1)} (hij : i ≠ j) {L : ℝ} (hL0 : 0 ≤ L)
+    (hL : ∀ᵐ x ∂μN n, |F x| ≤ L * |x j - x i|) :
+    IsWD k ((Hij i j).indicator F) ((Hij i j).indicator G) := by
   set H := Hij (n := n) i j
-  have hHm := measurableSet_Hij (n := n) i j
-  refine ⟨(memLp_dW hΦ k).indicator hHm.nullMeasurableSet, fun φ hφ => ?_⟩
+  refine ⟨hG.1.indicator (measurableSet_Hij i j).nullMeasurableSet, fun φ hφ => ?_⟩
   have hdφ := continuous_dk_of_C1 hφ k
-  have hM : ∀ M, ∫ x, H.indicator (trunc M Φ) x * dk k φ x ∂μN n =
-      -∫ x, H.indicator (dk k (trunc M Φ)) x * φ x ∂μN n := fun M =>
-    (isWD_half_C1 ((trunc_mem hΦ M).1.of_le (by norm_num)) (trunc_mem hΦ M).2.2 hij
-      (fer_plane (trunc_mem hΦ M) hij) k).2 φ hφ
-  have hg1 : MemLp (H.indicator (dk k φ)) 2 (μN n) :=
-    (memLp_cont hdφ).indicator hHm.nullMeasurableSet
-  have hg2 : MemLp (H.indicator φ) 2 (μN n) :=
-    (memLp_cont hφ.continuous).indicator hHm.nullMeasurableSet
-  have e1 : ∀ f : Cfg n → ℝ, ∫ x, H.indicator f x * dk k φ x ∂μN n =
-      ∫ x, f x * H.indicator (dk k φ) x ∂μN n := fun f =>
-    integral_congr_ae (ae_of_all _ fun x => by by_cases hx : x ∈ H <;> simp [hx])
-  have e2 : ∀ f : Cfg n → ℝ, ∫ x, H.indicator f x * φ x ∂μN n =
-      ∫ x, H.indicator φ x * f x ∂μN n := fun f =>
-    integral_congr_ae (ae_of_all _ fun x => by by_cases hx : x ∈ H <;> simp [hx, mul_comm])
-  have L1 := tendsto_integral_mul_of_L2 (fun M => memLp_cont (continuous_trunc M Φ)) hΦ.1 hg1
-    (tendsto_trunc hΦ.1)
-  have L2 := tendsto_trunc_dk (h1W_of_mem hΦ) k hg2
-  simp only [← e1] at L1
-  simp only [← e2] at L2
-  have heq : (fun M => ∫ x, H.indicator (trunc M Φ) x * dk k φ x ∂μN n) =
-      fun M => -∫ x, H.indicator (dk k (trunc M Φ)) x * φ x ∂μN n := funext hM
-  rw [heq] at L1
-  exact tendsto_nhds_unique L1 L2.neg
+  set δ : ℕ → ℝ := fun m => 1 / ((m : ℝ) + 1)
+  have hδ : ∀ m, 0 < δ m := fun m => by positivity
+  set θ : ℕ → Cfg n → ℝ := fun m => cutH i j (δ m)
+  have hθc : ∀ m, ContDiff ℝ 1 (θ m) := fun m => contDiff_cutH i j _
+  have hdθc : ∀ m, Continuous (dk k (θ m)) := fun m => continuous_dk_of_C1 (hθc m) k
+  have hθ01 : ∀ m x, 0 ≤ θ m x ∧ θ m x ≤ 1 := fun m x =>
+    ⟨smoothTransition.nonneg _, smoothTransition.le_one _⟩
+  have hm : ∀ m, ∫ x, F x * (θ m x * dk k φ x) ∂μN n + ∫ x, F x * (dk k (θ m) x * φ x) ∂μN n =
+      -∫ x, G x * (θ m x * φ x) ∂μN n := fun m => by
+    have h := hG.2 (fun x => θ m x * φ x) ((hθc m).mul hφ)
+    simp only [dk_mul ((hθc m).differentiable one_ne_zero) (hφ.differentiable one_ne_zero)] at h
+    rw [← integral_add (f := fun x => F x * (θ m x * dk k φ x))
+      (g := fun x => F x * (dk k (θ m) x * φ x))
+      (int_mul_cont hF ((hθc m).continuous.mul hdφ))
+      (int_mul_cont hF ((hdθc m).mul hφ.continuous))]
+    refine Eq.trans (integral_congr_ae (ae_of_all _ fun x => ?_)) h
+    ring
+  have L1 : Tendsto (fun m => ∫ x, F x * (θ m x * dk k φ x) ∂μN n) atTop
+      (𝓝 (∫ x, H.indicator F x * dk k φ x ∂μN n)) := by
+    refine tendsto_integral_of_dominated_convergence (fun x => |F x * dk k φ x|)
+      (fun m => hF.aestronglyMeasurable.mul ((hθc m).continuous.mul hdφ).aestronglyMeasurable)
+      (int_mul_cont hF hdφ).abs (fun m => ae_of_all _ fun x => ?_) (ae_of_all _ fun x => ?_)
+    · rw [Real.norm_eq_abs, show F x * (θ m x * dk k φ x) = θ m x * (F x * dk k φ x) by ring,
+        abs_mul, abs_of_nonneg (hθ01 m x).1]
+      exact mul_le_of_le_one_left (abs_nonneg _) (hθ01 m x).2
+    · have h := ((tendsto_cutH i j x).mul_const (dk k φ x)).const_mul (F x)
+      convert h using 2
+      by_cases hx : x ∈ H <;> simp [H, hx]
+  have L3 : Tendsto (fun m => ∫ x, G x * (θ m x * φ x) ∂μN n) atTop
+      (𝓝 (∫ x, H.indicator G x * φ x ∂μN n)) := by
+    refine tendsto_integral_of_dominated_convergence (fun x => |G x * φ x|)
+      (fun m => hG.1.aestronglyMeasurable.mul
+        ((hθc m).continuous.mul hφ.continuous).aestronglyMeasurable)
+      (int_mul_cont hG.1 hφ.continuous).abs (fun m => ae_of_all _ fun x => ?_)
+      (ae_of_all _ fun x => ?_)
+    · rw [Real.norm_eq_abs, show G x * (θ m x * φ x) = θ m x * (G x * φ x) by ring,
+        abs_mul, abs_of_nonneg (hθ01 m x).1]
+      exact mul_le_of_le_one_left (abs_nonneg _) (hθ01 m x).2
+    · have h := ((tendsto_cutH i j x).mul_const (φ x)).const_mul (G x)
+      convert h using 2
+      by_cases hx : x ∈ H <;> simp [H, hx]
+  obtain ⟨Mθ, hMθ⟩ := deriv_smoothTransition_bound
+  obtain ⟨Bφ, hBφ⟩ := ae_bound_cont hφ.continuous
+  have L2 : Tendsto (fun m => ∫ x, F x * (dk k (θ m) x * φ x) ∂μN n) atTop (𝓝 0) := by
+    have h0 : (0 : ℝ) = ∫ x, (0 : ℝ) ∂μN n := by simp
+    rw [h0]
+    refine tendsto_integral_of_dominated_convergence (fun _ => L * Mθ * Bφ)
+      (fun m => hF.aestronglyMeasurable.mul ((hdθc m).mul hφ.continuous).aestronglyMeasurable)
+      (integrable_const _) (fun m => ?_) (ae_of_all _ fun x => ?_)
+    · filter_upwards [hBφ, hL] with x hx hLx
+      rw [Real.norm_eq_abs] at hx ⊢
+      have hMθ0 : 0 ≤ Mθ := (abs_nonneg _).trans (hMθ 0)
+      have hB0 : 0 ≤ Bφ := (abs_nonneg _).trans hx
+      simp only [θ, dk_cutH]
+      set d := x j - x i
+      by_cases hd : 0 < d / δ m ∧ d / δ m < 1
+      · have hdpos : 0 < d := by
+          have := hd.1; rwa [div_pos_iff_of_pos_right (hδ m)] at this
+        have hdlt : d < δ m := by
+          have := hd.2; rwa [div_lt_one (hδ m)] at this
+        rw [abs_of_pos hdpos] at hLx
+        rw [abs_mul, abs_mul, abs_mul, abs_div, abs_of_pos (hδ m)]
+        have h1 : |(Pi.single k (1 : ℝ) : Cfg n) j - (Pi.single k (1 : ℝ) : Cfg n) i| / δ m ≤
+            1 / δ m := div_le_div_of_nonneg_right (abs_single_sub_le k i j hij) (hδ m).le
+        calc |F x| * (|deriv smoothTransition (d / δ m)| *
+              (|(Pi.single k (1 : ℝ) : Cfg n) j - (Pi.single k (1 : ℝ) : Cfg n) i| / δ m) * |φ x|)
+            ≤ (L * δ m) * (Mθ * (1 / δ m) * Bφ) := by
+              gcongr
+              · exact hLx.trans (mul_le_mul_of_nonneg_left hdlt.le hL0)
+              · exact hMθ _
+          _ = L * Mθ * Bφ := by have := (hδ m).ne'; field_simp
+      · have hz : deriv smoothTransition (d / δ m) = 0 := by
+          rw [not_and_or, not_lt, not_lt] at hd
+          rcases hd with h | h
+          · exact deriv_smoothTransition_of_nonpos h
+          · exact deriv_smoothTransition_of_one_le h
+        rw [hz]; simp only [zero_mul, mul_zero, abs_zero]
+        positivity
+    · refine tendsto_const_nhds.congr' ?_
+      simp only [θ, dk_cutH]
+      by_cases hx : 0 < x j - x i
+      · obtain ⟨m0, hm0⟩ := exists_nat_gt (1 / (x j - x i))
+        filter_upwards [eventually_ge_atTop m0] with m hmm
+        have h1 : (1 : ℝ) / (x j - x i) < m + 1 := by
+          have := (Nat.cast_le (α := ℝ)).2 hmm; linarith
+        rw [div_lt_iff₀ hx] at h1
+        rw [deriv_smoothTransition_of_one_le (by
+          simp only [δ]; rw [div_div_eq_mul_div, div_one]; linarith)]
+        ring
+      · refine Eventually.of_forall fun m => ?_
+        beta_reduce
+        rw [deriv_smoothTransition_of_nonpos (div_nonpos_of_nonpos_of_nonneg
+          (show x j - x i ≤ 0 by linarith) (hδ m).le)]
+        ring
+  have hlim := L1.add L2
+  rw [add_zero] at hlim
+  have heq : (fun m => ∫ x, F x * (θ m x * dk k φ x) ∂μN n +
+      ∫ x, F x * (dk k (θ m) x * φ x) ∂μN n) =
+      fun m => -∫ x, G x * (θ m x * φ x) ∂μN n := funext hm
+  rw [heq] at hlim
+  exact tendsto_nhds_unique hlim L3.neg
 
 end DFT.Continuum.Line

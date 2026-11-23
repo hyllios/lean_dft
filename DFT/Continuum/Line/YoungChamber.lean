@@ -5,7 +5,12 @@ Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Line.WeakS
 import DFT.Continuum.Line.YoungStrong
-import DFT.Continuum.Line.FerLog
+import DFT.Continuum.Line.HalfSpace
+import DFT.Continuum.Line.Chamber
+import DFT.Continuum.Line.LogEst
+import DFT.Continuum.Line.HardCore
+import DFT.Continuum.Line.SpinWeak
+import DFT.Continuum.Line.AbsW
 
 /-!
 # `H¹₀` states of mixed symmetry restricted to the Young chamber

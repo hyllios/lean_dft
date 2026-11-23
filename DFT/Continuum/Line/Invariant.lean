@@ -361,4 +361,56 @@ theorem null_or_conull {Z : Set (Cfg n)} (hZ : MeasurableSet Z)
     · exact (hclash 0 (ae_restrict_of_ae_restrict_of_subset (B0_sub m) hm) h0).elim
     · exact hm
 
+/-! ### Locally null or conull sets -/
+
+/-- **Local constancy propagates through a connected set.** If every point of the preconnected
+set `U` has an open neighbourhood in `U` on which `Z` is null or conull, then `Z` is
+null or conull in `U`. -/
+theorem null_or_conull_of_local {Z U : Set (Cfg n)} (hUc : IsPreconnected U)
+    (hloc : ∀ x ∈ U, ∃ B, IsOpen B ∧ x ∈ B ∧ B ⊆ U ∧
+      ((∀ᵐ y ∂volume.restrict B, y ∈ Z) ∨ (∀ᵐ y ∂volume.restrict B, y ∉ Z))) :
+    (∀ᵐ y ∂volume.restrict U, y ∈ Z) ∨ (∀ᵐ y ∂volume.restrict U, y ∉ Z) := by
+  -- the union of the open subsets of `U` on which `p` holds a.e.
+  let A : (Cfg n → Prop) → Set (Cfg n) := fun p =>
+    ⋃ i : {B : Set (Cfg n) // IsOpen B ∧ B ⊆ U ∧ ∀ᵐ y ∂volume.restrict B, p y}, i.1
+  have hAo : ∀ p, IsOpen (A p) := fun p => isOpen_iUnion fun i => i.2.1
+  have hAU : ∀ p, A p ⊆ U := fun p => iUnion_subset fun i => i.2.2.1
+  have hAae : ∀ p, ∀ᵐ y ∂volume.restrict (A p), p y := fun p => by
+    obtain ⟨T, hT, hTe⟩ := TopologicalSpace.isOpen_iUnion_countable
+      (fun i : {B : Set (Cfg n) // IsOpen B ∧ B ⊆ U ∧ ∀ᵐ y ∂volume.restrict B, p y} => i.1)
+      fun i => i.2.1
+    change ∀ᵐ y ∂volume.restrict (⋃ i, _), p y
+    rw [← hTe]
+    exact (ae_restrict_biUnion_iff _ hT p).2 fun i _ => i.2.2.2
+  have hmem : ∀ (p : Cfg n → Prop) (x : Cfg n) (B : Set (Cfg n)), IsOpen B → x ∈ B → B ⊆ U →
+      (∀ᵐ y ∂volume.restrict B, p y) → x ∈ A p := fun p x B hB hx hBU h =>
+    mem_iUnion.2 ⟨⟨B, hB, hBU, h⟩, hx⟩
+  set A1 := A fun y => y ∈ Z
+  set A0 := A fun y => y ∉ Z
+  have hdisj : Disjoint A1 A0 := by
+    rw [Set.disjoint_iff]
+    intro x ⟨h1, h0⟩
+    have hO : IsOpen (A1 ∩ A0) := (hAo _).inter (hAo _)
+    have hpos : 0 < volume (A1 ∩ A0) := hO.measure_pos volume ⟨x, h1, h0⟩
+    have hae : ∀ᵐ y ∂volume.restrict (A1 ∩ A0), False := by
+      filter_upwards [ae_restrict_of_ae_restrict_of_subset inter_subset_left (hAae _),
+        ae_restrict_of_ae_restrict_of_subset inter_subset_right (hAae _)] with y a b using b a
+    rw [ae_iff, Measure.restrict_apply' hO.measurableSet] at hae
+    simp only [not_false_eq_true, ofPred_true, univ_inter] at hae
+    exact hpos.ne' hae
+  have hcov : U ⊆ A1 ∪ A0 := fun x hx => by
+    obtain ⟨B, hB, hxB, hBU, h | h⟩ := hloc x hx
+    · exact Or.inl (hmem _ x B hB hxB hBU h)
+    · exact Or.inr (hmem _ x B hB hxB hBU h)
+  by_cases h1 : (U ∩ A1).Nonempty
+  · left
+    exact ae_restrict_of_ae_restrict_of_subset
+      (hUc.subset_left_of_subset_union (hAo _) (hAo _) hdisj hcov h1) (hAae _)
+  · right
+    have hsub : U ⊆ A0 := fun x hx => by
+      rcases hcov hx with h | h
+      · exact absurd ⟨x, hx, h⟩ h1
+      · exact h
+    exact ae_restrict_of_ae_restrict_of_subset hsub (hAae _)
+
 end DFT.Continuum.Line

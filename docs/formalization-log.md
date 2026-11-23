@@ -564,3 +564,14 @@ Recommended order: N5, then N6 (or N1/N2 first as quick wins).
   (b) the Question-A representability theorem (Lehmann form, sum rules, generalized Pauli
   constraints, rank budgets; dilation proof). Background in `../G-representability/HANDOFF.md`.
 - N6 Sine plan: done 2026-11-21 (S1–S7, unconditional HK and Lieb for interacting particles on a line).
+
+## Cleanup (2026-11-23)
+- Duplicates: one `Box.integral_mu1` (was three copies), `sgn_mul_self'` removed, unused
+  `ladder_Sp`/`ladder_Sm` removed, kernel-bound copies of `Kc_add`/`Bf_sub_left/right` and the
+  Sine/Min wrappers removed (callers use `kBd_of_kernel`), `Gk_test` derived from `Gk_src`.
+- Fermion UCP chain retired: fermions are Young symmetry with a = N (`DomW_fer_eq`,
+  `isGS_fer_Y`), so `gs_ne_zero_W_fer`/`ucpW_fer` now follow from `gs_ne_zero_WY` (in
+  `Line/UcpY`). Deleted `Line/ChamberGS`, `Line/FerGS`, `Line/FerLog`, `Line/UcpFer` and the
+  fermionic part of `Line/HalfSpace` (`fer_plane`, `isWD_half`). `isWD_half_of_bound` and
+  `abs_le_of_plane'` moved to `Line/HalfSpace`, `null_or_conull_of_local` to `Line/Invariant`.
+
