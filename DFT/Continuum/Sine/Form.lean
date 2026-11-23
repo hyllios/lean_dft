@@ -314,6 +314,72 @@ lemma Bf_sub_right {c d d' : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m
 
 end bound
 
+/-! ### An abstract `ℓ²` bound for the kernel -/
+
+/-- **An `ℓ²` bound for the kernel**: its rows pair with `ℓ²` sequences, and `‖Kc‖² ≤ C ‖c‖²`.
+It follows from the summable kernel bound (`kBd_of_kernel`, smooth `V`) and from continuity
+(`Sine/Cont`, `kBd_of_continuous`). -/
+structure KBd (V : Cfg n → ℝ) (C : ℝ) : Prop where
+  nonneg : 0 ≤ C
+  row : ∀ {c : (Fin (n + 1) → ℕ) → ℝ}, Summable (fun m => c m ^ 2) →
+    ∀ m', Summable fun m => Ker V m' m * c m
+  sq : ∀ {c : (Fin (n + 1) → ℕ) → ℝ}, Summable (fun m => c m ^ 2) →
+    Summable fun m => Kc V c m ^ 2
+  le : ∀ {c : (Fin (n + 1) → ℕ) → ℝ}, Summable (fun m => c m ^ 2) →
+    ∑' m, Kc V c m ^ 2 ≤ C * ∑' m, c m ^ 2
+
+lemma kBd_of_kernel {V : Cfg n → ℝ} {b : (Fin (n + 1) → ℕ) → ℝ} (hb0 : ∀ l, 0 ≤ b l)
+    (hbS : Summable b) (hK : ∀ m' m, |Ker V m' m| ≤ ∑' l, b l * (if adm m' l m then 1 else 0)) :
+    KBd V (C0 b) :=
+  ⟨C0_nonneg, fun hc m' => summable_Ker_mul hb0 hbS hK hc m',
+    fun hc => summable_Kc_sq hb0 hbS hK hc, fun hc => tsum_Kc_sq_le hb0 hbS hK hc⟩
+
+namespace KBd
+
+variable {V : Cfg n → ℝ} {C : ℝ} (hK : KBd V C)
+include hK
+
+lemma Kc_add {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
+    (hd : Summable fun m => d m ^ 2) :
+    Kc V (fun m => c m + d m) = fun m => Kc V c m + Kc V d m := by
+  funext m'
+  simp only [Kc, mul_add]
+  exact (hK.row hc m').tsum_add (hK.row hd m')
+
+lemma Bf_sq_le {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
+    (hd : Summable fun m => d m ^ 2) :
+    Bf V c d ^ 2 ≤ C * (∑' m, c m ^ 2) * ∑' m, d m ^ 2 := by
+  have h := tsum_mul_sq_le_real hc (hK.sq hd)
+  have h2 := hK.le hd
+  calc Bf V c d ^ 2 ≤ (∑' m, c m ^ 2) * ∑' m, Kc V d m ^ 2 := h
+    _ ≤ (∑' m, c m ^ 2) * (C * ∑' m, d m ^ 2) :=
+        mul_le_mul_of_nonneg_left h2 (tsum_nonneg fun m => sq_nonneg _)
+    _ = _ := by ring
+
+lemma Bf_sub_left {c c' d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
+    (hc' : Summable fun m => c' m ^ 2) (hd : Summable fun m => d m ^ 2) :
+    Bf V c d - Bf V c' d = Bf V (fun m => c m - c' m) d := by
+  simp only [Bf, sub_mul]
+  exact ((summable_mul_of_sq hc (hK.sq hd)).tsum_sub (summable_mul_of_sq hc' (hK.sq hd))).symm
+
+lemma Bf_sub_right {c d d' : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
+    (hd : Summable fun m => d m ^ 2) (hd' : Summable fun m => d' m ^ 2) :
+    Bf V c d - Bf V c d' = Bf V c (fun m => d m - d' m) := by
+  have hneg : Summable fun m => (-1 * d' m) ^ 2 := by simpa [neg_one_mul, neg_sq] using hd'
+  have e : (fun m => d m - d' m) = fun m => d m + (-1) * d' m := by funext m; ring
+  rw [e]
+  simp only [Bf]
+  rw [hK.Kc_add hd hneg, Kc_smul]
+  simp only [mul_add]
+  rw [(summable_mul_of_sq hc (hK.sq hd)).tsum_add]
+  · rw [show (∑' m, c m * (-1 * Kc V d' m)) = -∑' m, c m * Kc V d' m by
+      rw [← tsum_neg]; congr 1; funext m; ring]
+    ring
+  · have := summable_mul_of_sq hc (hK.sq hd')
+    simpa [mul_neg, neg_mul, one_mul] using this.neg
+
+end KBd
+
 /-! ### States and relabelling -/
 
 lemma Ker_eq_cN (V : Cfg n → ℝ) (m' m : Fin (n + 1) → ℕ) :

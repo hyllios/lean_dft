@@ -591,6 +591,55 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   bound bootstrap the decay of $c$ until the sine series converges in $C^2$; its sum is a classical ground state.
 \end{proof}
 
+\begin{lemma}[Coefficient minimisers for continuous potentials]
+  \label{lem:line_min_cont}
+  \lean{DFT.Continuum.Sine.KBd, DFT.Continuum.Sine.kBd_of_kernel, DFT.Continuum.Sine.KBd.exists_min, DFT.Continuum.Sine.KBd.euler_lagrange, DFT.Continuum.Sine.Kc_fin_bound, DFT.Continuum.Sine.kBd_of_continuous, DFT.Continuum.Sine.exists_min_cont, DFT.Continuum.Sine.euler_lagrange_cont}
+  \leanok
+  \uses{thm:line_sine_exists}
+  If $V$ is continuous with $|V|\le B$ on the closed cube, the kernel satisfies $\sum_{m'}(Kc)_{m'}^2\le
+  B^2\sum_m c_m^2$ on $\ell^2$. Hence the coefficient energy attains its infimum among normalised admissible
+  sequences, and the minimiser satisfies the Euler--Lagrange equation, with no smoothness of $V$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Rows: $\sum_m K(m',m)^2=\int(Vs_{m'})^2$ by Parseval. For finitely supported $c$, $(Kc)_{m'}=\langle
+  s_{m'},V\varphi\rangle$ with $\varphi=\sum c_ms_m$, so $\sum(Kc)^2=\int(V\varphi)^2\le B^2\sum c^2$. General
+  $c$ by truncation and lower semicontinuity. The direct method only uses this $\ell^2$ bound.
+\end{proof}
+
+\begin{theorem}[Ground states in $H^1_0$ for continuous potentials]
+  \label{thm:line_gs_cont}
+  \lean{DFT.Continuum.Line.orth_series, DFT.Continuum.Line.isWD_of_C2, DFT.Continuum.Line.isWD_smd, DFT.Continuum.Line.serW, DFT.Continuum.Line.dserW, DFT.Continuum.Line.isWD_serW, DFT.Continuum.Line.serW_pm, DFT.Continuum.Line.serW_mem, DFT.Continuum.Line.kinW_serW, DFT.Continuum.Line.exists_isNGS_W_cont}
+  \leanok
+  \uses{lem:line_min_cont}
+  For every continuous one-body potential $v$ and continuous interaction $w$, the $H^1_0$ Hamiltonian of $N$
+  bosons or fermions on $[0,1]$ has a normalised ground state.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Take the coefficient minimiser $a$ of Lemma~\ref{lem:line_min_cont}. The series $\Phi=\sum_ma_ms_m$ converges in
+  $L^2$, and $G_k=\sum_m\pi(m_k+1)a_mc^k_m$ converges because the $c^k_m$ are orthonormal and
+  $\sum_m\lambda_ma_m^2<\infty$. Testing against $C^1$ functions term by term ($\partial_ks_m=\pi(m_k+1)c^k_m$, $s_m=0$ on
+  the walls) shows $G_k$ is the weak derivative of $\Phi$, so $\Phi\in H^1_0$ with sine coefficients $a$ and kinetic
+  energy $\sum\lambda_ma_m^2$. Its energy is the coefficient minimum, which bounds from below the energy of every
+  normalised $H^1_0$ state.
+\end{proof}
+
+\begin{theorem}[HK on $H^1_0$ for continuous potentials, modulo unique continuation]
+  \label{thm:line_hk_cont_ucp}
+  \lean{DFT.Continuum.Line.UcpW, DFT.Continuum.Line.h0W_null, DFT.Continuum.Line.isGS_W_of_isNGS_W, DFT.Continuum.Line.exists_isGS_W_cont, DFT.Continuum.Line.hk_line_W_cont}
+  \leanok
+  \uses{thm:line_gs_cont}
+  Ground states exist on $H^1_0$ for every continuous $v$ and $w$. If every $H^1_0$ ground state of a continuous
+  potential is nonzero almost everywhere, then ground states of $v$ and $v'$ with the same density force $v-v'$ to be
+  constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The weak HK argument, separation and rigidity hold on $H^1_0$ for continuous potentials; unique continuation is the
+  only missing input.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}

@@ -374,6 +374,29 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     Gâteaux differentiable). **`dense_pureVRep`**, `dense_pureVRep_of_nst`: every finite-F
     (in particular every N-rep) density is a dual-norm limit of pure v-rep densities.
   - Items 1–4 of the v-representability plan are complete (N=1 box for 3–4).
+- STARTED (2026-11-23) continuous v for N particles on the line (H¹₀ ground states).
+  - Gap: existence (`exists_min`) and H¹₀ regularity (`gsW_ae_eq`) needed the summable kernel bound
+    `kernel_of_smooth` (V ∈ C^{2N}). Note: for N ≥ 2 and merely continuous V, ground states need not
+    be C², so the right target is existence in `settingW` (H¹₀).
+  - Step 1 DONE: `Sine/Form` `KBd V C` (abstract ℓ² kernel bound) + `kBd_of_kernel`; `Sine/Min`
+    energy/minimiser sections now in `namespace KBd` (`KBd.exists_min`, `KBd.euler_lagrange`, …),
+    old names kept as wrappers (no caller changes). `Sine/Cont`: **`kBd_of_continuous`** (C = B²,
+    Parseval + finite truncation + `lim_sum_le`), **`exists_min_cont`**, `euler_lagrange_cont`.
+  - Step 2 DONE: `Line/Realize`: `orth_series` (orthonormal series in a Hilbert space: sum,
+    coefficients, Parseval), `isWD_of_C2` (IBP for C² functions vanishing on the walls), `dk_smd`,
+    `isWD_smd`, `serW a = Σ a_m s_m`, `dserW k a = Σ π(m_k+1) a_m c^k_m`, `isWD_serW`, `serW_pm`,
+    **`serW_mem`** (admissible coefficients ⇒ DomW state), `cN_serW`, **`kinW_serW`**,
+    **`exists_isNGS_W_cont`**: H¹₀ ground state for every continuous v and continuous w (no hws).
+  - Step 3 STARTED: `Line/ContHK`: `UcpW` (every H¹₀ GS of a continuous v is ≠ 0 a.e.),
+    `h0W_null`, `isGS_W_of_isNGS_W`, `exists_isGS_W_cont`, **`hk_line_W_cont`** (HK on H¹₀ for
+    continuous v, w, given `UcpW`). Only `UcpW` is missing (smooth case used C² regularity).
+  - Plan for `UcpW` (Moser log-estimate route, no Carleman):
+    (a) cosine completeness in L²(0,1) (F = ∫f ⊥ sines ⇒ F = 0), then Parseval for ∂ₖΦ in the
+        c^k_m family ⇒ truncations converge in H¹ (density of C² states in H¹₀);
+    (b) chain rule IsWD for G∘Φ (G ∈ C¹, G' bounded), products with smooth cutoffs;
+    (c) Perron–Frobenius step: |Ψ| is a GS (bosons; fermions via the chamber sign);
+    (d) log estimate: test the weak equation with η²/(u+ε) ⇒ ∫η²|∇log(u+ε)|² ≤ C uniformly in ε;
+    (e) Poincaré–Wirtinger on sub-cubes ⇒ u = 0 a.e. or u > 0 a.e. on each sub-cube; chain.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

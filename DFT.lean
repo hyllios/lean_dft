@@ -18,6 +18,7 @@ import DFT.Continuum.Line.Bosons
 import DFT.Continuum.Line.Chamber
 import DFT.Continuum.Line.Closure
 import DFT.Continuum.Line.Complete
+import DFT.Continuum.Line.ContHK
 import DFT.Continuum.Line.Density
 import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.Free
@@ -31,6 +32,7 @@ import DFT.Continuum.Line.LiebMattisSpin
 import DFT.Continuum.Line.LiebMattisTotal
 import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Pauli
+import DFT.Continuum.Line.Realize
 import DFT.Continuum.Line.Represent
 import DFT.Continuum.Line.Smooth
 import DFT.Continuum.Line.SpinAlg
@@ -49,6 +51,7 @@ import DFT.Continuum.Line.YoungPos
 import DFT.Continuum.Line.YoungSign
 import DFT.Continuum.Line.YoungStrong
 import DFT.Continuum.Sine.Coeff
+import DFT.Continuum.Sine.Cont
 import DFT.Continuum.Sine.Cube
 import DFT.Continuum.Sine.Decay
 import DFT.Continuum.Sine.Exists
