@@ -716,7 +716,7 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
 
 \begin{lemma}[The zero set of a nonnegative ground state is translation invariant]
   \label{lem:line_zeroset}
-  \lean{DFT.Continuum.Line.translate_lintegral_le, DFT.Continuum.Line.Lg, DFT.Continuum.Line.etaS, DFT.Continuum.Line.Qa, DFT.Continuum.Line.etaS_ge, DFT.Continuum.Line.Sa, DFT.Continuum.Line.grad_L1_bound, DFT.Continuum.Line.bad_null, DFT.Continuum.Line.zero_set_translate}
+  \lean{DFT.Continuum.Line.translate_lintegral_le, DFT.Continuum.Line.Lg, DFT.Continuum.Line.etaS, DFT.Continuum.Line.Qa, DFT.Continuum.Line.etaS_ge, DFT.Continuum.Line.Sa, DFT.Continuum.Line.SP, DFT.Continuum.Line.SP_segment, DFT.Continuum.Line.LogData, DFT.Continuum.Line.LogData.grad_L1_bound, DFT.Continuum.Line.LogData.bad_null, DFT.Continuum.Line.LogData.zero_set_translate, DFT.Continuum.Line.logData_Qa, DFT.Continuum.Line.grad_L1_bound, DFT.Continuum.Line.bad_null, DFT.Continuum.Line.zero_set_translate}
   \leanok
   \uses{lem:line_logest, lem:line_translate}
   Let $u\ge0$ be a bosonic $H^1_0$ ground state, $0<a\le1/2$ and $h\ge0$. For almost every $x$ with $x$ and $x+he_k$
@@ -728,12 +728,14 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $\int_S|w_\varepsilon(x+he_k)-w_\varepsilon(x)|\le h\int_{[a,1-a]^N}|\partial_kw_\varepsilon|$, and the logarithmic estimate with
   $\eta=\prod_j\sin(\pi x_j)\ge\sin(\pi a)^N$ on $[a,1-a]^N$ bounds the right side by $hB$ uniformly in $\varepsilon$. Where $u$
   vanishes at one end and is $\ge\delta$ at the other, $|w_\varepsilon(x+he_k)-w_\varepsilon(x)|\ge\log(1+\delta/\varepsilon)$; by
-  Chebyshev this set has measure at most $hB/\log(1+\delta/\varepsilon)\to0$.
+  Chebyshev this set has measure at most $hB/\log(1+\delta/\varepsilon)\to0$. The argument only uses a convex set
+  $P$ in the cube, a continuous $\eta$ with $|\eta|$ bounded below on $P$, and a bound on
+  $\sum_k\int\eta^2(\partial_ku/(u+\varepsilon))^2$ uniform in $\varepsilon$, and is formalised in that generality.
 \end{proof}
 
 \begin{lemma}[Translation-invariant sets are null or conull]
   \label{lem:line_invariant}
-  \lean{DFT.Continuum.Line.invariant_all, DFT.Continuum.Line.invariant_vec, DFT.Continuum.Line.tent, DFT.Continuum.Line.const_on_box, DFT.Continuum.Line.cube_sub_iUnion, DFT.Continuum.Line.null_or_conull}
+  \lean{DFT.Continuum.Line.invariant_all_gen, DFT.Continuum.Line.invariant_all, DFT.Continuum.Line.invariant_vec_gen, DFT.Continuum.Line.invariant_vec, DFT.Continuum.Line.tent, DFT.Continuum.Line.const_on_set, DFT.Continuum.Line.const_on_box, DFT.Continuum.Line.cube_sub_iUnion, DFT.Continuum.Line.null_or_conull}
   \leanok
   A measurable set that is, up to null sets, invariant under small coordinate translations inside every
   $[a,1-a]^N$ is null or conull in the cube.
@@ -809,6 +811,25 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   Euler--Lagrange equation of $\Phi$ with it, $S^2=1$ shows that $B$ satisfies the bosonic weak equation with energy
   $E$ against $\varphi$. The test function $\eta^2/(B+\varepsilon)$ of Lemma~\ref{lem:line_logest} is of this kind, and
   that proof only uses the equation for it.
+\end{proof}
+
+\begin{theorem}[Unique continuation and HK on $H^1_0$ for fermions, continuous potentials]
+  \label{thm:line_ucp_fer}
+  \lean{DFT.Continuum.Line.null_or_conull_of_local, DFT.Continuum.Line.UC, DFT.Continuum.Line.isPreconnected_UC, DFT.Continuum.Line.ae_of_ae_chamber, DFT.Continuum.Line.Dg, DFT.Continuum.Line.etaD, DFT.Continuum.Line.etaD_diag, DFT.Continuum.Line.etaD_ne_zero, DFT.Continuum.Line.logData_ball, DFT.Continuum.Line.gs_ne_zero_W_fer, DFT.Continuum.Line.ucpW_fer, DFT.Continuum.Line.hk_line_W_cont_fer}
+  \leanok
+  \uses{lem:line_logest_fer, lem:line_zeroset, lem:line_invariant, thm:line_hk_cont_ucp}
+  For fermions on $[0,1]$ with continuous $v$ and $w$, every $H^1_0$ ground state is nonzero almost everywhere.
+  Hence ground states of $v$ and $v'$ with the same density force $v-v'$ to be constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Let $B=|\Psi|$ be the bosonic companion and $\eta=\prod_j\sin(\pi x_j)\prod_{i\ne j}(x_i-x_j)$, symmetric and zero on
+  the walls and the diagonals. On a closed ball inside the open chamber $U=(0,1)^N\cap\{x_0<\dots<x_N\}$, $|\eta|$ has a
+  positive minimum, so Lemma~\ref{lem:line_logest_fer} and the argument of Lemma~\ref{lem:line_zeroset} make the zero
+  set of $B$ translation invariant there, and the tent-kernel argument of Lemma~\ref{lem:line_invariant} makes it
+  null or conull on the concentric ball of half the radius. $U$ is convex, so the sets where it is locally null and
+  locally conull are disjoint open sets covering $U$, and one is empty. $B$ is symmetric and the relabelled chambers
+  cover the cube up to a null set. Conull would give $\Psi=0$.
 \end{proof}
 
 \begin{theorem}[Ground states exist for smooth potentials]

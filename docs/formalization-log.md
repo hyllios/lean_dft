@@ -460,6 +460,16 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     Π_{i<j}(xᵢ−xⱼ)², bounded below on boxes away from the diagonals); generalise `grad_L1_bound`,
     `bad_null`, `zero_set_translate`, `const_on_box` from Qa to arbitrary boxes; chain boxes across
     the convex chamber ⇒ PhiB ≠ 0 a.e. on C ⇒ (symmetry) a.e. ⇒ `ucpW_fer`, `hk_line_W_cont_fer`.
+    (f4) DONE: `Line/ZeroSet` generalised: `SP P h k`, `SP_segment` (convex P), structure
+    **`LogData u P`** (u ∈ DomW .bos, u ≥ 0, P convex measurable ⊆ cube, η continuous with
+    |η| ≥ c > 0 on P, uniform log bound K); `LogData.grad_L1_bound/bad_null/zero_set_translate`;
+    `logData_Qa` turns the old theorems into wrappers. `Line/Invariant`: `invariant_all_gen` (any P),
+    `invariant_vec_gen` (P = Π Iⱼ), `const_on_set` (open preconnected B with B − [−r,r]ᴺ ⊆ P);
+    `const_on_box` now a wrapper. `Line/UcpFer`: **`null_or_conull_of_local`** (Lindelöf +
+    preconnectedness), open chamber `UC` (convex), `ae_of_ae_chamber` (symmetric statements),
+    `etaD` = etaS · Π_{i≠j}(xᵢ−xⱼ), `logData_ball` (|etaD| has a positive minimum on a closed
+    ball in UC), **`gs_ne_zero_W_fer`**, **`ucpW_fer`**, **`hk_line_W_cont_fer`**: HK on H¹₀ for
+    fermions with continuous v and w. Standard axioms. The fermion plan (f1)–(f4) is complete.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

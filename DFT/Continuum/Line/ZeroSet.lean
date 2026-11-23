@@ -214,31 +214,48 @@ section zero
 
 variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {u : Cfg n → ℝ}
 
-/-- **The gradient of `log(u + ε)` is bounded in `L¹([a, 1 - a]ᴺ)`, uniformly in `ε`.** -/
-theorem grad_L1_bound (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
-    {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) (k : Fin (n + 1)) :
+/-- The points of `P` whose translate by `h eₖ` stays in `P`. -/
+def SP (P : Set (Cfg n)) (h : ℝ) (k : Fin (n + 1)) : Set (Cfg n) :=
+  {x | x ∈ P ∧ x + h • ek k ∈ P}
+
+lemma measurableSet_SP {P : Set (Cfg n)} (hP : MeasurableSet P) (h : ℝ) (k : Fin (n + 1)) :
+    MeasurableSet (SP P h k) :=
+  hP.inter (hP.preimage (measurable_id.add_const _))
+
+lemma SP_segment {P : Set (Cfg n)} (hP : Convex ℝ P) {h : ℝ} (hh : 0 ≤ h) (k : Fin (n + 1)) :
+    ∀ x ∈ SP P h k, ∀ s ∈ Icc 0 h, x + s • ek k ∈ P := by
+  intro x hx s hs
+  rcases hh.lt_or_eq with hh | hh
+  · have h1 : s / h ∈ Icc (0 : ℝ) 1 :=
+      ⟨div_nonneg hs.1 hh.le, (div_le_one hh).2 hs.2⟩
+    have := hP.add_smul_mem hx.1 hx.2 h1
+    rwa [smul_smul, div_mul_cancel₀ _ hh.ne'] at this
+  · have : s = 0 := le_antisymm (hh ▸ hs.2) hs.1
+    simpa [this] using hx.1
+
+lemma Sa_eq_SP (a h : ℝ) (k : Fin (n + 1)) : Sa n a h k = SP (Qa n a) h k := rfl
+
+lemma convex_Qa (a : ℝ) : Convex ℝ (Qa n a) := convex_pi fun _ _ => convex_Icc _ _
+
+/-- The data of a uniform logarithmic estimate on a convex set `P` of the cube, with a cutoff
+bounded below on `P`. -/
+structure LogData (u : Cfg n → ℝ) (P : Set (Cfg n)) : Prop where
+  mem : u ∈ DomW .bos n
+  nonneg : ∀ᵐ x ∂μN n, 0 ≤ u x
+  meas : MeasurableSet P
+  sub : P ⊆ Cube n
+  conv : Convex ℝ P
+  bound : ∃ η : Cfg n → ℝ, Continuous η ∧ ∃ c > 0, (∀ x ∈ P, c ≤ |η x|) ∧ ∃ K, 0 ≤ K ∧
+    ∀ ε > 0, ∑ k, ∫ x, (η x * (dW k u x / (u x + ε))) ^ 2 ∂μN n ≤ K
+
+/-- **The gradient of `log(u + ε)` is bounded in `L¹(P)`, uniformly in `ε`.** -/
+theorem LogData.grad_L1_bound {P : Set (Cfg n)} (hL : LogData u P) (k : Fin (n + 1)) :
     ∃ B : ℝ, 0 ≤ B ∧ ∀ ε > 0,
-      ∫⁻ y in Qa n a, ‖1 / (|u y| + ε) * dW k u y‖ₑ ≤ ENNReal.ofReal B := by
-  set E := Q (settingW .bos n w hw) v u / ip (μ := μN n) u u
-  obtain ⟨C, hC⟩ := ae_bound_cont (n := n)
-    (continuous_const.sub ((continuous_LN v).add hw) : Continuous fun x => E - (LN n v x + w x))
-  set C' := max C 0
-  have hC' : ∀ᵐ x ∂μN n, |E - (LN n v x + w x)| ≤ C' := by
-    filter_upwards [hC] with x hx
-    rw [Real.norm_eq_abs] at hx; exact hx.trans (le_max_left _ _)
-  set c := Real.sin (π * a) ^ (n + 1)
-  have hc : 0 < c := pow_pos (Real.sin_pos_of_pos_of_lt_pi (by positivity)
-    (by nlinarith [Real.pi_pos])) _
-  set K := 4 * ∑ k, ∫ x, dk k etaS x ^ 2 ∂μN n + 2 * C' * ∫ x, etaS x ^ 2 ∂μN n
-  have hK : 0 ≤ K := by
-    have h1 : 0 ≤ ∑ k, ∫ x, dk k (etaS (n := n)) x ^ 2 ∂μN n :=
-      Finset.sum_nonneg fun k _ => integral_nonneg fun x => sq_nonneg _
-    have h2 : 0 ≤ ∫ x, etaS (n := n) x ^ 2 ∂μN n := integral_nonneg fun x => sq_nonneg _
-    have h3 : 0 ≤ C' := le_max_right _ _
-    positivity
+      ∫⁻ y in P, ‖1 / (|u y| + ε) * dW k u y‖ₑ ≤ ENNReal.ofReal B := by
+  obtain ⟨η, hηc, c, hc, hηP, K, hK, hlog⟩ := hL.bound
+  have hD := hL.mem
+  have hu0 := hL.nonneg
   refine ⟨(1 + K / c ^ 2) / 2, by positivity, fun ε hε => ?_⟩
-  have hD := hu.1
-  have hlog := log_estimate hu hu0 contDiff_etaS etaS_pm etaS_wall hε (le_max_right C 0) hC'
   set q : Cfg n → ℝ := fun y => dW k u y / (u y + ε)
   have hq : MemLp q 2 (μN n) := by
     refine (memLp_dW hD k).of_le_mul (c := 1 / ε)
@@ -251,35 +268,36 @@ theorem grad_L1_bound (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂
       mul_le_mul_of_nonneg_left (by linarith) (by positivity)
     have e : 1 / ε * |dW k u x| * ε = |dW k u x| := by field_simp
     linarith
-  -- `∫_{Q_a} q² ≤ K / c²`
-  have hq2 : ∫ x, (Qa n a).indicator (fun y => q y ^ 2) x ∂μN n ≤ K / c ^ 2 := by
-    have hηq : MemLp (fun x => etaS x * q x) 2 (μN n) := memLp_mul_cont contDiff_etaS.continuous hq
-    calc ∫ x, (Qa n a).indicator (fun y => q y ^ 2) x ∂μN n
-        ≤ ∫ x, (etaS x * q x) ^ 2 / c ^ 2 ∂μN n := by
-          refine integral_mono (hq.integrable_sq.indicator (measurableSet_Qa a))
+  -- `∫_P q² ≤ K / c²`
+  have hq2 : ∫ x, P.indicator (fun y => q y ^ 2) x ∂μN n ≤ K / c ^ 2 := by
+    have hηq : MemLp (fun x => η x * q x) 2 (μN n) := memLp_mul_cont hηc hq
+    calc ∫ x, P.indicator (fun y => q y ^ 2) x ∂μN n
+        ≤ ∫ x, (η x * q x) ^ 2 / c ^ 2 ∂μN n := by
+          refine integral_mono (hq.integrable_sq.indicator hL.meas)
             (hηq.integrable_sq.div_const _) fun x => ?_
-          by_cases hx : x ∈ Qa n a
+          by_cases hx : x ∈ P
           · rw [indicator_of_mem hx, le_div_iff₀ (by positivity), mul_pow]
-            have h1 := etaS_ge ha ha2 hx
-            have h2 : c ^ 2 ≤ etaS x ^ 2 := pow_le_pow_left₀ hc.le h1 2
+            have h1 := hηP x hx
+            have h2 : c ^ 2 ≤ η x ^ 2 := by
+              rw [← sq_abs (η x)]; exact pow_le_pow_left₀ hc.le h1 2
             nlinarith [sq_nonneg (q x)]
           · rw [indicator_of_notMem hx]; positivity
-      _ = (∫ x, (etaS x * q x) ^ 2 ∂μN n) / c ^ 2 := integral_div _ _
+      _ = (∫ x, (η x * q x) ^ 2 ∂μN n) / c ^ 2 := integral_div _ _
       _ ≤ K / c ^ 2 := by
           refine div_le_div_of_nonneg_right ?_ (by positivity)
-          refine le_trans ?_ hlog
+          refine le_trans ?_ (hlog ε hε)
           exact Finset.single_le_sum
-            (f := fun k => ∫ x, (etaS x * (dW k u x / (u x + ε))) ^ 2 ∂μN n)
+            (f := fun k => ∫ x, (η x * (dW k u x / (u x + ε))) ^ 2 ∂μN n)
             (fun k _ => integral_nonneg fun x => sq_nonneg _) (Finset.mem_univ k)
   -- the lower integral
-  have hQc := Qa_sub_cube (n := n) ha
-  have hres : volume.restrict (Qa n a) = (μN n).restrict (Qa n a) :=
+  have hQc := hL.sub
+  have hres : volume.restrict P = (μN n).restrict P :=
     (Measure.restrict_restrict_of_subset hQc).symm
-  have hint : Integrable (fun y => (1 + q y ^ 2) / 2) ((μN n).restrict (Qa n a)) :=
+  have hint : Integrable (fun y => (1 + q y ^ 2) / 2) ((μN n).restrict P) :=
     (((integrable_const 1).add hq.integrable_sq).div_const 2).restrict
   rw [hres]
-  calc ∫⁻ y in Qa n a, ‖1 / (|u y| + ε) * dW k u y‖ₑ ∂μN n
-      ≤ ∫⁻ y in Qa n a, ENNReal.ofReal ((1 + q y ^ 2) / 2) ∂μN n := by
+  calc ∫⁻ y in P, ‖1 / (|u y| + ε) * dW k u y‖ₑ ∂μN n
+      ≤ ∫⁻ y in P, ENNReal.ofReal ((1 + q y ^ 2) / 2) ∂μN n := by
         refine lintegral_mono_ae ?_
         filter_upwards [ae_restrict_of_ae hu0] with y h0
         rw [abs_of_nonneg h0, ← ofReal_norm, Real.norm_eq_abs]
@@ -287,34 +305,33 @@ theorem grad_L1_bound (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂
         have e : 1 / (u y + ε) * dW k u y = q y := by simp only [q]; ring
         rw [e]
         nlinarith [sq_nonneg (|q y| - 1), sq_abs (q y)]
-    _ = ENNReal.ofReal (∫ y in Qa n a, (1 + q y ^ 2) / 2 ∂μN n) :=
+    _ = ENNReal.ofReal (∫ y in P, (1 + q y ^ 2) / 2 ∂μN n) :=
         (ofReal_integral_eq_lintegral_ofReal hint (ae_of_all _ fun y => by positivity)).symm
     _ ≤ ENNReal.ofReal ((1 + K / c ^ 2) / 2) := by
         refine ENNReal.ofReal_le_ofReal ?_
         rw [integral_div, integral_add (integrable_const 1).restrict hq.integrable_sq.restrict,
-          setIntegral_const, smul_eq_mul, mul_one, ← integral_indicator (measurableSet_Qa a)]
-        have h1 : (μN n).real (Qa n a) ≤ 1 := by
-          have : (μN n) (Qa n a) ≤ 1 := by
-            rw [Measure.restrict_apply (measurableSet_Qa a), inter_eq_left.2 hQc]
+          setIntegral_const, smul_eq_mul, mul_one, ← integral_indicator hL.meas]
+        have h1 : (μN n).real P ≤ 1 := by
+          have : (μN n) P ≤ 1 := by
+            rw [Measure.restrict_apply hL.meas, inter_eq_left.2 hQc]
             exact (measure_mono hQc).trans volume_cube.le
           rw [Measure.real]
           exact ENNReal.toReal_le_of_le_ofReal zero_le_one (by simpa using this)
         linarith
 
-/-- For each `δ > 0`, the points of `Sa` where `u` vanishes at one end of the segment and is
+/-- For each `δ > 0`, the points of `SP P h k` where `u` vanishes at one end of the segment and is
 `≥ δ` at the other form a null set. -/
-theorem bad_null (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
-    {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) (k : Fin (n + 1)) {h : ℝ} (hh : 0 ≤ h) {δ : ℝ}
-    (hδ : 0 < δ) :
-    volume {x | x ∈ Sa n a h k ∧ ((u x = 0 ∧ δ ≤ u (x + h • ek k)) ∨
+theorem LogData.bad_null {P : Set (Cfg n)} (hL : LogData u P) (k : Fin (n + 1)) {h : ℝ}
+    (hh : 0 ≤ h) {δ : ℝ} (hδ : 0 < δ) :
+    volume {x | x ∈ SP P h k ∧ ((u x = 0 ∧ δ ≤ u (x + h • ek k)) ∨
       (δ ≤ u x ∧ u (x + h • ek k) = 0))} = 0 := by
   set e := ek (n := n) k
-  set S := Sa n a h k
+  set S := SP P h k
   set A := {x | x ∈ S ∧ ((u x = 0 ∧ δ ≤ u (x + h • e)) ∨ (δ ≤ u x ∧ u (x + h • e) = 0))}
-  obtain ⟨B, hB0, hB⟩ := grad_L1_bound hu hu0 ha ha2 k
-  have hQc := Qa_sub_cube (n := n) ha
+  obtain ⟨B, hB0, hB⟩ := hL.grad_L1_bound k
+  have hQc := hL.sub
   have hSc : S ⊆ Cube n := fun x hx => hQc hx.1
-  have hD := hu.1
+  have hD := hL.mem
   -- the Chebyshev bound, for every `ε`
   have key : ∀ ε > 0, ENNReal.ofReal (Real.log (1 + δ / ε)) * volume A ≤
       ENNReal.ofReal (h * B) := by
@@ -327,9 +344,10 @@ theorem bad_null (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n
           have := abs_Lg_le hε (u x)
           rw [div_eq_inv_mul, ← one_div] at this
           exact this)
-    have hwD := isWD_comp (h1W_of_mem hD) (hasDerivAt_Lg hε) (continuous_Lg' hε) (Lg'_le hε) Lg_zero k
-    have htr := translate_lintegral_le hwL hwD hh (measurableSet_Sa a h k) (measurableSet_Qa a)
-      hQc (Sa_segment k)
+    have hwD :=
+      isWD_comp (h1W_of_mem hD) (hasDerivAt_Lg hε) (continuous_Lg' hε) (Lg'_le hε) Lg_zero k
+    have htr := translate_lintegral_le hwL hwD hh (measurableSet_SP hL.meas h k) hL.meas
+      hQc (SP_segment hL.conv hh k)
     have hint : ∫⁻ x in S, ‖wε (x + h • e) - wε x‖ₑ ≤ ENNReal.ofReal (h * B) := by
       rw [ENNReal.ofReal_mul hh]
       exact htr.trans (by gcongr; exact hB ε hε)
@@ -344,7 +362,7 @@ theorem bad_null (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n
       refine (((hwL.aestronglyMeasurable.stronglyMeasurable_mk.measurable.comp
         (measurable_add_const (h • e))).sub
         hwL.aestronglyMeasurable.stronglyMeasurable_mk.measurable).enorm).aemeasurable.congr ?_
-      filter_upwards [ae_restrict_mem (measurableSet_Sa a h k), ae_restrict_of_ae hwv,
+      filter_upwards [ae_restrict_mem (measurableSet_SP hL.meas h k), ae_restrict_of_ae hwv,
         ae_restrict_of_ae hwv'] with x hx h1 h2
       rw [h1 (hSc hx), h2 (hQc hx.2)]
       rfl
@@ -394,21 +412,21 @@ theorem bad_null (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n
   have h3 := (ENNReal.ofReal_le_ofReal_iff (by positivity)).1 h1
   linarith
 
-/-- **The zero set of a nonnegative bosonic ground state is invariant under translations** inside
-`[a, 1 - a]ᴺ`: for a.e. `x ∈ Sa`, `u(x) = 0 ↔ u(x + h eₖ) = 0`. -/
-theorem zero_set_translate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
-    {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) (k : Fin (n + 1)) {h : ℝ} (hh : 0 ≤ h) :
-    ∀ᵐ x ∂volume, x ∈ Sa n a h k → (u x = 0 ↔ u (x + h • ek k) = 0) := by
+/-- **The zero set of `u` is invariant under translations inside `P`**: for a.e. `x ∈ SP P h k`,
+`u(x) = 0 ↔ u(x + h eₖ) = 0`. -/
+theorem LogData.zero_set_translate {P : Set (Cfg n)} (hL : LogData u P) (k : Fin (n + 1))
+    {h : ℝ} (hh : 0 ≤ h) :
+    ∀ᵐ x ∂volume, x ∈ SP P h k → (u x = 0 ↔ u (x + h • ek k) = 0) := by
   set e := ek (n := n) k
-  have hQc := Qa_sub_cube (n := n) ha
-  have hn0 : ∀ᵐ x ∂volume, x ∈ Cube n → 0 ≤ u x := (ae_restrict_iff' measurableSet_cube).1 hu0
+  have hQc := hL.sub
+  have hn0 : ∀ᵐ x ∂volume, x ∈ Cube n → 0 ≤ u x :=
+    (ae_restrict_iff' measurableSet_cube).1 hL.nonneg
   have hn1 : ∀ᵐ x ∂volume, x + h • e ∈ Cube n → 0 ≤ u (x + h • e) :=
     (measurePreserving_add_right volume (h • e)).quasiMeasurePreserving.ae hn0
-  have hbad : ∀ᵐ x ∂volume, ∀ j : ℕ, x ∉ {x | x ∈ Sa n a h k ∧
+  have hbad : ∀ᵐ x ∂volume, ∀ j : ℕ, x ∉ {x | x ∈ SP P h k ∧
       ((u x = 0 ∧ 1 / ((j : ℝ) + 1) ≤ u (x + h • e)) ∨
         (1 / ((j : ℝ) + 1) ≤ u x ∧ u (x + h • e) = 0))} :=
-    ae_all_iff.2 fun j => measure_eq_zero_iff_ae_notMem.1 (bad_null hu hu0 ha ha2 k hh
-      (by positivity))
+    ae_all_iff.2 fun j => measure_eq_zero_iff_ae_notMem.1 (hL.bad_null k hh (by positivity))
   filter_upwards [hn0, hn1, hbad] with x h0 h1 hb hx
   have hu0x := h0 (hQc hx.1)
   have hu1x := h1 (hQc hx.2)
@@ -421,6 +439,52 @@ theorem zero_set_translate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ 
     by_contra hne
     obtain ⟨j, hj⟩ := exists_nat_one_div_lt (lt_of_le_of_ne hu0x (Ne.symm hne))
     exact hb j ⟨hx, Or.inr ⟨hj.le, hz⟩⟩
+
+/-- A nonnegative bosonic ground state gives the logarithmic data on `[a, 1 - a]ᴺ`. -/
+theorem logData_Qa (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
+    {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) : LogData u (Qa n a) := by
+  set E := Q (settingW .bos n w hw) v u / ip (μ := μN n) u u
+  obtain ⟨C, hC⟩ := ae_bound_cont (n := n)
+    (continuous_const.sub ((continuous_LN v).add hw) : Continuous fun x => E - (LN n v x + w x))
+  set C' := max C 0
+  have hC' : ∀ᵐ x ∂μN n, |E - (LN n v x + w x)| ≤ C' := by
+    filter_upwards [hC] with x hx
+    rw [Real.norm_eq_abs] at hx; exact hx.trans (le_max_left _ _)
+  have hc : 0 < Real.sin (π * a) ^ (n + 1) := pow_pos (Real.sin_pos_of_pos_of_lt_pi
+    (by positivity) (by nlinarith [Real.pi_pos])) _
+  set K := 4 * ∑ k, ∫ x, dk k etaS x ^ 2 ∂μN n + 2 * C' * ∫ x, etaS x ^ 2 ∂μN n
+  have hK : 0 ≤ K := by
+    have h1 : 0 ≤ ∑ k, ∫ x, dk k (etaS (n := n)) x ^ 2 ∂μN n :=
+      Finset.sum_nonneg fun k _ => integral_nonneg fun x => sq_nonneg _
+    have h2 : 0 ≤ ∫ x, etaS (n := n) x ^ 2 ∂μN n := integral_nonneg fun x => sq_nonneg _
+    have h3 : 0 ≤ C' := le_max_right _ _
+    positivity
+  exact ⟨hu.1, hu0, measurableSet_Qa a, Qa_sub_cube ha, convex_Qa a, etaS,
+    contDiff_etaS.continuous, _, hc, fun x hx => (etaS_ge ha ha2 hx).trans (le_abs_self _), K, hK,
+    fun ε hε => log_estimate hu hu0 contDiff_etaS etaS_pm etaS_wall hε (le_max_right C 0) hC'⟩
+
+/-- **The gradient of `log(u + ε)` is bounded in `L¹([a, 1 - a]ᴺ)`, uniformly in `ε`.** -/
+theorem grad_L1_bound (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
+    {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) (k : Fin (n + 1)) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ ε > 0,
+      ∫⁻ y in Qa n a, ‖1 / (|u y| + ε) * dW k u y‖ₑ ≤ ENNReal.ofReal B :=
+  (logData_Qa hu hu0 ha ha2).grad_L1_bound k
+
+/-- For each `δ > 0`, the points of `Sa` where `u` vanishes at one end of the segment and is
+`≥ δ` at the other form a null set. -/
+theorem bad_null (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
+    {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) (k : Fin (n + 1)) {h : ℝ} (hh : 0 ≤ h) {δ : ℝ}
+    (hδ : 0 < δ) :
+    volume {x | x ∈ Sa n a h k ∧ ((u x = 0 ∧ δ ≤ u (x + h • ek k)) ∨
+      (δ ≤ u x ∧ u (x + h • ek k) = 0))} = 0 :=
+  (logData_Qa hu hu0 ha ha2).bad_null k hh hδ
+
+/-- **The zero set of a nonnegative bosonic ground state is invariant under translations** inside
+`[a, 1 - a]ᴺ`: for a.e. `x ∈ Sa`, `u(x) = 0 ↔ u(x + h eₖ) = 0`. -/
+theorem zero_set_translate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
+    {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) (k : Fin (n + 1)) {h : ℝ} (hh : 0 ≤ h) :
+    ∀ᵐ x ∂volume, x ∈ Sa n a h k → (u x = 0 ↔ u (x + h • ek k) = 0) :=
+  (logData_Qa hu hu0 ha ha2).zero_set_translate k hh
 
 end zero
 

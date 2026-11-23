@@ -31,11 +31,11 @@ section invariance
 
 variable {Z : Set (Cfg n)} {a : ℝ}
 
-/-- Invariance under coordinate translations of either sign. -/
-lemma invariant_all
-    (hinv : ∀ k (h : ℝ), 0 ≤ h → ∀ᵐ x ∂volume, x ∈ Sa n a h k → (x ∈ Z ↔ x + h • ek k ∈ Z))
+/-- Invariance under coordinate translations of either sign, inside any set `P`. -/
+lemma invariant_all_gen {P : Set (Cfg n)}
+    (hinv : ∀ k (h : ℝ), 0 ≤ h → ∀ᵐ x ∂volume, x ∈ SP P h k → (x ∈ Z ↔ x + h • ek k ∈ Z))
     (k : Fin (n + 1)) (h : ℝ) :
-    ∀ᵐ x ∂volume, x ∈ Qa n a → x + h • ek k ∈ Qa n a → (x ∈ Z ↔ x + h • ek k ∈ Z) := by
+    ∀ᵐ x ∂volume, x ∈ P → x + h • ek k ∈ P → (x ∈ Z ↔ x + h • ek k ∈ Z) := by
   rcases le_or_gt 0 h with hh | hh
   · filter_upwards [hinv k h hh] with x hx h1 h2
     exact hx ⟨h1, h2⟩
@@ -46,6 +46,13 @@ lemma invariant_all
     have := hx ⟨h2, by rw [e]; exact h1⟩
     rw [e] at this
     exact this.symm
+
+/-- Invariance under coordinate translations of either sign. -/
+lemma invariant_all
+    (hinv : ∀ k (h : ℝ), 0 ≤ h → ∀ᵐ x ∂volume, x ∈ Sa n a h k → (x ∈ Z ↔ x + h • ek k ∈ Z))
+    (k : Fin (n + 1)) (h : ℝ) :
+    ∀ᵐ x ∂volume, x ∈ Qa n a → x + h • ek k ∈ Qa n a → (x ∈ Z ↔ x + h • ek k ∈ Z) :=
+  invariant_all_gen hinv k h
 
 /-- The partial translation by the coordinates in `s`. -/
 def trS (t : Cfg n) (s : Finset (Fin (n + 1))) : Cfg n := fun j => if j ∈ s then t j else 0
@@ -58,14 +65,14 @@ lemma trS_insert (t : Cfg n) {s : Finset (Fin (n + 1))} {k : Fin (n + 1)} (hk : 
   · subst hj; simp [hk]
   · simp [hj]
 
-/-- Invariance under all vector translations. -/
-lemma invariant_vec
-    (hA : ∀ k (h : ℝ), ∀ᵐ x ∂volume, x ∈ Qa n a → x + h • ek k ∈ Qa n a →
+/-- Invariance under all vector translations, inside a product set `Π_j I_j`. -/
+lemma invariant_vec_gen {I : Fin (n + 1) → Set ℝ}
+    (hA : ∀ k (h : ℝ), ∀ᵐ x ∂volume, x ∈ univ.pi I → x + h • ek k ∈ univ.pi I →
       (x ∈ Z ↔ x + h • ek k ∈ Z)) (t : Cfg n) :
-    ∀ᵐ x ∂volume, x ∈ Qa n a → x + t ∈ Qa n a → (x ∈ Z ↔ x + t ∈ Z) := by
+    ∀ᵐ x ∂volume, x ∈ univ.pi I → x + t ∈ univ.pi I → (x ∈ Z ↔ x + t ∈ Z) := by
   classical
-  suffices H : ∀ s : Finset (Fin (n + 1)), ∀ᵐ x ∂volume, x ∈ Qa n a → x + trS t s ∈ Qa n a →
-      (x ∈ Z ↔ x + trS t s ∈ Z) by
+  suffices H : ∀ s : Finset (Fin (n + 1)), ∀ᵐ x ∂volume, x ∈ univ.pi I →
+      x + trS t s ∈ univ.pi I → (x ∈ Z ↔ x + trS t s ∈ Z) by
     have e : trS t Finset.univ = t := by funext j; simp [trS]
     simpa [e] using H Finset.univ
   intro s
@@ -78,7 +85,7 @@ lemma invariant_vec
       (hA k (t k))
     filter_upwards [ih, h2] with x h1 h2 hx hxt
     rw [trS_insert t hk, ← add_assoc] at hxt ⊢
-    have hmid : x + trS t s ∈ Qa n a := Set.mem_univ_pi.2 fun j => by
+    have hmid : x + trS t s ∈ univ.pi I := Set.mem_univ_pi.2 fun j => by
       have a1 := Set.mem_univ_pi.1 hx j
       have a2 := Set.mem_univ_pi.1 hxt j
       simp only [Pi.add_apply, Pi.smul_apply, ek, smul_eq_mul, trS] at a2 ⊢
@@ -88,6 +95,13 @@ lemma invariant_vec
         exact a2
       · simp only [hj, ↓reduceIte, add_zero]; exact a1
     exact (h1 hx hmid).trans (h2 hmid hxt)
+
+/-- Invariance under all vector translations. -/
+lemma invariant_vec
+    (hA : ∀ k (h : ℝ), ∀ᵐ x ∂volume, x ∈ Qa n a → x + h • ek k ∈ Qa n a →
+      (x ∈ Z ↔ x + h • ek k ∈ Z)) (t : Cfg n) :
+    ∀ᵐ x ∂volume, x ∈ Qa n a → x + t ∈ Qa n a → (x ∈ Z ↔ x + t ∈ Z) :=
+  invariant_vec_gen (I := fun _ => Icc a (1 - a)) hA t
 
 end invariance
 
@@ -132,15 +146,17 @@ lemma tent_pos {r : ℝ} (hr : 0 < r) : 0 < ∫ t, tent (n := n) r t :=
       simp only [tent, Pi.zero_apply, abs_zero, sub_zero]
       exact (Finset.prod_pos fun _ _ => lt_max_of_lt_right hr).ne')
 
-/-- **On an open box, an invariant set is null or conull.** -/
-theorem const_on_box {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {a r : ℝ} (ha : 0 < a)
-    (hr : 0 < r)
-    (hV : ∀ t : Cfg n, ∀ᵐ x ∂volume, x ∈ Qa n a → x + t ∈ Qa n a → (x ∈ Z ↔ x + t ∈ Z)) :
-    (∀ᵐ x ∂volume.restrict (Bx n a r), x ∈ Z) ∨ (∀ᵐ x ∂volume.restrict (Bx n a r), x ∉ Z) := by
-  set B := Bx n a r
-  have hBQ : B ⊆ Qa n a := fun x hx => Set.mem_univ_pi.2 fun j => by
-    have := Set.mem_univ_pi.1 hx j; exact ⟨by linarith [this.1], by linarith [this.2]⟩
-  have hQc := Qa_sub_cube (n := n) ha
+/-- **Constancy on a connected open set.** If `Z` is invariant under translations inside `P`, and
+`B - [-r, r]ᴺ ⊆ P` with `B` open and connected, then `Z` is null or conull in `B`. -/
+theorem const_on_set {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {P B : Set (Cfg n)}
+    (hQc : P ⊆ Cube n) (hBo : IsOpen B) (hpre : IsPreconnected B) {r : ℝ} (hr : 0 < r)
+    (hBK : ∀ x ∈ B, ∀ t ∈ univ.pi (fun _ : Fin (n + 1) => Icc (-r) r), x - t ∈ P)
+    (hV : ∀ t : Cfg n, ∀ᵐ x ∂volume, x ∈ P → x + t ∈ P → (x ∈ Z ↔ x + t ∈ Z)) :
+    (∀ᵐ x ∂volume.restrict B, x ∈ Z) ∨ (∀ᵐ x ∂volume.restrict B, x ∉ Z) := by
+  have hBm : MeasurableSet B := hBo.measurableSet
+  have hBQ : B ⊆ P := fun x hx => by
+    simpa using hBK x hx 0 (Set.mem_univ_pi.2 fun _ =>
+      ⟨by simp only [Pi.zero_apply]; linarith, by simp only [Pi.zero_apply]; linarith⟩)
   set Z' := Z ∩ Cube n
   have hZ' : MeasurableSet Z' := hZ.inter measurableSet_cube
   set χ : Cfg n → ℝ := Z'.indicator fun _ => 1
@@ -164,7 +180,7 @@ theorem const_on_box {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {a r : ℝ} (ha : 
   set K : Set (Cfg n) := univ.pi fun _ => Icc (-r) r
   set E : Set (Cfg n × Cfg n) := {p | p.1 ∈ B ∧ p.2 ∈ K ∧ χ (p.1 - p.2) ≠ χ p.1}
   have hE : MeasurableSet E :=
-    (measurable_fst (measurableSet_Bx a r)).inter ((measurable_snd
+    (measurable_fst (hBm)).inter ((measurable_snd
       (MeasurableSet.univ_pi fun _ => measurableSet_Icc)).inter
       (measurableSet_eq_fun (hχm.comp (measurable_fst.sub measurable_snd))
         (hχm.comp measurable_fst)).compl)
@@ -172,11 +188,7 @@ theorem const_on_box {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {a r : ℝ} (ha : 
     rw [measure_eq_zero_iff_ae_notMem]
     filter_upwards [hV (-t)] with x hx ⟨hxB, htK, hne⟩
     have hxQ := hBQ hxB
-    have hxt : x + -t ∈ Qa n a := Set.mem_univ_pi.2 fun j => by
-      have h1 := Set.mem_univ_pi.1 hxB j
-      have h2 := Set.mem_univ_pi.1 htK j
-      simp only [Pi.add_apply, Pi.neg_apply]
-      exact ⟨by linarith [h1.1, h2.2], by linarith [h1.2, h2.1]⟩
+    have hxt : x + -t ∈ P := by rw [← sub_eq_add_neg]; exact hBK x hxB t htK
     have hiff := hx hxQ hxt
     apply hne
     simp only [χ, Z', ← sub_eq_add_neg] at hiff ⊢
@@ -191,7 +203,7 @@ theorem const_on_box {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {a r : ℝ} (ha : 
     simp [hslice]
   have hae := (Measure.measure_prod_null hE).1 hprod
   have hFx : ∀ᵐ x ∂volume.restrict B, F x = c * χ x := by
-    filter_upwards [ae_restrict_of_ae hae, ae_restrict_mem (measurableSet_Bx a r)] with x hx hxB
+    filter_upwards [ae_restrict_of_ae hae, ae_restrict_mem (hBm)] with x hx hxB
     simp only [Pi.zero_apply] at hx
     have h1 : ∀ᵐ t ∂volume, tent r t * χ (x - t) = tent r t * χ x := by
       rw [measure_eq_zero_iff_ae_notMem] at hx
@@ -213,10 +225,10 @@ theorem const_on_box {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {a r : ℝ} (ha : 
     rw [integral_congr_ae h1, integral_mul_const]
   -- `F` takes only the values `0` and `c` on `B`
   set O := B ∩ {x | F x ≠ 0 ∧ F x ≠ c}
-  have hO : IsOpen O := (isOpen_Bx a r).inter ((isOpen_ne_fun hFc continuous_const).inter
+  have hO : IsOpen O := hBo.inter ((isOpen_ne_fun hFc continuous_const).inter
     (isOpen_ne_fun hFc continuous_const))
   have hO0 : volume O = 0 := by
-    have h := (ae_restrict_iff' (measurableSet_Bx a r)).1 hFx
+    have h := (ae_restrict_iff' (hBm)).1 hFx
     rw [measure_eq_zero_iff_ae_notMem]
     filter_upwards [h] with x hx ⟨hxB, h1, h2⟩
     rcases hχ01 x with h | h <;> simp [hx hxB, h] at h1 h2
@@ -225,12 +237,10 @@ theorem const_on_box {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {a r : ℝ} (ha : 
     by_contra h; push Not at h
     have : x ∈ O := ⟨hx, h⟩
     rw [hOe] at this; exact this
-  have hpre : IsPreconnected B :=
-    (convex_pi fun _ _ => convex_Ioo (a + r) (1 - a - r)).isPreconnected
   -- intermediate values
   by_cases hall : ∀ x ∈ B, F x = c
   · left
-    filter_upwards [hFx, ae_restrict_mem (measurableSet_Bx a r)] with x hx hxB
+    filter_upwards [hFx, ae_restrict_mem (hBm)] with x hx hxB
     rw [hall x hxB] at hx
     have : χ x = 1 := by
       have := hc.ne'; field_simp at hx ⊢; linarith
@@ -246,13 +256,26 @@ theorem const_on_box {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {a r : ℝ} (ha : 
       · obtain ⟨y, hyB, hy⟩ := hpre.intermediate_value hx1B hxB hFc.continuousOn
           (show c / 2 ∈ Icc (F x1) (F x) by rw [hF1, h]; constructor <;> linarith)
         rcases hval y hyB with h' | h' <;> rw [h'] at hy <;> linarith
-    filter_upwards [hFx, ae_restrict_mem (measurableSet_Bx a r)] with x hx hxB hz
+    filter_upwards [hFx, ae_restrict_mem (hBm)] with x hx hxB hz
     rw [hzero x hxB] at hx
     have : χ x = 0 := by
       rcases mul_eq_zero.1 hx.symm with h | h
       · linarith
       · exact h
     simp [χ, Z', hz, hQc (hBQ hxB)] at this
+
+/-- **On an open box, an invariant set is null or conull.** -/
+theorem const_on_box {Z : Set (Cfg n)} (hZ : MeasurableSet Z) {a r : ℝ} (ha : 0 < a)
+    (hr : 0 < r)
+    (hV : ∀ t : Cfg n, ∀ᵐ x ∂volume, x ∈ Qa n a → x + t ∈ Qa n a → (x ∈ Z ↔ x + t ∈ Z)) :
+    (∀ᵐ x ∂volume.restrict (Bx n a r), x ∈ Z) ∨ (∀ᵐ x ∂volume.restrict (Bx n a r), x ∉ Z) :=
+  const_on_set hZ (Qa_sub_cube ha) (isOpen_Bx a r)
+    (convex_pi fun _ _ => convex_Ioo (a + r) (1 - a - r)).isPreconnected hr
+    (fun x hx t ht => Set.mem_univ_pi.2 fun j => by
+      have h1 := Set.mem_univ_pi.1 hx j
+      have h2 := Set.mem_univ_pi.1 ht j
+      simp only [Pi.sub_apply]
+      exact ⟨by linarith [h1.1, h2.2], by linarith [h1.2, h2.1]⟩) hV
 
 /-! ### Exhausting the cube -/
 
