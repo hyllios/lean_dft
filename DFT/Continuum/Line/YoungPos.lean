@@ -104,7 +104,7 @@ theorem tl_ae_gs {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v Φ)
   have hD : Φ ∈ DomY a n := hΦ.1
   obtain ⟨b, hb0, hbS, hK, hG⟩ := kernel_of_smooth hVc hF hVF
   -- the minimal energy is attained by a `C²` state
-  obtain ⟨a0, ha0, hmin0⟩ := exists_min hb0 hbS hK (V := V) (exists_adm_ymix (n := n) a)
+  obtain ⟨a0, ha0, hmin0⟩ := (kBd_of_kernel hb0 hbS hK).exists_min (V := V) (exists_adm_ymix (n := n) a)
   obtain ⟨hΦ0, hc0⟩ := ser_min2S hb0 hbS hK hVs ha0 hmin0 (by norm_num) (by norm_num) hG
   have hip0 : ip (μ := μN n) (ser a0) (ser a0) = 1 := by
     rw [ip_eq_tsum hΦ0.1.continuous]; simp only [hc0]; exact ha0.norm
@@ -153,7 +153,7 @@ theorem tl_ae_gs {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v Φ)
     gcongr
     exact (Summable.tsum_le_of_sum_le (summable_of_sum_le
       (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _)) hkin) hkin).trans hT
-  have hE0 : E0 V (ymix a) ≤ Fn V c := csInf_le (bddBelow_Fn hb0 hbS hK (ymix a)) ⟨c, ha, rfl⟩
+  have hE0 : E0 V (ymix a) ≤ Fn V c := csInf_le ((kBd_of_kernel hb0 hbS hK).bddBelow_Fn (ymix a)) ⟨c, ha, rfl⟩
   have hmin : Fn V c = E0 V (ymix a) := le_antisymm (hFn.trans hQΦ) hE0
   obtain ⟨hΦ1, hc1⟩ := ser_min2S hb0 hbS hK hVs ha hmin (by norm_num) (by norm_num) hG
   have hip' : ip (μ := μN n) (ser c) (ser c) = 1 := by
@@ -161,7 +161,7 @@ theorem tl_ae_gs {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v Φ)
   refine ⟨ser c, ⟨hΦ1, by rw [hip']; exact one_pos, fun φ hφ => ?_⟩, ?_⟩
   · rw [Q_eq_Fn_S hw v hΦ1, funext hc1, hmin, hip', mul_one, Q_eq_Fn_S hw v hφ,
       ip_eq_tsum hφ.1.continuous]
-    exact Fn_ge hb0 hbS hK (Dir_cN_S hφ)
+    exact (kBd_of_kernel hb0 hbS hK).Fn_ge (Dir_cN_S hφ)
   · exact ae_eq_of_cN_eq hmem (memLp_cont hΦ1.1.continuous) fun m => (hc1 m).symm
 
 omit hws hF hVF in

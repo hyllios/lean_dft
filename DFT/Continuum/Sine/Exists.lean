@@ -98,7 +98,7 @@ theorem exists_isGS_line {τ : Stat} (hws : ∀ σ x, w (pm σ x) = w x)
   set V : Cfg n → ℝ := fun x => LN n v x + w x
   have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
   have hK := abs_Ker_le (sumAbs hβ) hV
-  obtain ⟨a, ha, hmin⟩ := exists_min (fun l => abs_nonneg (β l)) (sumAbs hβ) hK (exists_adm τ)
+  obtain ⟨a, ha, hmin⟩ := (kBd_of_kernel (fun l => abs_nonneg (β l)) (sumAbs hβ) hK).exists_min (exists_adm τ)
   obtain ⟨hΦ, hcoef⟩ := ser_min (fun l => abs_nonneg (β l)) (sumAbs hβ) hK hβ hVs ha hmin
   have hcoef' : (fun m => cN m (ser a)) = a := funext hcoef
   have hip : ip (μ := μN n) (ser a) (ser a) = 1 := by
@@ -107,7 +107,7 @@ theorem exists_isGS_line {τ : Stat} (hws : ∀ σ x, w (pm σ x) = w x)
     rw [Q_eq_Fn hw v hΦ, hcoef', hmin]
   refine ⟨ser a, ⟨hΦ, hip ▸ one_pos, fun φ hφ => ?_⟩, hip⟩
   rw [hQ, hip, mul_one, Q_eq_Fn hw v hφ, ip_eq_tsum hφ.1.continuous]
-  exact Fn_ge (fun l => abs_nonneg (β l)) (sumAbs hβ) hK (Dir_cN hφ)
+  exact (kBd_of_kernel (fun l => abs_nonneg (β l)) (sumAbs hβ) hK).Fn_ge (Dir_cN hφ)
 
 /-- **Existence and uniqueness**: a normalised ground state exists, and every ground state of `v`
 is a multiple of it on the closed cube. -/

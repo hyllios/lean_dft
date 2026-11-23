@@ -66,9 +66,6 @@ lemma ip_eq_sq (g : ℝ → ℝ) : ip (μ := μ1) g g = ∫ t, g t ^ 2 ∂μ1 :=
 lemma dens_eq_sq (g : ℝ → ℝ) : dens setting g = fun u => ∫ t, ext u t * g t ^ 2 ∂μ1 := by
   funext u; simp only [dens, pf, sq]; rfl
 
-lemma integral_mu1 {f : ℝ → ℝ} : ∫ t, f t ∂μ1 = ∫ t in (0 : ℝ)..1, f t := by
-  rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
-
 lemma energy_eq_of_isGS {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) (E : ℝ)
     (hQ : Q setting v ψ = E * ip (μ := μ1) ψ ψ) : energy v ψ = E := by
   rw [energy, hQ, mul_div_assoc, div_self hψ.2.1.ne', mul_one]

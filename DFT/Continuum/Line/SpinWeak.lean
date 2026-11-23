@@ -451,7 +451,7 @@ theorem sector_lb_W {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v 
   have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
   obtain ⟨b, hb0, hbS, hK, hG⟩ := kernel_of_smooth hVc hF hVF
   -- `E(a) ≤ E0`
-  obtain ⟨a0, ha0, hmin0⟩ := exists_min hb0 hbS hK (V := V) (exists_adm_ymix (n := n) a)
+  obtain ⟨a0, ha0, hmin0⟩ := (kBd_of_kernel hb0 hbS hK).exists_min (V := V) (exists_adm_ymix (n := n) a)
   obtain ⟨hΦ0, hc0⟩ := ser_min2S hb0 hbS hK hVs ha0 hmin0 (by norm_num) (by norm_num) hG
   have hip0 : ip (μ := μN n) (ser a0) (ser a0) = 1 := by
     rw [ip_eq_tsum hΦ0.1.continuous]; simp only [hc0]; exact ha0.norm
@@ -474,7 +474,7 @@ theorem sector_lb_W {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v 
     sum_lam_le_wd (G := fun k => dW k f) fun k => dW_spec (hf.2 k)
   have hsum := summable_of_sum_le (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _)) hkin
   have hD : Dir (ymix (n := n) a) c := ⟨(parsevalW hf.1).summable, hsum, hsymc⟩
-  have h1 := Fn_ge hb0 hbS hK hD
+  have h1 := (kBd_of_kernel hb0 hbS hK).Fn_ge hD
   rw [(parsevalW hf.1).tsum_eq] at h1
   have hFn : Fn V c ≤ kinB f f + potB (Vt w v) f f := by
     rw [Fn, Bf_cNW (V := V) hVc hf.1,

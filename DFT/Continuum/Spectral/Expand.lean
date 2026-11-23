@@ -65,26 +65,6 @@ section dom
 variable {ψ : ℝ → ℝ} (hψ : ψ ∈ Box.Dom)
 include hψ
 
-lemma dom_c2 : ContDiff ℝ 1 (deriv ψ) := (contDiff_succ_iff_deriv.1 hψ.1).2.2
-
-include hWc in
-lemma continuous_src_dom : Continuous (src (W := W) ψ) :=
-  (((dom_c2 hψ).continuous_deriv le_rfl).neg).add (hWc.mul hψ.1.continuous)
-
-include hW0 in
-/-- `G(-ψ'' + Wψ) = ψ` on `[0, 1]`. -/
-lemma Gk_src {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) : Gk hWc (src (W := W) ψ) x = ψ x := by
-  have hd1 : Differentiable ℝ ψ := hψ.1.differentiable (by norm_num)
-  have hd2 : Differentiable ℝ (deriv ψ) := (dom_c2 hψ).differentiable one_ne_zero
-  rw [Gk_eq_Gf hWc (continuous_src_dom hWc hψ) hx]
-  have := eq_Gf hWc hW0 (continuous_src_dom hWc hψ) (y := ψ) (dy := deriv ψ)
-    (fun t _ => (hd1 t).hasDerivAt)
-    (fun t _ => by
-      refine (hd2 t).hasDerivAt.congr_deriv ?_
-      simp only [src]; ring)
-    hψ.2.1 hψ.2.2 x (Icc_sub_Ioo' hx)
-  exact this.symm
-
 include hW0 in
 /-- **`G(-ψ'' + Wψ) = ψ` in `L²(0, 1)`.** -/
 lemma Gop_toHL_src :

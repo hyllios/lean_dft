@@ -231,7 +231,7 @@ theorem ser_min2S (hVs : ∀ σ x, V (pm σ x) = V x) {s : SymT n} {a : (Fin (n 
     (ha : Adm s a) (hmin : Fn V a = E0 V s) {r : ℝ} (hr : 1 / 2 < r) (hr2 : r ≤ 2)
     (hG : Summable fun l => b l * om r l) :
     ser a ∈ DomS s ∧ ∀ m, cN m (ser a) = a m := by
-  have hEL := Sine.euler_lagrange hb0 hbS hK hVs ha hmin
+  have hEL := (kBd_of_kernel hb0 hbS hK).euler_lagrange hVs ha hmin
   have hq := summable_wt_sq_mul hb0 hbS hK hEL ha.sq hr hr2 hG
   have h0 : Summable fun m => |a m| := Summable.of_nonneg_of_le (fun m => abs_nonneg _)
     (fun m => le_mul_of_one_le_left (abs_nonneg _)
@@ -253,7 +253,7 @@ theorem exists_isGS_S {s : SymT n} (hne : ∃ c, Adm s c) (hws : ∀ σ x, w (pm
     ∃ Φ, IsGS (settingS s w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 := by
   set V : Cfg n → ℝ := fun x => LN n v x + w x
   have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
-  obtain ⟨a, ha, hmin⟩ := exists_min hb0 hbS hK (V := V) hne
+  obtain ⟨a, ha, hmin⟩ := (kBd_of_kernel hb0 hbS hK).exists_min (V := V) hne
   obtain ⟨hΦ, hcoef⟩ := ser_min2S hb0 hbS hK hVs ha hmin hr hr2 hG
   have hcoef' : (fun m => cN m (ser a)) = a := funext hcoef
   have hip : ip (μ := μN n) (ser a) (ser a) = 1 := by
@@ -262,7 +262,7 @@ theorem exists_isGS_S {s : SymT n} (hne : ∃ c, Adm s c) (hws : ∀ σ x, w (pm
     rw [Q_eq_Fn_S hw v hΦ, hcoef', hmin]
   refine ⟨ser a, ⟨hΦ, hip ▸ one_pos, fun φ hφ => ?_⟩, hip⟩
   rw [hQ, hip, mul_one, Q_eq_Fn_S hw v hφ, ip_eq_tsum hφ.1.continuous]
-  exact Fn_ge hb0 hbS hK (Dir_cN_S hφ)
+  exact (kBd_of_kernel hb0 hbS hK).Fn_ge (Dir_cN_S hφ)
 
 /-- **Ground states of mixed symmetry exist** whenever `Σ_k v(x_k) + w(x)` agrees on the closed
 cube with a `C^{2N}` function. -/

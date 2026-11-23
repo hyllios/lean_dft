@@ -348,7 +348,7 @@ include hb0 hbS hK hbs
 theorem ser_min (hVs : ∀ σ x, V (pm σ x) = V x) {τ : Stat} {a : (Fin (n + 1) → ℕ) → ℝ}
     (ha : Adm τ.toSym a) (hmin : Fn V a = E0 V τ.toSym) :
     ser a ∈ Dom τ n ∧ ∀ m, cN m (ser a) = a m := by
-  have hEL := euler_lagrange hb0 hbS hK hVs ha hmin
+  have hEL := (kBd_of_kernel hb0 hbS hK).euler_lagrange hVs ha hmin
   have hq := summable_wt_pow_mul (nw_ne_top hb0 hbS hK hbs hEL ha.sq)
   have h0 : Summable fun m => |a m| := by simpa using hq 0
   exact ⟨ser_mem hq ha.sym, cN_ser h0⟩

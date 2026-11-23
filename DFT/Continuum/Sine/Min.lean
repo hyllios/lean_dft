@@ -478,33 +478,4 @@ end minimiser
 
 end KBd
 
-/-! ### The kernel-bound forms (smooth potentials) -/
-
-section kernel
-
-variable {V : Cfg n → ℝ} {b : (Fin (n + 1) → ℕ) → ℝ} (hb0 : ∀ l, 0 ≤ b l) (hbS : Summable b)
-  (hK : ∀ m' m, |Ker V m' m| ≤ ∑' l, b l * (if adm m' l m then 1 else 0))
-include hb0 hbS hK
-
-lemma bddBelow_Fn (τ : SymT n) : BddBelow (Fn V '' {c | Adm τ c}) :=
-  (kBd_of_kernel hb0 hbS hK).bddBelow_Fn τ
-
-/-- **`F(c) ≥ E₀ Σ c²`** for every admissible direction. -/
-lemma Fn_ge {τ : SymT n} {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Dir τ c) :
-    E0 V τ * ∑' m, c m ^ 2 ≤ Fn V c :=
-  (kBd_of_kernel hb0 hbS hK).Fn_ge hc
-
-/-- **The minimiser** (direct method). -/
-theorem exists_min {τ : SymT n} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm τ c) :
-    ∃ c, Adm τ c ∧ Fn V c = E0 V τ :=
-  (kBd_of_kernel hb0 hbS hK).exists_min hne
-
-/-- **The Euler–Lagrange equation** `λ_m c_m + (Kc)_m = E₀ c_m` for a minimiser. -/
-theorem euler_lagrange (hVs : ∀ σ x, V (pm σ x) = V x) {τ : SymT n} {a : (Fin (n + 1) → ℕ) → ℝ}
-    (ha : Adm τ a) (hmin : Fn V a = E0 V τ) (m : Fin (n + 1) → ℕ) :
-    lam m * a m + Kc V a m = E0 V τ * a m :=
-  (kBd_of_kernel hb0 hbS hK).euler_lagrange hVs ha hmin m
-
-end kernel
-
 end DFT.Continuum.Sine

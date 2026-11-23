@@ -258,8 +258,8 @@ lemma contDiff_cumF' (hgc : Continuous g) : ContDiff ℝ 1 (cumF g) := by
 lemma integral_cumF' (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) {h : ℝ → ℝ}
     (hh : Continuous h) : ∫ t, g t ^ 2 * h (cumF g t) ∂μ1 = ∫ u in (0 : ℝ)..1, h u := by
   have h0 : cumF g 0 = 0 := intervalIntegral.integral_same
-  have h1 : cumF g 1 = 1 := by rw [cumF, ← Sine.integral_mu1_eq, hnorm]
-  rw [Sine.integral_mu1_eq]
+  have h1 : cumF g 1 = 1 := by rw [cumF, ← Box.integral_mu1, hnorm]
+  rw [Box.integral_mu1]
   have := intervalIntegral.integral_comp_mul_deriv (a := 0) (b := 1) (f := cumF g)
     (f' := fun x => g x ^ 2) (g := h) (fun x _ => hasDerivAt_cumF' hgc x)
     (hgc.pow 2).continuousOn hh

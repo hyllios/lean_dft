@@ -321,7 +321,7 @@ theorem gsW_ae_eq {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW τ n w hw) v Ψ) :
   have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
   obtain ⟨b, hb0, hbS, hK, hG⟩ := kernel_of_smooth ((continuous_LN v).add hw) hF hVF
   -- the coefficient-space minimiser and its `C²` state
-  obtain ⟨a0, ha0, hmin0⟩ := exists_min hb0 hbS hK (V := V) (exists_adm τ)
+  obtain ⟨a0, ha0, hmin0⟩ := (kBd_of_kernel hb0 hbS hK).exists_min (V := V) (exists_adm τ)
   obtain ⟨hΦ0, hc0⟩ := ser_min2 hb0 hbS hK hVs ha0 hmin0 (by norm_num) (by norm_num) hG
   have hc0' : (fun m => cN m (ser a0)) = a0 := funext hc0
   have hip0 : ip (μ := μN n) (ser a0) (ser a0) = 1 := by
@@ -340,7 +340,7 @@ theorem gsW_ae_eq {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW τ n w hw) v Ψ) :
   set a := fun m => cN m (c • Ψ)
   have ha := adm_cNW hΨ1.1 hsq1
   -- `E₀ ≤ Fn a ≤ Q(cΨ) ≤ Q(Φ₀) = E₀`
-  have hE1 : E0 V τ.toSym ≤ Fn V a := csInf_le (bddBelow_Fn hb0 hbS hK τ.toSym) ⟨a, ha, rfl⟩
+  have hE1 : E0 V τ.toSym ≤ Fn V a := csInf_le ((kBd_of_kernel hb0 hbS hK).bddBelow_Fn τ.toSym) ⟨a, ha, rfl⟩
   have hE2 : Fn V a ≤ Q (settingW τ n w hw) v (c • Ψ) := Fn_le_QW v hΨ1.1
   have hE3 : Q (settingW τ n w hw) v (c • Ψ) ≤ E0 V τ.toSym := by
     have := hΨ1.2.2 (ser a0) (Dom_le_DomW hΦ0)

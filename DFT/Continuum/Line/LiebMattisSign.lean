@@ -89,8 +89,6 @@ lemma SY_pm' {σ : Equiv.Perm (Fin (n + 1))} (hσ : YG a σ) {x : Cfg n} (hx : x
   obtain ⟨y, ⟨hy1, hy2⟩, -, hinj⟩ := exists_injective_near hx (h1.and h2)
   rw [← hy1, ← hy2, SY_pm hσ hinj]
 
-lemma sgn_mul_self' (σ : Equiv.Perm (Fin (n + 1))) : sgn σ * sgn σ = 1 := sgn_mul_self σ
-
 section gs
 
 variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} (hws : ∀ σ x, w (pm σ x) = w x)

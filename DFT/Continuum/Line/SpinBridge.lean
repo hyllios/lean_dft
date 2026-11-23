@@ -15,8 +15,8 @@ configuration).
 * `FermD`: fermionic antisymmetry; preserved by `S₊` (`FermD_Sp`) and by the sector projections.
 * `QS`, `ipS`: energy and norm. `sector_reduce`: in the sector with `c` spins up they are
   `K · B(ψ, ψ)` with `ψ = u (sc c)` of mixed symmetry `(c, N - c)` (`mem_DomY_sc`).
-* `ladder_Sp`, `ladder_Sm`: for a state of definite `S²` (on the cube) and `S_z`, `S₊` multiplies
-  both forms by `λ - M(M+1)` and `S₋` multiplies them by `λ - M(M-1)`.
+* `ladder_Sp_gen`, `ladder_Sm_gen`, `B_S2`: for a state of definite `S²` (on the cube) and
+  `S_z`, `S₊` multiplies both forms by `λ - M(M+1)` and `S₋` multiplies them by `λ - M(M-1)`.
 * `lift Φ`: the fermionic spin-orbital state whose component at `sc a` is `#YG · Φ`, for `Φ` of
   mixed symmetry `(a, N - a)`.
 * `Strong E f`: `-Δf + (w + Σ v - E) f = 0` on the cube; closed under linear combinations and
@@ -241,23 +241,6 @@ include hBc heig
 lemma B_S2 (s : SpinC n) : B (u s) (S2 u s) = lam * B (u s) (u s) := by
   rw [hBc (u s) (S2 u s) (lam • u s) fun x hx => by
     have := heig s x hx; simpa using this, map_smul, smul_eq_mul]
-
-include hc
-
-/-- **`S₊` along a multiplet.** -/
-lemma ladder_Sp :
-    ∑ s, B (Sp u s) (Sp u s) =
-      (lam - ((c : ℝ) - ((n : ℝ) + 1) / 2) ^ 2 - ((c : ℝ) - ((n : ℝ) + 1) / 2)) *
-        ∑ s, B (u s) (u s) :=
-  ladder_Sp_gen B hc (B_S2 B hBc heig)
-
-include hBs in
-/-- **`S₋` along a multiplet.** -/
-lemma ladder_Sm :
-    ∑ s, B (Sm u s) (Sm u s) =
-      (lam - ((c : ℝ) - ((n : ℝ) + 1) / 2) ^ 2 + ((c : ℝ) - ((n : ℝ) + 1) / 2)) *
-        ∑ s, B (u s) (u s) :=
-  ladder_Sm_gen B hc (B_S2 B hBc heig) hBs
 
 end ladder
 

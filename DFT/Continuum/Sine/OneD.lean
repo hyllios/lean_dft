@@ -30,9 +30,6 @@ noncomputable def sn (k : ℕ) (x : ℝ) : ℝ := √2 * Real.sin (π * k * x)
 
 lemma continuous_sn (k : ℕ) : Continuous (sn k) := by unfold sn; fun_prop
 
-lemma integral_mu1_eq {F : ℝ → ℝ} : ∫ x, F x ∂μ1 = ∫ x in (0 : ℝ)..1, F x := by
-  rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
-
 /-- `∫₀¹ cos(πjx) dx = [j = 0]` for integers `j`. -/
 lemma integral_cos_int (j : ℤ) :
     ∫ x in (0 : ℝ)..1, Real.cos (π * j * x) = if j = 0 then 1 else 0 := by
@@ -51,7 +48,7 @@ lemma two_sin_mul_sin (a b : ℝ) :
 /-- **Orthonormality.** -/
 lemma sn_orthonormal {k l : ℕ} (hk : 0 < k) (hl : 0 < l) :
     ∫ x, sn k x * sn l x ∂μ1 = if k = l then 1 else 0 := by
-  rw [integral_mu1_eq]
+  rw [integral_mu1]
   have e : ∀ x, sn k x * sn l x =
       Real.cos (π * ((k : ℤ) - l : ℤ) * x) - Real.cos (π * ((k : ℤ) + l : ℤ) * x) := by
     intro x

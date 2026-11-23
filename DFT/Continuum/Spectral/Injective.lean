@@ -13,7 +13,7 @@ For a smooth `φ` with compact support in `(0, 1)`, `φ = G(-φ'' + W φ)` (uniq
 Dirichlet problem). Hence if `G f = 0` then `⟪f, φ⟫ = ⟪G f, -φ'' + W φ⟫ = 0` for all such `φ`,
 and `f = 0` by the fundamental lemma of the calculus of variations.
 
-* `Gk_test`: `G(-φ'' + W φ) = φ` on `[0, 1]`.
+* `Gk_src`: `G(-ψ'' + W ψ) = ψ` on `[0, 1]` for `ψ ∈ Dom`; `Gk_test`: test functions.
 * `Gop_injective`: `G f = 0 → f = 0`.
 -/
 
@@ -22,6 +22,36 @@ namespace DFT.Continuum.Spectral
 open MeasureTheory Set Filter Topology Box
 
 variable {W : ℝ → ℝ} (hWc : Continuous W) (hW0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ W t)
+
+/-- The source `-φ'' + W φ`. -/
+noncomputable def src (φ : ℝ → ℝ) (x : ℝ) : ℝ := -deriv (deriv φ) x + W x * φ x
+
+section dom
+
+variable {ψ : ℝ → ℝ} (hψ : ψ ∈ Box.Dom)
+include hψ
+
+lemma dom_c2 : ContDiff ℝ 1 (deriv ψ) := (contDiff_succ_iff_deriv.1 hψ.1).2.2
+
+include hWc in
+lemma continuous_src_dom : Continuous (src (W := W) ψ) :=
+  (((dom_c2 hψ).continuous_deriv le_rfl).neg).add (hWc.mul hψ.1.continuous)
+
+include hW0 in
+/-- `G(-ψ'' + Wψ) = ψ` on `[0, 1]`. -/
+lemma Gk_src {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) : Gk hWc (src (W := W) ψ) x = ψ x := by
+  have hd1 : Differentiable ℝ ψ := hψ.1.differentiable (by norm_num)
+  have hd2 : Differentiable ℝ (deriv ψ) := (dom_c2 hψ).differentiable one_ne_zero
+  rw [Gk_eq_Gf hWc (continuous_src_dom hWc hψ) hx]
+  have := eq_Gf hWc hW0 (continuous_src_dom hWc hψ) (y := ψ) (dy := deriv ψ)
+    (fun t _ => (hd1 t).hasDerivAt)
+    (fun t _ => by
+      refine (hd2 t).hasDerivAt.congr_deriv ?_
+      simp only [src]; ring)
+    hψ.2.1 hψ.2.2 x (Icc_sub_Ioo' hx)
+  exact this.symm
+
+end dom
 
 section test
 
@@ -36,9 +66,6 @@ lemma test_out : ∀ x, x ∉ Ioo (0 : ℝ) 1 → φ x = 0 := fun _ hx =>
 omit hsupp in
 lemma test_c2 : ContDiff ℝ 2 φ := hφ.of_le (WithTop.coe_le_coe.mpr le_top)
 
-/-- The source `-φ'' + W φ`. -/
-noncomputable def src (φ : ℝ → ℝ) (x : ℝ) : ℝ := -deriv (deriv φ) x + W x * φ x
-
 include hWc in
 omit hsupp in
 lemma continuous_src : Continuous (src (W := W) φ) := by
@@ -48,22 +75,9 @@ lemma continuous_src : Continuous (src (W := W) φ) := by
 
 include hW0 in
 /-- **`G(-φ'' + W φ) = φ`** on `[0, 1]`. -/
-lemma Gk_test {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) : Gk hWc (src (W := W) φ) x = φ x := by
-  have h2 : ContDiff ℝ 2 φ := test_c2 hφ
-  have hd1 : Differentiable ℝ φ := h2.differentiable (by norm_num)
-  have hdd : ContDiff ℝ 1 (deriv φ) := (contDiff_succ_iff_deriv.1 h2).2.2
-  have hd2 : Differentiable ℝ (deriv φ) := hdd.differentiable one_ne_zero
-  rw [Gk_eq_Gf hWc (continuous_src hWc hφ) hx]
-  have := eq_Gf hWc hW0 (continuous_src hWc hφ) (y := φ) (dy := deriv φ)
-    (fun t _ => (hd1 t).hasDerivAt)
-    (fun t _ => by
-      have h := (hd2 t).hasDerivAt
-      refine h.congr_deriv ?_
-      simp only [src]; ring)
-    (test_out hsupp 0 (fun h => lt_irrefl _ h.1))
-    (test_out hsupp 1 (fun h => lt_irrefl _ h.2))
-    x (Icc_sub_Ioo' hx)
-  exact this.symm
+lemma Gk_test {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) : Gk hWc (src (W := W) φ) x = φ x :=
+  Gk_src hWc hW0 ⟨test_c2 hφ, test_out hsupp 0 (fun h => lt_irrefl _ h.1),
+    test_out hsupp 1 (fun h => lt_irrefl _ h.2)⟩ hx
 
 end test
 

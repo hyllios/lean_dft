@@ -69,7 +69,7 @@ lemma integral_mul_cos_ibp {g g1 g2 : ℝ → ℝ} (h1 : ∀ t, HasDerivAt g (g1
   have hc1 : Real.cos (c * 1) = (-1) ^ l := by
     rw [mul_one, hcdef, mul_comm]; exact Real.cos_nat_mul_pi l
   simp only [mul_zero, Real.sin_zero, Real.cos_zero, zero_div, hs1, hc1] at e1 e2
-  rw [integral_mu1_eq, integral_mu1_eq, e1, e2]
+  rw [integral_mu1, integral_mu1, e1, e2]
   field_simp
   ring
 

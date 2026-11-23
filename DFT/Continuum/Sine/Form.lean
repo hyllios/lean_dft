@@ -230,14 +230,6 @@ lemma tsum_Kc_sq_le {c : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => 
 
 lemma C0_nonneg : 0 ≤ C0 b := ENNReal.toReal_nonneg
 
-include hb0 hbS hK in
-lemma Kc_add {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
-    (hd : Summable fun m => d m ^ 2) :
-    Kc V (fun m => c m + d m) = fun m => Kc V c m + Kc V d m := by
-  funext m'
-  simp only [Kc, mul_add]
-  exact (summable_Ker_mul hb0 hbS hK hc m').tsum_add (summable_Ker_mul hb0 hbS hK hd m')
-
 lemma Kc_smul (t : ℝ) (c : (Fin (n + 1) → ℕ) → ℝ) :
     Kc V (fun m => t * c m) = fun m => t * Kc V c m := by
   funext m'
@@ -286,31 +278,6 @@ lemma Bf_sq_le {c d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m
     _ ≤ (∑' m, c m ^ 2) * (C0 b * ∑' m, d m ^ 2) :=
         mul_le_mul_of_nonneg_left h2 (tsum_nonneg fun m => sq_nonneg _)
     _ = _ := by ring
-
-include hb0 hbS hK in
-lemma Bf_sub_left {c c' d : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
-    (hc' : Summable fun m => c' m ^ 2) (hd : Summable fun m => d m ^ 2) :
-    Bf V c d - Bf V c' d = Bf V (fun m => c m - c' m) d := by
-  simp only [Bf, sub_mul]
-  exact ((summable_mul_of_sq hc (summable_Kc_sq hb0 hbS hK hd)).tsum_sub
-    (summable_mul_of_sq hc' (summable_Kc_sq hb0 hbS hK hd))).symm
-
-include hb0 hbS hK in
-lemma Bf_sub_right {c d d' : (Fin (n + 1) → ℕ) → ℝ} (hc : Summable fun m => c m ^ 2)
-    (hd : Summable fun m => d m ^ 2) (hd' : Summable fun m => d' m ^ 2) :
-    Bf V c d - Bf V c d' = Bf V c (fun m => d m - d' m) := by
-  have hneg : Summable fun m => (-1 * d' m) ^ 2 := by simpa [neg_one_mul, neg_sq] using hd'
-  have e : (fun m => d m - d' m) = fun m => d m + (-1) * d' m := by funext m; ring
-  rw [e]
-  simp only [Bf]
-  rw [Kc_add hb0 hbS hK hd hneg, Kc_smul]
-  simp only [mul_add]
-  rw [(summable_mul_of_sq hc (summable_Kc_sq hb0 hbS hK hd)).tsum_add]
-  · rw [show (∑' m, c m * (-1 * Kc V d' m)) = -∑' m, c m * Kc V d' m by
-      rw [← tsum_neg]; congr 1; funext m; ring]
-    ring
-  · have := summable_mul_of_sq hc (summable_Kc_sq hb0 hbS hK hd')
-    simpa [mul_neg, neg_mul, one_mul] using this.neg
 
 end bound
 

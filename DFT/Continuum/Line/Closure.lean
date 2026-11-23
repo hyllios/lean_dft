@@ -36,7 +36,7 @@ lemma two_cos_mul_cos (a b : ℝ) :
   rw [Real.cos_sub, Real.cos_add]; ring
 
 lemma cs_orthonormal (k l : ℕ) : ∫ x, cs k x * cs l x ∂μ1 = if k = l then 1 else 0 := by
-  rw [integral_mu1_eq]
+  rw [integral_mu1]
   have e : ∀ x, cs k x * cs l x =
       Real.cos (π * ((k : ℤ) - l : ℤ) * x) + Real.cos (π * ((k : ℤ) + l + 2 : ℤ) * x) := by
     intro x
@@ -57,7 +57,7 @@ lemma cs_orthonormal (k l : ℕ) : ∫ x, cs k x * cs l x ∂μ1 = if k = l then
     simp [h, this, hkl]
 
 lemma integral_cs (k : ℕ) : ∫ x, cs k x ∂μ1 = 0 := by
-  rw [integral_mu1_eq]
+  rw [integral_mu1]
   have e : (fun x => cs k x) = fun x => √2 * Real.cos (π * ((k + 1 : ℕ) : ℤ) * x) := by
     funext x; simp [cs]
   rw [e, intervalIntegral.integral_const_mul, integral_cos_int]
@@ -92,7 +92,7 @@ lemma sn_ibp {u : ℝ → ℝ} (hu : AbsolutelyContinuousOnInterval u 0 1) (h0 :
   have ibp := hu.integral_mul_deriv_eq_deriv_mul hvAC
   rw [h0, h1, zero_mul, zero_mul, sub_zero, zero_sub] at ibp
   simp only [(hv _).deriv] at ibp
-  rw [integral_mu1_eq, integral_mu1_eq,
+  rw [integral_mu1, integral_mu1,
     show (fun x => sn (k + 1) x * u x) = fun x => u x * sn (k + 1) x from
       funext fun x => mul_comm _ _, ibp, ← intervalIntegral.integral_const_mul,
     ← intervalIntegral.integral_neg]
@@ -175,7 +175,7 @@ theorem h1_closure {u : ℕ → ℝ → ℝ} {f : HL} {C : ℝ} (hu : ∀ j, Con
   have hg0 : g 0 = 0 := intervalIntegral.integral_same
   have hg1 : g 1 = 0 := by
     simp only [g]
-    rw [← integral_mu1_eq, ← hone_h, real_inner_comm, inner_toHL_right]
+    rw [← integral_mu1, ← hone_h, real_inner_comm, inner_toHL_right]
     simp [hf]
   have hderiv : ∀ᵐ x ∂μ1, deriv g x = hf x := by
     have := hII.ae_hasDerivAt_integral

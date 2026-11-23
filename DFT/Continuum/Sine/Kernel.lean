@@ -75,7 +75,7 @@ lemma kap_eq {k' k : ℕ} (hk' : 0 < k') (hk : 0 < k) (l : ℕ) :
       Real.cos_add (π * k' * x + _),
       Real.cos_sub (π * k' * x), Real.cos_add (π * k' * x), Real.sin_sub, Real.sin_add]
     linear_combination (Real.sin (π * k' * x) * Real.cos (π * l * x) * Real.sin (π * k * x)) * h2
-  rw [kap, integral_mu1_eq]
+  rw [kap, integral_mu1]
   simp only [e]
   rw [intervalIntegral.integral_div, intervalIntegral.integral_sub, intervalIntegral.integral_sub,
     intervalIntegral.integral_add]

@@ -343,15 +343,12 @@ noncomputable def sinDens (n : ℕ) (t : ℝ) : ℝ := (n + 1) * (√2 * Real.si
 /-- `N · 12 min(t, 1 - t)²`: positive inside, but with a kink at `t = 1/2`. -/
 noncomputable def tentDens (n : ℕ) (t : ℝ) : ℝ := (n + 1) * (√12 * min t (1 - t)) ^ 2
 
-lemma integral_mu1_eq {f : ℝ → ℝ} : ∫ t, f t ∂μ1 = ∫ t in (0 : ℝ)..1, f t := by
-  rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
-
 lemma sinG_mem : (fun t => √2 * Real.sin (2 * π * t)) ∈ Box.Dom := by
   refine ⟨by fun_prop, by simp, ?_⟩
   simp only [mul_one, Real.sin_two_pi, mul_zero]
 
 lemma sinG_norm : ∫ t, (√2 * Real.sin (2 * π * t)) ^ 2 ∂μ1 = 1 := by
-  rw [integral_mu1_eq]
+  rw [integral_mu1]
   simp only [mul_pow, Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num)]
   rw [intervalIntegral.integral_const_mul,
     intervalIntegral.integral_comp_mul_left (fun x => Real.sin x ^ 2) (by positivity : 2 * π ≠ 0),
@@ -383,7 +380,7 @@ lemma tentG_mem : H10 fun t => √12 * min t (1 - t) := by
     ((measurable_deriv _).pow_const 2).aestronglyMeasurable (ae_of_all _ hb)
 
 lemma tentG_norm : ∫ t, (√12 * min t (1 - t)) ^ 2 ∂μ1 = 1 := by
-  rw [integral_mu1_eq]
+  rw [integral_mu1]
   have hc : Continuous fun t : ℝ => (√12 * min t (1 - t)) ^ 2 := by fun_prop
   rw [← intervalIntegral.integral_add_adjacent_intervals (b := 1 / 2) (hc.intervalIntegrable _ _)
     (hc.intervalIntegrable _ _)]

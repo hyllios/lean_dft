@@ -38,6 +38,9 @@ open MeasureTheory Set Filter Topology
 /-- Lebesgue measure on `(0, 1)`. -/
 noncomputable abbrev μ1 : Measure ℝ := volume.restrict (Ioo (0 : ℝ) 1)
 
+lemma integral_mu1 {f : ℝ → ℝ} : ∫ t, f t ∂μ1 = ∫ t in (0 : ℝ)..1, f t := by
+  rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
+
 /-- The form domain: `C²` functions vanishing at the walls. -/
 def Dom : Submodule ℝ (ℝ → ℝ) where
   carrier := {ψ | ContDiff ℝ 2 ψ ∧ ψ 0 = 0 ∧ ψ 1 = 0}
