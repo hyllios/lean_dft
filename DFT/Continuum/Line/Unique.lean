@@ -17,7 +17,7 @@ from collisions; so if `Φ` and `Ψ` are ground states and `x₀` is a point of 
 `Φ - (Φ(x₀)/Ψ(x₀)) Ψ` vanishes at `x₀`, hence is not a ground state, hence has zero norm and
 vanishes on the cube.
 
-* `isGS_add_smul` (general setting): `ψ + s φ` is a ground state if it has positive norm.
+* `isGS_add_smul` (in `General/HK`): `ψ + s φ` is a ground state if it has positive norm.
 * `gs_ne_zero_stat`: no zeros on the cube away from collisions, for both statistics.
 * `gs_unique_line`: **nondegeneracy**, `Φ = c Ψ` on the closed cube.
 -/
@@ -25,49 +25,6 @@ vanishes on the cube.
 namespace DFT.Continuum
 
 open MeasureTheory
-
-section general
-
-variable {X : Type*} [MeasurableSpace X] {μ : Measure X} {P : Type*} [AddCommGroup P] [Module ℝ P]
-  {S : Setting μ P}
-
-/-- Two ground states of the same potential have the same energy, and every state lies above it. -/
-lemma isGS_energy {v : P} {ψ φ : X → ℝ} (hψ : IsGS S v ψ) (hφ : IsGS S v φ) :
-    Q S v φ = Q S v ψ / ip (μ := μ) ψ ψ * ip (μ := μ) φ φ := by
-  have h1 := hψ.2.2 φ hφ.1
-  have h2 := hφ.2.2 ψ hψ.1
-  have hp := hψ.2.1
-  rw [div_mul_eq_mul_div, eq_div_iff hp.ne']
-  linarith
-
-lemma le_Q_of_isGS {v : P} {ψ φ : X → ℝ} (hψ : IsGS S v ψ) (hφ : φ ∈ S.D) :
-    Q S v ψ / ip (μ := μ) ψ ψ * ip (μ := μ) φ φ ≤ Q S v φ := by
-  have h := hψ.2.2 φ hφ
-  have hp := hψ.2.1
-  rw [div_mul_eq_mul_div, div_le_iff₀ hp]
-  linarith
-
-/-- **Ground states form a linear space**: `ψ + s φ` is a ground state if it has positive norm. -/
-theorem isGS_add_smul {v : P} {ψ φ : X → ℝ} (hψ : IsGS S v ψ) (hφ : IsGS S v φ) (s : ℝ)
-    (hpos : 0 < ip (μ := μ) (ψ + s • φ) (ψ + s • φ)) : IsGS S v (ψ + s • φ) := by
-  set E := Q S v ψ / ip (μ := μ) ψ ψ
-  have hp := hψ.2.1
-  have hEψ : Q S v ψ = E * ip (μ := μ) ψ ψ := by simp only [E]; field_simp
-  have hEφ := isGS_energy hψ hφ
-  have hEL := euler_lagrange hψ hφ.1
-  have hD : ψ + s • φ ∈ S.D := S.D.add_mem hψ.1 (S.D.smul_mem s hφ.1)
-  have hQ : Q S v (ψ + s • φ) = E * ip (μ := μ) (ψ + s • φ) (ψ + s • φ) := by
-    rw [Q, h0_expand hψ.1 hφ.1, pf_expand v hψ.1 hφ.1, ip_expand hψ.1 hφ.1]
-    have e1 : S.h0 ψ ψ + pf S v ψ ψ = Q S v ψ := rfl
-    have e2 : S.h0 φ φ + pf S v φ φ = Q S v φ := rfl
-    have e3 : S.h0 ψ φ + pf S v ψ φ = E * ip (μ := μ) ψ φ := hEL
-    linear_combination e1 + 2 * s * e3 + s ^ 2 * e2 + hEψ + s ^ 2 * hEφ
-  refine ⟨hD, hpos, fun χ hχ => ?_⟩
-  rw [hQ]
-  have := le_Q_of_isGS hψ hχ
-  nlinarith
-
-end general
 
 namespace Line
 

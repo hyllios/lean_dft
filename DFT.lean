@@ -13,6 +13,7 @@ import DFT.Continuum.General.Ekeland
 import DFT.Continuum.General.FromLattice
 import DFT.Continuum.General.HK
 import DFT.Continuum.General.Lieb
+import DFT.Continuum.General.VRep
 import DFT.Continuum.Line.AbsW
 import DFT.Continuum.Line.Basic
 import DFT.Continuum.Line.Bosons
@@ -39,6 +40,7 @@ import DFT.Continuum.Line.LiebMattisSpin
 import DFT.Continuum.Line.LiebMattisTotal
 import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Nodal
+import DFT.Continuum.Line.Nondeg
 import DFT.Continuum.Line.Pauli
 import DFT.Continuum.Line.Realize
 import DFT.Continuum.Line.Represent

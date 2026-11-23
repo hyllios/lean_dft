@@ -585,3 +585,18 @@ Recommended order: N5, then N6 (or N1/N2 first as quick wins).
   `cN_pmW` as a corollary; `exists_isNGS_WS_cont` (generic) in `Line/Realize`,
   `exists_isNGS_WY_cont` in `Line/YoungChamber`. `Line/WeakS` deleted.
 
+## Continuous v supersedes smooth v (plan, 2026-11-24)
+Goal: replace every smooth-V result by a continuous-v H¹₀ one, then delete the C² setting, the
+smooth existence/regularity code and the nodal/Hopf machinery. Phases: (A) nondegeneracy, (B) pure
+= ensemble, (C) hard-core bosons on H¹₀, (D) Lieb–Mattis on H¹₀ (attempt; the C² proof compares
+point values at collision configurations, so a different argument is needed), (E) deletion. The
+C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*`, `sinDens`,
+`tentDens`) have no continuous-v counterpart and go with (E).
+- A, B DONE: `isGS_energy`, `le_Q_of_isGS`, `isGS_add_smul` moved to `General/HK`; abstract
+  `PureDens`/`EnsDens`/`pureDens_of_ensDens`/`dens_eq_of_ae_smul` moved to `General/VRep`.
+  `Line/Nondeg`: `ae_zero_of_ip_zero`, **`gs_eq_or_neg`** (φ² = ψ² + UCP ⇒ ψ = ±φ),
+  **`gs_unique_of_sign`** (sign-definite on R ⇒ unique), `gs_sign_W_bos`, **`gs_unique_W_bos`**,
+  `PhiY_eq_abs_RY`, `gs_sign_WY`, **`gs_unique_WY`**, **`gs_unique_W_fer`**, **`gs_unique_W`**,
+  **`exists_unique_gs_W_cont`**, **`exists_unique_gs_WY`**, **`ensDens_iff_W_cont`**,
+  **`ensVRep_iff_W_cont`**, **`ensDens_iff_WY`**; `gs_unique_SD` in `Line/SDFT`. Standard axioms.
+

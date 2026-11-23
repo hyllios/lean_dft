@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Line.HKY
+import DFT.Continuum.Line.Nondeg
 
 /-!
 # Spin-density functional theory on a line
@@ -17,8 +18,8 @@ equivalent to `(ρ↑, ρ↓)`, the density functional on pairs `(v↑, v↓)`.
 
 * `settingSD a w hw`: the `H¹₀` setting of the sector, with potentials in `Pot × Pot`;
 * `isGS_SD_iff`: ground states of `(v↑, v↓)` are the ground states of `settingWS (ymix a)` with
-  interaction `w + LS a (v↑, v↓)`; hence existence (`exists_isNGS_SD`) and unique continuation
-  (`gs_ne_zero_SD`) for continuous potentials;
+  interaction `w + LS a (v↑, v↓)`; hence existence (`exists_isNGS_SD`), unique continuation
+  (`gs_ne_zero_SD`) and nondegeneracy (`gs_unique_SD`) for continuous potentials;
 * `sep_SD`, `rigid_two`: separation, and rigidity for two species;
 * **`hk_SD`**: equal norms and equal spin densities force `v↑ - v↑'` to be constant when `a ≥ 1`
   and `v↓ - v↓'` to be constant when `a ≤ N - 1`;
@@ -147,6 +148,11 @@ theorem exists_isNGS_SD (hw : Continuous w) (p : Pot × Pot) :
 theorem gs_ne_zero_SD {p : Pot × Pot} {ψ : Cfg n → ℝ} (hψ : IsGS (settingSD a w hw) p ψ) :
     ∀ᵐ x ∂μN n, ψ x ≠ 0 :=
   gs_ne_zero_WY ((isGS_SD_iff p).1 hψ)
+
+/-- **Nondegeneracy** in the sector, for all continuous `v↑`, `v↓`, `w`. -/
+theorem gs_unique_SD {p : Pot × Pot} {ψ φ : Cfg n → ℝ} (hψ : IsGS (settingSD a w hw) p ψ)
+    (hφ : IsGS (settingSD a w hw) p φ) : ∃ c : ℝ, ψ =ᵐ[μN n] c • φ :=
+  gs_unique_WY ((isGS_SD_iff p).1 hψ) ((isGS_SD_iff p).1 hφ)
 
 lemma h0SD_null (hw : Continuous w) {φ : Cfg n → ℝ} (hφ : φ ∈ DomWS (ymix (n := n) a))
     (h0 : ip (μ := μN n) φ φ = 0) : 0 ≤ (settingSD a w hw).h0 φ φ :=

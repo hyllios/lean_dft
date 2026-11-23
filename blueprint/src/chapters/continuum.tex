@@ -804,6 +804,23 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   (Theorems~\ref{thm:line_ucp_bos} and~\ref{thm:line_ucp_fer}).
 \end{proof}
 
+\begin{theorem}[Nondegeneracy on $H^1_0$, continuous potentials]
+  \label{thm:line_nondeg_cont}
+  \lean{DFT.Continuum.isGS_add_smul, DFT.Continuum.gs_eq_or_neg, DFT.Continuum.gs_unique_of_sign, DFT.Continuum.Line.gs_sign_W_bos, DFT.Continuum.Line.gs_unique_W_bos, DFT.Continuum.Line.gs_sign_WY, DFT.Continuum.Line.gs_unique_WY, DFT.Continuum.Line.gs_unique_W_fer, DFT.Continuum.Line.gs_unique_W, DFT.Continuum.Line.exists_unique_gs_W_cont, DFT.Continuum.Line.exists_unique_gs_WY, DFT.Continuum.Line.ensDens_iff_W_cont, DFT.Continuum.Line.ensVRep_iff_W_cont, DFT.Continuum.Line.ensDens_iff_WY}
+  \leanok
+  \uses{thm:line_ucp_bos, thm:line_ucp_young, thm:line_ucp_fer}
+  For bosons, fermions and every spin sector on $[0,1]$, with continuous $v$ and $w$, the $H^1_0$ ground state is
+  unique up to a constant factor. Hence every ground-state ensemble has the density of the ground state, and
+  ensemble and pure-state $v$-representability coincide.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Ground states and null states form a linear space. $|\Psi|$ (bosons), resp.\ the chamber state $\Phi$ (spin sectors),
+  is a ground state with $\Phi^2=\Psi^2$, so $(\Phi+\Psi)(\Phi-\Psi)=0$; each factor is a ground state, hence nonzero a.e.,
+  or zero. So $\Psi=\pm\Phi$ has a fixed sign on the cube, resp.\ the Young chamber. If $\Psi_1,\Psi_2$ are ground
+  states, $\Psi_1-c\Psi_2$ with zero integral over that region cannot be a ground state, so it vanishes.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}
@@ -1080,7 +1097,7 @@ $(a,b)$, Young subgroup $\mathrm{YG}_a$).
 
 \begin{theorem}[Spin-density functional theory on a line]
   \label{thm:line_sdft}
-  \lean{DFT.Continuum.L_ae_const_of_ucp, DFT.Continuum.Line.LS, DFT.Continuum.Line.settingSD, DFT.Continuum.Line.isGS_SD_iff, DFT.Continuum.Line.exists_isNGS_SD, DFT.Continuum.Line.gs_ne_zero_SD, DFT.Continuum.Line.sep_SD, DFT.Continuum.Line.rigid_two, DFT.Continuum.Line.hk_SD, DFT.Continuum.Line.pvb, DFT.Continuum.Line.rhoSD, DFT.Continuum.Line.magSD, DFT.Continuum.Line.dens_SD_eq_of_rho_mag, DFT.Continuum.Line.sdft_hk_mixed, DFT.Continuum.Line.sdft_hk_polarised, DFT.Continuum.Line.sdft_nonunique}
+  \lean{DFT.Continuum.L_ae_const_of_ucp, DFT.Continuum.Line.LS, DFT.Continuum.Line.settingSD, DFT.Continuum.Line.isGS_SD_iff, DFT.Continuum.Line.exists_isNGS_SD, DFT.Continuum.Line.gs_ne_zero_SD, DFT.Continuum.Line.gs_unique_SD, DFT.Continuum.Line.sep_SD, DFT.Continuum.Line.rigid_two, DFT.Continuum.Line.hk_SD, DFT.Continuum.Line.pvb, DFT.Continuum.Line.rhoSD, DFT.Continuum.Line.magSD, DFT.Continuum.Line.dens_SD_eq_of_rho_mag, DFT.Continuum.Line.sdft_hk_mixed, DFT.Continuum.Line.sdft_hk_polarised, DFT.Continuum.Line.sdft_nonunique}
   \leanok
   \uses{thm:line_hk_young}
   Let $H=-\Delta+\sum_k\big(v(x_k)+\sigma_kb(x_k)\big)+w$ with continuous $v$, $b$, $w$, in the sector with $a$ spins up.
