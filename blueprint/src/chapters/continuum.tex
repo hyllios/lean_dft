@@ -775,6 +775,23 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $L^2$ with weakly convergent derivatives.
 \end{proof}
 
+\begin{theorem}[A fermionic ground state nonnegative on the ordered chamber]
+  \label{thm:line_fer_chamber}
+  \lean{DFT.Continuum.Line.H1W, DFT.Continuum.Line.h1W_of_mem, DFT.Continuum.Line.contDiff_trunc, DFT.Continuum.Line.trunc_wall, DFT.Continuum.Line.isWD_half_of_bound, DFT.Continuum.Line.Ord, DFT.Continuum.Line.isWD_chamber_of_bound, DFT.Continuum.Line.isWD_chamber, DFT.Continuum.Line.uC, DFT.Continuum.Line.PhiF, DFT.Continuum.Line.PhiF_eq_of_mem, DFT.Continuum.Line.PhiF_mem, DFT.Continuum.Line.abs_PhiF, DFT.Continuum.Line.kinW_PhiF_le, DFT.Continuum.Line.isGS_PhiF}
+  \leanok
+  \uses{lem:line_halfspace, lem:line_absW}
+  Let $\Psi$ be a fermionic $H^1_0$ ground state and $C=\{x_0<\dots<x_N\}$. Then $\mathbf 1_C\Psi$ has weak derivatives
+  $\mathbf 1_C\partial_k\Psi$, and the antisymmetrisation $\Phi=\sum_\sigma\operatorname{sgn}\sigma\,(\mathbf 1_C|\Psi|)\circ\sigma$ is again a
+  fermionic ground state, with $|\Phi|=|\Psi|$ a.e.\ and $\Phi=|\Psi|\ge0$ on $C$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The truncations of $\Psi$ are $C^2$ and vanish linearly at collisions, so restricting them to $C$ (one adjacent
+  pair at a time, as in Lemma~\ref{lem:line_halfspace}) commutes with weak derivatives; pass to the limit. The chain
+  rule gives $|\mathbf 1_C\Psi|\in H^1$, relabelling gives $\Phi$. At a configuration without collisions only the sorting
+  permutation contributes, so $|\Phi|=|\Psi|$ and $|\partial_k\Phi|\le|\partial_k\Psi|$, hence $Q(\Phi)\le Q(\Psi)$.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}

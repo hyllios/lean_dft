@@ -330,7 +330,7 @@ theorem isWD_half {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW .fer n) {i j : Fin (n 
     integral_congr_ae (ae_of_all _ fun x => by by_cases hx : x ∈ H <;> simp [hx, mul_comm])
   have L1 := tendsto_integral_mul_of_L2 (fun M => memLp_cont (continuous_trunc M Φ)) hΦ.1 hg1
     (tendsto_trunc hΦ.1)
-  have L2 := tendsto_trunc_dk hΦ k hg2
+  have L2 := tendsto_trunc_dk (h1W_of_mem hΦ) k hg2
   simp only [← e1] at L1
   simp only [← e2] at L2
   have heq : (fun M => ∫ x, H.indicator (trunc M Φ) x * dk k φ x ∂μN n) =

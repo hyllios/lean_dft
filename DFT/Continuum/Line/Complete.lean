@@ -224,6 +224,12 @@ lemma smd_pm' (σ : Equiv.Perm (Fin (n + 1))) (m : Fin (n + 1) → ℕ) (x : Cfg
   have h := smd_pm σ (pmI σ⁻¹ m) x
   rwa [pmI_pmI, inv_mul_cancel, pmI_one] at h
 
+lemma contDiff_trunc (M : ℕ) (Φ : Cfg n → ℝ) : ContDiff ℝ 2 (trunc M Φ) :=
+  ContDiff.sum fun m _ => contDiff_const.mul (contDiff_smd m)
+
+lemma trunc_wall (M : ℕ) (Φ : Cfg n → ℝ) : ∀ x k, (x k = 0 ∨ x k = 1) → trunc M Φ x = 0 :=
+  fun x k hk => by simp only [trunc, smd_face _ x k hk, mul_zero, Finset.sum_const_zero]
+
 /-- **The truncations are `C²` states** of the same exchange symmetry. -/
 theorem trunc_mem {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (M : ℕ) : trunc M Φ ∈ Dom τ n := by
   refine ⟨ContDiff.sum fun m _ => contDiff_const.mul (contDiff_smd m), fun σ x => ?_,
@@ -251,7 +257,7 @@ lemma cN_trunc (Φ : Cfg n → ℝ) (M : ℕ) (m' : Fin (n + 1) → ℕ) :
   rw [Finset.sum_ite_eq]
 
 /-- The kinetic energy of a truncation, in coefficients. -/
-lemma kin_trunc {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (M : ℕ) :
+lemma kin_trunc (Φ : Cfg n → ℝ) (M : ℕ) :
     ∫ x, ∑ k, dk k (trunc M Φ) x * dk k (trunc M Φ) x ∂μN n =
       ∑ m ∈ boxI n M, π ^ 2 * ksq m * cN m Φ ^ 2 := by
   have hF : (fun m => π ^ 2 * (ksq m : ℝ) * cN m (trunc M Φ) ^ 2) =
@@ -261,7 +267,7 @@ lemma kin_trunc {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (M : ℕ) :
       (∑ m ∈ boxI n M, if m ∈ boxI n M then π ^ 2 * (ksq m : ℝ) * cN m Φ ^ 2 else 0) :=
     hasSum_sum_of_ne_finset_zero fun m hm => by simp [hm]
   rw [Finset.sum_ite_mem, Finset.inter_self] at h
-  exact (hasSum_kin (trunc_mem hΦ M)).unique (by rw [hF]; exact h)
+  exact (hasSum_kin0 (contDiff_trunc M Φ) (trunc_wall M Φ)).unique (by rw [hF]; exact h)
 
 /-! ### Bessel's inequality for the weak derivatives -/
 
@@ -332,10 +338,10 @@ lemma dk_cmd (k : Fin (n + 1)) (m : Fin (n + 1) → ℕ) (x : Cfg n) :
   ring
 
 /-- **Bessel for the weak derivative**: `Σ_{m ∈ s} (π(m_k+1) ⟨s_m, Φ⟩)² ≤ ∫ |∂ₖΦ|²`. -/
-lemma bessel_dW {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (k : Fin (n + 1))
+lemma bessel_dW {Φ : Cfg n → ℝ} (hΦ : H1W Φ) (k : Fin (n + 1))
     (s : Finset (Fin (n + 1) → ℕ)) :
     ∑ m ∈ s, (π * (m k + 1) * cN m Φ) ^ 2 ≤ ∫ x, dW k Φ x * dW k Φ x ∂μN n := by
-  have hW := dW_spec (hΦ.2.1 k)
+  have hW := dW_spec (hΦ.2 k)
   set v : (Fin (n + 1) → ℕ) → HN n := fun m => (memLp_cont (contDiff_cmd k m).continuous).toLp
   have hv : Orthonormal ℝ v := by
     rw [orthonormal_iff_ite]
@@ -362,10 +368,10 @@ lemma bessel_dW {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (k : Fin (n + 1))
   rw [norm_sq_toLp]; congr 1; funext x; ring
 
 /-- **The truncations have kinetic energy at most the weak kinetic energy.** -/
-theorem kin_trunc_le {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (M : ℕ) :
+theorem kin_trunc_le {Φ : Cfg n → ℝ} (hΦ : H1W Φ) (M : ℕ) :
     ∫ x, ∑ k, dk k (trunc M Φ) x * dk k (trunc M Φ) x ∂μN n ≤
       ∑ k, ∫ x, dW k Φ x * dW k Φ x ∂μN n := by
-  rw [kin_trunc hΦ]
+  rw [kin_trunc Φ]
   have e : ∑ m ∈ boxI n M, π ^ 2 * (ksq m : ℝ) * cN m Φ ^ 2 =
       ∑ k, ∑ m ∈ boxI n M, (π * (m k + 1) * cN m Φ) ^ 2 := by
     rw [Finset.sum_comm]

@@ -266,7 +266,7 @@ theorem sqrt_dens_H1W {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
   have hu1 : ∀ M, u M 1 = 0 := fun M => by
     simp [u, (sqrt_dens_H1 (hP M)).2.2.1]
   have hC : ∀ M, ∫ t, deriv (u M) t ^ 2 ∂μ1 ≤ ∑ k, ∫ x, dW k Φ x * dW k Φ x ∂μN n :=
-    fun M => (integral_deriv_ureg_le (hP M) (hε M)).trans (kin_trunc_le hΦ M)
+    fun M => (integral_deriv_ureg_le (hP M) (hε M)).trans (kin_trunc_le (h1W_of_mem hΦ) M)
   -- `u_M → √ρ` in `L²`
   have hlim : Tendsto (fun M => toHL (hu M).continuous) atTop (𝓝 f) := by
     rw [tendsto_iff_norm_sub_tendsto_zero]

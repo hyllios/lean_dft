@@ -79,7 +79,7 @@ lemma Q_le_trunc (v : Pot) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (M : �
   have hP := trunc_mem hΨ M
   rw [← QW_eq_Q v hP, QW_eq v (Dom_le_DomW hP)]
   gcongr
-  have h := kin_trunc_le hΨ M
+  have h := kin_trunc_le (h1W_of_mem hΨ) M
   rw [kinW]
   refine le_trans (le_of_eq ?_) h
   rw [integral_finsetSum (f := fun k x => dk k (trunc M Ψ) x * dk k (trunc M Ψ) x) _
@@ -275,8 +275,8 @@ lemma sum_lam_le {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (s : Finset (Fin 
     omega
   refine (Finset.sum_le_sum_of_subset_of_nonneg hsub fun m _ _ =>
     mul_nonneg (lam_nonneg m) (sq_nonneg _)).trans ?_
-  have h := kin_trunc_le hΨ M
-  rw [kin_trunc hΨ] at h
+  have h := kin_trunc_le (h1W_of_mem hΨ) M
+  rw [kin_trunc Ψ] at h
   simpa [lam, kinW] using h
 
 lemma adm_cNW {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (h1 : ∫ x, Ψ x ^ 2 ∂μN n = 1) :

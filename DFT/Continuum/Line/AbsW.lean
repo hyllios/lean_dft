@@ -111,11 +111,11 @@ lemma tendsto_Geps' (t : ℝ) :
   exact h
 
 /-- **`|Φ|` has weak derivatives `rsgn(Φ) ∂ₖΦ`.** -/
-theorem isWD_abs {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (k : Fin (n + 1)) :
+theorem isWD_abs {Φ : Cfg n → ℝ} (hΦ : H1W Φ) (k : Fin (n + 1)) :
     IsWD k (fun x => |Φ x|) (fun x => rsgn (Φ x) * dW k Φ x) := by
   set ε : ℕ → ℝ := fun j => 1 / ((j : ℝ) + 1)
   have hε : ∀ j, 0 < ε j := fun j => by positivity
-  have hW := dW_spec (hΦ.2.1 k)
+  have hW := dW_spec (hΦ.2 k)
   have hcomp : ∀ j, IsWD k (fun x => Geps (ε j) (Φ x)) (fun x => Geps' (ε j) (Φ x) * dW k Φ x) :=
     fun j => isWD_comp hΦ (hasDerivAt_Geps (hε j)) (continuous_Geps' (hε j))
       (abs_Geps'_le (hε j)) (Geps_zero (hε j)) k
@@ -163,14 +163,14 @@ lemma abs_ch (τ : Stat) (σ : Equiv.Perm (Fin (n + 1))) : |ch τ σ| = 1 := by
 /-- `|Φ|` is a bosonic `H¹₀` state, for either statistics of `Φ`. -/
 theorem abs_mem_DomW {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
     (fun x => |Φ x|) ∈ DomW .bos n :=
-  ⟨hΦ.1.abs, fun k => ⟨_, isWD_abs hΦ k⟩, fun σ => by
+  ⟨hΦ.1.abs, fun k => ⟨_, isWD_abs (h1W_of_mem hΦ) k⟩, fun σ => by
     filter_upwards [hΦ.2.2 σ] with x hx
     rw [hx, abs_mul, abs_ch, ch_bos]⟩
 
 /-- **Kato's inequality in `H¹₀`**: `T(|Φ|) ≤ T(Φ)`. -/
 theorem kinW_abs_le {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) : kinW (fun x => |Φ x|) ≤ kinW Φ := by
   refine Finset.sum_le_sum fun k _ => ?_
-  have hd := dW_ae_eq (isWD_abs hΦ k)
+  have hd := dW_ae_eq (isWD_abs (h1W_of_mem hΦ) k)
   have hm := memLp_dW hΦ k
   have e : ∫ x, dW k (fun x => |Φ x|) x * dW k (fun x => |Φ x|) x ∂μN n =
       ∫ x, (rsgn (Φ x) * dW k Φ x) * (rsgn (Φ x) * dW k Φ x) ∂μN n :=

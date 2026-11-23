@@ -102,16 +102,17 @@ lemma integral_smd_dk (k : Fin (n + 1)) (m : Fin (n + 1) → ℕ) {Ψ G : Cfg n 
 
 section trunc
 
-variable {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n)
+variable {Φ : Cfg n → ℝ} (hΦ : H1W Φ)
 include hΦ
 
 /-- The truncations have kinetic energy at most that of `Φ`, in each direction. -/
 lemma norm_dk_trunc_sq_le (k : Fin (n + 1)) (M : ℕ) :
     ∫ x, dk k (trunc M Φ) x ^ 2 ∂μN n ≤ kinW Φ := by
-  have hP := trunc_mem hΦ M
+  have hc : ∀ k, Continuous (dk k (trunc M Φ)) := fun k =>
+    continuous_dk_of_C1 ((contDiff_trunc M Φ).of_le (by norm_num)) k
   have h := kin_trunc_le hΦ M
   rw [integral_finsetSum (f := fun k x => dk k (trunc M Φ) x * dk k (trunc M Φ) x) _
-    fun k _ => integrableN ((cont_dk hP k).mul (cont_dk hP k))] at h
+    fun k _ => integrableN ((hc k).mul (hc k))] at h
   refine le_trans ?_ h
   have := Finset.single_le_sum (f := fun k => ∫ x, dk k (trunc M Φ) x * dk k (trunc M Φ) x ∂μN n)
     (fun k _ => integral_nonneg fun x => mul_self_nonneg _) (Finset.mem_univ k)
@@ -123,8 +124,8 @@ theorem tendsto_trunc_dk (k : Fin (n + 1)) {g : Cfg n → ℝ} (hg : MemLp g 2 (
     Tendsto (fun M => ∫ x, g x * dk k (trunc M Φ) x ∂μN n) atTop
       (𝓝 (∫ x, g x * dW k Φ x ∂μN n)) := by
   have hPm : ∀ M, MemLp (dk k (trunc M Φ)) 2 (μN n) := fun M =>
-    memLp_cont (cont_dk (trunc_mem hΦ M) k)
-  have hW := dW_spec (hΦ.2.1 k)
+    memLp_cont (continuous_dk_of_C1 ((contDiff_trunc M Φ).of_le (by norm_num)) k)
+  have hW := dW_spec (hΦ.2 k)
   set x : ℕ → HN n := fun M => (hPm M).toLp _
   set x0 : HN n := hW.1.toLp _
   have hC : ∀ M, ‖x M‖ ≤ √(kinW Φ) := fun M => by
@@ -135,7 +136,7 @@ theorem tendsto_trunc_dk (k : Fin (n + 1)) {g : Cfg n → ℝ} (hg : MemLp g 2 (
     intro m
     simp only [bN_apply, x, x0, eN, inner_toLp_toLp]
     rw [integral_smd_dk k m hW]
-    simp only [fun M => integral_smd_dk k m (isWD_dk (trunc_mem hΦ M) k)]
+    simp only [fun M => integral_smd_dk k m (isWD_of_C2 (contDiff_trunc M Φ) (trunc_wall M Φ) k)]
     refine Tendsto.const_mul _ ?_
     exact tendsto_integral_mul_of_L2 (fun M => memLp_cont (continuous_trunc M Φ)) hΦ.1
       (memLp_cont (contDiff_cmd k m).continuous) (tendsto_trunc hΦ.1)

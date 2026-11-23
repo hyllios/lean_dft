@@ -18,10 +18,12 @@ import DFT.Continuum.Line.Basic
 import DFT.Continuum.Line.Bosons
 import DFT.Continuum.Line.Chain
 import DFT.Continuum.Line.Chamber
+import DFT.Continuum.Line.ChamberGS
 import DFT.Continuum.Line.Closure
 import DFT.Continuum.Line.Complete
 import DFT.Continuum.Line.ContHK
 import DFT.Continuum.Line.Density
+import DFT.Continuum.Line.FerGS
 import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions

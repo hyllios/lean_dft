@@ -173,6 +173,11 @@ def DomW (τ : Stat) (n : ℕ) : Submodule ℝ (Cfg n → ℝ) where
       filter_upwards [ha.2.2 σ] with x h1
       simp only [Pi.smul_apply, smul_eq_mul, h1]; ring⟩
 
+/-- `L²` functions with all weak first derivatives (zero boundary values), no symmetry. -/
+def H1W (Φ : Cfg n → ℝ) : Prop := MemLp Φ 2 (μN n) ∧ ∀ k, ∃ G, IsWD k Φ G
+
+lemma h1W_of_mem {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) : H1W Φ := ⟨h.1, h.2.1⟩
+
 section dom
 
 variable {Φ Ψ : Cfg n → ℝ}

@@ -327,7 +327,7 @@ theorem bad_null (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n
           have := abs_Lg_le hε (u x)
           rw [div_eq_inv_mul, ← one_div] at this
           exact this)
-    have hwD := isWD_comp hD (hasDerivAt_Lg hε) (continuous_Lg' hε) (Lg'_le hε) Lg_zero k
+    have hwD := isWD_comp (h1W_of_mem hD) (hasDerivAt_Lg hε) (continuous_Lg' hε) (Lg'_le hε) Lg_zero k
     have htr := translate_lintegral_le hwL hwD hh (measurableSet_Sa a h k) (measurableSet_Qa a)
       hQc (Sa_segment k)
     have hint : ∫⁻ x in S, ‖wε (x + h • e) - wε x‖ₑ ≤ ENNReal.ofReal (h * B) := by

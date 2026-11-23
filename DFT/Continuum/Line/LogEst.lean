@@ -182,7 +182,7 @@ theorem log_estimate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂�
     hum.aestronglyMeasurable) (1 / ε) (ae_of_all _ fun x => by
       rw [Real.norm_eq_abs]; exact abs_Gr_le hε _)
   have hg : ∀ k, IsWD k g (fun x => 1 / (|u x| + ε) ^ 2 * dW k u x) := fun k =>
-    isWD_comp hD (hasDerivAt_Gr hε) (continuous_Gr' hε) (Gr'_le hε) Gr_zero k
+    isWD_comp (h1W_of_mem hD) (hasDerivAt_Gr hε) (continuous_Gr' hε) (Gr'_le hε) Gr_zero k
   set φ : Cfg n → ℝ := fun x => ε⁻¹ * ζ x + (-1) * (ζ x * g x)
   have hL1 : MemLp (fun x => ε⁻¹ * ζ x) 2 (μN n) := memLp_cont (continuous_const.mul hζ.continuous)
   have hL2 : MemLp (fun x => -1 * (ζ x * g x)) 2 (μN n) :=

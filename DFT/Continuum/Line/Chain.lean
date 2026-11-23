@@ -57,7 +57,7 @@ lemma exists_ae_subseq {f : ℕ → Cfg n → ℝ} {f0 : Cfg n → ℝ} (hf : �
   simpa using ENNReal.tendsto_ofReal h.sqrt
 
 /-- **The chain rule in `H¹₀`**: `∂ₖ (G ∘ Φ) = G'(Φ) ∂ₖ Φ` for `G ∈ C¹`, `|G'| ≤ L`, `G(0) = 0`. -/
-theorem isWD_comp {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {G G' : ℝ → ℝ}
+theorem isWD_comp {Φ : Cfg n → ℝ} (hΦ : H1W Φ) {G G' : ℝ → ℝ}
     (hG : ∀ t, HasDerivAt G (G' t) t) (hG'c : Continuous G') {L : ℝ} (hL : ∀ t, |G' t| ≤ L)
     (hG0 : G 0 = 0) (k : Fin (n + 1)) :
     IsWD k (fun x => G (Φ x)) (fun x => G' (Φ x) * dW k Φ x) := by
@@ -73,7 +73,7 @@ theorem isWD_comp {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {G G' : ℝ → 
     have h := hl.dist_le_mul a b
     rwa [Real.dist_eq, Real.dist_eq, Real.coe_toNNReal _ hL0] at h
   have hGb : ∀ t, |G t| ≤ L * |t| := fun t => by simpa [hG0] using hLip t 0
-  have hW := dW_spec (hΦ.2.1 k)
+  have hW := dW_spec (hΦ.2 k)
   have hΦm := hΦ.1.aestronglyMeasurable
   have hGΦ : MemLp (fun x => G (Φ x)) 2 (μN n) :=
     hΦ.1.of_le_mul (c := L) (hGC1.continuous.comp_aestronglyMeasurable hΦm)
@@ -86,17 +86,18 @@ theorem isWD_comp {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {G G' : ℝ → 
     rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_mul]
     exact mul_le_mul_of_nonneg_right (hL _) (abs_nonneg _)), fun φ hφ => ?_⟩
   set P : ℕ → Cfg n → ℝ := fun M => trunc M Φ with hPdef
-  have hP : ∀ M, P M ∈ Dom τ n := trunc_mem hΦ
+  have hP2 : ∀ M, ContDiff ℝ 2 (P M) := fun M => contDiff_trunc M Φ
+  have hPw : ∀ M, ∀ x j, (x j = 0 ∨ x j = 1) → P M x = 0 := fun M => trunc_wall M Φ
   have hPc : ∀ M, Continuous (P M) := fun M => continuous_trunc M Φ
   -- the classical identity for the truncations
   have hM : ∀ M, ∫ x, G (P M x) * dk k φ x ∂μN n =
       -∫ x, G' (P M x) * dk k (P M) x * φ x ∂μN n := fun M => by
-    have hC1 : ContDiff ℝ 1 (fun x => G (P M x)) := hGC1.comp ((hP M).1.of_le (by norm_num))
+    have hC1 : ContDiff ℝ 1 (fun x => G (P M x)) := hGC1.comp ((hP2 M).of_le (by norm_num))
     have hface : ∀ x j, (x j = 0 ∨ x j = 1) → G (P M x) = 0 := fun x j hj => by
-      rw [(hP M).2.2 x j hj, hG0]
+      rw [hPw M x j hj, hG0]
     have h := (isWD_of_C1 hC1 hface k).2 φ hφ
     have hdk : ∀ x, dk k (fun x => G (P M x)) x = G' (P M x) * dk k (P M) x := fun x => by
-      have hf := (((hP M).1.differentiable (by norm_num)) x).hasFDerivAt
+      have hf := (((hP2 M).differentiable (by norm_num)) x).hasFDerivAt
       have h2 := ((hG (P M x)).comp_hasFDerivAt x hf).fderiv
       simp only [dk]
       rw [show (fun x => G (P M x)) = G ∘ P M from rfl, h2]
@@ -136,7 +137,7 @@ theorem isWD_comp {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {G G' : ℝ → 
     have h1 : MemLp (fun x => G' (P (ns j) x) - G' (Φ x)) 2 (μN n) :=
       (memLp_cont (hG'c.comp (hPc _))).sub hG'Φ
     simpa only [D, mul_comm] using memLp_mul_cont hφ.continuous h1
-  have hdP : ∀ j, MemLp (dk k (P (ns j))) 2 (μN n) := fun j => memLp_cont (cont_dk (hP _) k)
+  have hdP : ∀ j, MemLp (dk k (P (ns j))) 2 (μN n) := fun j => memLp_cont (continuous_dk_of_C1 ((hP2 _).of_le (by norm_num)) k)
   have hsplit : ∀ j, ∫ x, G' (P (ns j) x) * dk k (P (ns j)) x * φ x ∂μN n =
       ∫ x, D j x * dk k (P (ns j)) x ∂μN n + ∫ x, g2 x * dk k (P (ns j)) x ∂μN n := fun j => by
     rw [← integral_add (int_mul_L2 (hDm j) (hdP j)) (int_mul_L2 hg2 (hdP j))]

@@ -441,6 +441,14 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `cutH`, `abs_le_of_plane` (mean value towards the plane), `isWD_half_C1`, `fer_plane`,
     **`isWD_half`**: 1_{xᵢ<xⱼ}Φ has weak derivatives 1_{xᵢ<xⱼ}∂ₖΦ for fermionic Φ ∈ H¹₀ (via
     truncations; no Hardy inequality needed). Next (f2): Φ = S·|Ψ| ∈ fermionic H¹₀, T(Φ) ≤ T(Ψ).
+    (f2) DONE: refactor `H1W Φ` (MemLp + all weak derivatives, no symmetry; `h1W_of_mem`) —
+    `bessel_dW`, `kin_trunc(_le)`, `norm_dk_trunc_sq_le`, `tendsto_trunc_dk`, `isWD_comp`,
+    `isWD_abs` now take `H1W` (`contDiff_trunc`, `trunc_wall` replace `trunc_mem`).
+    `Line/ChamberGS`: `isWD_half_of_bound` (half-space for IsWD F with |F| ≤ L|xⱼ−xᵢ|), `Ord`,
+    `isWD_chamber_of_bound`, **`isWD_chamber`** (1_C Ψ ∈ H¹ for fermionic Ψ).
+    `Line/FerGS`: `uC` = |1_C Ψ|, `PhiF` = alt .fer uC, `PhiF_eq_of_mem` (= |Ψ| on C),
+    `PhiF_mem`, `abs_PhiF`, `kinW_PhiF_le`, **`isGS_PhiF`**. Next (f3): log estimate for PhiF on the
+    chamber with antisymmetric test functions alt(1_C η² Gr(PhiF)).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
