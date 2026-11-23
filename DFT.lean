@@ -29,6 +29,7 @@ import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions
 import DFT.Continuum.Line.H1Approx
+import DFT.Continuum.Line.HKY
 import DFT.Continuum.Line.HalfSpace
 import DFT.Continuum.Line.HardCore
 import DFT.Continuum.Line.Hopf

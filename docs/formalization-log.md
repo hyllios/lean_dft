@@ -498,6 +498,9 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     **`log_estimate_Y`**. `Line/UcpY`: `ae_of_ae_RY`, `etaY` = etaS · Π_{i≠j same group}(xᵢ−xⱼ),
     `logData_ballY`, **`gs_ne_zero_WY`**: every H¹₀ GS of mixed symmetry (a, N−a) is ≠ 0 a.e.,
     continuous v and w. Standard axioms. (UcpFer could now be derived as the case a = N.)
+  - P3 DONE: `Line/HKY`: `DomY_le_DomWS`, `ae_eq_zero_of_integral_altY_L1`, `sep_lineWY`,
+    `rigidL_lineWY`, **`hk_line_WY`**, **`lieb_line_WY_of`**, **`lieb_line_WY`**: HK and Lieb in
+    each S_z sector (a spins up), continuous v and w. Next P4: spin-orbital states and SDFT.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
