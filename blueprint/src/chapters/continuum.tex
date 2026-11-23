@@ -1067,3 +1067,69 @@ $(a,b)$, Young subgroup $\mathrm{YG}_a$).
   the weak energy form and the $L^2$ product. The top sector is an $H^1_0$ function of mixed symmetry, whose sine
   coefficients give energy at least $E(a,b)$ per norm. The $C^2$ states give the upper bound.
 \end{proof}
+
+\section{Spin on a line: HK, Lieb and SDFT for continuous potentials}
+
+\begin{theorem}[Ground states of mixed symmetry exist in $H^1_0$]
+  \label{thm:line_young_exists}
+  \lean{DFT.Continuum.Line.DomWS, DFT.Continuum.Line.settingWS, DFT.Continuum.Line.DomW_eq_DomWS, DFT.Continuum.Line.serWS_mem, DFT.Continuum.Line.exists_isNGS_WS_cont, DFT.Continuum.Line.exists_isNGS_WY_cont}
+  \leanok
+  \uses{thm:line_lieb_cont}
+  For any symmetry type (a set of relabellings with a character) that admits a normalised coefficient sequence,
+  in particular for the Young symmetry of type $(a,N-a)$, the $H^1_0$ Hamiltonian with continuous $v$ and $w$ has
+  a normalised ground state.
+\end{theorem}
+\begin{proof}
+  \leanok
+  As for bosons and fermions: the coefficient-space minimiser for continuous potentials is the sine series of an
+  $H^1_0$ state of the same symmetry, with the same energy.
+\end{proof}
+
+\begin{theorem}[Unique continuation for ground states of mixed symmetry]
+  \label{thm:line_ucp_young}
+  \lean{DFT.Continuum.Line.isWD_pairs_of_bound, DFT.Continuum.Line.isWD_RY, DFT.Continuum.Line.YG_eq_of_mem_RY, DFT.Continuum.Line.sumY, DFT.Continuum.Line.PhiY, DFT.Continuum.Line.PhiBY, DFT.Continuum.Line.isGS_PhiY, DFT.Continuum.Line.PhiBY_ae_eq_abs, DFT.Continuum.Line.eq_PhiBY, DFT.Continuum.Line.log_estimate_Y, DFT.Continuum.Line.etaY, DFT.Continuum.Line.ae_of_ae_RY, DFT.Continuum.Line.gs_ne_zero_WY}
+  \leanok
+  \uses{thm:line_young_exists, thm:line_ucp_fer}
+  For continuous $v$ and $w$, every $H^1_0$ ground state of Young symmetry $(a,N-a)$ is nonzero almost everywhere.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The fermionic argument of Theorem~\ref{thm:line_ucp_fer} with the Young group in place of all relabellings and
+  the chamber $R_Y$ (each group ordered) in place of the ordered chamber. Restriction to $R_Y$ commutes with weak
+  derivatives because the truncations vanish on same-group planes. The sorting relabelling is unique, after
+  shifting the second group by $2$. The cutoff vanishes on the walls and the same-group diagonals.
+\end{proof}
+
+\begin{theorem}[HK and the Lieb functional in a spin sector]
+  \label{thm:line_hk_young}
+  \lean{DFT.Continuum.Line.DomY_le_DomWS, DFT.Continuum.Line.ae_eq_zero_of_integral_altY_L1, DFT.Continuum.Line.sep_lineWY, DFT.Continuum.Line.rigidL_lineWY, DFT.Continuum.Line.hk_line_WY, DFT.Continuum.Line.lieb_line_WY_of, DFT.Continuum.Line.lieb_line_WY}
+  \leanok
+  \uses{thm:line_ucp_young}
+  In the sector with $a$ spins up, with continuous $v$ and $w$: ground states exist, equal densities force $v-v'$
+  constant, and at a ground-state density the Lieb functional has $-v$ as its unique subgradient up to constants.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Separation with test functions $\sum_{\sigma\in Y_a}\operatorname{sgn}\sigma\,\psi\circ\sigma$, rigidity, unique
+  continuation, and the general Hohenberg--Kohn and Lieb arguments.
+\end{proof}
+
+\begin{theorem}[Spin-density functional theory on a line]
+  \label{thm:line_sdft}
+  \lean{DFT.Continuum.General.L_ae_const_of_ucp, DFT.Continuum.Line.LS, DFT.Continuum.Line.settingSD, DFT.Continuum.Line.isGS_SD_iff, DFT.Continuum.Line.exists_isNGS_SD, DFT.Continuum.Line.gs_ne_zero_SD, DFT.Continuum.Line.sep_SD, DFT.Continuum.Line.rigid_two, DFT.Continuum.Line.hk_SD, DFT.Continuum.Line.pvb, DFT.Continuum.Line.rhoSD, DFT.Continuum.Line.magSD, DFT.Continuum.Line.dens_SD_eq_of_rho_mag, DFT.Continuum.Line.sdft_hk_mixed, DFT.Continuum.Line.sdft_hk_polarised, DFT.Continuum.Line.sdft_nonunique}
+  \leanok
+  \uses{thm:line_hk_young}
+  Let $H=-\Delta+\sum_k\big(v(x_k)+\sigma_kb(x_k)\big)+w$ with continuous $v$, $b$, $w$, in the sector with $a$ spins up.
+  Ground states exist and are nonzero almost everywhere. If ground states of $(v,b)$ and $(v',b')$ have the same norm,
+  density $\rho$ and magnetisation $m$, then $v-v'$ and $b-b'$ are constant when $1\le a\le N-1$, while for $a=N$
+  only $(v+b)-(v'+b')$ is constant; indeed for $a=N$ the potentials $(v+d,b-d)$ have the same ground states for
+  every $d$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  In the sector, spin-up particles see $v_\uparrow=v+b$ and spin-down particles $v_\downarrow=v-b$, and $(\rho,m)$
+  determine the densities $(\rho_\uparrow,\rho_\downarrow)$. For fixed potentials the coupling is a continuous
+  interaction, so existence and unique continuation follow from the previous theorems. A shared ground state makes
+  $\sum_{k<a}\Delta v_\uparrow(x_k)+\sum_{k\ge a}\Delta v_\downarrow(x_k)$ constant; moving one particle of each
+  species shows that each present species sees a constant difference.
+\end{proof}

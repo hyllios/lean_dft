@@ -45,6 +45,7 @@ import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Pauli
 import DFT.Continuum.Line.Realize
 import DFT.Continuum.Line.Represent
+import DFT.Continuum.Line.SDFT
 import DFT.Continuum.Line.Smooth
 import DFT.Continuum.Line.SpinAlg
 import DFT.Continuum.Line.SpinBridge

@@ -176,11 +176,11 @@ theorem weak_hk {v v' : P} {ψ ψ' : X → ℝ} (hψ : IsGS S v ψ) (hψ' : IsGS
   rw [heq, hn]
   exact hmin' φ hφ
 
-/-- **Strong Hohenberg–Kohn, conditional on unique continuation.** If `v` and `v'` share a ground
-state `ψ` that vanishes only on a null set, then `v - v'` is a multiple of `one`. -/
-theorem strong_hk_of_ucp (hsep : Sep S) {one : P} (hrig : RigidL S one) {v v' : P}
+/-- **A shared ground state forces a constant coupling difference.** If `v` and `v'` share a
+ground state `ψ` that vanishes only on a null set, then `L(v - v')` is a.e. constant. -/
+theorem L_ae_const_of_ucp (hsep : Sep S) {v v' : P}
     {ψ : X → ℝ} (hψ : IsGS S v ψ) (hψ' : IsGS S v' ψ) (hucp : ∀ᵐ x ∂μ, ψ x ≠ 0) :
-    ∃ k : ℝ, v - v' = k • one := by
+    ∃ c : ℝ, S.L (v - v') =ᵐ[μ] fun _ => c := by
   have hD := hψ.1
   set c := Q S v ψ / ip (μ := μ) ψ ψ - Q S v' ψ / ip (μ := μ) ψ ψ
   set g : X → ℝ := fun x => (S.L (v - v') x - c) * ψ x
@@ -208,6 +208,14 @@ theorem strong_hk_of_ucp (hsep : Sep S) {one : P} (hrig : RigidL S one) {v v' : 
     rcases hx with h | h
     · linarith
     · exact absurd h hx0
+  exact ⟨c, hL⟩
+
+/-- **Strong Hohenberg–Kohn, conditional on unique continuation.** If `v` and `v'` share a ground
+state `ψ` that vanishes only on a null set, then `v - v'` is a multiple of `one`. -/
+theorem strong_hk_of_ucp (hsep : Sep S) {one : P} (hrig : RigidL S one) {v v' : P}
+    {ψ : X → ℝ} (hψ : IsGS S v ψ) (hψ' : IsGS S v' ψ) (hucp : ∀ᵐ x ∂μ, ψ x ≠ 0) :
+    ∃ k : ℝ, v - v' = k • one := by
+  obtain ⟨c, hL⟩ := L_ae_const_of_ucp hsep hψ hψ' hucp
   exact hrig _ c hL
 
 /-- **Hohenberg–Kohn, conditional on unique continuation.** If the ground states `ψ` of `v` and
