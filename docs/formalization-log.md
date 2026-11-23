@@ -365,9 +365,15 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
   - `Box/Dense`: `gsEr` (real GS energy, `gsE_eq`), `densL` (density as a functional, norm ≤ 1),
     `gsEr_concave`, `gsEr_lipschitz` (1-Lipschitz in sup norm), `supergrad_of_isNGS`
     (Hellmann–Feynman), `liebF_of_supergrad`, **`dense_supergrad`**, `dense_supergrad_of_nst`.
-  - Next: item 4b, the converse of Hellmann–Feynman (every supergradient of E at v is the GS
-    density of v). Needs a spectral gap / differentiability of E; via Picone this is a weighted
-    Poincaré inequality with weight ψ² on (0,1).
+- DONE (2026-11-23) item 4b `Box/Diff`: converse Hellmann–Feynman, so v-rep densities are dense.
+  - No spectral gap needed: GS = shooting solution; `estar_eq_gsEr` (E* = E, so E* 1-Lipschitz),
+    `fsh_close` (Gronwall via `sol_dist_le`: |ψ_{E*(v')} − ψ_{E*(v)}| ≤ C‖v'−v‖ on [0,1]),
+    `tendsto_Nsh` (∫ h ψ² continuous along v + t u), `exists_gsN` (normalised GS, density
+    ∫uψ²/∫ψ²).
+  - **`supergrad_eq`**: a supergradient of E at v is the density of a normalised GS of v (E is
+    Gâteaux differentiable). **`dense_pureVRep`**, `dense_pureVRep_of_nst`: every finite-F
+    (in particular every N-rep) density is a dual-norm limit of pure v-rep densities.
+  - Items 1–4 of the v-representability plan are complete (N=1 box for 3–4).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

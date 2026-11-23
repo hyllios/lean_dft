@@ -1,5 +1,6 @@
 import DFT.Continuum.Box.Basic
 import DFT.Continuum.Box.Dense
+import DFT.Continuum.Box.Diff
 import DFT.Continuum.Box.Extend
 import DFT.Continuum.Box.Ground
 import DFT.Continuum.Box.Lieb

@@ -708,6 +708,23 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $\{(y,t):t<-\eta\|y\|\}$ gives a linear minorant $\ell$ of $f$ with $\|\ell\|\le\eta$, and $\rho'=\rho-\ell$.
 \end{proof}
 
+\begin{theorem}[$v$-representable densities are dense]
+  \label{thm:box_vrep_dense}
+  \lean{DFT.Continuum.Box.fsh, DFT.Continuum.Box.Nsh, DFT.Continuum.Box.exists_gsN, DFT.Continuum.Box.estar_eq_gsEr, DFT.Continuum.Box.fsh_close, DFT.Continuum.Box.tendsto_Nsh, DFT.Continuum.Box.supergrad_eq, DFT.Continuum.Box.dense_pureVRep, DFT.Continuum.Box.dense_pureVRep_of_nst}
+  \leanok
+  \uses{thm:box_dense, thm:box_vrep}
+  For one particle in the box, every supergradient of $E$ at $v$ is the density of the ground state of $v$ ($E$ is
+  G\^ateaux differentiable). Hence every density of finite Lieb functional, in particular every $N$-representable
+  density, is a limit in the dual norm of $C([0,1])$ of pure $v$-representable densities.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The ground state is the shooting solution $\psi_{E^*}$, and $E^*=E$ is $1$-Lipschitz. Gronwall gives
+  $|\psi_{E^*(v+tu)}-\psi_{E^*(v)}|\le C|t|\|u\|$ on $[0,1]$, so the ground-state density $\rho_t$ of $v+tu$ tends to
+  $\rho_0$. If $\rho'$ is a supergradient at $v$, then $E(v)+t\rho_t(u)\le E(v+tu)\le E(v)+t\rho'(u)$, so
+  $\rho_0(u)\le\rho'(u)$ for all $u$, and equality follows from $u\mapsto-u$. Combine with Theorem~\ref{thm:box_dense}.
+\end{proof}
+
 \begin{theorem}[Hard-core bosons]
   \label{thm:line_hardcore}
   \lean{DFT.Continuum.Line.hk_hardcore_line, DFT.Continuum.Line.lieb_hardcore_line, DFT.Continuum.Line.exists_unique_gs_hardcore, DFT.Continuum.Line.nrep_hardcore, DFT.Continuum.Line.tonks_girardeau}
