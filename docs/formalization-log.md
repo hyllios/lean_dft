@@ -599,4 +599,9 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   `PhiY_eq_abs_RY`, `gs_sign_WY`, **`gs_unique_WY`**, **`gs_unique_W_fer`**, **`gs_unique_W`**,
   **`exists_unique_gs_W_cont`**, **`exists_unique_gs_WY`**, **`ensDens_iff_W_cont`**,
   **`ensVRep_iff_W_cont`**, **`ensDens_iff_WY`**; `gs_unique_SD` in `Line/SDFT`. Standard axioms.
+- C DONE: `Line/HardCoreW`: `gA_of_strictMono`, `gA_sort`, **`isWD_mulA`** (∂(AΨ) = A∂Ψ for
+  fermionic H¹₀ Ψ, via `isWD_RY`/`isWD_sumY` with a = N), `mulA_memW`, `DomHCW`, `settingHCW`,
+  `h0W_mulA`, `isGS_mulA_W_iff`, `gsE_hcW`, `liebF_hcW`, **`gs_ne_zero_hcW`**,
+  **`exists_unique_gs_hcW`**, **`hk_hardcore_W`**, **`lieb_hardcore_W_of`** (continuous v, w).
+  Supersedes `exists_unique_gs_hardcore` (cosine class) and `exists_unique_gs_hardcore_smooth`.
 

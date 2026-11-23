@@ -30,6 +30,7 @@ import DFT.Continuum.Line.H1Approx
 import DFT.Continuum.Line.HKY
 import DFT.Continuum.Line.HalfSpace
 import DFT.Continuum.Line.HardCore
+import DFT.Continuum.Line.HardCoreW
 import DFT.Continuum.Line.Hopf
 import DFT.Continuum.Line.Invariant
 import DFT.Continuum.Line.Lieb

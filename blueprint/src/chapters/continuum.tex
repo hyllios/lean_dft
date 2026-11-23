@@ -821,6 +821,22 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   states, $\Psi_1-c\Psi_2$ with zero integral over that region cannot be a ground state, so it vanishes.
 \end{proof}
 
+\begin{theorem}[Hard-core bosons on $H^1_0$, continuous potentials]
+  \label{thm:line_hardcore_W}
+  \lean{DFT.Continuum.Line.gA_sort, DFT.Continuum.Line.isWD_mulA, DFT.Continuum.Line.mulA_memW, DFT.Continuum.Line.DomHCW, DFT.Continuum.Line.settingHCW, DFT.Continuum.Line.h0W_mulA, DFT.Continuum.Line.isGS_mulA_W_iff, DFT.Continuum.Line.gsE_hcW, DFT.Continuum.Line.liebF_hcW, DFT.Continuum.Line.gs_ne_zero_hcW, DFT.Continuum.Line.exists_unique_gs_hcW, DFT.Continuum.Line.hk_hardcore_W, DFT.Continuum.Line.lieb_hardcore_W_of}
+  \leanok
+  \uses{thm:line_hardcore, thm:line_ucp_young, thm:line_nondeg_cont, thm:line_lieb_cont}
+  For a fermionic $H^1_0$ state $\Psi$, $A\Psi$ is a bosonic $H^1_0$ state with $\partial_k(A\Psi)=A\,\partial_k\Psi$. Hard-core
+  bosons on $H^1_0$ (the image of the fermionic states) with continuous $v$ and $w$ have a unique ground state, nonzero
+  almost everywhere; Hohenberg--Kohn holds, and the Lieb functional equals that of fermions.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $A\Psi$ is a.e.\ the symmetrisation of $\mathbf 1_C\Psi$, $C$ the ordered chamber, so its weak derivatives follow from
+  the restriction to the chamber (Theorem~\ref{thm:line_ucp_young} with one group). $A^2=1$ off collisions, so energies,
+  norms and densities are preserved and the fermionic results transfer.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}
