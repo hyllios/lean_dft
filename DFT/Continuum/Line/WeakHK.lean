@@ -62,8 +62,8 @@ lemma kinW_nonneg (Ψ : Cfg n → ℝ) : 0 ≤ kinW Ψ :=
   Finset.sum_nonneg fun _ _ => integral_nonneg fun _ => mul_self_nonneg _
 
 /-- `Q = T + ∫ V ψ²` with `V = Σ_k v(x_k) + w`. -/
-lemma QW_eq (v : Pot) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) :
-    Q (settingW τ n w hw) v Ψ = kinW Ψ + ∫ x, (LN n v x + w x) * (Ψ x * Ψ x) ∂μN n := by
+lemma QW_eq {s : SymT n} (v : Pot) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomWS s) :
+    Q (settingWS s w hw) v Ψ = kinW Ψ + ∫ x, (LN n v x + w x) * (Ψ x * Ψ x) ∂μN n := by
   change h0W n w Ψ Ψ + ∫ x, LN n v x * (Ψ x * Ψ x) ∂μN n = _
   have hsq := int_mul_L2 hΨ.1 hΨ.1
   obtain ⟨C1, hC1⟩ := ae_bound_cont (n := n) (continuous_LN v)
@@ -223,13 +223,14 @@ theorem sep_lineW (w : Cfg n → ℝ) (hw : Continuous w) : Sep (settingW τ n w
   have hg : Integrable g (μN n) :=
     (hψ.1.integrable one_le_two).bdd_mul hgc.aestronglyMeasurable hC
   have hgs : ∀ σ, ∀ᵐ x ∂μN n, g (pm σ x) = ch τ σ * g x := fun σ => by
-    filter_upwards [hψ.2.2 σ] with x hx
+    filter_upwards [hψ.2.2 σ trivial] with x hx
     simp only [g, LN_pm, hx]; ring
   refine ae_eq_zero_of_integral_alt hg hgs fun φ hφ => ?_
   exact h φ (Dom_le_DomW hφ)
 
-lemma rigidL_lineW (w : Cfg n → ℝ) (hw : Continuous w) : RigidL (settingW τ n w hw) one :=
-  fun v c h => rigidL_line (τ := τ) w hw v c h
+lemma rigidL_lineW {s : SymT n} (w : Cfg n → ℝ) (hw : Continuous w) :
+    RigidL (settingWS s w hw) one :=
+  fun v c h => rigidL_line (τ := .bos) w hw v c h
 
 /-! ### Coefficients of `H¹₀` states -/
 
@@ -280,17 +281,17 @@ lemma sum_lam_le {Ψ : Cfg n → ℝ} (hΨ : H1W Ψ) (s : Finset (Fin (n + 1) �
   rw [kin_trunc Ψ] at h
   simpa [lam, kinW] using h
 
-lemma adm_cNW {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (h1 : ∫ x, Ψ x ^ 2 ∂μN n = 1) :
-    Adm τ.toSym fun m => cN m Ψ :=
+lemma adm_cNW {s : SymT n} {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomWS s) (h1 : ∫ x, Ψ x ^ 2 ∂μN n = 1) :
+    Adm s fun m => cN m Ψ :=
   { sq := (parsevalW hΨ.1).summable
     kin := summable_of_sum_le (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _))
       (sum_lam_le (h1W_of_mem hΨ))
-    sym := fun σ _ m => cN_pmW hΨ σ m
+    sym := fun σ hσ m => cN_pmWS hΨ hσ m
     norm := by rw [(parsevalW hΨ.1).tsum_eq, h1] }
 
-lemma Fn_le_QW {w : Cfg n → ℝ} {hw : Continuous w} (v : Pot) {Ψ : Cfg n → ℝ}
-    (hΨ : Ψ ∈ DomW τ n) :
-    Fn (fun x => LN n v x + w x) (fun m => cN m Ψ) ≤ Q (settingW τ n w hw) v Ψ := by
+lemma Fn_le_QW {s : SymT n} {w : Cfg n → ℝ} {hw : Continuous w} (v : Pot) {Ψ : Cfg n → ℝ}
+    (hΨ : Ψ ∈ DomWS s) :
+    Fn (fun x => LN n v x + w x) (fun m => cN m Ψ) ≤ Q (settingWS s w hw) v Ψ := by
   rw [Fn, Bf_cNW (V := fun x => LN n v x + w x) ((continuous_LN v).add hw) hΨ.1, QW_eq v hΨ]
   gcongr
   exact Summable.tsum_le_of_sum_le (summable_of_sum_le

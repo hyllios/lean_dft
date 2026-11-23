@@ -153,6 +153,28 @@ lemma ch_mul_self (τ : Stat) (σ : Equiv.Perm (Fin (n + 1))) : ch τ σ * ch τ
 lemma ch_inv (τ : Stat) (σ : Equiv.Perm (Fin (n + 1))) : ch τ σ⁻¹ = ch τ σ := by
   cases τ <;> simp [sgn_inv]
 
+end DFT.Continuum.Line
+
+namespace DFT.Continuum.Sine
+
+/-- A symmetry type: a set `G` of relabellings and a character `χ` on it. -/
+structure SymT (n : ℕ) where
+  /-- The relabellings under which states transform. -/
+  G : Equiv.Perm (Fin (n + 1)) → Prop
+  /-- The character. -/
+  χ : Equiv.Perm (Fin (n + 1)) → ℝ
+
+end DFT.Continuum.Sine
+
+namespace DFT.Continuum.Line
+
+open MeasureTheory Set Filter Topology Box
+
+variable {n : ℕ}
+
+/-- Full exchange symmetry `τ` as a symmetry type. -/
+noncomputable abbrev Stat.toSym (τ : Stat) : Sine.SymT n := ⟨fun _ => True, ch τ⟩
+
 variable {τ : Stat}
 
 /-! ### The form domain and the setting -/

@@ -83,7 +83,7 @@ theorem dens_eq_rhoNW {w : Cfg n → ℝ} {hw : Continuous w} {Φ : Cfg n → �
     intro k
     rw [← integral_pm (Equiv.swap 0 k) (fun x => ext v (x 0) * (Φ x * Φ x))]
     refine integral_congr_ae ?_
-    filter_upwards [hΦ.2.2 (Equiv.swap 0 k)] with x hx
+    filter_upwards [hΦ.2.2 (Equiv.swap 0 k) trivial] with x hx
     simp only [pm, Equiv.swap_apply_left] at hx ⊢
     rw [hx]
     have := ch_mul_self τ (Equiv.swap 0 k)

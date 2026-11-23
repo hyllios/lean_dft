@@ -150,7 +150,7 @@ theorem gs_ne_zero_SD {p : Pot × Pot} {ψ : Cfg n → ℝ} (hψ : IsGS (setting
 
 lemma h0SD_null (hw : Continuous w) {φ : Cfg n → ℝ} (hφ : φ ∈ DomWS (ymix (n := n) a))
     (h0 : ip (μ := μN n) φ φ = 0) : 0 ≤ (settingSD a w hw).h0 φ φ :=
-  h0WS_null (s := ymix a) hw hφ h0
+  h0W_null (s := ymix a) hw hφ h0
 
 /-- **Separation** in the sector. -/
 theorem sep_SD (w : Cfg n → ℝ) (hw : Continuous w) : Sep (settingSD (n := n) a w hw) := by

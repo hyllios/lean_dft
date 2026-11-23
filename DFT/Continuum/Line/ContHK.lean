@@ -35,8 +35,8 @@ def UcpW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) : Prop :=
   ∀ (v : Pot) (Ψ : Cfg n → ℝ), IsGS (settingW τ n w hw) v Ψ → ∀ᵐ x ∂μN n, Ψ x ≠ 0
 
 /-- On `H¹₀`, the energy form is nonnegative on null states. -/
-lemma h0W_null {w : Cfg n → ℝ} (hw : Continuous w) {φ : Cfg n → ℝ} (hφ : φ ∈ DomW τ n)
-    (h0 : ip (μ := μN n) φ φ = 0) : 0 ≤ (settingW τ n w hw).h0 φ φ := by
+lemma h0W_null {s : Sine.SymT n} {w : Cfg n → ℝ} (hw : Continuous w) {φ : Cfg n → ℝ}
+    (hφ : φ ∈ DomWS s) (h0 : ip (μ := μN n) φ φ = 0) : 0 ≤ (settingWS s w hw).h0 φ φ := by
   have hz : (fun x => φ x * φ x) =ᵐ[μN n] 0 :=
     (integral_eq_zero_iff_of_nonneg (fun x => mul_self_nonneg (φ x)) (int_mul_L2 hφ.1 hφ.1)).1 h0
   have hw0 : ∫ x, w x * (φ x * φ x) ∂μN n = 0 := by
@@ -48,8 +48,8 @@ lemma h0W_null {w : Cfg n → ℝ} (hw : Continuous w) {φ : Cfg n → ℝ} (hφ
   simp only [h0W, hw0, add_zero]
   exact Finset.sum_nonneg fun k _ => integral_nonneg fun x => mul_self_nonneg _
 
-lemma isGS_W_of_isNGS_W {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Φ : Cfg n → ℝ}
-    (h : IsNGS (settingW τ n w hw) v Φ) : IsGS (settingW τ n w hw) v Φ :=
+lemma isGS_W_of_isNGS_W {s : Sine.SymT n} {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
+    {Φ : Cfg n → ℝ} (h : IsNGS (settingWS s w hw) v Φ) : IsGS (settingWS s w hw) v Φ :=
   isGS_of_isNGS (fun _ hφ h0 => h0W_null hw hφ h0) h
 
 /-- **Ground states exist on `H¹₀`** for every continuous `v` and continuous `w`. -/

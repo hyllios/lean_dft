@@ -58,7 +58,6 @@ import DFT.Continuum.Line.Weak
 import DFT.Continuum.Line.WeakHK
 import DFT.Continuum.Line.WeakNec
 import DFT.Continuum.Line.WeakRep
-import DFT.Continuum.Line.WeakS
 import DFT.Continuum.Line.Young
 import DFT.Continuum.Line.YoungChamber
 import DFT.Continuum.Line.YoungGS

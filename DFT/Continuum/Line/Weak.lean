@@ -22,9 +22,10 @@ the boundary term of the integration by parts is `∫_{walls} Φ φ`. Equivalent
 
 * `IsWD`, `IsWD.add`, `IsWD.smul`, `IsWD.sum`, `IsWD.unique`: weak derivatives, their linearity
   and their uniqueness a.e. (fundamental lemma of the calculus of variations).
-* `DomW τ n`: `L²` functions of exchange symmetry `τ` (a.e.) with all `N` weak derivatives.
+* `DomWS s`: `L²` functions with all `N` weak derivatives and symmetry type `s` (a.e.);
+  `DomW τ n = DomWS τ.toSym` for bosons and fermions.
 * `dW k Φ`: the weak derivative (a chosen representative).
-* `settingW τ n w hw`: the Hohenberg–Kohn setting on `DomW`, with kinetic energy
+* `settingWS s w hw`, `settingW τ n w hw = settingWS τ.toSym w hw`: the Hohenberg–Kohn setting, with kinetic energy
   `Σ_k ∫ |∂_k Φ|²` in the weak sense.
 * `integral_cube_ins`: Fubini on the cube for integrable functions, splitting off particle `k`.
 * `Dom_le_DomW`, `dW_ae_eq_dk`, `h0W_eq`: the `C²` states are `H¹₀` states, with the same
@@ -154,44 +155,59 @@ lemma dW_ae_eq {k : Fin (n + 1)} {Φ G : Cfg n → ℝ} (h : IsWD k Φ G) : dW k
 
 /-! ### The state space -/
 
-/-- `H¹₀` states of exchange symmetry `τ`. -/
-def DomW (τ : Stat) (n : ℕ) : Submodule ℝ (Cfg n → ℝ) where
+/-- `H¹₀` states of symmetry type `s`: `L²` functions with all weak derivatives, with
+`Φ(σx) = χ(σ) Φ(x)` a.e. for `σ ∈ G`. -/
+def DomWS (s : Sine.SymT n) : Submodule ℝ (Cfg n → ℝ) where
   carrier := {Φ | MemLp Φ 2 (μN n) ∧ (∀ k, ∃ G, IsWD k Φ G) ∧
-    ∀ σ, ∀ᵐ x ∂μN n, Φ (pm σ x) = ch τ σ * Φ x}
+    ∀ σ, s.G σ → ∀ᵐ x ∂μN n, Φ (pm σ x) = s.χ σ * Φ x}
   add_mem' {a b} ha hb := ⟨ha.1.add hb.1, fun k => by
       obtain ⟨G, hG⟩ := ha.2.1 k
       obtain ⟨H, hH⟩ := hb.2.1 k
       exact ⟨_, IsWD.add ha.1 hb.1 hG hH⟩,
-    fun σ => by
-      filter_upwards [ha.2.2 σ, hb.2.2 σ] with x h1 h2
+    fun σ hσ => by
+      filter_upwards [ha.2.2 σ hσ, hb.2.2 σ hσ] with x h1 h2
       simp only [Pi.add_apply, h1, h2]; ring⟩
-  zero_mem' := ⟨MemLp.zero, fun k => ⟨0, IsWD.zero k⟩, fun σ => ae_of_all _ fun x => by simp⟩
+  zero_mem' := ⟨MemLp.zero, fun k => ⟨0, IsWD.zero k⟩, fun σ _ => ae_of_all _ fun x => by simp⟩
   smul_mem' c a ha := ⟨ha.1.const_smul c, fun k => by
       obtain ⟨G, hG⟩ := ha.2.1 k
       exact ⟨_, IsWD.const_mul c hG⟩,
-    fun σ => by
-      filter_upwards [ha.2.2 σ] with x h1
+    fun σ hσ => by
+      filter_upwards [ha.2.2 σ hσ] with x h1
       simp only [Pi.smul_apply, smul_eq_mul, h1]; ring⟩
+
+/-- `H¹₀` states of exchange symmetry `τ`. -/
+noncomputable abbrev DomW (τ : Stat) (n : ℕ) : Submodule ℝ (Cfg n → ℝ) := DomWS (n := n) τ.toSym
 
 /-- `L²` functions with all weak first derivatives (zero boundary values), no symmetry. -/
 def H1W (Φ : Cfg n → ℝ) : Prop := MemLp Φ 2 (μN n) ∧ ∀ k, ∃ G, IsWD k Φ G
 
-lemma h1W_of_mem {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) : H1W Φ := ⟨h.1, h.2.1⟩
+lemma h1W_of_mem {s : Sine.SymT n} {Φ : Cfg n → ℝ} (h : Φ ∈ DomWS s) : H1W Φ := ⟨h.1, h.2.1⟩
 
 section dom
 
 variable {Φ Ψ : Cfg n → ℝ}
 
-lemma memLp_dW (hΦ : Φ ∈ DomW τ n) (k : Fin (n + 1)) : MemLp (dW k Φ) 2 (μN n) :=
-  (dW_spec (hΦ.2.1 k)).1
+lemma memLp_dW_H (hΦ : H1W Φ) (k : Fin (n + 1)) : MemLp (dW k Φ) 2 (μN n) := (dW_spec (hΦ.2 k)).1
 
-lemma dW_add (hΦ : Φ ∈ DomW τ n) (hΨ : Ψ ∈ DomW τ n) (k : Fin (n + 1)) :
+lemma dW_add_H (hΦ : H1W Φ) (hΨ : H1W Ψ) (k : Fin (n + 1)) :
     dW k (Φ + Ψ) =ᵐ[μN n] dW k Φ + dW k Ψ :=
-  dW_ae_eq (IsWD.add hΦ.1 hΨ.1 (dW_spec (hΦ.2.1 k)) (dW_spec (hΨ.2.1 k)))
+  dW_ae_eq (IsWD.add hΦ.1 hΨ.1 (dW_spec (hΦ.2 k)) (dW_spec (hΨ.2 k)))
 
-lemma dW_smul (hΦ : Φ ∈ DomW τ n) (c : ℝ) (k : Fin (n + 1)) :
+lemma dW_smul_H (hΦ : H1W Φ) (c : ℝ) (k : Fin (n + 1)) : dW k (c • Φ) =ᵐ[μN n] c • dW k Φ :=
+  dW_ae_eq (IsWD.const_mul c (dW_spec (hΦ.2 k)))
+
+variable {s : Sine.SymT n}
+
+lemma memLp_dW (hΦ : Φ ∈ DomWS s) (k : Fin (n + 1)) : MemLp (dW k Φ) 2 (μN n) :=
+  memLp_dW_H (h1W_of_mem hΦ) k
+
+lemma dW_add (hΦ : Φ ∈ DomWS s) (hΨ : Ψ ∈ DomWS s) (k : Fin (n + 1)) :
+    dW k (Φ + Ψ) =ᵐ[μN n] dW k Φ + dW k Ψ :=
+  dW_add_H (h1W_of_mem hΦ) (h1W_of_mem hΨ) k
+
+lemma dW_smul (hΦ : Φ ∈ DomWS s) (c : ℝ) (k : Fin (n + 1)) :
     dW k (c • Φ) =ᵐ[μN n] c • dW k Φ :=
-  dW_ae_eq (IsWD.const_mul c (dW_spec (hΦ.2.1 k)))
+  dW_smul_H (h1W_of_mem hΦ) c k
 
 end dom
 
@@ -199,10 +215,10 @@ end dom
 noncomputable def h0W (n : ℕ) (w : Cfg n → ℝ) (ψ φ : Cfg n → ℝ) : ℝ :=
   ∑ k, ∫ x, dW k ψ x * dW k φ x ∂μN n + ∫ x, w x * (ψ x * φ x) ∂μN n
 
-/-- `N` particles of statistics `τ` on a line, with all finite-kinetic-energy states. -/
-noncomputable def settingW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) :
+/-- `N` particles with exchange symmetry `s` on a line, with all finite-kinetic-energy states. -/
+noncomputable def settingWS (s : Sine.SymT n) (w : Cfg n → ℝ) (hw : Continuous w) :
     Setting (μN n) Pot where
-  D := DomW τ n
+  D := DomWS s
   h0 := h0W n w
   h0_add a ha b hb c hc := by
     have hk : ∀ k, ∫ x, dW k (a + b) x * dW k c x ∂μN n =
@@ -240,6 +256,10 @@ noncomputable def settingW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Conti
     obtain ⟨C, hC⟩ := ae_bound_cont (continuous_LN (n := n) v)
     exact (int_mul_L2 hψ.1 hφ.1).bdd_mul (continuous_LN v).aestronglyMeasurable hC
   int_sq ψ φ hψ hφ := int_mul_L2 hψ.1 hφ.1
+
+/-- `N` particles of statistics `τ` on a line, with all finite-kinetic-energy states. -/
+noncomputable abbrev settingW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) : Setting (μN n) Pot :=
+  settingWS (n := n) τ.toSym w hw
 
 /-! ### Fubini, splitting off particle `k` -/
 
@@ -313,7 +333,7 @@ lemma isWD_dk {Φ : Cfg n → ℝ} (hΦ : Φ ∈ Dom τ n) (k : Fin (n + 1)) : I
 
 theorem Dom_le_DomW : Dom τ n ≤ DomW τ n := fun _ hΦ =>
   ⟨memLp_cont hΦ.1.continuous, fun k => ⟨_, isWD_dk hΦ k⟩,
-    fun σ => ae_of_all _ fun x => hΦ.2.1 σ x⟩
+    fun σ _ => ae_of_all _ fun x => hΦ.2.1 σ x⟩
 
 lemma dW_ae_eq_dk {Φ : Cfg n → ℝ} (hΦ : Φ ∈ Dom τ n) (k : Fin (n + 1)) :
     dW k Φ =ᵐ[μN n] dk k Φ :=

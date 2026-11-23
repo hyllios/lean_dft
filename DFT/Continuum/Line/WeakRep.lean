@@ -204,7 +204,7 @@ lemma prodS_eq_tens (g : ℝ → ℝ) : prodS (n := n) g = tens fun _ => g := rf
 
 lemma prodS_memW (hg : H10 g) (hgc : Continuous g) : prodS (n := n) g ∈ DomW .bos n := by
   refine ⟨memLp_cont (continuous_finsetProd _ fun k _ => hgc.comp (continuous_apply k)),
-    fun k => ⟨_, isWD_tens (fun _ => hg) k⟩, fun σ => ae_of_all _ fun x => ?_⟩
+    fun k => ⟨_, isWD_tens (fun _ => hg) k⟩, fun σ _ => ae_of_all _ fun x => ?_⟩
   simp only [prodS, pm, ch_bos, one_mul]
   exact Equiv.prod_comp σ fun i => g (x i)
 
@@ -276,7 +276,7 @@ lemma continuous_slater {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, Continu
 /-- A Slater determinant of continuous `H10` orbitals is an `H¹₀` fermionic state. -/
 lemma slater_memW {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, H10 (φ j))
     (hφc : ∀ j, Continuous (φ j)) : slater φ ∈ DomW .fer n := by
-  refine ⟨memLp_cont (continuous_slater hφc), fun k => ?_, fun σ => ae_of_all _ fun x => ?_⟩
+  refine ⟨memLp_cont (continuous_slater hφc), fun k => ?_, fun σ _ => ae_of_all _ fun x => ?_⟩
   · have e : slater φ = fun x => ∑ σ : Equiv.Perm (Fin (n + 1)),
         sgn σ * tens (fun i => φ (σ i)) x := funext (slater_eq_sum φ)
     have h := IsWD.sum (k := k) (Finset.univ : Finset (Equiv.Perm (Fin (n + 1))))

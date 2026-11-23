@@ -14,7 +14,7 @@ the sector `S_z = a - N/2`), with continuous `v` and continuous `w`:
 
 * `DomY_le_DomWS`: `C²` states of mixed symmetry are `H¹₀` states;
 * `ae_eq_zero_of_integral_altY_L1`: an integrable function of mixed antisymmetry orthogonal to all
-  `H¹₀` states of that symmetry vanishes a.e.; `sep_lineWY`, `rigidL_lineWY`;
+  `H¹₀` states of that symmetry vanishes a.e.; `sep_lineWY`, `rigidL_lineW`;
 * **`hk_line_WY`**: Hohenberg–Kohn in the sector;
 * **`lieb_line_WY_of`**, **`lieb_line_WY`**: the Lieb functional of the sector at the density of a
   normalised ground state: value, subgradient, uniqueness of the subgradient up to constants.
@@ -105,10 +105,6 @@ theorem sep_lineWY (w : Cfg n → ℝ) (hw : Continuous w) :
     simp only [g, LN_pm, hx]; ring
   exact ae_eq_zero_of_integral_altY_L1 hg hgs h
 
-lemma rigidL_lineWY (w : Cfg n → ℝ) (hw : Continuous w) :
-    RigidL (settingWS (ymix (n := n) a) w hw) one :=
-  fun v c h => rigidL_line (τ := .bos) w hw v c h
-
 variable {w : Cfg n → ℝ} {hw : Continuous w}
 
 /-- **Hohenberg–Kohn in a spin sector**, continuous `v` and `w`: ground states exist, and ground
@@ -118,8 +114,8 @@ theorem hk_line_WY (v v' : Pot) :
       IsGS (settingWS (ymix a) w hw) v' Ψ' → ip (μ := μN n) Ψ Ψ = ip (μ := μN n) Ψ' Ψ' →
       dens (settingWS (ymix a) w hw) Ψ = dens (settingWS (ymix a) w hw) Ψ' →
         ∃ k : ℝ, v - v' = k • one :=
-  ⟨(exists_isNGS_WY_cont a hw v).imp fun _ h => isGS_WS_of_isNGS h,
-    fun _ _ hΨ hΨ' hn hd => hk_of_ucp (sep_lineWY w hw) (rigidL_lineWY w hw) hΨ hΨ' hn hd
+  ⟨(exists_isNGS_WY_cont a hw v).imp fun _ h => isGS_W_of_isNGS_W h,
+    fun _ _ hΨ hΨ' hn hd => hk_of_ucp (sep_lineWY w hw) (rigidL_lineW w hw) hΨ hΨ' hn hd
       (gs_ne_zero_WY hΨ)⟩
 
 /-- **The Lieb functional of a spin sector at a v-representable density.** -/
@@ -133,9 +129,9 @@ theorem lieb_line_WY_of {v : Pot} {ψ : Cfg n → ℝ} (hψ : IsNGS (settingWS (
         dens (settingWS (ymix a) w hw) ψ v' - ρ v' : ℝ) : EReal) ≤
           liebF (settingWS (ymix a) w hw) ρ) → ∃ k : ℝ, v - v' = k • one := by
   have hnull : ∀ φ ∈ (settingWS (ymix a) w hw).D, ip (μ := μN n) φ φ = 0 →
-      0 ≤ (settingWS (ymix a) w hw).h0 φ φ := fun _ hφ h => h0WS_null hw hφ h
+      0 ≤ (settingWS (ymix a) w hw).h0 φ φ := fun _ hφ h => h0W_null hw hφ h
   refine ⟨liebF_of_isNGS hψ, subgrad_of_isNGS hψ, fun v' hsub => ?_⟩
-  exact subgrad_unique (sep_lineWY w hw) (rigidL_lineWY w hw) hnull hψ
+  exact subgrad_unique (sep_lineWY w hw) (rigidL_lineW w hw) hnull hψ
     (gs_ne_zero_WY (isGS_of_isNGS hnull hψ))
     (fun φ _ => hsub (dens (settingWS (ymix a) w hw) φ))
 

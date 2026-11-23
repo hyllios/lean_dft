@@ -578,3 +578,10 @@ Recommended order: N5, then N6 (or N1/N2 first as quick wins).
   `hk_line_W_cont_bos`/`hk_line_W_cont_fer`, all covered by `hk_line_W_cont_stat` and
   `lieb_line_W_cont` (continuous v, w). The smooth-V regularity results (`gsW_ae_eq`,
   `exists_unique_gs_W`) stay.
+- One H¹₀ setting: `Sine.SymT` and `Stat.toSym` moved to `Line/Basic`; `DomWS s`/`settingWS s`
+  defined in `Line/Weak`, with `DomW τ n := DomWS τ.toSym` and `settingW τ := settingWS τ.toSym`
+  (abbrevs). `QW_eq`, `h0W_null`, `isGS_W_of_isNGS_W`, `adm_cNW`, `Fn_le_QW`, `serW_pm`,
+  `serW_mem`, `rigidL_lineW` are now generic in the symmetry type; `cN_pmWS` (generic) with
+  `cN_pmW` as a corollary; `exists_isNGS_WS_cont` (generic) in `Line/Realize`,
+  `exists_isNGS_WY_cont` in `Line/YoungChamber`. `Line/WeakS` deleted.
+

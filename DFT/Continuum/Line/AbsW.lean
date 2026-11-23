@@ -163,8 +163,8 @@ lemma abs_ch (τ : Stat) (σ : Equiv.Perm (Fin (n + 1))) : |ch τ σ| = 1 := by
 /-- `|Φ|` is a bosonic `H¹₀` state, for either statistics of `Φ`. -/
 theorem abs_mem_DomW {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
     (fun x => |Φ x|) ∈ DomW .bos n :=
-  ⟨hΦ.1.abs, fun k => ⟨_, isWD_abs (h1W_of_mem hΦ) k⟩, fun σ => by
-    filter_upwards [hΦ.2.2 σ] with x hx
+  ⟨hΦ.1.abs, fun k => ⟨_, isWD_abs (h1W_of_mem hΦ) k⟩, fun σ _ => by
+    filter_upwards [hΦ.2.2 σ trivial] with x hx
     rw [hx, abs_mul, abs_ch, ch_bos]⟩
 
 /-- **Kato's inequality in `H¹₀`**: `T(|Φ|) ≤ T(Φ)`. -/

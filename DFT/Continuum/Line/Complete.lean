@@ -212,12 +212,16 @@ lemma pmI_mem_boxI {M : ℕ} (σ : Equiv.Perm (Fin (n + 1))) {m : Fin (n + 1) �
   simp only [mem_boxI, pmI]
   exact ⟨fun h j => by simpa using h (σ⁻¹ j), fun h j => h (σ j)⟩
 
-lemma cN_pmW {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (σ : Equiv.Perm (Fin (n + 1)))
-    (m : Fin (n + 1) → ℕ) : cN (pmI σ m) Φ = ch τ σ * cN m Φ := by
+lemma cN_pmWS {s : SymT n} {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomWS s) {σ : Equiv.Perm (Fin (n + 1))}
+    (hσ : s.G σ) (m : Fin (n + 1) → ℕ) : cN (pmI σ m) Φ = s.χ σ * cN m Φ := by
   rw [cN_eq, cN_eq, ← integral_pm σ, ← integral_const_mul]
   refine integral_congr_ae ?_
-  filter_upwards [hΦ.2.2 σ] with x hx
+  filter_upwards [hΦ.2.2 σ hσ] with x hx
   simp only [smd_pm, hx]; ring
+
+lemma cN_pmW {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (σ : Equiv.Perm (Fin (n + 1)))
+    (m : Fin (n + 1) → ℕ) : cN (pmI σ m) Φ = ch τ σ * cN m Φ :=
+  cN_pmWS hΦ trivial m
 
 lemma smd_pm' (σ : Equiv.Perm (Fin (n + 1))) (m : Fin (n + 1) → ℕ) (x : Cfg n) :
     smd m (pm σ x) = smd (pmI σ⁻¹ m) x := by

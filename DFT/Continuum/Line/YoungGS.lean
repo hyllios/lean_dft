@@ -224,7 +224,7 @@ theorem abs_DPhiY_le (k : Fin (n + 1)) : ∀ᵐ x ∂μN n, |DPhiY a Ψ k x| ≤
 theorem kinW_PhiY_le : kinW (PhiY a Ψ) ≤ kinW Ψ := by
   refine Finset.sum_le_sum fun k _ => ?_
   have hd := dW_ae_eq (sum_PhiY hΨ k).2
-  have hm := memLp_dW_H (h1W_of_memS hΨ) k
+  have hm := memLp_dW_H (h1W_of_mem hΨ) k
   rw [integral_congr_ae (by filter_upwards [hd] with x hx; rw [hx])]
   refine integral_mono_of_nonneg (ae_of_all _ fun x => mul_self_nonneg _) (int_mul_L2 hm hm) ?_
   filter_upwards [abs_DPhiY_le hΨ k] with x hx
@@ -255,7 +255,7 @@ theorem isGS_PhiY {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n 
     rw [← abs_mul_abs_self, hx, abs_mul_abs_self]
   have hip : ip (μ := μN n) (PhiY a Ψ) (PhiY a Ψ) = ip (μ := μN n) Ψ Ψ := integral_congr_ae hsq
   have hQ : Q (settingWS (ymix a) w hw) v (PhiY a Ψ) ≤ Q (settingWS (ymix a) w hw) v Ψ := by
-    rw [QWS_eq v hD, QWS_eq v hΨ.1]
+    rw [QW_eq v hD, QW_eq v hΨ.1]
     have e : ∫ x, (LN n v x + w x) * (PhiY a Ψ x * PhiY a Ψ x) ∂μN n =
         ∫ x, (LN n v x + w x) * (Ψ x * Ψ x) ∂μN n :=
       integral_congr_ae (by filter_upwards [hsq] with x hx; rw [hx])

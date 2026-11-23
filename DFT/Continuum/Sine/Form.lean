@@ -383,16 +383,6 @@ lemma ksq_pm (σ : Equiv.Perm (Fin (n + 1))) (m : Fin (n + 1) → ℕ) : ksq (pm
   simp only [ksq, pmI]
   exact Equiv.sum_comp σ (fun i => (m i + 1) ^ 2)
 
-/-- A symmetry type: a set `G` of relabellings and a character `χ` on it. -/
-structure SymT (n : ℕ) where
-  /-- The relabellings under which states transform. -/
-  G : Equiv.Perm (Fin (n + 1)) → Prop
-  /-- The character. -/
-  χ : Equiv.Perm (Fin (n + 1)) → ℝ
-
-/-- Full exchange symmetry `τ` as a symmetry type. -/
-noncomputable def _root_.DFT.Continuum.Line.Stat.toSym (τ : Stat) : SymT n := ⟨fun _ => True, ch τ⟩
-
 /-- The sequences of symmetry type `τ`. -/
 def InS (τ : SymT n) (c : (Fin (n + 1) → ℕ) → ℝ) : Prop :=
   ∀ σ, τ.G σ → ∀ m, c (pmI σ m) = τ.χ σ * c m

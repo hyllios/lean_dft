@@ -196,21 +196,22 @@ lemma memLp_comp_pm {f : Cfg n → ℝ} (hf : MemLp f 2 (μN n)) (σ : Equiv.Per
   exact hf.comp_measurePreserving hmp
 
 /-- The series inherits the exchange symmetry of its coefficients (a.e.). -/
-theorem serW_pm (hs : Summable fun m => a m ^ 2) (hsym : InS τ.toSym a)
-    (σ : Equiv.Perm (Fin (n + 1))) : ∀ᵐ x ∂μN n, serW a (pm σ x) = ch τ σ * serW a x := by
+theorem serW_pm {s : SymT n} (hs : Summable fun m => a m ^ 2) (hsym : InS s a)
+    {σ : Equiv.Perm (Fin (n + 1))} (hσ : s.G σ) :
+    ∀ᵐ x ∂μN n, serW a (pm σ x) = s.χ σ * serW a x := by
   refine ae_eq_of_cN_eq (memLp_comp_pm memLp_serW σ) (memLp_serW.const_mul _) fun m => ?_
   have h1 : cN m (fun x => serW a (pm σ x)) = cN (pmI σ m) (serW a) := by
     rw [cN_eq, cN_eq, ← integral_pm σ (fun x => smd (pmI σ m) x * serW a x)]
     exact integral_congr_ae (ae_of_all _ fun x => by simp only [smd_pm])
-  have h2 : cN m (fun x => ch τ σ * serW a x) = ch τ σ * cN m (serW a) := by
+  have h2 : cN m (fun x => s.χ σ * serW a x) = s.χ σ * cN m (serW a) := by
     rw [cN_eq, cN_eq, ← integral_const_mul]
     exact integral_congr_ae (ae_of_all _ fun x => by ring)
   rw [h1, h2, cN_serW hs, cN_serW hs]
-  exact hsym σ trivial m
+  exact hsym σ hσ m
 
-/-- **Admissible coefficient sequences are `H¹₀` states.** -/
-theorem serW_mem (ha : Dir τ.toSym a) : serW a ∈ DomW τ n :=
-  ⟨memLp_serW, fun k => ⟨_, isWD_serW ha.sq ha.kin k⟩, fun σ => serW_pm ha.sq ha.sym σ⟩
+/-- **Admissible coefficient sequences are `H¹₀` states** of the same symmetry type. -/
+theorem serW_mem {s : SymT n} (ha : Dir s a) : serW a ∈ DomWS s :=
+  ⟨memLp_serW, fun k => ⟨_, isWD_serW ha.sq ha.kin k⟩, fun _ hσ => serW_pm ha.sq ha.sym hσ⟩
 
 /-- The weak kinetic energy of the series is `Σ λ_m a_m²`. -/
 theorem kinW_serW {s : SymT n} (ha : Dir s a) : kinW (serW a) = ∑' m, lam m * a m ^ 2 := by
@@ -232,17 +233,17 @@ theorem kinW_serW {s : SymT n} (ha : Dir s a) : kinW (serW a) = ∑' m, lam m * 
 
 /-! ### Ground states for continuous potentials -/
 
-/-- **Ground states exist in `H¹₀` for every continuous potential.** For `N` particles on the line
-with any continuous one-body potential `v` and continuous interaction `w`, the `H¹₀` Hamiltonian
-has a normalised ground state (no smoothness, no symmetry assumption on `w`). -/
-theorem exists_isNGS_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
-    ∃ Φ, IsNGS (settingW τ n w hw) v Φ := by
+/-- **Ground states exist in `H¹₀` for every continuous potential**, for any symmetry type that
+admits a normalised coefficient sequence (no smoothness, no symmetry assumption on `w`). -/
+theorem exists_isNGS_WS_cont {s : SymT n} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm s c)
+    {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
+    ∃ Φ, IsNGS (settingWS s w hw) v Φ := by
   set V : Cfg n → ℝ := fun x => LN n v x + w x
   have hV : Continuous V := (continuous_LN v).add hw
   obtain ⟨B, hB⟩ := (isCompact_univ_pi fun _ => isCompact_Icc :
     IsCompact (CubeC n)).exists_bound_of_continuousOn hV.continuousOn
   have hK := kBd_of_continuous hV (B := B) fun x hx => by simpa [Real.norm_eq_abs] using hB x hx
-  obtain ⟨a, ha, hmin⟩ := hK.exists_min (exists_adm τ)
+  obtain ⟨a, ha, hmin⟩ := hK.exists_min hne
   have hD := serW_mem ha.toDir
   have hcN : (fun m => cN m (serW a)) = a := funext (cN_serW ha.sq)
   have hip : ip (μ := μN n) (serW a) (serW a) = 1 := by
@@ -251,12 +252,17 @@ theorem exists_isNGS_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
           integral_congr_ae (ae_of_all _ fun x => by simp [sq])
       _ = ∑' m, cN m (serW a) ^ 2 := h.tsum_eq.symm
       _ = 1 := by simp only [cN_serW ha.sq]; exact ha.norm
-  have hQ : Q (settingW τ n w hw) v (serW a) = E0 V τ.toSym := by
+  have hQ : Q (settingWS s w hw) v (serW a) = E0 V s := by
     rw [QW_eq v hD, kinW_serW ha.toDir, ← hmin, Fn, ← Bf_cNW hV memLp_serW, hcN]
   refine ⟨serW a, ⟨hD, hip⟩, fun Ψ hΨ => ?_⟩
   rw [hQ]
   have h1 : ∫ x, Ψ x ^ 2 ∂μN n = 1 := by
     rw [← hΨ.2]; simp only [ip]; exact integral_congr_ae (ae_of_all _ fun x => by ring)
-  exact (csInf_le (hK.bddBelow_Fn τ.toSym) ⟨_, adm_cNW hΨ.1 h1, rfl⟩).trans (Fn_le_QW v hΨ.1)
+  exact (csInf_le (hK.bddBelow_Fn s) ⟨_, adm_cNW hΨ.1 h1, rfl⟩).trans (Fn_le_QW v hΨ.1)
+
+/-- **Ground states exist in `H¹₀` for every continuous potential**, bosons or fermions. -/
+theorem exists_isNGS_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
+    ∃ Φ, IsNGS (settingW τ n w hw) v Φ :=
+  exists_isNGS_WS_cont (exists_adm τ) hw v
 
 end DFT.Continuum.Line

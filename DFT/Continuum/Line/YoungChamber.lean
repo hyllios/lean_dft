@@ -3,7 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Line.WeakS
+import DFT.Continuum.Line.Realize
 import DFT.Continuum.Line.YoungStrong
 import DFT.Continuum.Line.HalfSpace
 import DFT.Continuum.Line.Chamber
@@ -33,6 +33,12 @@ namespace DFT.Continuum.Line
 open MeasureTheory Set Box Real Filter Topology Sine
 
 variable {n : ℕ} {a : ℕ}
+
+/-- **Ground states of mixed symmetry `(a, N - a)` exist in `H¹₀`** for every continuous `v` and
+continuous `w`. -/
+theorem exists_isNGS_WY_cont (a : ℕ) {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
+    ∃ Φ, IsNGS (settingWS (ymix a) w hw) v Φ :=
+  exists_isNGS_WS_cont (exists_adm_ymix a) hw v
 
 /-! ### Restriction to a set cut out by pair inequalities -/
 
@@ -145,7 +151,7 @@ theorem isWD_RY (k : Fin (n + 1)) :
   have hCm : MeasurableSet C := measurableSet_PairS _
   suffices H : IsWD k (C.indicator Ψ) (C.indicator (dW k Ψ)) from
     (H.congr (indicator_RY_ae Ψ)).congr_right (indicator_RY_ae _)
-  refine ⟨(memLp_dW_H (h1W_of_memS hΨ) k).indicator hCm.nullMeasurableSet, fun φ hφ => ?_⟩
+  refine ⟨(memLp_dW_H (h1W_of_mem hΨ) k).indicator hCm.nullMeasurableSet, fun φ hφ => ?_⟩
   have hdφ := continuous_dk_of_C1 hφ k
   have hM : ∀ M, ∫ x, C.indicator (trunc M Ψ) x * dk k φ x ∂μN n =
       -∫ x, C.indicator (dk k (trunc M Ψ)) x * φ x ∂μN n := fun M => by
@@ -167,7 +173,7 @@ theorem isWD_RY (k : Fin (n + 1)) :
     integral_congr_ae (ae_of_all _ fun x => by by_cases hx : x ∈ C <;> simp [hx, mul_comm])
   have L1 := tendsto_integral_mul_of_L2 (fun M => memLp_cont (continuous_trunc M Ψ)) hΨ.1 hg1
     (tendsto_trunc hΨ.1)
-  have L2 := tendsto_trunc_dk (h1W_of_memS hΨ) k hg2
+  have L2 := tendsto_trunc_dk (h1W_of_mem hΨ) k hg2
   simp only [← e1] at L1
   simp only [← e2] at L2
   have heq : (fun M => ∫ x, C.indicator (trunc M Ψ) x * dk k φ x ∂μN n) =

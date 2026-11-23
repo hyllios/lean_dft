@@ -212,7 +212,8 @@ end ucp
 /-- Fermionic states are the Young states with all particles in one group. -/
 lemma DomW_fer_eq : DomW .fer n = DomWS (ymix (n := n) (n + 1)) := by
   ext Φ
-  refine ⟨fun h => ⟨h.1, h.2.1, fun σ _ => h.2.2 σ⟩, fun h => ⟨h.1, h.2.1, fun σ => h.2.2 σ ?_⟩⟩
+  refine ⟨fun h => ⟨h.1, h.2.1, fun σ _ => h.2.2 σ trivial⟩,
+    fun h => ⟨h.1, h.2.1, fun σ _ => h.2.2 σ ?_⟩⟩
   intro i
   exact ⟨fun _ => i.isLt, fun _ => (σ i).isLt⟩
 

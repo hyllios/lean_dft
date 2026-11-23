@@ -349,8 +349,8 @@ theorem log_estimate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂�
   have hD : u ∈ DomW .bos n := hu.1
   have hφD : logTest η u ε ∈ DomW .bos n := by
     refine ⟨(h1W_logTest (h1W_of_mem hD) hη hηw hε).1, (h1W_logTest (h1W_of_mem hD) hη hηw hε).2,
-      fun σ => ?_⟩
-    filter_upwards [hD.2.2 σ] with x hx
+      fun σ _ => ?_⟩
+    filter_upwards [hD.2.2 σ trivial] with x hx
     simp only [ch_bos, one_mul] at hx ⊢
     simp only [logTest, hηs, hx]
   exact log_estimate_of_eq hw (h1W_of_mem hD) hu0 hη hηw hε hC0 hC (euler_lagrange hu hφD)
