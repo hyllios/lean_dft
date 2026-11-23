@@ -686,7 +686,7 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
 
 \begin{lemma}[Logarithmic estimate]
   \label{lem:line_logest}
-  \lean{DFT.Continuum.Line.dk_mul, DFT.Continuum.Line.IsWD.mul_C1, DFT.Continuum.Line.oddExt, DFT.Continuum.Line.hasDerivAt_oddExt, DFT.Continuum.Line.Gr, DFT.Continuum.Line.log_estimate}
+  \lean{DFT.Continuum.Line.dk_mul, DFT.Continuum.Line.IsWD.mul_C1, DFT.Continuum.Line.oddExt, DFT.Continuum.Line.hasDerivAt_oddExt, DFT.Continuum.Line.Gr, DFT.Continuum.Line.logTest, DFT.Continuum.Line.log_estimate_of_eq, DFT.Continuum.Line.h1W_logTest, DFT.Continuum.Line.log_estimate}
   \leanok
   \uses{lem:line_absW}
   Let $u\ge0$ be a bosonic $H^1_0$ ground state with energy $E$ and $|V-E|\le C$. For every symmetric $C^1$ cutoff
@@ -790,6 +790,25 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   pair at a time, as in Lemma~\ref{lem:line_halfspace}) commutes with weak derivatives; pass to the limit. The chain
   rule gives $|\mathbf 1_C\Psi|\in H^1$, relabelling gives $\Phi$. At a configuration without collisions only the sorting
   permutation contributes, so $|\Phi|=|\Psi|$ and $|\partial_k\Phi|\le|\partial_k\Psi|$, hence $Q(\Phi)\le Q(\Psi)$.
+\end{proof}
+
+\begin{lemma}[Logarithmic estimate for fermions]
+  \label{lem:line_logest_fer}
+  \lean{DFT.Continuum.Line.sum_sort, DFT.Continuum.Line.sgnC, DFT.Continuum.Line.PhiB, DFT.Continuum.Line.PhiB_mem, DFT.Continuum.Line.PhiB_ae_eq_abs, DFT.Continuum.Line.phiF, DFT.Continuum.Line.phiF_mem, DFT.Continuum.Line.dW_phiF_ae, DFT.Continuum.Line.eq_PhiB, DFT.Continuum.Line.log_estimate_fer}
+  \leanok
+  \uses{thm:line_fer_chamber, lem:line_logest}
+  Let $\Psi$ be a fermionic $H^1_0$ ground state with energy $E$, $|V-E|\le C$, and $B=\sum_\sigma(\mathbf 1_C|\Psi|)\circ\sigma$
+  (so $B=|\Psi|$ a.e.). For every symmetric $C^1$ cutoff $\eta$ vanishing on the walls and on the diagonals and every
+  $\varepsilon>0$, $\sum_k\int\eta^2\big(\partial_kB/(B+\varepsilon)\big)^2\le4\sum_k\int(\partial_k\eta)^2+2C\int\eta^2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  With $S$ the sign of the sorting permutation, $\Phi=SB$ and $\partial_k\Phi=S\,\partial_kB$ off the collisions. A
+  symmetric $\varphi\in H^1$ vanishing linearly on the adjacent diagonals gives the fermionic state
+  $\sum_\sigma\operatorname{sgn}\sigma\,(\mathbf 1_C\varphi)\circ\sigma=S\varphi$ with derivatives $S\,\partial_k\varphi$. Testing the
+  Euler--Lagrange equation of $\Phi$ with it, $S^2=1$ shows that $B$ satisfies the bosonic weak equation with energy
+  $E$ against $\varphi$. The test function $\eta^2/(B+\varepsilon)$ of Lemma~\ref{lem:line_logest} is of this kind, and
+  that proof only uses the equation for it.
 \end{proof}
 
 \begin{theorem}[Ground states exist for smooth potentials]

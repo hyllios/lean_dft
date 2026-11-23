@@ -24,6 +24,7 @@ import DFT.Continuum.Line.Complete
 import DFT.Continuum.Line.ContHK
 import DFT.Continuum.Line.Density
 import DFT.Continuum.Line.FerGS
+import DFT.Continuum.Line.FerLog
 import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions

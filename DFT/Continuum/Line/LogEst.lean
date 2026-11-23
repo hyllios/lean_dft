@@ -157,18 +157,24 @@ section estimate
 
 variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {u : Cfg n → ℝ}
 
-/-- **The logarithmic estimate.** For a nonnegative bosonic `H¹₀` ground state `u`, with
-`|E - V| ≤ C` a.e., and a symmetric `C¹` cutoff `η` vanishing on the walls,
-`Σ_k ∫ η² (∂ₖu/(u+ε))² ≤ 4 Σ_k ∫ (∂ₖη)² + 2C ∫ η²` for every `ε > 0`. -/
-theorem log_estimate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
-    {η : Cfg n → ℝ} (hη : ContDiff ℝ 1 η) (hηs : ∀ σ x, η (pm σ x) = η x)
-    (hηw : ∀ x k, (x k = 0 ∨ x k = 1) → η x = 0) {ε : ℝ} (hε : 0 < ε) {C : ℝ} (hC0 : 0 ≤ C)
-    (hC : ∀ᵐ x ∂μN n,
-      |Q (settingW .bos n w hw) v u / ip (μ := μN n) u u - (LN n v x + w x)| ≤ C) :
+/-- The test function of the logarithmic estimate, `η² (1/ε - Gr_ε(u))` (`= η²/(u+ε)` where
+`u ≥ 0`). -/
+noncomputable def logTest (η u : Cfg n → ℝ) (ε : ℝ) (x : Cfg n) : ℝ :=
+  ε⁻¹ * (η x * η x) + (-1) * (η x * η x * Gr ε (u x))
+
+/-- **The logarithmic estimate, from the weak equation.** Let `u ≥ 0` be a symmetric `H¹₀`
+function satisfying the weak Schrödinger equation with eigenvalue `E` against the single test
+function `logTest η u ε`, where `|E - V| ≤ C` a.e. and `η ∈ C¹` vanishes on the walls. Then
+`Σ_k ∫ η² (∂ₖu/(u+ε))² ≤ 4 Σ_k ∫ (∂ₖη)² + 2C ∫ η²`. -/
+theorem log_estimate_of_eq (hw : Continuous w) (hD : u ∈ DomW .bos n)
+    (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
+    {η : Cfg n → ℝ} (hη : ContDiff ℝ 1 η)
+    (hηw : ∀ x k, (x k = 0 ∨ x k = 1) → η x = 0) {ε : ℝ} (hε : 0 < ε) {E C : ℝ} (hC0 : 0 ≤ C)
+    (hC : ∀ᵐ x ∂μN n, |E - (LN n v x + w x)| ≤ C)
+    (hel : h0W n w u (logTest η u ε) + ∫ x, LN n v x * (u x * logTest η u ε x) ∂μN n =
+      E * ∫ x, u x * logTest η u ε x ∂μN n) :
     ∑ k, ∫ x, (η x * (dW k u x / (u x + ε))) ^ 2 ∂μN n ≤
       4 * ∑ k, ∫ x, dk k η x ^ 2 ∂μN n + 2 * C * ∫ x, η x ^ 2 ∂μN n := by
-  set E := Q (settingW .bos n w hw) v u / ip (μ := μN n) u u
-  have hD : u ∈ DomW .bos n := hu.1
   have hum := hD.1
   set ζ : Cfg n → ℝ := fun x => η x * η x with hζdef
   have hζ : ContDiff ℝ 1 ζ := hη.mul hη
@@ -184,6 +190,8 @@ theorem log_estimate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂�
   have hg : ∀ k, IsWD k g (fun x => 1 / (|u x| + ε) ^ 2 * dW k u x) := fun k =>
     isWD_comp (h1W_of_mem hD) (hasDerivAt_Gr hε) (continuous_Gr' hε) (Gr'_le hε) Gr_zero k
   set φ : Cfg n → ℝ := fun x => ε⁻¹ * ζ x + (-1) * (ζ x * g x)
+  have hφe : logTest η u ε = φ := rfl
+  rw [hφe] at hel
   have hL1 : MemLp (fun x => ε⁻¹ * ζ x) 2 (μN n) := memLp_cont (continuous_const.mul hζ.continuous)
   have hL2 : MemLp (fun x => -1 * (ζ x * g x)) 2 (μN n) :=
     (memLp_mul_cont hζ.continuous hgL).const_mul (-1)
@@ -192,13 +200,6 @@ theorem log_estimate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂�
       (-1) * (ζ x * (1 / (|u x| + ε) ^ 2 * dW k u x) + dk k ζ x * g x)) := fun k =>
     IsWD.add hL1 hL2 ((isWD_of_C1 hζ hζw k).const_mul ε⁻¹)
       (((hg k).mul_C1 hgL hζ).const_mul (-1))
-  have hφD : φ ∈ DomW .bos n := ⟨hφL, fun k => ⟨_, hφWD k⟩, fun σ => by
-    filter_upwards [hD.2.2 σ] with x hx
-    simp only [ch_bos, one_mul] at hx ⊢
-    simp only [φ, ζ, g, hηs, hx]⟩
-  -- the Euler–Lagrange equation tested with `φ`
-  have hel := euler_lagrange hu hφD
-  change h0W n w u φ + ∫ x, LN n v x * (u x * φ x) ∂μN n = E * ∫ x, u x * φ x ∂μN n at hel
   simp only [h0W] at hel
   -- bounds
   obtain ⟨Bη, hBη⟩ := ae_bound_cont hη.continuous
@@ -314,6 +315,45 @@ theorem log_estimate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂�
     exact Finset.sum_congr rfl fun k _ => hk k
   change ∑ k, ∫ x, A k x ^ 2 ∂μN n ≤ _
   linarith
+
+omit hw in
+/-- The test function `logTest η u ε` is in `H¹`. -/
+lemma h1W_logTest (hD : H1W u) {η : Cfg n → ℝ} (hη : ContDiff ℝ 1 η)
+    (hηw : ∀ x k, (x k = 0 ∨ x k = 1) → η x = 0) {ε : ℝ} (hε : 0 < ε) :
+    H1W (logTest η u ε) := by
+  have hζ : ContDiff ℝ 1 fun x => η x * η x := hη.mul hη
+  have hζw : ∀ x k, (x k = 0 ∨ x k = 1) → η x * η x = 0 := fun x k h => by simp [hηw x k h]
+  have hGc : Continuous (Gr ε) :=
+    continuous_iff_continuousAt.2 fun t => (hasDerivAt_Gr hε t).continuousAt
+  have hgL : MemLp (fun x => Gr ε (u x)) 2 (μN n) := MemLp.of_bound
+    (hGc.comp_aestronglyMeasurable hD.1.aestronglyMeasurable) (1 / ε)
+    (ae_of_all _ fun x => by rw [Real.norm_eq_abs]; exact abs_Gr_le hε _)
+  have hL1 : MemLp (fun x => ε⁻¹ * (η x * η x)) 2 (μN n) :=
+    memLp_cont (continuous_const.mul hζ.continuous)
+  have hL2 : MemLp (fun x => -1 * (η x * η x * Gr ε (u x))) 2 (μN n) :=
+    (memLp_mul_cont hζ.continuous hgL).const_mul (-1)
+  exact ⟨hL1.add hL2, fun k => ⟨_, IsWD.add hL1 hL2 ((isWD_of_C1 hζ hζw k).const_mul ε⁻¹)
+    (((isWD_comp hD (hasDerivAt_Gr hε) (continuous_Gr' hε) (Gr'_le hε) Gr_zero
+      k).mul_C1 hgL hζ).const_mul (-1))⟩⟩
+
+/-- **The logarithmic estimate.** For a nonnegative bosonic `H¹₀` ground state `u`, with
+`|E - V| ≤ C` a.e., and a symmetric `C¹` cutoff `η` vanishing on the walls,
+`Σ_k ∫ η² (∂ₖu/(u+ε))² ≤ 4 Σ_k ∫ (∂ₖη)² + 2C ∫ η²` for every `ε > 0`. -/
+theorem log_estimate (hu : IsGS (settingW .bos n w hw) v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x)
+    {η : Cfg n → ℝ} (hη : ContDiff ℝ 1 η) (hηs : ∀ σ x, η (pm σ x) = η x)
+    (hηw : ∀ x k, (x k = 0 ∨ x k = 1) → η x = 0) {ε : ℝ} (hε : 0 < ε) {C : ℝ} (hC0 : 0 ≤ C)
+    (hC : ∀ᵐ x ∂μN n,
+      |Q (settingW .bos n w hw) v u / ip (μ := μN n) u u - (LN n v x + w x)| ≤ C) :
+    ∑ k, ∫ x, (η x * (dW k u x / (u x + ε))) ^ 2 ∂μN n ≤
+      4 * ∑ k, ∫ x, dk k η x ^ 2 ∂μN n + 2 * C * ∫ x, η x ^ 2 ∂μN n := by
+  have hD : u ∈ DomW .bos n := hu.1
+  have hφD : logTest η u ε ∈ DomW .bos n := by
+    refine ⟨(h1W_logTest (h1W_of_mem hD) hη hηw hε).1, (h1W_logTest (h1W_of_mem hD) hη hηw hε).2,
+      fun σ => ?_⟩
+    filter_upwards [hD.2.2 σ] with x hx
+    simp only [ch_bos, one_mul] at hx ⊢
+    simp only [logTest, hηs, hx]
+  exact log_estimate_of_eq hw hD hu0 hη hηw hε hC0 hC (euler_lagrange hu hφD)
 
 end estimate
 

@@ -449,6 +449,17 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `Line/FerGS`: `uC` = |1_C Ψ|, `PhiF` = alt .fer uC, `PhiF_eq_of_mem` (= |Ψ| on C),
     `PhiF_mem`, `abs_PhiF`, `kinW_PhiF_le`, **`isGS_PhiF`**. Next (f3): log estimate for PhiF on the
     chamber with antisymmetric test functions alt(1_C η² Gr(PhiF)).
+    (f3) DONE: `Line/LogEst` split into `logTest`, `h1W_logTest`, **`log_estimate_of_eq`** (only the
+    weak equation for the one test function, arbitrary E), `log_estimate` now a wrapper.
+    `Line/FerLog`: `sum_sort`, chamber sign `sgnC`, bosonic companion `PhiB` = alt .bos uC
+    (`PhiB_mem`, `PhiB_nonneg`, `PhiB_ae_eq_abs`), `PhiF = sgnC·PhiB`; `phiF φ` = alt .fer (1_C φ)
+    for symmetric φ ∈ H¹ with |φ| ≤ L|x_{j+1}−x_j| (`phiF_mem`, `dW_phiF_ae`: ∂ = sgnC·∂φ);
+    **`eq_PhiB`** (PhiB satisfies the bosonic weak equation with the fermionic E against such φ),
+    **`log_estimate_fer`** (η symmetric, C¹, zero on walls and diagonals). Standard axioms.
+    Next (f4): zero set of PhiB translation invariant on boxes inside the open chamber (η = etaS ×
+    Π_{i<j}(xᵢ−xⱼ)², bounded below on boxes away from the diagonals); generalise `grad_L1_bound`,
+    `bad_null`, `zero_set_translate`, `const_on_box` from Qa to arbitrary boxes; chain boxes across
+    the convex chamber ⇒ PhiB ≠ 0 a.e. on C ⇒ (symmetry) a.e. ⇒ `ucpW_fer`, `hk_line_W_cont_fer`.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
