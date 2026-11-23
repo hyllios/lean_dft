@@ -437,6 +437,10 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     (e4) DONE `Line/UcpBos`: **`gs_ne_zero_W_bos`**, **`ucpW_bos`**, **`hk_line_W_cont_bos`**:
          HK on H¹₀ for bosons with continuous v and w (no smoothness). Fermions: open (need the
          chamber/sign structure: Ψ·sgn on the chamber, or |Ψ| is bosonic but not a fermionic GS).
+  - Fermions, plan (f1)–(f4) (see conversation): (f1) DONE `Line/HalfSpace`: smooth-step cutoffs
+    `cutH`, `abs_le_of_plane` (mean value towards the plane), `isWD_half_C1`, `fer_plane`,
+    **`isWD_half`**: 1_{xᵢ<xⱼ}Φ has weak derivatives 1_{xᵢ<xⱼ}∂ₖΦ for fermionic Φ ∈ H¹₀ (via
+    truncations; no Hardy inequality needed). Next (f2): Φ = S·|Ψ| ∈ fermionic H¹₀, T(Φ) ≤ T(Ψ).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

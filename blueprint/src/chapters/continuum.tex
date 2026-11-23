@@ -759,6 +759,22 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   conull would give $|\Psi|=0$.
 \end{proof}
 
+\begin{lemma}[Antisymmetric states restricted to a half-space]
+  \label{lem:line_halfspace}
+  \lean{DFT.Continuum.Line.deriv_smoothTransition_bound, DFT.Continuum.Line.Hij, DFT.Continuum.Line.cutH, DFT.Continuum.Line.dk_cutH, DFT.Continuum.Line.abs_le_of_plane, DFT.Continuum.Line.isWD_half_C1, DFT.Continuum.Line.fer_plane, DFT.Continuum.Line.isWD_half}
+  \leanok
+  \uses{lem:line_h1_approx}
+  For a fermionic $H^1_0$ state $\Phi$ and $i\ne j$, $\mathbf 1_{x_i<x_j}\Phi$ has weak derivatives
+  $\mathbf 1_{x_i<x_j}\partial_k\Phi$: antisymmetric states vanish on the collision planes in the weak sense.
+\end{lemma}
+\begin{proof}
+  \leanok
+  For a $C^1$ function vanishing on the walls and on $x_i=x_j$, test against $\theta((x_j-x_i)/\delta)\varphi$ with $\theta$ a
+  smooth step; the boundary term is $O(1)$ on a strip of width $\delta$ because $|P|\le L(x_j-x_i)$ (mean value theorem),
+  so it vanishes as $\delta\to0$. In general, pass to the limit through the $C^2$ sine truncations, which converge in
+  $L^2$ with weakly convergent derivatives.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}
