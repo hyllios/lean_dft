@@ -24,6 +24,7 @@ import DFT.Continuum.Line.ContHK
 import DFT.Continuum.Line.Density
 import DFT.Continuum.Line.Fermions
 import DFT.Continuum.Line.H1Approx
+import DFT.Continuum.Line.Invariant
 import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions
@@ -45,6 +46,7 @@ import DFT.Continuum.Line.SpinStates
 import DFT.Continuum.Line.SpinWeak
 import DFT.Continuum.Line.Strong
 import DFT.Continuum.Line.Translate
+import DFT.Continuum.Line.UcpBos
 import DFT.Continuum.Line.Unique
 import DFT.Continuum.Line.VRep
 import DFT.Continuum.Line.Weak

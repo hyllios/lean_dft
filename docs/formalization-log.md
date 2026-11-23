@@ -432,6 +432,11 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
          integrals), `Lg` (odd log(1+t/ε)), `etaS` = Πsin(πxⱼ), `Qa`, `Sa`, `grad_L1_bound`
          (∫_{Qa}|∂ₖ log(u+ε)| ≤ B uniformly in ε), `bad_null` (Chebyshev, ε → 0),
          **`zero_set_translate`**: a.e. x ∈ Sa, u(x) = 0 ↔ u(x+heₖ) = 0.
+    (e3) DONE `Line/Invariant`: `invariant_all`, `invariant_vec`, `tent`, `const_on_box`
+         (Fubini + convolution with tent kernel + continuity + IVT), `null_or_conull`.
+    (e4) DONE `Line/UcpBos`: **`gs_ne_zero_W_bos`**, **`ucpW_bos`**, **`hk_line_W_cont_bos`**:
+         HK on H¹₀ for bosons with continuous v and w (no smoothness). Fermions: open (need the
+         chamber/sign structure: Ψ·sgn on the chamber, or |Ψ| is bosonic but not a fermionic GS).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

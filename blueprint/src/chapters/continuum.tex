@@ -731,6 +731,34 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   Chebyshev this set has measure at most $hB/\log(1+\delta/\varepsilon)\to0$.
 \end{proof}
 
+\begin{lemma}[Translation-invariant sets are null or conull]
+  \label{lem:line_invariant}
+  \lean{DFT.Continuum.Line.invariant_all, DFT.Continuum.Line.invariant_vec, DFT.Continuum.Line.tent, DFT.Continuum.Line.const_on_box, DFT.Continuum.Line.cube_sub_iUnion, DFT.Continuum.Line.null_or_conull}
+  \leanok
+  A measurable set that is, up to null sets, invariant under small coordinate translations inside every
+  $[a,1-a]^N$ is null or conull in the cube.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Compose coordinate moves to get invariance under vector translations. By Fubini, $F=\varphi\star\chi_Z$ with a
+  continuous tent kernel $\varphi$ of mass $c$ equals $c\,\chi_Z$ a.e. on a box; $F$ is continuous and $\{0,c\}$-valued
+  there, hence constant (intermediate values). Exhaust the cube by boxes.
+\end{proof}
+
+\begin{theorem}[Unique continuation and HK on $H^1_0$ for bosons, continuous potentials]
+  \label{thm:line_ucp_bos}
+  \lean{DFT.Continuum.Line.gs_ne_zero_W_bos, DFT.Continuum.Line.ucpW_bos, DFT.Continuum.Line.hk_line_W_cont_bos}
+  \leanok
+  \uses{lem:line_invariant, lem:line_zeroset, lem:line_absW, thm:line_hk_cont_ucp}
+  For bosons on $[0,1]$ with continuous $v$ and $w$, every $H^1_0$ ground state is nonzero almost everywhere.
+  Hence ground states of $v$ and $v'$ with the same density force $v-v'$ to be constant.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $|\Psi|$ is a nonnegative nonzero ground state; its zero set is translation invariant, hence null or conull, and
+  conull would give $|\Psi|=0$.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}
