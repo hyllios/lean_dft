@@ -604,4 +604,17 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   `h0W_mulA`, `isGS_mulA_W_iff`, `gsE_hcW`, `liebF_hcW`, **`gs_ne_zero_hcW`**,
   **`exists_unique_gs_hcW`**, **`hk_hardcore_W`**, **`lieb_hardcore_W_of`** (continuous v, w).
   Supersedes `exists_unique_gs_hardcore` (cosine class) and `exists_unique_gs_hardcore_smooth`.
+- D STARTED: Lieb–Mattis on H¹₀ for continuous V (w symmetric), a ≥ b ≥ 1. Route (agreed):
+  (1) weak equation of a sector GS g against all H¹ test functions (project onto the sign component
+  of YG); lowered state f = altY_a g has energy E(a+1,b−1), so E(a,b) ≤ E(a+1,b−1);
+  (2) f ≠ 0: with T = ⟨g, g∘(a a+1)⟩, ⟨g, altY_a g⟩ = |H|(‖g‖² − (b−1)T) and
+  0 ≤ ⟨g, altY_{a+2} g⟩ = |H'|(‖g‖² − (a+1)T), so ⟨g, altY_a g⟩ > 0;
+  (3) reference φ₀ = D_a(x₀..x_{a−1}) D_b(x_a..) (sine Slaters): Fock altY_{a+1} φ₀ = 0 (repeated
+  orbital), fixed nonzero sign on RY_a (det[sin(jπxᵢ)] = ∏ sin · 2^… · vandermonde(cos));
+  (4) equality ⇒ f GS ⇒ f = ±PhiY f, so ⟨f, φ₀⟩ ≠ 0, but ⟨f, φ₀⟩ ∝ ⟨g, altY_{a+1} φ₀⟩ = 0.
+  - D1 DONE `Line/YoungL2`: `cardY`, `altY_altY`, `memLp_altY`, `integral_altY_mul`
+    (self-adjoint), `integral_mul_altY_self_nonneg`, `AntiY`, `altY_ae_of_antiY`,
+    `integral_mul_altY_of_antiY`, `isWD_altY`, `altY_memWS`, `ae_dW_pm_antiY`, `kin_mul_altY`,
+    `h0W_altY`, `LN_altY`, **`el_all`** (weak equation against all H¹ test functions),
+    **`Q_altY_W`** (altY_a g is an eigenstate with the energy of g).
 
