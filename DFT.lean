@@ -1,4 +1,5 @@
 import DFT.Continuum.Box.Basic
+import DFT.Continuum.Box.Dense
 import DFT.Continuum.Box.Extend
 import DFT.Continuum.Box.Ground
 import DFT.Continuum.Box.Lieb
@@ -7,6 +8,7 @@ import DFT.Continuum.Box.PiconeEq
 import DFT.Continuum.Box.Solve
 import DFT.Continuum.Box.Sturm
 import DFT.Continuum.Box.VRep
+import DFT.Continuum.General.Ekeland
 import DFT.Continuum.General.FromLattice
 import DFT.Continuum.General.HK
 import DFT.Continuum.General.Lieb

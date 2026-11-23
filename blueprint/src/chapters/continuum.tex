@@ -689,6 +689,25 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   multiple of the shooting solution; take $g=\pm\varphi$ and $q=v-E^*$.
 \end{proof}
 
+\begin{theorem}[Supergradient densities are dense]
+  \label{thm:box_dense}
+  \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}
+  \leanok
+  \uses{thm:box_exists}
+  (Brøndsted--Rockafellar.) Let $E$ be concave and upper semicontinuous on a Banach space $P$ and $\rho\in P^*$ with
+  $\sup_v(E(v)-\rho(v))<\infty$. For every $\eta>0$ there are $v\in P$ and a supergradient $\rho'$ of $E$ at $v$ with
+  $\|\rho'-\rho\|\le\eta$. For one particle in the box with $P=C([0,1])$, $E$ is concave and $1$-Lipschitz, the density of
+  a ground state of $v$ is a supergradient at $v$ (Hellmann--Feynman), and at a supergradient $F(\rho')=E(v)-\rho'(v)$.
+  Hence every density of finite Lieb functional, in particular every $N$-representable one, is a dual-norm limit of
+  supergradient densities.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Ekeland's principle applied to $g=\rho-E$ gives $\bar v$ with $g(\bar v)\le g(w)+\eta\|w-\bar v\|$ for all $w$. The convex
+  function $f(y)=g(\bar v+y)-g(\bar v)$ lies above $-\eta\|y\|$; separating its epigraph from the open convex set
+  $\{(y,t):t<-\eta\|y\|\}$ gives a linear minorant $\ell$ of $f$ with $\|\ell\|\le\eta$, and $\rho'=\rho-\ell$.
+\end{proof}
+
 \begin{theorem}[Hard-core bosons]
   \label{thm:line_hardcore}
   \lean{DFT.Continuum.Line.hk_hardcore_line, DFT.Continuum.Line.lieb_hardcore_line, DFT.Continuum.Line.exists_unique_gs_hardcore, DFT.Continuum.Line.nrep_hardcore, DFT.Continuum.Line.tonks_girardeau}

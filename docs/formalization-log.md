@@ -357,6 +357,17 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
   - **`quartDens_not_vrep`**: 30x²(1−x)² is N-rep (C² state √30 x(1−x)) but not v-rep
     (g''/g = −2/(x(1−x)) unbounded vs |q| ≤ ‖q‖ at x = 1/(‖q‖+2)).
   - Next: item 4 (v-rep densities dense, Brøndsted–Rockafellar).
+- DONE (2026-11-23) item 4a: Brøndsted–Rockafellar, abstract and in the box.
+  - `General/Ekeland`: **`ekeland`** (weak Ekeland principle, complete metric space; Mathlib has
+    none), `exists_minorant_of_ge_neg_norm` (Hahn–Banach via `geometric_hahn_banach_open`),
+    **`exists_supergrad_near`** (concave usc E on a Banach space, sup(E−ρ) < ∞ ⇒ supergradient
+    within η of ρ in the dual norm).
+  - `Box/Dense`: `gsEr` (real GS energy, `gsE_eq`), `densL` (density as a functional, norm ≤ 1),
+    `gsEr_concave`, `gsEr_lipschitz` (1-Lipschitz in sup norm), `supergrad_of_isNGS`
+    (Hellmann–Feynman), `liebF_of_supergrad`, **`dense_supergrad`**, `dense_supergrad_of_nst`.
+  - Next: item 4b, the converse of Hellmann–Feynman (every supergradient of E at v is the GS
+    density of v). Needs a spectral gap / differentiability of E; via Picone this is a weighted
+    Poincaré inequality with weight ψ² on (0,1).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
