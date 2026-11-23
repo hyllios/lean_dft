@@ -474,6 +474,20 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     **`lieb_line_W_cont_of`** (any normalised H¹₀ GS: F(ρ_ψ) = ⟨ψ,(T+W)ψ⟩, −v subgradient, unique
     up to constants), **`lieb_line_W_cont`** (exists for every continuous v, w; no hws). Standard
     axioms.
+- STARTED (2026-11-23) Spin-½ / SDFT on H¹₀ with continuous potentials.
+  - Target: spin-orbital H¹₀ ground states of −Δ + Σ v(x_k) + Σ b(x_k)σ_k + w. If Ψ, Ψ' are GSs
+    of (v,b), (v',b') with equal (ρ, m), then v − v', b − b' are constant when the GS lives in a
+    sector 0 < a < N; for a fully polarised GS only v + b (resp. v − b) is fixed up to a constant
+    (the SDFT non-uniqueness). Lieb–Mattis on H¹₀ with continuous V is out of reach this way (its
+    proof uses Hopf and C² nodal structure).
+  - Route: each spin component Ψ(s,·) is a mixed-symmetry (a, N−a) function; fold the b-term into
+    the continuous interaction w_b = w + Σ_k σ_k b(x_k). Phases: (P1) H¹₀ setting for any SymT;
+    (P2) UCP for Young symmetry ymix a (f1–f4 with YG a and the chamber RY; fermions = a = N);
+    (P3) sector HK/Lieb; (P4) spin-orbital states, densities (ρ, m), SDFT HK.
+  - P1 DONE: `Line/WeakS`: `DomWS s`, `settingWS s w hw`, `DomW_eq_DomWS`, `QWS_eq`, `h0WS_null`,
+    `isGS_WS_of_isNGS`, `cN_pmWS`, `adm_cNWS`, `Fn_le_QWS`, `serWS_mem`,
+    **`exists_isNGS_WS_cont`**, **`exists_isNGS_WY_cont`**. `sum_lam_le` now takes `H1W`,
+    `kinW_serW` any `Dir s`.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

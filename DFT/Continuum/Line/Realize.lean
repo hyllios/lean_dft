@@ -213,7 +213,7 @@ theorem serW_mem (ha : Dir τ.toSym a) : serW a ∈ DomW τ n :=
   ⟨memLp_serW, fun k => ⟨_, isWD_serW ha.sq ha.kin k⟩, fun σ => serW_pm ha.sq ha.sym σ⟩
 
 /-- The weak kinetic energy of the series is `Σ λ_m a_m²`. -/
-theorem kinW_serW (ha : Dir τ.toSym a) : kinW (serW a) = ∑' m, lam m * a m ^ 2 := by
+theorem kinW_serW {s : SymT n} (ha : Dir s a) : kinW (serW a) = ∑' m, lam m * a m ^ 2 := by
   have hk : ∀ k, ∫ x, dW k (serW a) x * dW k (serW a) x ∂μN n =
       ∑' m, (π * (m k + 1) * a m) ^ 2 := fun k => by
     have hd := dW_ae_eq (isWD_serW ha.sq ha.kin k)

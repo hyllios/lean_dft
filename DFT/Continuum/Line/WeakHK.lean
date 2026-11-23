@@ -265,7 +265,7 @@ lemma Bf_cNW {V Ψ : Cfg n → ℝ} (hV : Continuous V) (hΨ : MemLp Ψ 2 (μN n
   exact integral_congr_ae (ae_of_all _ fun x => by ring)
 
 /-- Bessel for the kinetic energy: every partial sum of `Σ λ_m c_m²` is at most `T`. -/
-lemma sum_lam_le {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (s : Finset (Fin (n + 1) → ℕ)) :
+lemma sum_lam_le {Ψ : Cfg n → ℝ} (hΨ : H1W Ψ) (s : Finset (Fin (n + 1) → ℕ)) :
     ∑ m ∈ s, lam m * cN m Ψ ^ 2 ≤ kinW Ψ := by
   set M := (s.sup fun m => Finset.univ.sup m) + 1
   have hsub : s ⊆ boxI n M := fun m hm => mem_boxI.2 fun j => by
@@ -275,7 +275,7 @@ lemma sum_lam_le {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (s : Finset (Fin 
     omega
   refine (Finset.sum_le_sum_of_subset_of_nonneg hsub fun m _ _ =>
     mul_nonneg (lam_nonneg m) (sq_nonneg _)).trans ?_
-  have h := kin_trunc_le (h1W_of_mem hΨ) M
+  have h := kin_trunc_le hΨ M
   rw [kin_trunc Ψ] at h
   simpa [lam, kinW] using h
 
@@ -283,7 +283,7 @@ lemma adm_cNW {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (h1 : ∫ x, Ψ x ^ 
     Adm τ.toSym fun m => cN m Ψ :=
   { sq := (parsevalW hΨ.1).summable
     kin := summable_of_sum_le (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _))
-      (sum_lam_le hΨ)
+      (sum_lam_le (h1W_of_mem hΨ))
     sym := fun σ _ m => cN_pmW hΨ σ m
     norm := by rw [(parsevalW hΨ.1).tsum_eq, h1] }
 
@@ -293,7 +293,8 @@ lemma Fn_le_QW {w : Cfg n → ℝ} {hw : Continuous w} (v : Pot) {Ψ : Cfg n →
   rw [Fn, Bf_cNW (V := fun x => LN n v x + w x) ((continuous_LN v).add hw) hΨ.1, QW_eq v hΨ]
   gcongr
   exact Summable.tsum_le_of_sum_le (summable_of_sum_le
-    (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _)) (sum_lam_le hΨ)) (sum_lam_le hΨ)
+    (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _)) (sum_lam_le (h1W_of_mem hΨ)))
+    (sum_lam_le (h1W_of_mem hΨ))
 
 /-- `L²` functions with the same sine coefficients agree a.e. -/
 lemma ae_eq_of_cN_eq {f g : Cfg n → ℝ} (hf : MemLp f 2 (μN n)) (hg : MemLp g 2 (μN n))
