@@ -44,6 +44,7 @@ import DFT.Continuum.Line.SpinBridge
 import DFT.Continuum.Line.SpinStates
 import DFT.Continuum.Line.SpinWeak
 import DFT.Continuum.Line.Strong
+import DFT.Continuum.Line.Translate
 import DFT.Continuum.Line.Unique
 import DFT.Continuum.Line.VRep
 import DFT.Continuum.Line.Weak

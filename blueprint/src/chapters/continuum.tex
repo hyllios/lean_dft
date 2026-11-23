@@ -701,6 +701,19 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $2ab\le a^2/2+2b^2$.
 \end{proof}
 
+\begin{lemma}[Translations of weakly differentiable functions]
+  \label{lem:line_translate}
+  \lean{DFT.Continuum.Line.ek, DFT.Continuum.Line.hasDerivAt_translate, DFT.Continuum.Line.dk_translate, DFT.Continuum.Line.translate_identity}
+  \leanok
+  If $H$ is the weak $k$-th derivative of $F$ on $\mathbb R^N$ (both integrable), then for $t\ge0$,
+  $F(x+te_k)-F(x)=\int_0^tH(x+se_k)\,ds$ for almost every $x$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Pair with a test function $g$, move the translation onto $g$, write $g(y-te_k)-g(y)=-\int_0^t\partial_kg(y-se_k)\,ds$,
+  swap the integrals and use the weak derivative against $g(\cdot-se_k)$; conclude with the fundamental lemma.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}

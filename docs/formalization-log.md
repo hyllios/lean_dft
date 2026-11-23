@@ -418,6 +418,16 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     for (e) use η = Σ_σ η₀∘pm σ). Next (e): w_ε = oddExt log(1+t/ε) ∘ u ∈ H¹₀ with
     ∂w_ε = ∂u/(u+ε); Poincaré–Wirtinger on sub-cubes (needs strong local H¹ approximation or a
     direct proof for IsWD functions), then the dichotomy u = 0 / u > 0 a.e. per sub-cube, chain.
+  - (e) route revised (no Poincaré, no mollifier L² theory):
+    (e1) DONE `Line/Translate`: **`translate_identity`**: F(x+teₖ) − F(x) = ∫₀ᵗ H(x+seₖ) ds a.e.
+         for strongly measurable integrable F, H on ℝᴺ with H the weak ∂ₖF (smooth compactly
+         supported tests). Apply to zero extensions (`indicator`) of H¹₀ functions / their dW.
+    (e2) w_ε = oddExt log(1+t/ε) ∘ u; Cauchy–Schwarz + log_estimate ⇒ ∫_{Q}|w_ε(x+heₖ)−w_ε(x)|²
+         ≤ h²K uniformly in ε on Q = [a,1−a]ᴺ shrunk by h (η = Πⱼ sin(πxⱼ)/sin(πa));
+         ⇒ 1_Z(x+heₖ) = 1_Z(x) a.e. on Q, Z = {u = 0}.
+    (e3) translation-invariant indicator ⇒ equals a.e. its average against a continuous bump,
+         which is continuous and {0,1}-valued on a connected set ⇒ constant; a → 0.
+    (e4) assemble UcpW for bosons (|Ψ| GS ≥ 0, nonzero) and HK on H¹₀ for continuous v.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
