@@ -401,8 +401,11 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     `tendsto_inner_of_basis` (bounded + convergence on a Hilbert basis ⇒ weak convergence),
     `tendsto_integral_mul_of_L2`, `norm_dk_trunc_sq_le`, `integral_smd_dk`, **`tendsto_trunc_dk`**
     (∂ₖP_M ⇀ ∂ₖΦ weakly in L², ‖∂ₖP_M‖² ≤ T(Φ)). Enough for (b): G'(P_M) → G'(Φ) strongly (a.e.
-    subsequence + dominated) times weakly convergent ∂ₖP_M. Next: (b) chain rule; needs IBP for C¹
-    functions vanishing on the walls (`isWD_of_C2` only uses C¹ — generalise).
+    subsequence + dominated) times weakly convergent ∂ₖP_M.
+  - (b) DONE: `Line/Realize` `isWD_of_C1` (IBP generalised to C¹); `Line/Chain`:
+    `abs_integral_mul_le`, `exists_ae_subseq` (L² ⇒ a.e. subsequence via convergence in measure),
+    **`isWD_comp`**: ∂ₖ(G∘Φ) = G'(Φ)∂ₖΦ for G ∈ C¹, |G'| ≤ L, G(0) = 0.
+    Next: products with smooth cutoffs (needed in (d)), then (c) |Ψ| via G_ε(t) = √(t²+ε²) − ε.
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,

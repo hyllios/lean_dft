@@ -61,14 +61,15 @@ lemma orth_series {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [
 
 /-! ### Integration by parts for the sines -/
 
-lemma isWD_of_C2 {Φ : Cfg n → ℝ} (hC : ContDiff ℝ 2 Φ)
+/-- Integration by parts: a `C¹` function vanishing on the walls has its classical derivatives as
+weak derivatives. -/
+lemma isWD_of_C1 {Φ : Cfg n → ℝ} (hC1 : ContDiff ℝ 1 Φ)
     (hface : ∀ x k, (x k = 0 ∨ x k = 1) → Φ x = 0) (k : Fin (n + 1)) : IsWD k Φ (dk k Φ) := by
-  have hC1 : ContDiff ℝ 1 Φ := hC.of_le (by norm_num)
   have hdc : Continuous (dk k Φ) := continuous_dk_of_C1 hC1 k
   refine ⟨memLp_cont hdc, fun φ hφ => ?_⟩
   have hd := continuous_dk_of_C1 hφ k
   have hφd : Differentiable ℝ φ := hφ.differentiable one_ne_zero
-  rw [integral_cube_ins (F := fun x => Φ x * dk k φ x) k (integrableN (hC.continuous.mul hd)),
+  rw [integral_cube_ins (F := fun x => Φ x * dk k φ x) k (integrableN (hC1.continuous.mul hd)),
     integral_cube_ins (F := fun x => dk k Φ x * φ x) k (integrableN (hdc.mul hφ.continuous)),
     ← integral_neg]
   refine setIntegral_congr_fun measurableSet_cube' fun y _ => ?_
@@ -83,6 +84,10 @@ lemma isWD_of_C2 {Φ : Cfg n → ℝ} (hC : ContDiff ℝ 2 Φ)
   have w0 : Φ (Fin.insertNth k 0 y) = 0 := hface _ k (Or.inl (by simp))
   have w1 : Φ (Fin.insertNth k 1 y) = 0 := hface _ k (Or.inr (by simp))
   rw [w0, w1]; ring
+
+lemma isWD_of_C2 {Φ : Cfg n → ℝ} (hC : ContDiff ℝ 2 Φ)
+    (hface : ∀ x k, (x k = 0 ∨ x k = 1) → Φ x = 0) (k : Fin (n + 1)) : IsWD k Φ (dk k Φ) :=
+  isWD_of_C1 (hC.of_le (by norm_num)) hface k
 
 /-- `∂ₖ s_m = π(m_k+1) c^k_m`. -/
 lemma dk_smd (k : Fin (n + 1)) (m : Fin (n + 1) → ℕ) (x : Cfg n) :

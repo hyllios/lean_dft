@@ -655,6 +655,21 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   basis converges weakly.
 \end{proof}
 
+\begin{lemma}[Chain rule in $H^1_0$]
+  \label{lem:line_chain}
+  \lean{DFT.Continuum.Line.isWD_of_C1, DFT.Continuum.Line.abs_integral_mul_le, DFT.Continuum.Line.exists_ae_subseq, DFT.Continuum.Line.isWD_comp}
+  \leanok
+  \uses{lem:line_h1_approx}
+  For $\Phi\in H^1_0$ and $G\in C^1(\mathbb R)$ with $|G'|\le L$ and $G(0)=0$, $G\circ\Phi$ has weak derivatives
+  $G'(\Phi)\,\partial_k\Phi$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Classical for the truncations $P_M$. Along a subsequence $P_M\to\Phi$ a.e.; $G(P_M)\to G(\Phi)$ in $L^2$ since $G$ is
+  Lipschitz; $(G'(P_M)-G'(\Phi))\varphi\to0$ in $L^2$ by dominated convergence while $\|\partial_kP_M\|$ stays bounded,
+  and $G'(\Phi)\varphi\cdot\partial_kP_M$ converges by weak convergence.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}
