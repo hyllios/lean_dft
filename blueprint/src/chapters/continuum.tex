@@ -640,6 +640,21 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   only missing input.
 \end{proof}
 
+\begin{lemma}[$C^2$ states approximate $H^1_0$ states]
+  \label{lem:line_h1_approx}
+  \lean{DFT.Continuum.Line.tendsto_inner_of_basis, DFT.Continuum.Line.tendsto_integral_mul_of_L2, DFT.Continuum.Line.norm_dk_trunc_sq_le, DFT.Continuum.Line.integral_smd_dk, DFT.Continuum.Line.tendsto_trunc_dk}
+  \leanok
+  \uses{thm:line_gs_cont}
+  For $\Phi\in H^1_0$ the sine truncations $P_M$ are $C^2$ states with $P_M\to\Phi$ in $L^2$, $\|\partial_kP_M\|^2\le
+  T(\Phi)$, and $\partial_kP_M\rightharpoonup\partial_k\Phi$ weakly in $L^2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Integrating by parts on both sides, $\langle s_m,\partial_kP_M\rangle=-\pi(m_k+1)\langle c^k_m,P_M\rangle\to
+  -\pi(m_k+1)\langle c^k_m,\Phi\rangle=\langle s_m,\partial_k\Phi\rangle$. A bounded sequence converging on a Hilbert
+  basis converges weakly.
+\end{proof}
+
 \begin{theorem}[Ground states exist for smooth potentials]
   \label{thm:line_smooth}
   \lean{DFT.Continuum.Sine.coef_decay, DFT.Continuum.Sine.kernel_of_smooth, DFT.Continuum.Sine.exists_isGS_kernel, DFT.Continuum.Sine.exists_isGS_smooth, DFT.Continuum.Sine.exists_unique_gs_smooth, DFT.Continuum.Sine.hk_line_smooth, DFT.Continuum.Sine.lieb_line_smooth, DFT.Continuum.Sine.hk_line_pair, DFT.Continuum.Sine.lieb_line_pair, DFT.Continuum.Sine.exists_unique_gs_pair, DFT.Continuum.Sine.hk_line_mirror, DFT.Continuum.Sine.lieb_line_mirror}

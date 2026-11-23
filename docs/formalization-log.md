@@ -397,6 +397,12 @@ Status (2026-11-21): S1–S7 done, uncommitted. All files below build.
     (c) Perron–Frobenius step: |Ψ| is a GS (bosons; fermions via the chamber sign);
     (d) log estimate: test the weak equation with η²/(u+ε) ⇒ ∫η²|∇log(u+ε)|² ≤ C uniformly in ε;
     (e) Poincaré–Wirtinger on sub-cubes ⇒ u = 0 a.e. or u > 0 a.e. on each sub-cube; chain.
+  - (a) DONE in weak form (cosine completeness turned out unnecessary): `Line/H1Approx`:
+    `tendsto_inner_of_basis` (bounded + convergence on a Hilbert basis ⇒ weak convergence),
+    `tendsto_integral_mul_of_L2`, `norm_dk_trunc_sq_le`, `integral_smd_dk`, **`tendsto_trunc_dk`**
+    (∂ₖP_M ⇀ ∂ₖΦ weakly in L², ‖∂ₖP_M‖² ≤ T(Φ)). Enough for (b): G'(P_M) → G'(Φ) strongly (a.e.
+    subsequence + dominated) times weakly convergent ∂ₖP_M. Next: (b) chain rule; needs IBP for C¹
+    functions vanishing on the walls (`isWD_of_C2` only uses C¹ — generalise).
 
 ## RDMFT on a lattice (2026-11-19)
 `H(h) = Γ(h) + W` with `h` any real symmetric one-body matrix. All RDMFT files build, no sorry,
