@@ -26,6 +26,7 @@ import DFT.Continuum.Line.Density
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions
 import DFT.Continuum.Line.H1Approx
+import DFT.Continuum.Line.H2
 import DFT.Continuum.Line.HKY
 import DFT.Continuum.Line.HalfSpace
 import DFT.Continuum.Line.HardCore
@@ -37,6 +38,7 @@ import DFT.Continuum.Line.LiebMattisTotalW
 import DFT.Continuum.Line.LiebMattisW
 import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Meagre
+import DFT.Continuum.Line.MeagreC1
 import DFT.Continuum.Line.Nondeg
 import DFT.Continuum.Line.NotVRep
 import DFT.Continuum.Line.NotVRepDense

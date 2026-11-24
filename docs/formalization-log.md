@@ -700,3 +700,16 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   Blueprint `thm:line_nonvrep_dense`, `thm:line_meagre`. Literature: density known (Lieb/Kvaal et al.
   2014 "small but dense"); no category statement found; with H⁻¹ potentials every positive H¹
   density is v-rep (Corso LMP 2026, Neumann) — meagreness reflects C([0,1]) being too small.
+- M STARTED (interacting v-rep densities meagre for all N; user approved). Plan: (a) C¹ profiles
+  meagre, (b) H² regularity of the GS in sine coefficients, (c) GS density has a C¹ profile.
+  - (a) DONE `Line/MeagreC1`: `D2_perturb` (generic apex estimate, no sign hypothesis needed),
+    `tentF_nonneg`/`tentF_le_one`/`tent_le_indicator`, `integral_tent_le` (∫ tent ≤ 2w),
+    `exists_tent_L2'` (‖q‖² ≤ 2/w), `Bset k` (|Δ²ρ| ≤ h for h ≤ 1/(k+1)), `exists_not_Bset`
+    (tent of width r⁴, height r³: L² cost O(r), apex term 4|γ|/r; explicit r, no limits; needs
+    maxHeartbeats 10⁶), `D2_le_of_C1` (uniform continuity of K'), `C1Dens`, **`meagre_C1Dens`**.
+  - (b) DONE for fermions `Line/H2`: `int_dW_smd`, `h0W_smd`, **`coef_EL`**
+    (λ_m c_m + ⟨s_m, VΨ⟩ = E c_m via `el_all` tested on one sine mode; needs relabelling-invariant
+    w), **`summable_lam_sq`** (Σ λ_m² c_m² < ∞). Bosons need a symmetric analogue of `el_all`
+    (`altY` with sign 1).
+  - (c) TODO: K(t) = N Σ_μ u_μ(t)², u_μ(t) = Σ_k c_{(k,μ)} s_{k+1}(t); C¹ via uniform bounds
+    Σ_μ sup|u_μ| sup|u_μ'| ≲ Σ λ² c²; identify ρ(u) = ∫ u K (fiber Parseval or kernel route).
