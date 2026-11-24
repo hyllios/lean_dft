@@ -627,4 +627,9 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
     `phi0_eq_Pst` (= P ≥ 0 on RY off collisions: σ ≠ 1 has an in-group inversion), `boxB`.
   - D4 DONE `Line/LiebMattisW`: **`lieb_mattis_W`**: E(a,b) < E(a+1,b−1) on H¹₀, continuous v,
     relabelling-invariant continuous w. Standard axioms. Next: total-spin form on H¹₀ without smooth V.
+  - D5 DONE `Line/LiebMattisTotalW`: `relW`, `BQW_rel`, `BipW_rel`, `BQW_eq_h0W`, `EigSp` (the
+    E-eigenspace tested against all H¹₀), `relW_mem_EigSp`, `mem_EigSp_of_GS`, `liftW`,
+    `FermW_liftW`, `Pc_liftW`, `liftW_sc_ae`, `lower_bound_WC`, `upper_bound_WC`,
+    **`EspinW_eq_cont`**, **`lieb_mattis_total_W_cont`** (E(S) < E(S+1), continuous V). Phase D
+    complete. Next: E (deletion of the smooth-V code).
 

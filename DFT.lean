@@ -39,6 +39,7 @@ import DFT.Continuum.Line.LiebMattis
 import DFT.Continuum.Line.LiebMattisSign
 import DFT.Continuum.Line.LiebMattisSpin
 import DFT.Continuum.Line.LiebMattisTotal
+import DFT.Continuum.Line.LiebMattisTotalW
 import DFT.Continuum.Line.LiebMattisW
 import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Nodal

@@ -1152,3 +1152,20 @@ $(a,b)$, Young subgroup $\mathrm{YG}_a$).
   Fock's condition makes zero.
 \end{proof}
 
+\begin{theorem}[Lieb--Mattis for the total spin on $H^1_0$, continuous potentials]
+  \label{thm:lieb_mattis_total_W_cont}
+  \lean{DFT.Continuum.Line.relW, DFT.Continuum.Line.BQW_rel, DFT.Continuum.Line.EigSp, DFT.Continuum.Line.mem_EigSp_of_GS, DFT.Continuum.Line.liftW, DFT.Continuum.Line.FermW_liftW, DFT.Continuum.Line.liftW_sc_ae, DFT.Continuum.Line.lower_bound_WC, DFT.Continuum.Line.upper_bound_WC, DFT.Continuum.Line.EspinW_eq_cont, DFT.Continuum.Line.lieb_mattis_total_W_cont}
+  \leanok
+  \uses{thm:lieb_mattis_W_cont, thm:lieb_mattis_total_W}
+  For continuous $v$ and relabelling-invariant continuous $w$, the lowest energy $E(S)$ of a fermionic spin-orbital
+  state with $H^1_0$ components and total spin $S$ is the ground-state energy of the sector $S_z=S$, and
+  $E(S)<E(S+1)$ for $S\ge0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The multiplet bound with the $H^1_0$ variational principle in the top sector gives $E(S)\ge E(a,b)$. The sector ground
+  state lifts to a fermionic spin-orbital state whose components lie in the $E$-eigenspace of the weak Hamiltonian
+  (closed under relabelling and sums); its raised component would be an eigenstate of type $(a+1,b-1)$ with energy
+  $E(a,b)<E(a+1,b-1)$ (Theorem~\ref{thm:lieb_mattis_W_cont}), so it vanishes, and the lift has total spin exactly $S$.
+\end{proof}
+
