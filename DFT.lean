@@ -30,11 +30,14 @@ import DFT.Continuum.Line.HalfSpace
 import DFT.Continuum.Line.HardCore
 import DFT.Continuum.Line.HardCoreW
 import DFT.Continuum.Line.Invariant
+import DFT.Continuum.Line.KohnSham
 import DFT.Continuum.Line.LiebCont
 import DFT.Continuum.Line.LiebMattisTotalW
 import DFT.Continuum.Line.LiebMattisW
 import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Nondeg
+import DFT.Continuum.Line.NotVRep
+import DFT.Continuum.Line.OneBody
 import DFT.Continuum.Line.Pauli
 import DFT.Continuum.Line.Realize
 import DFT.Continuum.Line.RefState

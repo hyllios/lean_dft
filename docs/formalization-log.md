@@ -651,3 +651,29 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   `Line/TonksW`: `isGS_W_of_isGS` (C² ground states are H¹₀ ground states) and
   **`tonks_girardeau_W`**. Found with a declaration-level reachability script from the H¹₀ results
   and Lieb's N-representability. Blueprint: 9 entries deleted, `thm:tonks_W` added.
+- G DONE (non-v-representable densities on H¹₀, continuous V). `Line/NotVRep`: **`dens_pos_of_isGS`**
+  (∫ u ρ > 0 for continuous u ≥ 0 positive at an interior point, from `ucpW_cont` and continuity of
+  Σ u(x_k) on the open cube), `not_pureVRep_of_dens_zero`, `not_ensVRep_of_dens_zero`, `gHalf` =
+  max(sin 2πt, 0) (Lipschitz ⇒ `h10_gHalf`), `rhoHalf`, **`nrep_not_vrep`**: N-representable, not
+  pure/ensemble v-representable, any continuous w. Standard axioms. Blueprint `thm:line_not_vrep`.
+  Open: kinks (needs H² regularity of H¹₀ GS) and isolated interior zeros (needs strict positivity);
+  both easy-ish for N = 1 via C² regularity of the weak ODE.
+- H DONE (N = 1 on H¹₀, continuous V). `Line/OneBody`: `lift`/`unlift` (ℝ → ℝ vs Cfg 0 → ℝ),
+  `integral_one` (funUnique), `dk_lift`, `lift_mem`, `unlift_mem`, `Q_lift`, `dens_lift`,
+  **`isGS_lift`** (box GS ⇒ C² line GS ⇒ H¹₀ GS via `isGS_W_of_isGS`), `wPot`, `Q_shift`,
+  `isGS_shift` (for n = 0, w is a potential), **`pureDens_one_iff`**, **`pureVRep_one_iff`**,
+  **`pureVRep_one_iff_boxRep`**, `ensVRep_one_iff_boxRep` (exact N = 1 characterisation on H¹₀),
+  **`not_vrep_one_of_zero`** (interior zero ⇒ not v-rep), `sinG`/`sinDens` = 2 sin²(2πt),
+  **`sinDens_nrep_not_vrep`**, **`quartDens_nrep_not_vrep`**. Both examples are C^∞ densities.
+  Standard axioms. Blueprint `thm:one_W_vrep`. No du Bois-Reymond regularity needed: uniqueness of
+  the H¹₀ GS plus the existing C² box GS did it.
+- I DONE (Kohn–Sham on H¹₀, continuous V; user chose "framework + bosonic KS"). `Line/KohnSham`:
+  `ksS` (w = 0), `KSRep`, `pureDens_hk`, **`ks_unique`**, **`hxc_unique`** (v_s − v unique mod
+  constants), **`ksDens_fer`** (KS equations: orthonormal C² orbitals φ_j'' = (v_s − λ_j)φ_j,
+  KS density = Σ φ_j²), `prodS_isGS_of` (product of any normalised box GS is a free-boson GS),
+  `ks_prodS`, **`ksDens_bos`** (N φ₀²), **`ksRep_bos_iff`** (bosonic KS v-rep ⟺ ρ = N g², BoxRep g),
+  `Ts`, `EHxc`, `isNGS_of_isGS_one`, **`ks_decomposition`** (T_s = kinetic energy of Φ, E_Hxc
+  finite, E = T_s + ∫vρ + E_Hxc), `wPot_zero`, **`ks_exists_one`**, `ksRep_of_vrep_one` (N = 1:
+  interacting ⇒ KS, v_s = v + w). Standard axioms. Blueprint `thm:line_ks`.
+  Open: KS existence for N ≥ 2 (interacting GS density ⇒ KSRep). For bosons this is exactly:
+  does √(ρ/N) of an interacting GS satisfy BoxRep (C², g''/g continuous up to the walls)?

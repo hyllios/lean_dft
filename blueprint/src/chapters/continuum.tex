@@ -691,6 +691,24 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   states, $\Psi_1-c\Psi_2$ with zero integral over that region cannot be a ground state, so it vanishes.
 \end{proof}
 
+\begin{theorem}[$N$-representable densities that are not $v$-representable]
+  \label{thm:line_not_vrep}
+  \lean{DFT.Continuum.Line.dens_pos_of_isGS, DFT.Continuum.Line.not_pureVRep_of_dens_zero, DFT.Continuum.Line.not_ensVRep_of_dens_zero, DFT.Continuum.Line.gHalf, DFT.Continuum.Line.h10_gHalf, DFT.Continuum.Line.rhoHalf, DFT.Continuum.Line.nrep_not_vrep}
+  \leanok
+  \uses{thm:line_ucp_bos, thm:line_ucp_fer, thm:line_nondeg_cont, thm:line_nrep}
+  For bosons or fermions on $H^1_0$ with continuous $v$ and $w$, the density $\rho$ of a ground state has
+  $\int_0^1 u\rho>0$ for every continuous $u\ge0$ positive at an interior point. Hence a density vanishing on an
+  interval is neither pure- nor ensemble-$v$-representable. In particular $\rho=c^2\max(\sin2\pi x,0)^2$ with
+  $\int\rho=N$ is $N$-representable but not $v$-representable, for every continuous interaction $w$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  If $\int u\rho=0$, then $\big(\sum_k u(x_k)\big)\Psi^2=0$ a.e.; by unique continuation $\Psi\ne0$ a.e., so the
+  continuous function $\sum_k u(x_k)$ vanishes on the open cube, which fails at $x=(c,\dots,c)$. The example has
+  $\sqrt\rho\in H^1_0$ (it is Lipschitz), so it is $N$-representable by Theorem~\ref{thm:line_nrep}; take
+  $u=\max(x-\tfrac12,0)$.
+\end{proof}
+
 \begin{theorem}[Hard-core bosons on $H^1_0$, continuous potentials]
   \label{thm:line_hardcore_W}
   \lean{DFT.Continuum.Line.gA_sort, DFT.Continuum.Line.isWD_mulA, DFT.Continuum.Line.mulA_memW, DFT.Continuum.Line.DomHCW, DFT.Continuum.Line.settingHCW, DFT.Continuum.Line.h0W_mulA, DFT.Continuum.Line.isGS_mulA_W_iff, DFT.Continuum.Line.gsE_hcW, DFT.Continuum.Line.liebF_hcW, DFT.Continuum.Line.gs_ne_zero_hcW, DFT.Continuum.Line.exists_unique_gs_hcW, DFT.Continuum.Line.hk_hardcore_W, DFT.Continuum.Line.lieb_hardcore_W_of}
@@ -771,6 +789,49 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $g\psi'-g'\psi$ vanishes at both walls and has derivative $-E^*g\psi$, so $E^*=0$; integrating by parts, $g$ has
   energy $0$. ($\Rightarrow$) A ground state $\varphi$ of $v$ has energy $E^*$, so by the equality case of Picone it is a
   multiple of the shooting solution; take $g=\pm\varphi$ and $q=v-E^*$.
+\end{proof}
+
+\begin{theorem}[One particle on $H^1_0$: smooth densities that are not $v$-representable]
+  \label{thm:one_W_vrep}
+  \lean{DFT.Continuum.Line.lift, DFT.Continuum.Line.integral_one, DFT.Continuum.Line.isGS_lift, DFT.Continuum.Line.wPot, DFT.Continuum.Line.isGS_shift, DFT.Continuum.Line.pureDens_one_iff, DFT.Continuum.Line.pureVRep_one_iff, DFT.Continuum.Line.pureVRep_one_iff_boxRep, DFT.Continuum.Line.ensVRep_one_iff_boxRep, DFT.Continuum.Line.not_vrep_one_of_zero, DFT.Continuum.Line.sinDens, DFT.Continuum.Line.sinDens_nrep_not_vrep, DFT.Continuum.Line.quartDens_nrep_not_vrep}
+  \leanok
+  \uses{thm:box_vrep, thm:line_nondeg_cont, thm:tonks_W}
+  For one particle on $H^1_0$ with continuous $v$ and $w$ ($w$ acts as a potential), the pure and the ensemble
+  $v$-representable densities are exactly those of Theorem~\ref{thm:box_vrep}. Hence a density with an interior
+  zero is not $v$-representable, and the smooth densities $2\sin^2(2\pi x)$ and $30x^2(1-x)^2$ are $N$-representable
+  but not $v$-representable.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The lift $\varphi(x_0)$ of a $C^2$ box ground state is a $C^2$ ground state on the line, hence an $H^1_0$ one; the
+  $H^1_0$ ground state is unique up to a factor, so it has the density of the box ground state. If $g^2=\rho$ with
+  $g>0$ on $(0,1)$, then $\rho$ has no interior zero.
+\end{proof}
+
+\begin{theorem}[Kohn--Sham theory on $H^1_0$, continuous potentials]
+  \label{thm:line_ks}
+  \lean{DFT.Continuum.Line.ksS, DFT.Continuum.Line.KSRep, DFT.Continuum.Line.pureDens_hk, DFT.Continuum.Line.ks_unique, DFT.Continuum.Line.hxc_unique, DFT.Continuum.Line.ksDens_fer, DFT.Continuum.Line.prodS_isGS_of, DFT.Continuum.Line.ksDens_bos, DFT.Continuum.Line.ksRep_bos_iff, DFT.Continuum.Line.Ts, DFT.Continuum.Line.EHxc, DFT.Continuum.Line.ks_decomposition, DFT.Continuum.Line.ks_exists_one, DFT.Continuum.Line.ksRep_of_vrep_one}
+  \leanok
+  \uses{thm:line_lieb_cont, thm:line_nondeg_cont, thm:tonks_W, thm:box_vrep, thm:one_W_vrep}
+  Let the Kohn--Sham system be the same particles on $H^1_0$ with no interaction.
+  \begin{enumerate}
+    \item The Kohn--Sham potential of a density, and the Hxc potential $v_s-v$, are unique up to a constant.
+    \item (Kohn--Sham equations.) For every continuous $v_s$ there are orthonormal $C^2$ orbitals with
+      $\varphi_j''=(v_s-\lambda_j)\varphi_j$, vanishing at the walls, and the fermionic Kohn--Sham density of $v_s$ is
+      $\sum_j\varphi_j^2$. For bosons it is $N\varphi_0^2$, $\varphi_0$ the one-particle ground state.
+    \item $\rho$ is bosonic Kohn--Sham $v$-representable iff $\rho=Ng^2$ with $g$ as in Theorem~\ref{thm:box_vrep}.
+    \item If $\rho$ is the density of an interacting ground state $\Psi$ of $v$ and of a Kohn--Sham ground state $\Phi$,
+      then $T_s(\rho)$ is the kinetic energy of $\Phi$, $E_{\mathrm{Hxc}}=F-T_s$ is finite at $\rho$, and
+      $E(v)=T_s(\rho)+\int v\rho+E_{\mathrm{Hxc}}(\rho)$.
+    \item For one particle every interacting ground-state density is Kohn--Sham $v$-representable, with $v_s=v+w$.
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+  \leanok
+  (1) is Hohenberg--Kohn with $w=0$. (2): the Slater determinant of the lowest orbitals, resp.\ the product of the box
+  ground state, is a $C^2$ ground state, hence an $H^1_0$ one, and the ground state is unique up to a factor. (3)
+  follows from (2) and Theorem~\ref{thm:box_vrep}. (4): at a ground-state density the Lieb functional is the
+  intrinsic energy of the ground state. (5) is Theorem~\ref{thm:one_W_vrep}.
 \end{proof}
 
 \begin{theorem}[Supergradient densities are dense]
