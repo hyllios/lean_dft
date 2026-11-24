@@ -834,6 +834,25 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   intrinsic energy of the ground state. (5) is Theorem~\ref{thm:one_W_vrep}.
 \end{proof}
 
+\begin{theorem}[$v$-representable and Kohn--Sham densities are dense on $H^1_0$]
+  \label{thm:line_dense}
+  \lean{DFT.Continuum.Line.exists_subseq_adm, DFT.Continuum.Line.gsErW, DFT.Continuum.Line.densLW, DFT.Continuum.Line.supergrad_of_isNGSW, DFT.Continuum.Line.gsErW_lipschitz, DFT.Continuum.Line.gsErW_concave, DFT.Continuum.Line.liebF_of_supergradW, DFT.Continuum.Line.dense_supergradW, DFT.Continuum.Line.tendsto_dens_line, DFT.Continuum.Line.supergrad_eqW, DFT.Continuum.Line.dense_pureVRepW, DFT.Continuum.Line.dense_pureVRepW_of_nst, DFT.Continuum.Line.ks_dense}
+  \leanok
+  \uses{thm:box_dense, thm:line_nondeg_cont, thm:line_ks}
+  For $N$ bosons or fermions on $H^1_0$ with continuous $v$ and $w$, every supergradient of the ground-state energy
+  $E$ at $v$ is the density of the ground state of $v$. Hence every density of finite Lieb functional, in particular
+  every $N$-representable density, is a limit in the dual norm of $C([0,1])$ of pure $v$-representable densities.
+  With $w=0$: Kohn--Sham $v$-representable densities are dense among $N$-representable ones.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $E$ is concave and $N$-Lipschitz, so Theorem~\ref{thm:box_dense} (Brøndsted--Rockafellar) gives supergradients near
+  $\rho$. If $\rho'$ is a supergradient at $v$ and $\Psi_t$ is the ground state of $v+tu$, then
+  $\rho_{\Psi_t}(u)\le\rho'(u)$ for $t>0$. The sine coefficients of $\Psi_t$ have bounded kinetic energy, so along a
+  sequence $t_k\to0$ they converge in $\ell^2$; the limit is a ground state of $v$, unique, so $\rho_\Psi(u)\le\rho'(u)$
+  for all $u$, and $\rho'=\rho_\Psi$.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}

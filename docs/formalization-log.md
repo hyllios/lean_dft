@@ -677,3 +677,12 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   interacting ⇒ KS, v_s = v + w). Standard axioms. Blueprint `thm:line_ks`.
   Open: KS existence for N ≥ 2 (interacting GS density ⇒ KSRep). For bosons this is exactly:
   does √(ρ/N) of an interacting GS satisfy BoxRep (C², g''/g continuous up to the walls)?
+- J DONE (density of v-rep and KS densities on H¹₀, continuous v, w). `Line/Dense`:
+  `exists_subseq_adm` (compactness in coefficient space, extracted from `KBd.exists_min`),
+  `tendsto_Bf`, `kBd_cont`, `gsErW`, `densW_add`/`densW_smul`/`abs_densW_le` (|ρ(u)| ≤ N‖u‖),
+  `densLW`, `QW_shift`, `supergrad_of_isNGSW`, `gsErW_lipschitz` (N-Lipschitz), `gsErW_concave`,
+  `liebF_of_supergradW`, `dense_supergradW`, **`tendsto_dens_line`** (GS densities continuous along
+  v + t u up to a subsequence: coefficients converge in ℓ², limit is the unique GS),
+  **`supergrad_eqW`** (converse Hellmann–Feynman, no spectral gap, no shooting),
+  **`dense_pureVRepW`**, `dense_pureVRepW_of_nst`, **`ks_dense`** (w = 0). Standard axioms.
+  Blueprint `thm:line_dense`. Box/Diff could now be rederived from this for n = 0.

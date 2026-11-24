@@ -21,6 +21,7 @@ import DFT.Continuum.Line.Chamber
 import DFT.Continuum.Line.Closure
 import DFT.Continuum.Line.Complete
 import DFT.Continuum.Line.ContHK
+import DFT.Continuum.Line.Dense
 import DFT.Continuum.Line.Density
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions
