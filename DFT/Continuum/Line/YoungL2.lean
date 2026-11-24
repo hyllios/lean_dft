@@ -183,7 +183,8 @@ lemma kin_mul_altY {χ φ : Cfg n → ℝ} (hχ : χ ∈ DomWS (ymix (n := n) a)
   have e1 : ∀ k, ∫ x, dW k χ x * dW k (altY a φ) x ∂μN n =
       ∑ σ, (if YG a σ then sgn σ else 0) *
         ∫ x, dW k χ x * dW (σ⁻¹ k) φ (pm σ x) ∂μN n := fun k => by
-    rw [integral_congr_ae (by filter_upwards [dW_ae_eq (isWD_altY (a := a) hφ k)] with x hx; rw [hx])]
+    rw [integral_congr_ae (by
+      filter_upwards [dW_ae_eq (isWD_altY (a := a) hφ k)] with x hx; rw [hx])]
     have : (fun x => dW k χ x * sumY a sgn (fun σ => dW (σ⁻¹ k) φ) x) = fun x =>
         ∑ σ, (if YG a σ then sgn σ else 0) * (dW k χ x * dW (σ⁻¹ k) φ (pm σ x)) := by
       funext x; simp only [sumY, Finset.mul_sum]

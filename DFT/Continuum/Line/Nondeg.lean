@@ -141,7 +141,8 @@ lemma measure_cube_ne_zero : (μN n) univ ≠ 0 := by
 /-- **Nondegeneracy for bosons**, continuous `v` and `w`. -/
 theorem gs_unique_W_bos {Ψ Φ : Cfg n → ℝ} (hΨ : IsGS (settingW .bos n w hw) v Ψ)
     (hΦ : IsGS (settingW .bos n w hw) v Φ) : ∃ c : ℝ, Ψ =ᵐ[μN n] c • Φ :=
-  gs_unique_of_sign (S := settingW .bos n w hw) (R := univ) measure_cube_ne_zero (fun χ hχ => integrableOn_of_memLp hχ.1 _)
+  gs_unique_of_sign (S := settingW .bos n w hw) (R := univ) measure_cube_ne_zero
+    (fun χ hχ => integrableOn_of_memLp hχ.1 _)
     (fun _ h => gs_ne_zero_W_bos h)
     (fun χ hχ => by
       rw [Measure.restrict_univ]
@@ -187,7 +188,8 @@ lemma measure_RY_ne_zero : (μN n) (RY a n) ≠ 0 := by
 /-- **Nondegeneracy in a spin sector**, continuous `v` and `w`. -/
 theorem gs_unique_WY {Ψ Φ : Cfg n → ℝ} (hΨ : IsGS (settingWS (ymix a) w hw) v Ψ)
     (hΦ : IsGS (settingWS (ymix a) w hw) v Φ) : ∃ c : ℝ, Ψ =ᵐ[μN n] c • Φ := by
-  refine gs_unique_of_sign (S := settingWS (ymix a) w hw) (measure_RY_ne_zero (a := a)) (fun χ hχ => integrableOn_of_memLp hχ.1 _)
+  refine gs_unique_of_sign (S := settingWS (ymix a) w hw) (measure_RY_ne_zero (a := a))
+    (fun χ hχ => integrableOn_of_memLp hχ.1 _)
     (fun _ h => gs_ne_zero_WY h) (fun χ hχ => ?_) hΨ hΦ
   have hR := (ae_restrict_iff' measurableSet_RY).2 (PhiY_eq_abs_RY (a := a) χ)
   rcases gs_sign_WY hχ with h | h

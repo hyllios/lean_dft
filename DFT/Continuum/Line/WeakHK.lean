@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Line.WeakNec
-import DFT.Continuum.Sine.General
+import DFT.Continuum.Sine.Exists
 
 /-!
 # Hohenberg–Kohn and the Lieb functional on `H¹₀`
@@ -15,14 +15,12 @@ physics:
 * `gsE_W_eq`, `liebF_W_eq`: **the ground-state energies and the Lieb functionals agree**, for
   every continuous potential. The sine truncations of an `H¹₀` state are `C²` states whose energy
   converges to at most that of the state (`gsE_le_QW`).
-* `gsW_ae_eq`: for `Σ_k v(x_k) + w` smooth (`C^{2N}`) on the closed cube, **every `H¹₀` ground
-  state is a.e. a `C²` ground state.** Its sine coefficients minimise the coefficient-space energy
-  (`Fn_le_QW`), so the regularity theory of `Sine/Mixed` applies.
 * `sep_lineW`: separation for `H¹₀` states.
+* `adm_cNW`, `Fn_le_QW`: the sine coefficients of an `H¹₀` state are admissible, and their
+  coefficient-space energy is at most the energy.
 
-With these, `exists_isGS_W` and `exists_unique_gs_W` give existence and uniqueness (a.e., up to a
-constant) on `H¹₀`. Hohenberg–Kohn and the Lieb functional on `H¹₀` hold for all continuous
-potentials (`Line/LiebCont`).
+Existence, uniqueness, Hohenberg–Kohn and the Lieb functional on `H¹₀` hold for all continuous
+potentials (`Line/Realize`, `Line/Nondeg`, `Line/LiebCont`).
 -/
 
 namespace DFT.Continuum.Line
@@ -307,140 +305,5 @@ lemma ae_eq_of_cN_eq {f g : Cfg n → ℝ} (hf : MemLp f 2 (μN n)) (hg : MemLp 
   filter_upwards [MemLp.coeFn_toLp hf, MemLp.coeFn_toLp hg] with x h1 h2
   rw [← h1, ← h2, hz]
 
-/-! ### Ground states on `H¹₀` -/
-
-section gs
-
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} (hws : ∀ σ x, w (pm σ x) = w x)
-  {F : Cfg n → ℝ} (hF : ContDiff ℝ (2 * (n + 1) : ℕ) F)
-  (hVF : ∀ x ∈ CubeC n, LN n v x + w x = F x)
-include hws hF hVF
-
-/-- **Regularity**: every `H¹₀` ground state is a.e. a `C²` ground state. -/
-theorem gsW_ae_eq {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW τ n w hw) v Ψ) :
-    ∃ Φ, IsGS (setting τ n w hw) v Φ ∧ Ψ =ᵐ[μN n] Φ := by
-  set V : Cfg n → ℝ := fun x => LN n v x + w x
-  have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
-  obtain ⟨b, hb0, hbS, hK, hG⟩ := kernel_of_smooth ((continuous_LN v).add hw) hF hVF
-  -- the coefficient-space minimiser and its `C²` state
-  obtain ⟨a0, ha0, hmin0⟩ := (kBd_of_kernel hb0 hbS hK).exists_min (V := V) (exists_adm τ)
-  obtain ⟨hΦ0, hc0⟩ := ser_min2 hb0 hbS hK hVs ha0 hmin0 (by norm_num) (by norm_num) hG
-  have hc0' : (fun m => cN m (ser a0)) = a0 := funext hc0
-  have hip0 : ip (μ := μN n) (ser a0) (ser a0) = 1 := by
-    rw [ip_eq_tsum hΦ0.1.continuous]; simp only [hc0]; exact ha0.norm
-  have hQ0 : Q (settingW τ n w hw) v (ser a0) = E0 V τ.toSym := by
-    rw [QW_eq_Q v hΦ0, Q_eq_Fn hw v hΦ0, hc0', hmin0]
-  -- normalise `Ψ`
-  have hs := hΨ.2.1
-  set c := (√(ip (μ := μN n) Ψ Ψ))⁻¹
-  have hc : c ≠ 0 := inv_ne_zero (Real.sqrt_pos.2 hs).ne'
-  have hcc : c * c * ip (μ := μN n) Ψ Ψ = 1 := by
-    simp only [c]; rw [← mul_inv, Real.mul_self_sqrt hs.le, inv_mul_cancel₀ hs.ne']
-  have hΨ1 := isGS_smul hΨ hc
-  have hip1 : ip (μ := μN n) (c • Ψ) (c • Ψ) = 1 := by rw [ip_smul_self, hcc]
-  have hsq1 : ∫ x, (c • Ψ) x ^ 2 ∂μN n = 1 := by rw [← hip1]; simp only [ip, sq]
-  set a := fun m => cN m (c • Ψ)
-  have ha := adm_cNW hΨ1.1 hsq1
-  -- `E₀ ≤ Fn a ≤ Q(cΨ) ≤ Q(Φ₀) = E₀`
-  have hE1 : E0 V τ.toSym ≤ Fn V a :=
-    csInf_le ((kBd_of_kernel hb0 hbS hK).bddBelow_Fn τ.toSym) ⟨a, ha, rfl⟩
-  have hE2 : Fn V a ≤ Q (settingW τ n w hw) v (c • Ψ) := Fn_le_QW v hΨ1.1
-  have hE3 : Q (settingW τ n w hw) v (c • Ψ) ≤ E0 V τ.toSym := by
-    have := hΨ1.2.2 (ser a0) (Dom_le_DomW hΦ0)
-    rwa [hip0, hip1, mul_one, mul_one, hQ0] at this
-  have hmin : Fn V a = E0 V τ.toSym := le_antisymm (hE2.trans hE3) hE1
-  have hQ1 : Q (settingW τ n w hw) v (c • Ψ) = E0 V τ.toSym := le_antisymm hE3 (hE1.trans hE2)
-  obtain ⟨hΦ1, hc1⟩ := ser_min2 hb0 hbS hK hVs ha hmin (by norm_num) (by norm_num) hG
-  have hc1' : (fun m => cN m (ser a)) = a := funext hc1
-  have hip' : ip (μ := μN n) (ser a) (ser a) = 1 := by
-    rw [ip_eq_tsum hΦ1.1.continuous]; simp only [hc1]; exact ha.norm
-  -- `ser a` is a `C²` ground state
-  have hGS : IsGS (setting τ n w hw) v (ser a) := by
-    refine ⟨hΦ1, by rw [hip']; exact one_pos, fun φ hφ => ?_⟩
-    have h := hΨ1.2.2 φ (Dom_le_DomW hφ)
-    rw [hip1, mul_one, hQ1, QW_eq_Q v hφ] at h
-    rw [Q_eq_Fn hw v hΦ1, hc1', hmin, hip', mul_one]
-    exact h
-  -- `cΨ = ser a` a.e.
-  have hae : (c • Ψ) =ᵐ[μN n] ser a :=
-    ae_eq_of_cN_eq hΨ1.1.1 (memLp_cont hΦ1.1.continuous) fun m => (hc1 m).symm
-  refine ⟨c⁻¹ • ser a, isGS_smul hGS (inv_ne_zero hc), ?_⟩
-  filter_upwards [hae] with x hx
-  simp only [Pi.smul_apply, smul_eq_mul] at hx ⊢
-  rw [← hx, ← mul_assoc, inv_mul_cancel₀ hc, one_mul]
-
-omit hws hF hVF in
-/-- A `C²` normalised ground state minimises the energy over all `H¹₀` states (any continuous
-`v`). -/
-lemma isNGS_le_QW {Φ : Cfg n → ℝ} (hΦ : IsNGS (setting τ n w hw) v Φ) {φ : Cfg n → ℝ}
-    (hφ : φ ∈ DomW τ n) :
-    Q (setting τ n w hw) v Φ * ip (μ := μN n) φ φ ≤ Q (settingW τ n w hw) v φ := by
-  have hip0 : 0 ≤ ip (μ := μN n) φ φ := integral_nonneg fun x => mul_self_nonneg _
-  rcases hip0.eq_or_lt with h0 | hpos
-  · rw [← h0, mul_zero, QW_eq v hφ]
-    have hz : (fun x => φ x * φ x) =ᵐ[μN n] 0 :=
-      (integral_eq_zero_iff_of_nonneg (fun x => mul_self_nonneg _)
-        (int_mul_L2 hφ.1 hφ.1)).1 h0.symm
-    have : ∫ x, (LN n v x + w x) * (φ x * φ x) ∂μN n = 0 := by
-      rw [integral_eq_zero_of_ae]
-      filter_upwards [hz] with x hx
-      simp [hx]
-    rw [this, add_zero]; exact kinW_nonneg φ
-  · set c := (√(ip (μ := μN n) φ φ))⁻¹
-    have hcc : c * c = (ip (μ := μN n) φ φ)⁻¹ := by
-      simp only [c]; rw [← mul_inv, Real.mul_self_sqrt hpos.le]
-    have hN : c • φ ∈ Nst (settingW τ n w hw) :=
-      ⟨(DomW τ n).smul_mem c hφ, by rw [ip_smul_self, hcc, inv_mul_cancel₀ hpos.ne']⟩
-    have h := gsE_le_QW v hN
-    rw [gsE_of_isNGS hΦ, EReal.coe_le_coe_iff, Q_smul_self v c hφ, hcc] at h
-    rw [← le_div_iff₀ hpos, div_eq_inv_mul]
-    exact h
-
-/-- **Existence of a normalised ground state on `H¹₀`.** -/
-theorem exists_isNGS_W : ∃ Φ, IsNGS (settingW τ n w hw) v Φ ∧ Φ ∈ Dom τ n := by
-  obtain ⟨Φ, hΦ⟩ := exists_isNGS_smooth (τ := τ) (hw := hw) hws hF hVF
-  refine ⟨Φ, ⟨⟨Dom_le_DomW hΦ.1.1, hΦ.1.2⟩, fun φ hφ => ?_⟩, hΦ.1.1⟩
-  have h := isNGS_le_QW hΦ hφ.1
-  rw [hφ.2, mul_one, ← QW_eq_Q v hΦ.1.1] at h
-  exact h
-
-omit hws hF hVF in
-lemma isNGS_of_W {Φ : Cfg n → ℝ} (hΦ : IsNGS (settingW τ n w hw) v Φ) (hD : Φ ∈ Dom τ n) :
-    IsNGS (setting τ n w hw) v Φ :=
-  ⟨⟨hD, hΦ.1.2⟩, fun ψ hψ => by
-    have := hΦ.2 ψ ⟨Dom_le_DomW hψ.1, hψ.2⟩
-    rwa [QW_eq_Q v hD, QW_eq_Q v hψ.1] at this⟩
-
-omit hws hF hVF in
-lemma isGS_W_of_isNGS {Φ : Cfg n → ℝ} (hΦ : IsNGS (setting τ n w hw) v Φ) :
-    IsGS (settingW τ n w hw) v Φ := by
-  refine ⟨Dom_le_DomW hΦ.1.1, by rw [hΦ.1.2]; exact one_pos, fun φ hφ => ?_⟩
-  rw [hΦ.1.2, mul_one, QW_eq_Q v hΦ.1.1]
-  exact isNGS_le_QW hΦ hφ
-
-theorem exists_isGS_W : ∃ Φ, IsGS (settingW τ n w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 := by
-  obtain ⟨Φ, hΦ, hD⟩ := exists_isNGS_W hws hF hVF (τ := τ) (hw := hw)
-  exact ⟨Φ, isGS_W_of_isNGS (isNGS_of_W hΦ hD), hΦ.1.2⟩
-
-/-- **Existence and uniqueness on `H¹₀`**: a normalised ground state exists, and every ground
-state is a.e. a constant multiple of it. -/
-theorem exists_unique_gs_W :
-    ∃ Φ, IsGS (settingW τ n w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 ∧
-      ∀ Ψ, IsGS (settingW τ n w hw) v Ψ → ∃ c : ℝ, Ψ =ᵐ[μN n] c • Φ := by
-  obtain ⟨Φ, hΦ, hD⟩ := exists_isNGS_W hws hF hVF (τ := τ) (hw := hw)
-  have hn := isNGS_of_W hΦ hD
-  have hGS : IsGS (setting τ n w hw) v Φ := by
-    refine ⟨hD, by rw [hΦ.1.2]; exact one_pos, fun φ hφ => ?_⟩
-    have h := isNGS_le_QW hn (Dom_le_DomW hφ)
-    rw [QW_eq_Q v hφ] at h
-    rw [hΦ.1.2, mul_one]; exact h
-  refine ⟨Φ, isGS_W_of_isNGS hn, hΦ.1.2, fun Ψ hΨ => ?_⟩
-  obtain ⟨Φ'', h1, h2⟩ := gsW_ae_eq hws hF hVF hΨ
-  obtain ⟨c, hc⟩ := gs_unique_line hws h1 hGS
-  refine ⟨c, ?_⟩
-  filter_upwards [h2, ae_restrict_mem measurableSet_cube] with x hx hxC
-  rw [hx, hc x (cube_subset hxC)]; rfl
-
-end gs
 
 end DFT.Continuum.Line

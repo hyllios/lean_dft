@@ -48,6 +48,29 @@ def BoxRep (g : ℝ → ℝ) (q : Pot) : Prop :=
 
 section aux
 
+/-- A density functional `v ↦ ∫₀¹ v f` with continuous `f` determines `f` on `(0, 1)`. -/
+lemma eqOn_of_integral_pot {f g : ℝ → ℝ} (hf : Continuous f) (hg : Continuous g)
+    (h : ∀ u : Pot, ∫ t in Ioo (0 : ℝ) 1, ext u t * f t = ∫ t in Ioo (0 : ℝ) 1, ext u t * g t) :
+    EqOn f g (Ioo 0 1) := by
+  set u : Pot := ⟨fun s => f s - g s, (hf.sub hg).comp continuous_subtype_val⟩
+  have hu : ∀ t, ext u t = f (projIcc 0 1 zero_le_one t) - g (projIcc 0 1 zero_le_one t) :=
+    fun _ => rfl
+  have hint : ∀ k : ℝ → ℝ, Continuous k → IntegrableOn (fun t => ext u t * k t) (Ioo (0 : ℝ) 1) :=
+    fun k hk => (((continuous_ext u).mul hk).continuousOn.integrableOn_compact
+      isCompact_Icc).mono_set Ioo_subset_Icc_self
+  have hz : ∫ t in Ioo (0 : ℝ) 1, (f t - g t) * (f t - g t) = 0 := by
+    have e : ∫ t in Ioo (0 : ℝ) 1, (f t - g t) * (f t - g t) =
+        ∫ t in Ioo (0 : ℝ) 1, (ext u t * f t - ext u t * g t) := by
+      refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
+      simp only [hu, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]; ring
+    rw [e, integral_sub (hint f hf) (hint g hg), h u, sub_self]
+  have hc : Continuous fun t => (f t - g t) * (f t - g t) := (hf.sub hg).mul (hf.sub hg)
+  have hae : (fun t => (f t - g t) * (f t - g t)) =ᵐ[volume.restrict (Ioo (0 : ℝ) 1)] 0 :=
+    (integral_eq_zero_iff_of_nonneg (fun t => mul_self_nonneg _)
+      ((hc.continuousOn.integrableOn_compact isCompact_Icc).mono_set Ioo_subset_Icc_self)).1 hz
+  have hz' := Measure.eqOn_open_of_ae_eq hae isOpen_Ioo hc.continuousOn continuousOn_const
+  exact fun t ht => sub_eq_zero.1 (mul_self_eq_zero.1 (hz' ht))
+
 variable {g : ℝ → ℝ}
 
 lemma contDiff_deriv_of_mem (hg : g ∈ Dom) : ContDiff ℝ 1 (deriv g) :=
@@ -277,7 +300,7 @@ theorem quartDens_not_vrep :
   refine ⟨⟨quartG, ⟨quartG_mem, by rw [ip_eq_sq, quartG_norm]⟩, dens_eq_sq _⟩, fun h => ?_⟩
   obtain ⟨g, q, ⟨hg, hpos, -, hode⟩, hρ⟩ := (pureVRep_box_iff _).1 h
   -- `g = quartG` on `(0, 1)`
-  have hsq := Line.eqOn_of_integral_pot (f := fun t => g t ^ 2) (g := quartDens)
+  have hsq := eqOn_of_integral_pot (f := fun t => g t ^ 2) (g := quartDens)
     (hg.1.continuous.pow 2) (by unfold quartDens quartG; fun_prop)
     (fun u => (congrFun hρ u).symm)
   have hgq : EqOn g quartG (Ioo 0 1) := fun t ht =>

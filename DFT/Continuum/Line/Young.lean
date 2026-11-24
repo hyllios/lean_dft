@@ -3,10 +3,10 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Sine.General
+import DFT.Continuum.Sine.Exists
 
 /-!
-# States of mixed exchange symmetry, and their ground states
+# States of mixed exchange symmetry
 
 For spin-½ particles with a spin-independent Hamiltonian, the sector with `a` particles of spin
 up and `b = N - a` of spin down is described by spatial wave functions that are antisymmetric
@@ -17,9 +17,8 @@ under exchanges between the two groups.
   `s : SymT n` (a set of relabellings and a character on it).
 * `YG a`: the Young subgroup of relabellings preserving `{0, …, a - 1}`; `ymix a`: the symmetry
   type `(YG a, sign)`.
-* `exists_adm_ymix`: normalised admissible coefficient sequences of type `ymix a` exist.
-* `exists_isGS_S`, `exists_isGS_smoothS`: **ground states of mixed symmetry exist** (for the
-  kernel bound of `Sine/Mixed`, in particular for `Σ_k v(x_k) + w` smooth on the closed cube).
+* `exists_adm_ymix`: normalised admissible coefficient sequences of type `ymix a` exist (hence
+  `H¹₀` ground states of mixed symmetry exist for continuous potentials, `exists_isNGS_WY_cont`).
 -/
 
 namespace DFT.Continuum.Line
@@ -220,58 +219,5 @@ lemma exists_adm_ymix (a : ℕ) : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm (ym
 
 /-! ### Existence of ground states -/
 
-section existence
-
-variable {V : Cfg n → ℝ} {b : (Fin (n + 1) → ℕ) → ℝ} (hb0 : ∀ l, 0 ≤ b l) (hbS : Summable b)
-  (hK : ∀ m' m, |Ker V m' m| ≤ ∑' l, b l * (if adm m' l m then 1 else 0))
-include hb0 hbS hK
-
-/-- The minimiser is a `C²` state of the symmetry type. -/
-theorem ser_min2S (hVs : ∀ σ x, V (pm σ x) = V x) {s : SymT n} {a : (Fin (n + 1) → ℕ) → ℝ}
-    (ha : Adm s a) (hmin : Fn V a = E0 V s) {r : ℝ} (hr : 1 / 2 < r) (hr2 : r ≤ 2)
-    (hG : Summable fun l => b l * om r l) :
-    ser a ∈ DomS s ∧ ∀ m, cN m (ser a) = a m := by
-  have hEL := (kBd_of_kernel hb0 hbS hK).euler_lagrange hVs ha hmin
-  have hq := summable_wt_sq_mul hb0 hbS hK hEL ha.sq hr hr2 hG
-  have h0 : Summable fun m => |a m| := Summable.of_nonneg_of_le (fun m => abs_nonneg _)
-    (fun m => le_mul_of_one_le_left (abs_nonneg _)
-      (one_le_pow₀ (by exact_mod_cast one_le_wt m))) hq
-  exact ⟨⟨contDiff_ser2 hq, fun σ hσ x => ser_pm ha.sym σ hσ x, ser_face a⟩, cN_ser h0⟩
-
-end existence
-
-section gs
-
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {b : (Fin (n + 1) → ℕ) → ℝ}
-
-/-- **Ground states of a symmetry type exist** under the kernel bound. -/
-theorem exists_isGS_S {s : SymT n} (hne : ∃ c, Adm s c) (hws : ∀ σ x, w (pm σ x) = w x)
-    (hb0 : ∀ l, 0 ≤ b l) (hbS : Summable b)
-    (hK : ∀ m' m, |Ker (fun x => LN n v x + w x) m' m| ≤
-      ∑' l, b l * (if adm m' l m then 1 else 0))
-    {r : ℝ} (hr : 1 / 2 < r) (hr2 : r ≤ 2) (hG : Summable fun l => b l * om r l) :
-    ∃ Φ, IsGS (settingS s w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 := by
-  set V : Cfg n → ℝ := fun x => LN n v x + w x
-  have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
-  obtain ⟨a, ha, hmin⟩ := (kBd_of_kernel hb0 hbS hK).exists_min (V := V) hne
-  obtain ⟨hΦ, hcoef⟩ := ser_min2S hb0 hbS hK hVs ha hmin hr hr2 hG
-  have hcoef' : (fun m => cN m (ser a)) = a := funext hcoef
-  have hip : ip (μ := μN n) (ser a) (ser a) = 1 := by
-    rw [ip_eq_tsum hΦ.1.continuous]; simp only [hcoef]; exact ha.norm
-  have hQ : Q (settingS s w hw) v (ser a) = E0 V s := by
-    rw [Q_eq_Fn_S hw v hΦ, hcoef', hmin]
-  refine ⟨ser a, ⟨hΦ, hip ▸ one_pos, fun φ hφ => ?_⟩, hip⟩
-  rw [hQ, hip, mul_one, Q_eq_Fn_S hw v hφ, ip_eq_tsum hφ.1.continuous]
-  exact (kBd_of_kernel hb0 hbS hK).Fn_ge (Dir_cN_S hφ)
-
-/-- **Ground states of mixed symmetry exist** whenever `Σ_k v(x_k) + w(x)` agrees on the closed
-cube with a `C^{2N}` function. -/
-theorem exists_isGS_smoothS (a : ℕ) (hws : ∀ σ x, w (pm σ x) = w x) {F : Cfg n → ℝ}
-    (hF : ContDiff ℝ (2 * (n + 1) : ℕ) F) (hVF : ∀ x ∈ CubeC n, LN n v x + w x = F x) :
-    ∃ Φ, IsGS (settingS (ymix a) w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 := by
-  obtain ⟨b, hb0, hbS, hK, hG⟩ := kernel_of_smooth ((continuous_LN v).add hw) hF hVF
-  exact exists_isGS_S (exists_adm_ymix a) hws hb0 hbS hK (by norm_num) (by norm_num) hG
-
-end gs
 
 end DFT.Continuum.Line

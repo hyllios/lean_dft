@@ -25,7 +25,8 @@ the boundary term of the integration by parts is `∫_{walls} Φ φ`. Equivalent
 * `DomWS s`: `L²` functions with all `N` weak derivatives and symmetry type `s` (a.e.);
   `DomW τ n = DomWS τ.toSym` for bosons and fermions.
 * `dW k Φ`: the weak derivative (a chosen representative).
-* `settingWS s w hw`, `settingW τ n w hw = settingWS τ.toSym w hw`: the Hohenberg–Kohn setting, with kinetic energy
+* `settingWS s w hw`, `settingW τ n w hw = settingWS τ.toSym w hw`: the Hohenberg–Kohn setting,
+  with kinetic energy
   `Σ_k ∫ |∂_k Φ|²` in the weak sense.
 * `integral_cube_ins`: Fubini on the cube for integrable functions, splitting off particle `k`.
 * `Dom_le_DomW`, `dW_ae_eq_dk`, `h0W_eq`: the `C²` states are `H¹₀` states, with the same
@@ -258,7 +259,8 @@ noncomputable def settingWS (s : Sine.SymT n) (w : Cfg n → ℝ) (hw : Continuo
   int_sq ψ φ hψ hφ := int_mul_L2 hψ.1 hφ.1
 
 /-- `N` particles of statistics `τ` on a line, with all finite-kinetic-energy states. -/
-noncomputable abbrev settingW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) : Setting (μN n) Pot :=
+noncomputable abbrev settingW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) :
+    Setting (μN n) Pot :=
   settingWS (n := n) τ.toSym w hw
 
 /-! ### Fubini, splitting off particle `k` -/

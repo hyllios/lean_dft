@@ -633,3 +633,11 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
     **`EspinW_eq_cont`**, **`lieb_mattis_total_W_cont`** (E(S) < E(S+1), continuous V). Phase D
     complete. Next: E (deletion of the smooth-V code).
 
+- E DONE (deletion of the smooth-V code). Removed `Line/{LiebMattis, LiebMattisSign,
+  LiebMattisSpin, LiebMattisTotal, YoungPos, YoungSign}` and `Sine/{Decay, General, Mirror, Mixed,
+  Regular, Schur}`. Trimmed `WeakHK`, `Young`, `VRep`, `HardCore`, `SpinWeak`, `SpinAlg`,
+  `Sine/Exists` (cosine class), `Sine/Form` (kernel-bound route) and `Sine/Kernel` to what the
+  continuous-V results use. Dropped with them the C² facts about smooth-V ground states (positive
+  C² densities, explicit non-v-representable densities). Superseded by `exists_unique_gs_W_cont`,
+  `ensVRep_iff_W_cont`, `exists_unique_gs_hcW`, `lieb_mattis_W`, `lieb_mattis_total_W_cont`.
+  Blueprint: `thm:line_smooth` and `thm:lieb_mattis` deleted, the other entries pruned.

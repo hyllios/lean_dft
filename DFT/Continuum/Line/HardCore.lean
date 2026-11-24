@@ -36,8 +36,8 @@ preserves `|ψ|²`, the gradient almost everywhere, hence every energy and every
 * `tonks_girardeau`: **the Tonks–Girardeau gas.** Without further interaction, `A · det φ_j(x_i)`
   built from the `N` lowest orbitals is a hard-core ground state, `|A det| = |det|`, and its
   density is the free-fermion density `Σ_j φ_j²`.
-* `exists_unique_gs_hardcore`, `nrep_hardcore`, `liebF_hc_ne_top`: existence (cosine class), and
-  `N`-representability of `N g²`.
+* `nrep_hardcore`, `liebF_hc_ne_top`: `N`-representability of `N g²`. (Existence and uniqueness
+  on `H¹₀` for continuous potentials: `Line/HardCoreW`.)
 -/
 
 namespace DFT.Continuum.Line
@@ -364,17 +364,6 @@ theorem lieb_hardcore_line (hws : ∀ σ x, w (pm σ x) = w x) {ψ : Cfg n → �
   refine (lieb_line (τ := .fer) hws hF).2.2 v' fun ρ => ?_
   have := hsub ρ
   rwa [liebF_hc, eq_mulA hD, h0_mulA hF' hF', dens_mulA hF'] at this
-
-/-- Existence and uniqueness of the hard-core ground state, for potentials in the cosine class. -/
-theorem exists_unique_gs_hardcore {β : (Fin (n + 1) → ℕ) → ℝ} (hws : ∀ σ x, w (pm σ x) = w x)
-    (hβ : ∀ s : ℕ, Summable fun l => |β l| * (1 + (Sine.sz l : ℝ)) ^ s)
-    (hV : ∀ x ∈ CubeC n, LN n v x + w x = ∑' l, β l * Sine.cosM l x) :
-    ∃ Φ, IsGS (settingHC n w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 ∧
-      ∀ Ψ, IsGS (settingHC n w hw) v Ψ → ∃ c : ℝ, ∀ x ∈ CubeC n, Ψ x = c * Φ x := by
-  obtain ⟨Φ, hΦ, hip⟩ := Sine.exists_isGS_line (τ := .fer) (hw := hw) hws hβ hV
-  have hG := (isGS_mulA_iff hΦ.1 v).2 hΦ
-  exact ⟨mulA Φ, hG, by rw [ip_mulA hΦ.1]; exact hip,
-    fun Ψ hΨ => gs_unique_hardcore hws hΨ hG⟩
 
 /-- **`N`-representability for hard-core bosons**: every density `N g²` comes from a normalised
 hard-core state. -/

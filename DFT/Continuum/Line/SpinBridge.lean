@@ -101,6 +101,17 @@ lemma mem_DomY_sc {u : SpinC n → D0 n} (hu : FermD u) (c : ℕ) :
 
 /-! ### Energy and norm -/
 
+/-- A continuous `C²` state of zero norm vanishes on the cube. -/
+lemma eq_zero_of_ip_zero' {φ : Cfg n → ℝ} (h2 : ContDiff ℝ 2 φ)
+    (h : ip (μ := μN n) φ φ = 0) : ∀ x ∈ Cube n, φ x = 0 := by
+  have hc := h2.continuous
+  have hae : (fun x => φ x * φ x) =ᵐ[μN n] 0 :=
+    (integral_eq_zero_iff_of_nonneg (fun x => mul_self_nonneg (φ x))
+      (integrableN (hc.mul hc))).1 h
+  have hz : EqOn (fun x => φ x * φ x) (fun _ => 0) (Cube n) :=
+    Measure.eqOn_open_of_ae_eq hae isOpen_cube (hc.mul hc).continuousOn continuousOn_const
+  exact fun x hx => mul_self_eq_zero.1 (hz hx)
+
 section forms
 
 variable (w : Cfg n → ℝ) (hw : Continuous w) (v : Pot)

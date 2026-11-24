@@ -13,8 +13,8 @@ For `a + b = N` with `b ≤ a`, a state `φ₀` of type `(a, b)` that satisfies 
 strictly positive on a box of positive measure there.
 
 Orbitals are tent functions `h_k` with disjoint supports `I_0 < I_1 < ⋯` inside `(0, 1)`. Particle
-`i` carries orbital `orb i` (`i` in the first group, `i - a` in the second), `P = Π_i h_{orb i}(x_i)`
-and `φ₀ = altY a P`.
+`i` carries orbital `orb i` (`i` in the first group, `i - a` in the second),
+`P = Π_i h_{orb i}(x_i)` and `φ₀ = altY a P`.
 
 * `phi0_pm`: `φ₀` has type `(a, b)`;
 * **`altY_phi0`**: Fock's condition. For `σ ∈ YG a`, `P ∘ σ` carries the same orbital on a particle

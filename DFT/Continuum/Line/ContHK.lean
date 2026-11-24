@@ -8,9 +8,8 @@ import DFT.Continuum.Line.Realize
 /-!
 # Hohenberg–Kohn on `H¹₀` for continuous potentials, modulo unique continuation
 
-For smooth `Σ v + w` the ground state is a.e. `C²` (`gsW_ae_eq`), so it is nonzero a.e.
-(`ucp_line_stat`). For merely continuous potentials the ground state exists in `H¹₀`
-(`exists_isNGS_W_cont`) but need not be `C²`. Everything else in the
+For continuous potentials the ground state exists in `H¹₀` (`exists_isNGS_W_cont`) but need not
+be `C²`. Everything in the
 Hohenberg–Kohn argument (`weak_hk`, `sep_lineW`, `rigidL_lineW`) already holds on `H¹₀` for
 continuous potentials, so HK reduces to one analytic statement:
 

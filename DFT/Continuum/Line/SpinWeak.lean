@@ -3,25 +3,26 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Line.LiebMattisTotal
-import DFT.Continuum.Line.YoungPos
+import DFT.Continuum.Line.SpinBridge
+import DFT.Continuum.Line.HardCore
+import DFT.Continuum.Line.WeakHK
 
 /-!
-# The Lieb–Mattis theorem for spin-orbital states of finite kinetic energy
+# Spin-orbital states of finite kinetic energy
 
-The spin results of `Line/LiebMattisTotal` are for spin-orbital states with `C²` components.
-Here the components only have finite kinetic energy: they lie in `W0 n`, the `L²` functions with
-weak first derivatives and zero boundary values (`H¹₀` of the cube, no exchange symmetry).
+Spin-orbital states whose components only have finite kinetic energy: they lie in `W0 n`, the `L²`
+functions with weak first derivatives and zero boundary values (`H¹₀` of the cube, no exchange
+symmetry).
+
+* `lamS`, `sum_sectors`, `multiplet_lb`: the multiplet lower bound along `S₊`, for any pair of
+  bilinear forms.
 
 * `IsWD.pm`, `dW_pm`: weak derivatives under relabelling.
 * `BQW`, `BipW`: the energy `Σ_k ∫ ∂_k f ∂_k g + ∫ (Σ v + w) f g` and the `L²` product on `W0`,
   bilinear, unchanged under a.e. modification, invariant under relabelling.
 * `FermW`, `EigW`: fermionic antisymmetry and `S² Ψ = λ Ψ`, almost everywhere.
-* `sector_lb_W`: a function of `W0` with a.e. mixed symmetry `(a, N - a)` has energy at least
-  `E(a, N - a)` per norm (through its sine coefficients, as for `tl_ae_gs`).
-* `EspinW`: the lowest energy at total spin `S` over these states.
-* **`EspinW_eq`**: it equals the `C²` value `EspinT`, the ground-state energy of the spatial sector
-  `S_z = S`; **`lieb_mattis_total_W`**: `E(S) < E(S + 1)`.
+* `EspinW`: the lowest energy at total spin `S` over these states (computed in
+  `Line/LiebMattisTotalW`).
 -/
 
 namespace DFT.Continuum.Line
@@ -29,6 +30,103 @@ namespace DFT.Continuum.Line
 open MeasureTheory Set Box Real Filter Topology Sine Function
 
 variable {n : ℕ} {a : ℕ}
+
+/-- `S(S+1)` with `S = a - N/2`. -/
+noncomputable def lamS (n a : ℕ) : ℝ :=
+  ((a : ℝ) - ((n : ℝ) + 1) / 2) * ((a : ℝ) - ((n : ℝ) + 1) / 2 + 1)
+
+/-! ### The multiplet lower bound, for any pair of forms -/
+
+section multiplet
+
+variable {V : Type*} [AddCommGroup V] [Module ℝ V]
+
+lemma sum_sectors (B : V →ₗ[ℝ] V →ₗ[ℝ] ℝ) (u : SpinC n → V) :
+    ∑ s, B (u s) (u s) = ∑ c ∈ Finset.range (n + 2), ∑ s, B (Pc c u s) (Pc c u s) := by
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun s _ => ?_
+  simp only [Pc_apply]
+  have : ∀ c, B (if nup s = c then u s else 0) (if nup s = c then u s else 0) =
+      if nup s = c then B (u s) (u s) else 0 := fun c => by split_ifs <;> simp
+  simp only [this]
+  have hs : nup s ∈ Finset.range (n + 2) := Finset.mem_range.2 (by have := nup_le s; omega)
+  simp only [Finset.sum_ite_eq, hs, ite_true]
+
+/-- **The lower bound along a multiplet** of total spin `S' = a' - N/2 ≥ 0`, abstractly: a class
+`P` of states of total spin `S'`, closed under `S₊` and the sector projections, with energy and
+norm forms; if the top sector `S_z = S'` satisfies `E' ‖·‖ ≤ energy`, so does every state. -/
+theorem multiplet_lb (BQ' Bi' : V →ₗ[ℝ] V →ₗ[ℝ] ℝ) (hBis : ∀ f g, Bi' f g = Bi' g f)
+    (hnn : ∀ f, 0 ≤ Bi' f f) (hz : ∀ f, Bi' f f = 0 → BQ' f f = 0)
+    (P : (SpinC n → V) → Prop) (hPSp : ∀ u, P u → P (Sp u))
+    (hPPc : ∀ u c, P u → P (Pc c u)) {a' : ℕ} (ha' : ((n : ℝ) + 1) / 2 ≤ a')
+    (hQ2 : ∀ u, P u → ∀ s, BQ' (u s) (S2 u s) = lamS n a' * BQ' (u s) (u s))
+    (hI2 : ∀ u, P u → ∀ s, Bi' (u s) (S2 u s) = lamS n a' * Bi' (u s) (u s)) {E' : ℝ}
+    (hbase : ∀ u, P u → Pc a' u = u → E' * ∑ s, Bi' (u s) (u s) ≤ ∑ s, BQ' (u s) (u s))
+    {u : SpinC n → V} (hu : P u) : E' * ∑ s, Bi' (u s) (u s) ≤ ∑ s, BQ' (u s) (u s) := by
+  set S' : ℝ := (a' : ℝ) - ((n : ℝ) + 1) / 2
+  have hS' : 0 ≤ S' := by simp only [S']; linarith
+  have hlam : lamS n a' = S' * (S' + 1) := rfl
+  have hsn : ∀ φ : SpinC n → V, 0 ≤ ∑ s, Bi' (φ s) (φ s) := fun φ =>
+    Finset.sum_nonneg fun s _ => hnn _
+  have hzero : ∀ φ : SpinC n → V, ∑ s, Bi' (φ s) (φ s) = 0 → ∑ s, BQ' (φ s) (φ s) = 0 :=
+    fun φ h => Finset.sum_eq_zero fun s hs =>
+      hz _ ((Finset.sum_eq_zero_iff_of_nonneg fun s _ => hnn (φ s)).1 h s hs)
+  -- sectors at and below the top
+  have key : ∀ k c (φ : SpinC n → V), c + k = a' → P φ → Pc c φ = φ →
+      E' * ∑ s, Bi' (φ s) (φ s) ≤ ∑ s, BQ' (φ s) (φ s) := by
+    intro k
+    induction k with
+    | zero =>
+      intro c φ hck hφ hc
+      simp only [add_zero] at hck
+      subst hck
+      exact hbase φ hφ hc
+    | succ k ih =>
+      intro c φ hck hφ hc
+      rcases (hsn φ).eq_or_lt with h0 | hpos
+      · rw [← h0, hzero φ h0.symm, mul_zero]
+      set M : ℝ := (c : ℝ) - ((n : ℝ) + 1) / 2
+      have hSM : S' - M = k + 1 := by
+        simp only [S', M]; have : (c : ℝ) + (k + 1 : ℕ) = a' := by exact_mod_cast hck
+        push_cast at this; linarith
+      have hm := ladder_Sm_gen Bi' hc (hI2 φ hφ) hBis
+      have hp := ladder_Sp_gen Bi' hc (hI2 φ hφ)
+      have hq := ladder_Sp_gen BQ' hc (hQ2 φ hφ)
+      have hcm : 0 ≤ lamS n a' - M ^ 2 + M := by
+        have := hsn (Sm φ)
+        rw [hm] at this
+        exact nonneg_of_mul_nonneg_left this hpos
+      have hcp : 0 < lamS n a' - M ^ 2 - M := by
+        rw [hlam] at hcm ⊢
+        have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg k
+        nlinarith
+      have hIH := ih (c + 1) (Sp φ) (by omega) (hPSp φ hφ) (by rw [← Sp_Pc, hc])
+      rw [hp, hq, ← mul_assoc, mul_comm E', mul_assoc] at hIH
+      exact le_of_mul_le_mul_left hIH hcp
+  -- sectors above the top are empty
+  have above : ∀ c, a' < c → ∑ s, Bi' (Pc c u s) (Pc c u s) = 0 := by
+    intro c hc
+    have hφ := hPPc u c hu
+    have hp := ladder_Sp_gen Bi' (Pc_Pc c u) (hI2 _ hφ)
+    set M : ℝ := (c : ℝ) - ((n : ℝ) + 1) / 2
+    have hMS : S' < M := by
+      simp only [S', M]; have : (a' : ℝ) < c := by exact_mod_cast hc
+      linarith
+    have hneg : lamS n a' - M ^ 2 - M < 0 := by rw [hlam]; nlinarith
+    have hnn' := hsn (Sp (Pc c u))
+    rw [hp] at hnn'
+    exact le_antisymm (nonpos_of_mul_nonneg_right hnn' hneg) (hsn _)
+  have hsec : ∀ c ∈ Finset.range (n + 2),
+      E' * ∑ s, Bi' (Pc c u s) (Pc c u s) ≤ ∑ s, BQ' (Pc c u s) (Pc c u s) := by
+    intro c _
+    by_cases hc : c ≤ a'
+    · exact key (a' - c) c (Pc c u) (by omega) (hPPc u c hu) (Pc_Pc c u)
+    · have h0 := above c (by omega)
+      rw [h0, hzero _ h0, mul_zero]
+  rw [sum_sectors BQ', sum_sectors Bi', Finset.mul_sum]
+  exact Finset.sum_le_sum hsec
+
+end multiplet
 
 /-! ### The space `H¹₀` without symmetry -/
 
@@ -433,63 +531,6 @@ lemma sector_reduce_W (B : W0 n →ₗ[ℝ] W0 n →ₗ[ℝ] ℝ)
 
 /-! ### The sector bound for `H¹₀` functions of mixed symmetry -/
 
-section sector
-
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} (hws : ∀ σ x, w (pm σ x) = w x)
-  {F : Cfg n → ℝ} (hF : ContDiff ℝ (2 * (n + 1) : ℕ) F)
-  (hVF : ∀ x ∈ CubeC n, LN n v x + w x = F x)
-include hws hF hVF
-
-/-- **A finite-kinetic-energy function of mixed symmetry `(a, N - a)` has energy at least
-`E(a, N - a)` per norm.** -/
-theorem sector_lb_W {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v Φ) {f : Cfg n → ℝ}
-    (hf : f ∈ W0 n) (hsym : ∀ σ, YG a σ → ∀ᵐ x ∂μN n, f (pm σ x) = sgn σ * f x) :
-    Q (settingS (ymix a) w hw) v Φ / ip (μ := μN n) Φ Φ * ∫ x, f x * f x ∂μN n ≤
-      kinB f f + potB (Vt w v) f f := by
-  set V : Cfg n → ℝ := fun x => LN n v x + w x
-  have hVc : Continuous V := (continuous_LN v).add hw
-  have hVs : ∀ σ x, V (pm σ x) = V x := fun σ x => by simp only [V, LN_pm, hws]
-  obtain ⟨b, hb0, hbS, hK, hG⟩ := kernel_of_smooth hVc hF hVF
-  -- `E(a) ≤ E0`
-  obtain ⟨a0, ha0, hmin0⟩ :=
-    (kBd_of_kernel hb0 hbS hK).exists_min (V := V) (exists_adm_ymix (n := n) a)
-  obtain ⟨hΦ0, hc0⟩ := ser_min2S hb0 hbS hK hVs ha0 hmin0 (by norm_num) (by norm_num) hG
-  have hip0 : ip (μ := μN n) (ser a0) (ser a0) = 1 := by
-    rw [ip_eq_tsum hΦ0.1.continuous]; simp only [hc0]; exact ha0.norm
-  have hQ0 : Q (settingS (ymix a) w hw) v (ser a0) = E0 V (ymix a) := by
-    rw [Q_eq_Fn_S hw v hΦ0, funext hc0, hmin0]
-  have hE : Q (settingS (ymix a) w hw) v Φ / ip (μ := μN n) Φ Φ ≤ E0 V (ymix a) := by
-    have := hΦ.2.2 (ser a0) hΦ0
-    rw [hip0, mul_one, hQ0] at this
-    rw [div_le_iff₀ hΦ.2.1]; linarith
-  -- the coefficients of `f`
-  set c : (Fin (n + 1) → ℕ) → ℝ := fun m => cN m f
-  have hsymc : InS (ymix (n := n) a) c := fun σ hσ m => by
-    change cN (pmI σ m) f = sgn σ * cN m f
-    rw [cN_eq, cN_eq, ← integral_pm σ, ← integral_const_mul]
-    refine integral_congr_ae ?_
-    filter_upwards [hsym σ hσ] with x hx
-    simp only [smd_pm]
-    rw [hx]; ring
-  have hkin : ∀ s : Finset (Fin (n + 1) → ℕ), ∑ m ∈ s, lam m * c m ^ 2 ≤ kinB f f :=
-    sum_lam_le_wd (G := fun k => dW k f) fun k => dW_spec (hf.2 k)
-  have hsum := summable_of_sum_le (fun m => mul_nonneg (lam_nonneg m) (sq_nonneg _)) hkin
-  have hD : Dir (ymix (n := n) a) c := ⟨(parsevalW hf.1).summable, hsum, hsymc⟩
-  have h1 := (kBd_of_kernel hb0 hbS hK).Fn_ge hD
-  rw [(parsevalW hf.1).tsum_eq] at h1
-  have hFn : Fn V c ≤ kinB f f + potB (Vt w v) f f := by
-    rw [Fn, Bf_cNW (V := V) hVc hf.1,
-      show potB (Vt w v) f f = ∫ x, V x * (f x * f x) ∂μN n from rfl]
-    gcongr
-    exact Summable.tsum_le_of_sum_le hsum hkin
-  have hsq : ∫ x, f x ^ 2 ∂μN n = ∫ x, f x * f x ∂μN n := by simp only [sq]
-  rw [hsq] at h1
-  have hint : 0 ≤ ∫ x, f x * f x ∂μN n := integral_nonneg fun _ => mul_self_nonneg _
-  calc Q (settingS (ymix a) w hw) v Φ / ip (μ := μN n) Φ Φ * ∫ x, f x * f x ∂μN n
-      ≤ E0 V (ymix a) * ∫ x, f x * f x ∂μN n := mul_le_mul_of_nonneg_right hE hint
-    _ ≤ _ := h1.trans hFn
-
-end sector
 
 /-! ### The theorem -/
 
@@ -510,87 +551,6 @@ def SpinClassW (a : ℕ) (u : SpinC n → W0 n) : Prop :=
 /-- **`E(S)` over states of finite kinetic energy.** -/
 noncomputable def EspinW (a : ℕ) : EReal :=
   ⨅ (u : SpinC n → W0 n) (_ : SpinClassW a u), ((QSW w hw v u / ipSW u : ℝ) : EReal)
-
-/-- The inclusion of `C²` states. -/
-noncomputable def ιW : D0 n →ₗ[ℝ] W0 n := Submodule.inclusion D0_le_W0
-
-variable {w hw v}
-
-/-- Enlarging the state space can only lower `E(S)`. -/
-theorem EspinW_le_EspinT : EspinW w hw v a ≤ EspinT w hw v a := by
-  refine le_iInf₂ fun u hu => ?_
-  set u' : SpinC n → W0 n := fun s => ιW (u s)
-  have hQ : QSW w hw v u' = QS w hw v u :=
-    Finset.sum_congr rfl fun s _ => BQW_eq_BQ w hw v (u s)
-  have hI : ipSW u' = ipS u := Finset.sum_congr rfl fun s _ => rfl
-  have hF' : FermW u' := ae_of_all _ fun x σ s => hu.1 σ s x
-  have hE' : EigW (lamS n a) u' := by
-    filter_upwards [ae_cube] with x hx
-    intro s
-    have e : S2 u' s = ιW (S2 u s) := (S2_map ιW u s).symm
-    rw [e]
-    exact hu.2.2 s x hx
-  have h := iInf₂_le (f := fun (u : SpinC n → W0 n) (_ : SpinClassW a u) =>
-    ((QSW w hw v u / ipSW u : ℝ) : EReal)) u' ⟨hF', by rw [hI]; exact hu.2.1, hE'⟩
-  rw [hQ, hI] at h
-  exact h
-
-variable (hws : ∀ σ x, w (pm σ x) = w x)
-  {F : Cfg n → ℝ} (hF : ContDiff ℝ (2 * (n + 1) : ℕ) F)
-  (hVF : ∀ x ∈ CubeC n, LN n v x + w x = F x)
-include hws hF hVF
-
-/-- **The lower bound** for finite-kinetic-energy states of total spin `S' = a' - N/2 ≥ 0`. -/
-theorem lower_bound_W {a' : ℕ} (ha' : ((n : ℝ) + 1) / 2 ≤ a') (ha'N : a' ≤ n + 1)
-    {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a') w hw) v Φ)
-    {u : SpinC n → W0 n} (hFu : FermW u) (heig : EigW (lamS n a') u) :
-    Q (settingS (ymix a') w hw) v Φ / ip (μ := μN n) Φ Φ * ipSW u ≤ QSW w hw v u := by
-  refine multiplet_lb (BQW w hw v) BipW BipW_symm BipW_self_nonneg
-    (fun f h => BQW_zero_of_BipW w hw v h)
-    (fun u => FermW u ∧ EigW (lamS n a') u) (fun u hu => ⟨FermW_Sp hu.1, EigW_Sp hu.2⟩)
-    (fun u c hu => ⟨FermW_Pc hu.1 c, EigW_Pc hu.2 c⟩) ha' (fun u hu s => ?_) (fun u hu s => ?_)
-    (fun φ hφ hc => ?_) ⟨hFu, heig⟩
-  · rw [BQW_congr w hw v (f := u s) (g := lamS n a' • u s) (f' := u s) (g' := S2 u s)
-      (Filter.EventuallyEq.refl _ _) (ae_S2 hu.2 s).symm, map_smul, smul_eq_mul]
-  · rw [BipW_congr (f := u s) (g := lamS n a' • u s) (f' := u s) (g' := S2 u s)
-      (Filter.EventuallyEq.refl _ _) (ae_S2 hu.2 s).symm, map_smul, smul_eq_mul]
-  · rw [sector_reduce_W (BQW w hw v) (fun f f' h => BQW_congr w hw v h h)
-        (BQW_pm w hw v hws) hφ.1 hc,
-      sector_reduce_W BipW (fun f f' h => BipW_congr h h) BipW_pm hφ.1 hc]
-    have h := sector_lb_W hws hF hVF hΦ (φ (sc n a')).2 (sym_sc_W hφ.1 a')
-    have hK := (card_sector_pos (n := n) (c := a') ha'N).le
-    rw [BQW_apply, BipW_apply]
-    nlinarith
-
-/-- **`E(S)` over finite-kinetic-energy states is the ground-state energy of the spatial sector
-`S_z = S`** (`a ≥ b ≥ 1`), the same as over `C²` states. -/
-theorem EspinW_eq {b : ℕ} (hab : a + b = n + 1) (hb1 : 1 ≤ b) (hba : b ≤ a)
-    {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v Φ) :
-    EspinW w hw v a = ((Q (settingS (ymix a) w hw) v Φ / ip (μ := μN n) Φ Φ : ℝ) : EReal) := by
-  refine le_antisymm ?_ (le_iInf₂ fun u hu => ?_)
-  · rw [← Espin_total_eq hws hF hVF hab hb1 hba hΦ]; exact EspinW_le_EspinT
-  · refine EReal.coe_le_coe_iff.2 ?_
-    have hlb := lower_bound_W hws hF hVF (a' := a) (by
-      have : (b : ℝ) ≤ a := by exact_mod_cast hba
-      have : (a : ℝ) + b = n + 1 := by exact_mod_cast hab
-      linarith) (by omega) hΦ hu.1 hu.2.2
-    rw [le_div_iff₀ hu.2.1]; linarith
-
-/-- **The Lieb–Mattis theorem for states of finite kinetic energy**: `E(S) < E(S + 1)` for
-`S ≥ 0`. -/
-theorem lieb_mattis_total_W {b : ℕ} (hab : a + b = n + 1) (hb1 : 1 ≤ b) (hba : b ≤ a) :
-    EspinW w hw v a < EspinW w hw v (a + 1) := by
-  obtain ⟨Φ, hΦ, -⟩ := exists_isGS_smoothS a hws hF hVF (hw := hw)
-  obtain ⟨Ψ, hΨ, -⟩ := exists_isGS_smoothS (a + 1) hws hF hVF (hw := hw)
-  have hlm := lieb_mattis hws hF hVF hab hb1 hba hΦ hΨ
-  rw [EspinW_eq hws hF hVF hab hb1 hba hΦ]
-  refine lt_of_lt_of_le (EReal.coe_lt_coe_iff.2 hlm) (le_iInf₂ fun u hu => ?_)
-  refine EReal.coe_le_coe_iff.2 ?_
-  have hlb := lower_bound_W hws hF hVF (a' := a + 1) (by
-    have : (b : ℝ) ≤ a := by exact_mod_cast hba
-    have : (a : ℝ) + b = n + 1 := by exact_mod_cast hab
-    push_cast; linarith) (by omega) hΨ hu.1 hu.2.2
-  rw [le_div_iff₀ hu.2.1]; linarith
 
 end main
 
