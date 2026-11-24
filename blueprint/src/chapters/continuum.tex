@@ -853,6 +853,42 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   for all $u$, and $\rho'=\rho_\Psi$.
 \end{proof}
 
+\begin{theorem}[Non-$v$-representable densities are dense too]
+  \label{thm:line_nonvrep_dense}
+  \lean{DFT.Continuum.Line.cutoff, DFT.Continuum.Line.exists_nonvrep_near, DFT.Continuum.Line.nonvrep_dense, DFT.Continuum.Line.vrep_nonvrep_dense, DFT.Continuum.Line.ks_vrep_nonvrep_dense}
+  \leanok
+  \uses{thm:line_not_vrep, thm:line_dense, thm:line_nrep}
+  For $N$ bosons or fermions on $H^1_0$ with continuous $v$ and $w$, both the $v$-representable and the
+  non-$v$-representable densities are dense among the $N$-representable ones, in the dual norm of $C([0,1])$; with
+  $w=0$ the same for Kohn--Sham.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Multiply $\sqrt\rho$ by a smooth cutoff that vanishes on $[1-\varepsilon,1]$ and renormalise. The result vanishes on an
+  interval, so it is not $v$-representable (Theorem~\ref{thm:line_not_vrep}), and it converges to $\rho$ in $L^1$ by
+  dominated convergence.
+\end{proof}
+
+\begin{theorem}[Kohn--Sham $v$-representable densities are meagre]
+  \label{thm:line_meagre}
+  \lean{DFT.Continuum.Line.L2I, DFT.Continuum.Line.prim, DFT.Continuum.Line.h10_prim, DFT.Continuum.Line.SN, DFT.Continuum.Line.isClosed_SN, DFT.Continuum.Line.rhoF, DFT.Continuum.Line.nrep_iff_SN, DFT.Continuum.Line.D2, DFT.Continuum.Line.D2_bound_of_C2, DFT.Continuum.Line.Cond, DFT.Continuum.Line.isClosed_Cond, DFT.Continuum.Line.sq_prim_sub_le, DFT.Continuum.Line.exists_not_Cond, DFT.Continuum.Line.isNowhereDense_CondS, DFT.Continuum.Line.C2Dens, DFT.Continuum.Line.meagre_C2Dens, DFT.Continuum.Line.ks_meagre, DFT.Continuum.Line.ks_nonrep_dense, DFT.Continuum.Line.one_vrep_meagre}
+  \leanok
+  \uses{thm:line_ks, thm:one_W_vrep, thm:line_nrep}
+  Parametrise the $N$-representable densities by $f=(\sqrt\rho)'$ in the complete metric space
+  $S_N=\{f\in L^2(0,1):\int_0^1f=0,\ \int(\int_0^tf)^2=N\}$. The densities with a $C^2$ profile form a meagre subset.
+  Hence the Kohn--Sham $v$-representable densities (bosons or fermions), and the $v$-representable densities of one
+  particle, are meagre: dense, but of first Baire category; the non-$v$-representable densities are residual.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A $C^2$ profile $K$ has $|K(t+h)-2K(t)+K(t-h)|\le Lh^2$ for some $L$; for fixed $L$ this is a closed condition. It has
+  empty interior: add a tent of small height $\delta$ and width $w$ to $g=\sqrt\rho$ at a point $t_0$ where $g\ne0$,
+  with $\delta g(t_0)>0$, and renormalise. At the apex the second difference of $(g+\delta p)^2$ is
+  $-4\delta g(t_0)h/w+o(h)$: the second difference of $g^2$ is $O(h^2)$, and
+  $2g(t_0)\,(g(t_0+h)+g(t_0-h)-2g(t_0))$ differs from it by $(g(t_0\pm h)-g(t_0))^2\le h\int_{t_0-h}^{t_0+h}g'^2=o(h)$.
+  The Kohn--Sham density $\sum_j\varphi_j^2$, resp.\ $N\varphi_0^2$, is $C^2$ and vanishes at the walls.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}

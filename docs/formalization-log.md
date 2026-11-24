@@ -686,3 +686,17 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   **`supergrad_eqW`** (converse Hellmann–Feynman, no spectral gap, no shooting),
   **`dense_pureVRepW`**, `dense_pureVRepW_of_nst`, **`ks_dense`** (w = 0). Standard axioms.
   Blueprint `thm:line_dense`. Box/Diff could now be rederived from this for n = 0.
+- K DONE (non-v-rep densities dense). `Line/NotVRepDense`: `cutoff` (smoothTransition),
+  `exists_nonvrep_near` (√ρ · cutoff vanishing on [1−ε,1], renormalised; L¹ error by dominated
+  convergence), **`nonvrep_dense`**, **`vrep_nonvrep_dense`**, **`ks_vrep_nonvrep_dense`**.
+- L DONE (KS-v-rep densities are meagre; user asked for "the whole thing"). `Line/Prim`: `L2I`,
+  `prim f t = ∫₀ᵗ f`, `abs_prim_sub_le`, `h10_prim` (Mathlib AC of primitives + Lebesgue
+  differentiation), `SN n` (∫f = 0, ∫(∫₀ᵗf)² = N), `isClosed_SN`, `rhoF`, **`nrep_iff_SN`**
+  (SN parametrises exactly the N-rep densities). `Line/Meagre`: `D2`, `D2_bound_of_C2`, `Cond L`
+  (second differences ≤ L h², closed), `sq_prim_sub_le` (Cauchy–Schwarz), `tentF`,
+  `exists_tent_L2`, **`exists_not_Cond`** (tent perturbation at a point with g ≠ 0: apex second
+  difference −4δg(t₀)h/w + o(h)), `isNowhereDense_CondS`, `C2Dens`, **`meagre_C2Dens`**,
+  **`ks_meagre`**, **`ks_nonrep_dense`** (residual), **`one_vrep_meagre`**. Standard axioms.
+  Blueprint `thm:line_nonvrep_dense`, `thm:line_meagre`. Literature: density known (Lieb/Kvaal et al.
+  2014 "small but dense"); no category statement found; with H⁻¹ potentials every positive H¹
+  density is v-rep (Corso LMP 2026, Neumann) — meagreness reflects C([0,1]) being too small.

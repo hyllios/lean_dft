@@ -36,10 +36,13 @@ import DFT.Continuum.Line.LiebCont
 import DFT.Continuum.Line.LiebMattisTotalW
 import DFT.Continuum.Line.LiebMattisW
 import DFT.Continuum.Line.LogEst
+import DFT.Continuum.Line.Meagre
 import DFT.Continuum.Line.Nondeg
 import DFT.Continuum.Line.NotVRep
+import DFT.Continuum.Line.NotVRepDense
 import DFT.Continuum.Line.OneBody
 import DFT.Continuum.Line.Pauli
+import DFT.Continuum.Line.Prim
 import DFT.Continuum.Line.Realize
 import DFT.Continuum.Line.RefState
 import DFT.Continuum.Line.Represent
