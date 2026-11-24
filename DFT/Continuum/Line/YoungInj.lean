@@ -16,8 +16,8 @@ spin-lowering operator, up to a factor) is not zero: `⟨g, altY a g⟩ > 0`
 With `t σ = sgn σ ⟨g, g ∘ σ⟩`, invariant under the symmetry group of `g` on both sides
 (`term_left`, `term_right`), the sum over `YG a` splits along the preimage of particle `a`
 (`sum_YG_coset`): `⟨g, altY a g⟩ = m (‖g‖² + (b - 1) T)` with `T = t(swap a (a+1))`. The same
-splitting of `YG (a + 2)` along particle `a + 1` gives `0 ≤ ⟨g, altY (a+2) g⟩ = m' (‖g‖² + (a + 1) T)`,
-and `b - 1 < a + 1`.
+splitting of `YG (a + 2)` along particle `a + 1` gives
+`0 ≤ ⟨g, altY (a+2) g⟩ = m' (‖g‖² + (a + 1) T)`, and `b - 1 < a + 1`.
 -/
 
 namespace DFT.Continuum.Line
@@ -196,7 +196,8 @@ theorem integral_mul_altY_lower_pos {a b : ℕ} (hab : a + b = n + 1) (hb : 1 �
         rw [this, Finset.mem_singleton] at h1
         exact hfix h1)]
     have hm : (0 : ℝ) < ((Finset.univ.filter fun σ => YG a σ ∧ σ⁻¹ Q = Q).card : ℝ) := by
-      exact_mod_cast Finset.card_pos.2 ⟨1, by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨YG_one _, rfl⟩⟩
+      exact_mod_cast Finset.card_pos.2 ⟨1, by
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨YG_one _, rfl⟩⟩
     rw [hcardA]; push_cast
     nlinarith
   · -- `b ≥ 2`
@@ -267,9 +268,11 @@ theorem integral_mul_altY_lower_pos {a b : ℕ} (hab : a + b = n + 1) (hb : 1 �
     have hBnn := integral_mul_altY_self_nonneg (a := a + 2) hg
     rw [hB, hcardB] at hBnn
     have hmB : (0 : ℝ) < ((Finset.univ.filter fun σ => YG (a + 2) σ ∧ σ⁻¹ P1 = P1).card : ℝ) := by
-      exact_mod_cast Finset.card_pos.2 ⟨1, by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨YG_one _, rfl⟩⟩
+      exact_mod_cast Finset.card_pos.2 ⟨1, by
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨YG_one _, rfl⟩⟩
     have hmA : (0 : ℝ) < ((Finset.univ.filter fun σ => YG a σ ∧ σ⁻¹ Q = Q).card : ℝ) := by
-      exact_mod_cast Finset.card_pos.2 ⟨1, by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨YG_one _, rfl⟩⟩
+      exact_mod_cast Finset.card_pos.2 ⟨1, by
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨YG_one _, rfl⟩⟩
     have hB' : 0 ≤ G + ((a : ℝ) + 2 - 1) * T := by
       by_contra h; push Not at h; nlinarith
     rw [hcardA]
