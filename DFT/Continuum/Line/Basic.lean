@@ -19,12 +19,7 @@ of the particles and vanish on the walls. The kinetic energy is `∫ |∇ψ|²`.
 * `pm σ x = x ∘ σ`: relabelling; it preserves Lebesgue measure and the cube (`integral_pm`).
 * `Stat`, `ch`: the statistics and the exchange character (`1` for bosons, the sign for fermions).
 * `Dom τ`: the form domain (`DomB`, `DomF`); `setting τ`: the Hohenberg–Kohn setting.
-* `sep_line`: separation, from the fundamental lemma with test functions of the same symmetry.
 * `rigidL_line`: a continuous `v` with `Σₖ v(xₖ)` a.e. constant on the cube is constant.
-* `dens_eq_of_marginal_line`: equal one-body densities `ρ(t) = ∫ ψ(t, y)² dy` give equal density
-  functionals (Fubini, and symmetry of `ψ²`).
-* `hk_line_of_ucp`: **Hohenberg–Kohn for `N` particles on a line**, conditional on unique
-  continuation of the ground state.
 -/
 
 namespace DFT.Continuum.Line
@@ -421,16 +416,6 @@ lemma eq_zero_of_integral_alt {g : Cfg n → ℝ} (hg : Continuous g)
   · simpa [smul_eq_mul, mul_comm] using hμ
   · intro x hx; rw [hout x hx, zero_smul]
 
-/-- **Separation on the cube.** -/
-theorem sep_line (w : Cfg n → ℝ) (hw : Continuous w) : Sep (setting τ n w hw) := by
-  intro v c ψ hψ h
-  set g : Cfg n → ℝ := fun x => (LN n v x - c) * ψ x
-  have hg : Continuous g := ((continuous_LN v).sub continuous_const).mul hψ.1.continuous
-  have hgs : ∀ σ x, g (pm σ x) = ch τ σ * g x := by
-    intro σ x; simp only [g, LN_pm, hψ.2.1 σ x]; ring
-  have h0 := eq_zero_of_integral_alt hg hgs fun φ hφ => h φ hφ
-  exact (ae_restrict_iff' measurableSet_cube).2 (ae_of_all _ fun x hx => h0 x hx)
-
 /-- **Rigidity on the cube.** -/
 theorem rigidL_line (w : Cfg n → ℝ) (hw : Continuous w) : RigidL (setting τ n w hw) one := by
   intro v c h
@@ -497,69 +482,5 @@ lemma sq_pm {ψ : Cfg n → ℝ} (hψ : ψ ∈ Dom τ n) (σ : Equiv.Perm (Fin (
     ψ (pm σ x) * ψ (pm σ x) = ψ x * ψ x := by
   rw [hψ.2.1 σ x]
   linear_combination (ψ x * ψ x) * ch_mul_self τ σ
-
-/-- **Densities.** If the one-body densities `ρ(t) = ∫ ψ(t, y)² dy` agree on `(0, 1)`, so do the
-norms and the density functionals. -/
-theorem dens_eq_of_marginal_line {w : Cfg n → ℝ} {hw : Continuous w} {ψ ψ' : Cfg n → ℝ}
-    (hψ : ψ ∈ Dom τ n) (hψ' : ψ' ∈ Dom τ n)
-    (hρ : ∀ t ∈ Ioo (0 : ℝ) 1, ∫ y in Cube' n, ψ (Fin.cons t y) ^ 2 =
-      ∫ y in Cube' n, ψ' (Fin.cons t y) ^ 2) :
-    ip (μ := μN n) ψ ψ = ip (μ := μN n) ψ' ψ' ∧
-      dens (setting τ n w hw) ψ = dens (setting τ n w hw) ψ' := by
-  -- the integral of `f(x₀) ψ(x)²` only depends on the density
-  have key : ∀ f : ℝ → ℝ, Continuous f →
-      ∫ x, f (x 0) * (ψ x * ψ x) ∂μN n = ∫ x, f (x 0) * (ψ' x * ψ' x) ∂μN n := by
-    intro f hf
-    rw [integral_cube_cons (F := fun x => f (x 0) * (ψ x * ψ x))
-        ((hf.comp (continuous_apply 0)).mul (hψ.1.continuous.mul hψ.1.continuous)),
-      integral_cube_cons (F := fun x => f (x 0) * (ψ' x * ψ' x))
-        ((hf.comp (continuous_apply 0)).mul (hψ'.1.continuous.mul hψ'.1.continuous))]
-    refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
-    simp only [Fin.cons_zero]
-    rw [integral_const_mul, integral_const_mul]
-    have := hρ t ht
-    simp only [sq] at this
-    rw [this]
-  -- relabelling moves `f(xₖ)` to `f(x₀)`
-  have swapsq : ∀ φ : Cfg n → ℝ, φ ∈ Dom τ n → ∀ f : ℝ → ℝ, ∀ k : Fin (n + 1),
-      ∫ x, f (x k) * (φ x * φ x) ∂μN n = ∫ x, f (x 0) * (φ x * φ x) ∂μN n := by
-    intro φ hφ f k
-    rw [← integral_pm (Equiv.swap 0 k)]
-    congr 1; funext x
-    rw [sq_pm hφ]
-    simp
-  refine ⟨?_, ?_⟩
-  · have := key (fun _ => 1) continuous_const
-    simpa [ip] using this
-  · funext v
-    have hv := continuous_ext v
-    simp only [dens, pf]
-    change ∫ x, (∑ k, Box.ext v (x k)) * (ψ x * ψ x) ∂μN n =
-      ∫ x, (∑ k, Box.ext v (x k)) * (ψ' x * ψ' x) ∂μN n
-    have split : ∀ φ : Cfg n → ℝ, φ ∈ Dom τ n →
-        ∫ x, (∑ k, Box.ext v (x k)) * (φ x * φ x) ∂μN n =
-          (n + 1) * ∫ x, Box.ext v (x 0) * (φ x * φ x) ∂μN n := by
-      intro φ hφ
-      have hpt : (fun x : Cfg n => (∑ k, Box.ext v (x k)) * (φ x * φ x)) =
-          fun x => ∑ k, Box.ext v (x k) * (φ x * φ x) := by
-        funext x; rw [Finset.sum_mul]
-      rw [hpt, integral_finsetSum (f := fun k x => Box.ext v (x k) * (φ x * φ x)) _
-        fun k _ => integrableN ((hv.comp (continuous_apply k)).mul
-        (hφ.1.continuous.mul hφ.1.continuous))]
-      simp only [swapsq φ hφ (Box.ext v), Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-        nsmul_eq_mul]
-      push_cast; ring
-    rw [split ψ hψ, split ψ' hψ', key _ hv]
-
-/-- **Hohenberg–Kohn for `n + 1` particles on a line, conditional on unique continuation.** If
-ground states of continuous potentials `v` and `v'` have the same one-body density, and the ground
-state of `v` vanishes only on a null set of the cube, then `v - v'` is constant. -/
-theorem hk_line_of_ucp {w : Cfg n → ℝ} {hw : Continuous w} {v v' : Pot} {ψ ψ' : Cfg n → ℝ}
-    (hψ : IsGS (setting τ n w hw) v ψ) (hψ' : IsGS (setting τ n w hw) v' ψ')
-    (hρ : ∀ t ∈ Ioo (0 : ℝ) 1, ∫ y in Cube' n, ψ (Fin.cons t y) ^ 2 =
-      ∫ y in Cube' n, ψ' (Fin.cons t y) ^ 2)
-    (hucp : ∀ᵐ x ∂μN n, ψ x ≠ 0) : ∃ k : ℝ, v - v' = k • one := by
-  obtain ⟨hn, hd⟩ := dens_eq_of_marginal_line (w := w) (hw := hw) hψ.1 hψ'.1 hρ
-  exact hk_of_ucp (sep_line w hw) (rigidL_line w hw) hψ hψ' hn hd hucp
 
 end DFT.Continuum.Line

@@ -3,7 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Line.Lieb
+import DFT.Continuum.Line.Chamber
+import DFT.Continuum.General.Lieb
 import DFT.Continuum.Box.Ground
 
 /-!
@@ -11,16 +12,13 @@ import DFT.Continuum.Box.Ground
 
 For `n + 1` non-interacting bosons on `[0, 1]` with a continuous potential `v`, let `ψ₀` be the
 one-particle ground state (energy `E₀`, from `Continuum/Box/Ground`). Then
-`Ψ(x) = ψ₀(x₀) ⋯ ψ₀(xₙ)` is an `(n + 1)`-boson ground state, so Hohenberg–Kohn and Lieb's form of it
-hold with no assumption at all.
+`Ψ(x) = ψ₀(x₀) ⋯ ψ₀(xₙ)` is an `(n + 1)`-boson ground state.
 
 * `Q_slices`: the energy above `(n + 1) E` is a sum over coordinates of one-particle slice
   energies (Fubini along each coordinate); this holds for either statistics.
 * `lower_bound_free`: every state has energy at least `(n + 1) E₀`.
 * `prodS_isGS`: the product state has energy exactly `(n + 1) E₀`, so it is a ground state.
-* `hk_free_bosons_line`: **Hohenberg–Kohn for `N` free bosons on a line, unconditional**: ground
-  states exist, and equal densities force the potentials to differ by a constant.
-* `lieb_free_bosons_line`: Lieb's form, unconditional.
+* `exists_isNGS_free`: normalised ground states exist.
 -/
 
 namespace DFT.Continuum.Line
@@ -190,18 +188,7 @@ theorem prodS_isGS : ∃ Ψ, IsGS (freeS .bos n) v Ψ ∧
   rw [hQΨ]
   nlinarith [mul_le_mul_of_nonneg_left (lower_bound_free v hφ) hposΨ.le]
 
-/-! ### Unconditional theorems -/
-
-/-- **Hohenberg–Kohn for `N` free bosons on a line, unconditional.** Every continuous potential has
-an `(n + 1)`-boson ground state, and ground states of two continuous potentials with the same
-one-body density force the potentials to differ by a constant. -/
-theorem hk_free_bosons_line (v v' : Pot) :
-    (∃ Φ, IsGS (freeS .bos n) v Φ) ∧ ∀ Φ Φ', IsGS (freeS .bos n) v Φ →
-      IsGS (freeS .bos n) v' Φ' →
-      (∀ t ∈ Ioo (0 : ℝ) 1, ∫ y in Cube' n, Φ (Fin.cons t y) ^ 2 =
-        ∫ y in Cube' n, Φ' (Fin.cons t y) ^ 2) → ∃ k : ℝ, v - v' = k • one :=
-  ⟨(prodS_isGS v).imp fun _ h => h.1, fun _ _ h h' hρ =>
-    hk_interacting_bosons_line (fun _ _ => rfl) h h' hρ⟩
+/-! ### Normalised ground states -/
 
 /-- **Normalised ground states exist** for `N` free bosons. -/
 theorem exists_isNGS_free : ∃ ψ, IsNGS (freeS .bos n) v ψ := by
@@ -221,18 +208,5 @@ theorem exists_isNGS_free : ∃ ψ, IsNGS (freeS .bos n) v ψ := by
     _ = (n + 1) * Estar v := by rw [hc2, mul_one]
     _ ≤ Q (freeS .bos n) v φ := this
 
-/-- **The Lieb functional for `N` free bosons on a line, unconditional.** For every continuous
-potential `v` there is a normalised ground state `ψ`; at its density the Lieb functional equals the
-kinetic energy of `ψ`, `-v` is a subgradient, and every other subgradient `-v'` has `v - v'`
-constant. -/
-theorem lieb_free_bosons_line : ∃ ψ, IsNGS (freeS .bos n) v ψ ∧
-    liebF (freeS .bos n) (dens (freeS .bos n) ψ) = (((freeS .bos n).h0 ψ ψ : ℝ) : EReal) ∧
-    (∀ ρ : Pot → ℝ, (((freeS .bos n).h0 ψ ψ + dens (freeS .bos n) ψ v - ρ v : ℝ) : EReal) ≤
-      liebF (freeS .bos n) ρ) ∧
-    ∀ v' : Pot, (∀ ρ : Pot → ℝ,
-      (((freeS .bos n).h0 ψ ψ + dens (freeS .bos n) ψ v' - ρ v' : ℝ) : EReal) ≤
-        liebF (freeS .bos n) ρ) → ∃ k : ℝ, v - v' = k • one := by
-  obtain ⟨ψ, hψ⟩ := exists_isNGS_free (n := n) v
-  exact ⟨ψ, hψ, lieb_line (fun _ _ => rfl) hψ⟩
 
 end DFT.Continuum.Line

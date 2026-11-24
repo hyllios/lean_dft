@@ -5,7 +5,7 @@ Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Sine.Min
 import DFT.Continuum.Line.FreeFermions
-import DFT.Continuum.Line.Unique
+import DFT.Continuum.General.HK
 
 /-!
 # Energies and norms in sine coefficients

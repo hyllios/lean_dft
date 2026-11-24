@@ -7,14 +7,12 @@ import DFT.Continuum.Line.Young
 import DFT.Continuum.Line.Chamber
 
 /-!
-# Mixed symmetry: the strong equation, the ordered region, collisions
+# Mixed symmetry: the ordered region and collisions
 
 For states antisymmetric within the first `a` particles and within the last `N - a`:
 
 * `altY`, `altY_mem`, `eq_zero_of_integral_altY`: the Young antisymmetrisation and the
   fundamental lemma with test functions of mixed symmetry.
-* `strong_eq_Y`: **ground states of mixed symmetry are classical solutions** of
-  `-ΔΦ + (w + Σ_k v(x_k) - E) Φ = 0` on the open cube.
 * `SameB`, `RY`: same-group pairs, and the region where each group is strictly ordered (open and
   convex).
 * `eq_zero_of_collisionY`: a state vanishes where two particles of the same group meet.
@@ -125,56 +123,6 @@ lemma lapN_pmY {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomY a n) {σ : Equiv.Perm (Fi
   rw [dk_smul (hΦ.1.differentiable (by norm_num)),
     dk_smul ((contDiff_dk hΦ.1 k).differentiable one_ne_zero)]
   rfl
-
-/-- **Ground states of mixed symmetry are classical solutions.** -/
-theorem strong_eq_Y {w : Cfg n → ℝ} {hw : Continuous w} (hws : ∀ σ x, w (pm σ x) = w x)
-    {v : Pot} {Φ : Cfg n → ℝ} (hΦ : IsGS (settingS (ymix a) w hw) v Φ) :
-    ∀ x ∈ Cube n, -lapN Φ x +
-      (w x + LN n v x - Q (settingS (ymix a) w hw) v Φ / ip (μ := μN n) Φ Φ) * Φ x = 0 := by
-  have hD : Φ ∈ DomY a n := hΦ.1
-  set E := Q (settingS (ymix a) w hw) v Φ / ip (μ := μN n) Φ Φ
-  set g : Cfg n → ℝ := fun x => -lapN Φ x + (w x + LN n v x - E) * Φ x
-  have hc := hD.1.continuous
-  have hg : Continuous g :=
-    (continuous_lapN hD.1).neg.add (((hw.add (continuous_LN v)).sub continuous_const).mul hc)
-  have hgs : ∀ σ, YG a σ → ∀ x, g (pm σ x) = sgn σ * g x := by
-    intro σ hσ x
-    simp only [g, lapN_pmY hD hσ, hws, LN_pm]
-    rw [show Φ (pm σ x) = sgn σ * Φ x from hD.2.1 σ hσ x]
-    ring
-  refine eq_zero_of_integral_altY hg hgs fun φ hφ => ?_
-  have hel := euler_lagrange hΦ hφ
-  change h0N n w Φ φ + ∫ x, LN n v x * (Φ x * φ x) ∂μN n = E * ∫ x, Φ x * φ x ∂μN n at hel
-  simp only [h0N] at hel
-  have hφc := hφ.1.continuous
-  have iK : ∀ k ∈ Finset.univ, Integrable (fun x => dk k Φ x * dk k φ x) (μN n) :=
-    fun k _ => integrableN ((contDiff_dk hD.1 k).continuous.mul (contDiff_dk hφ.1 k).continuous)
-  have jK : ∀ k ∈ Finset.univ, Integrable (fun x => dkk k Φ x * φ x) (μN n) :=
-    fun k _ => integrableN ((continuous_dkk hD.1 k).mul hφc)
-  have iw := integrableN (hw.mul (hc.mul hφc))
-  have iL := integrableN ((continuous_LN v).mul (hc.mul hφc))
-  have iP := integrableN (hc.mul hφc)
-  have iLap : Integrable (fun x => lapN Φ x * φ x) (μN n) :=
-    integrableN ((continuous_lapN hD.1).mul hφc)
-  have hkin : ∫ x, ∑ k, dk k Φ x * dk k φ x ∂μN n = -∫ x, lapN Φ x * φ x ∂μN n := by
-    rw [integral_finsetSum (f := fun k x => dk k Φ x * dk k φ x) _ iK]
-    simp only [ibpN0 hD.1 hφ.1 hφ.2.2]
-    have : ∫ x, lapN Φ x * φ x ∂μN n = ∑ k, ∫ x, dkk k Φ x * φ x ∂μN n := by
-      rw [← integral_finsetSum (f := fun k x => dkk k Φ x * φ x) _ jK]
-      congr 1; funext x; simp only [lapN, Finset.sum_mul]
-    rw [this, Finset.sum_neg_distrib]
-  have hpt : (fun x => g x * φ x) = fun x =>
-      (-(lapN Φ x * φ x) + (w x * (Φ x * φ x) + LN n v x * (Φ x * φ x))) - E * (Φ x * φ x) := by
-    funext x; simp only [g]; ring
-  rw [hpt,
-    integral_sub (f := fun x => -(lapN Φ x * φ x) + (w x * (Φ x * φ x) + LN n v x * (Φ x * φ x)))
-      (g := fun x => E * (Φ x * φ x)) (iLap.neg.add (iw.add iL)) (iP.const_mul E),
-    integral_add (f := fun x => -(lapN Φ x * φ x))
-      (g := fun x => w x * (Φ x * φ x) + LN n v x * (Φ x * φ x)) iLap.neg (iw.add iL),
-    integral_add (f := fun x => w x * (Φ x * φ x)) (g := fun x => LN n v x * (Φ x * φ x)) iw iL,
-    integral_neg, integral_const_mul]
-  rw [hkin] at hel
-  linarith
 
 /-! ### The ordered region and collisions -/
 

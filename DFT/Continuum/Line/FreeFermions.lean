@@ -13,7 +13,7 @@ import DFT.Continuum.Spectral.Expand
 For `n + 1` non-interacting fermions on `[0, 1]` with a continuous potential `v`, take the
 `n + 1` lowest one-particle eigenfunctions `φⱼ` (energies `λⱼ`, `Continuum/Spectral/Expand`).
 The Slater determinant `Φ(x) = det [φⱼ(xᵢ)]` is an `(n + 1)`-fermion ground state with energy
-`Σⱼ λⱼ`, so Hohenberg–Kohn and Lieb's form of it hold with no assumption at all.
+`Σⱼ λⱼ`.
 
 * `exists_det_ne`: linearly independent functions have a nonzero determinant at some points.
 * `slater_mem`, `lapN_slater`, `Q_slater`: the determinant is a state, solves
@@ -22,8 +22,7 @@ The Slater determinant `Φ(x) = det [φⱼ(xᵢ)]` is an `(n + 1)`-fermion groun
 * `lower_bound_fer`: every state has energy at least `Σⱼ λⱼ`. Along each coordinate the
   one-particle bound `Λ ‖ψ‖² - Σⱼ (Λ - λⱼ) ⟪φⱼ, ψ⟫² ≤ ⟨ψ, hψ⟩` holds slice by slice, and the
   Pauli principle (`Continuum/Line/Pauli`) bounds the occupation of each `φⱼ` by one.
-* `hk_free_fermions_line`, `lieb_free_fermions_line`: **unconditional** Hohenberg–Kohn and
-  Lieb's form of it for `N` free fermions.
+* `slater_isGS`, `exists_isNGS_free_fer`: the determinant is a ground state.
 -/
 
 namespace DFT.Continuum.Line
@@ -389,17 +388,6 @@ theorem slater_isGS (v : Pot) : ∃ Ψ E, IsGS (freeS .fer n) v Ψ ∧
   rw [hQ]
   nlinarith [mul_le_mul_of_nonneg_left (hlow φ' hφ') hpos.le]
 
-/-- **Hohenberg–Kohn for `N` free fermions on a line, unconditional.** Every continuous potential
-has an `(n + 1)`-fermion ground state, and ground states of two continuous potentials with the same
-one-body density force the potentials to differ by a constant. -/
-theorem hk_free_fermions_line (v v' : Pot) :
-    (∃ Φ, IsGS (freeS .fer n) v Φ) ∧ ∀ Φ Φ', IsGS (freeS .fer n) v Φ →
-      IsGS (freeS .fer n) v' Φ' →
-      (∀ t ∈ Ioo (0 : ℝ) 1, ∫ y in Cube' n, Φ (Fin.cons t y) ^ 2 =
-        ∫ y in Cube' n, Φ' (Fin.cons t y) ^ 2) → ∃ k : ℝ, v - v' = k • one := by
-  obtain ⟨Ψ, -, hΨ, -⟩ := slater_isGS (n := n) v
-  exact ⟨⟨Ψ, hΨ⟩, fun _ _ h h' hρ => hk_interacting_fermions_line (fun _ _ => rfl) h h' hρ⟩
-
 /-- **Normalised ground states exist** for `N` free fermions. -/
 theorem exists_isNGS_free_fer (v : Pot) : ∃ ψ, IsNGS (freeS .fer n) v ψ := by
   obtain ⟨Ψ, E, hΨ, hQΨ, hlow⟩ := slater_isGS (n := n) v
@@ -417,18 +405,5 @@ theorem exists_isNGS_free_fer (v : Pot) : ∃ ψ, IsNGS (freeS .fer n) v ψ := b
     _ = E := by rw [hc2, mul_one]
     _ ≤ Q (freeS .fer n) v φ := this
 
-/-- **The Lieb functional for `N` free fermions on a line, unconditional.** For every continuous
-potential `v` there is a normalised ground state `ψ`; at its density the Lieb functional equals the
-kinetic energy of `ψ`, `-v` is a subgradient, and every other subgradient `-v'` has `v - v'`
-constant. -/
-theorem lieb_free_fermions_line (v : Pot) : ∃ ψ, IsNGS (freeS .fer n) v ψ ∧
-    liebF (freeS .fer n) (dens (freeS .fer n) ψ) = (((freeS .fer n).h0 ψ ψ : ℝ) : EReal) ∧
-    (∀ ρ : Pot → ℝ, (((freeS .fer n).h0 ψ ψ + dens (freeS .fer n) ψ v - ρ v : ℝ) : EReal) ≤
-      liebF (freeS .fer n) ρ) ∧
-    ∀ v' : Pot, (∀ ρ : Pot → ℝ,
-      (((freeS .fer n).h0 ψ ψ + dens (freeS .fer n) ψ v' - ρ v' : ℝ) : EReal) ≤
-        liebF (freeS .fer n) ρ) → ∃ k : ℝ, v - v' = k • one := by
-  obtain ⟨ψ, hψ⟩ := exists_isNGS_free_fer (n := n) v
-  exact ⟨ψ, hψ, lieb_line (fun _ _ => rfl) hψ⟩
 
 end DFT.Continuum.Line

@@ -213,31 +213,6 @@ lemma dW_pm {f : Cfg n → ℝ} (hf : f ∈ W0 n) (σ : Equiv.Perm (Fin (n + 1))
 
 /-! ### `C²` states -/
 
-lemma isWD_dk0 {Φ : Cfg n → ℝ} (hΦ : Φ ∈ D0 n) (k : Fin (n + 1)) : IsWD k Φ (dk k Φ) := by
-  obtain ⟨h2, hw⟩ := mem_D0.1 hΦ
-  have hcd : Continuous (dk k Φ) := (contDiff_dk h2 k).continuous
-  refine ⟨memLp_cont hcd, fun φ hφ => ?_⟩
-  have hd := continuous_dk_of_C1 hφ k
-  have hφd : Differentiable ℝ φ := hφ.differentiable one_ne_zero
-  rw [integral_cube_ins (F := fun x => Φ x * dk k φ x) k (integrableN (h2.continuous.mul hd)),
-    integral_cube_ins (F := fun x => dk k Φ x * φ x) k (integrableN (hcd.mul hφ.continuous)),
-    ← integral_neg]
-  refine setIntegral_congr_fun measurableSet_cube' fun y _ => ?_
-  simp only [integral_Ioo_eq_interval]
-  have hc : ∀ {g : Cfg n → ℝ}, Continuous g →
-      IntervalIntegrable (fun t => g (Fin.insertNth k t y)) volume 0 1 := fun hg =>
-    (hg.comp (continuous_ins k y)).intervalIntegrable 0 1
-  rw [intervalIntegral.integral_mul_deriv_eq_deriv_mul
-    (u := fun t => Φ (Fin.insertNth k t y)) (v := fun t => φ (Fin.insertNth k t y))
-    (fun t _ => hasDerivAt_ins (h2.differentiable (by norm_num)) k y t)
-    (fun t _ => hasDerivAt_ins hφd k y t) (hc hcd) (hc hd)]
-  have w0 : Φ (Fin.insertNth k 0 y) = 0 := hw _ k (Or.inl (by simp))
-  have w1 : Φ (Fin.insertNth k 1 y) = 0 := hw _ k (Or.inr (by simp))
-  rw [w0, w1]; ring
-
-lemma D0_le_W0 : D0 n ≤ W0 n := fun _ hΦ =>
-  ⟨memLp_cont (mem_D0.1 hΦ).1.continuous, fun k => ⟨_, isWD_dk0 hΦ k⟩⟩
-
 /-! ### Energy and norm -/
 
 /-- The kinetic form. -/
@@ -406,28 +381,6 @@ lemma BipW_pm (f : W0 n) (σ : Equiv.Perm (Fin (n + 1))) :
     BipW ⟨_, comp_pm_mem_W0 f.2 σ⟩ ⟨_, comp_pm_mem_W0 f.2 σ⟩ = BipW f f := by
   rw [BipW_apply, BipW_apply]
   exact integral_pm σ (fun x => (f : Cfg n → ℝ) x * (f : Cfg n → ℝ) x)
-
-/-- On `C²` states the weak energy is the classical one. -/
-lemma BQW_eq_BQ (f : D0 n) :
-    BQW w hw v ⟨f, D0_le_W0 f.2⟩ ⟨f, D0_le_W0 f.2⟩ = BQ w hw v f f := by
-  have h2 := (mem_D0.1 f.2).1
-  have hcd : ∀ k, Continuous (dk k (f : Cfg n → ℝ)) := fun k => (contDiff_dk h2 k).continuous
-  rw [BQW_apply, BQ_apply]
-  simp only [kinB, potB, h0N, Vt]
-  rw [integral_finsetSum (f := fun k x => dk k (f : Cfg n → ℝ) x * dk k (f : Cfg n → ℝ) x) _
-    fun k _ => integrableN ((hcd k).mul (hcd k))]
-  have hc := h2.continuous
-  rw [show (fun x => (LN n v x + w x) * ((f : Cfg n → ℝ) x * (f : Cfg n → ℝ) x)) =
-      fun x => w x * ((f : Cfg n → ℝ) x * (f : Cfg n → ℝ) x) +
-        LN n v x * ((f : Cfg n → ℝ) x * (f : Cfg n → ℝ) x) from funext fun x => by ring,
-    integral_add (f := fun x => w x * ((f : Cfg n → ℝ) x * (f : Cfg n → ℝ) x))
-      (g := fun x => LN n v x * ((f : Cfg n → ℝ) x * (f : Cfg n → ℝ) x))
-      (integrableN (hw.mul (hc.mul hc))) (integrableN ((continuous_LN v).mul (hc.mul hc)))]
-  rw [← add_assoc]
-  congr 2
-  refine Finset.sum_congr rfl fun k _ => integral_congr_ae ?_
-  filter_upwards [dW_ae_eq (isWD_dk0 f.2 k)] with x hx
-  rw [hx]
 
 end bil
 

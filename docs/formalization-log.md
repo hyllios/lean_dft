@@ -641,3 +641,13 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   C² densities, explicit non-v-representable densities). Superseded by `exists_unique_gs_W_cont`,
   `ensVRep_iff_W_cont`, `exists_unique_gs_hcW`, `lieb_mattis_W`, `lieb_mattis_total_W_cont`.
   Blueprint: `thm:line_smooth` and `thm:lieb_mattis` deleted, the other entries pruned.
+- F DONE (removal of the C² strong-equation layer on the line). Deleted `Line/{Smooth, Hopf, Nodal,
+  Bosons, Fermions, Lieb, Unique, VRep}` (maximum principle and nodal route to unique continuation,
+  C² HK/Lieb/nondegeneracy). Trimmed `HardCore` to Girardeau's map (`gA`, `mulA`, `mu_collision`,
+  `ae_injective`), `Chamber` (smooth sign `Sgn`, cutoff `chi` removed), `SpinBridge`/`SpinStates`
+  (C² spin bridge `D0`, `BQ`, `Bip`, `lift`, `sector_reduce` removed), `Strong`/`YoungStrong`
+  (`strong_eq_line`, `strong_eq_Y`), `Basic` (`hk_line_of_ucp`, `sep_line`), `Sine/Min`/`Cont`
+  (coefficient Euler–Lagrange), `Free`/`FreeFermions` (w = 0 HK/Lieb special cases). New
+  `Line/TonksW`: `isGS_W_of_isGS` (C² ground states are H¹₀ ground states) and
+  **`tonks_girardeau_W`**. Found with a declaration-level reachability script from the H¹₀ results
+  and Lieb's N-representability. Blueprint: 9 entries deleted, `thm:tonks_W` added.

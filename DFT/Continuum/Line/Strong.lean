@@ -6,17 +6,12 @@ Authors: Miguel A. L. Marques
 import DFT.Continuum.Line.Basic
 
 /-!
-# Ground states of `N` particles on a line are classical solutions
-
-For `n + 1` bosons or fermions on `[0, 1]` with a continuous interaction `w` invariant under
-relabelling, every ground state `Φ` of the potential `v` solves the Schrödinger equation pointwise
-on the open cube: `-ΔΦ + (w + Σₖ v(xₖ) - E) Φ = 0`, with `E = ⟨Φ, HΦ⟩ / ⟨Φ, Φ⟩`.
+# Calculus for `C²` states on the cube
 
 * `integral_cube_insertNth`: Fubini on the cube, with coordinate `k` innermost.
 * `dk_comp_pm`: the chain rule for relabelling, `∂ₖ(f ∘ σ) = (∂_{σ⁻¹ k} f) ∘ σ`.
 * `lapN_pm`: the Laplacian of a state has the same exchange symmetry.
 * `ibpN`: integration by parts along each coordinate.
-* `strong_eq_line`: the strong Schrödinger equation.
 -/
 
 namespace DFT.Continuum.Line
@@ -143,55 +138,5 @@ lemma lapN_pm {Φ : Cfg n → ℝ} (hΦ : Φ ∈ Dom τ n) (σ : Equiv.Perm (Fin
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [dk_smul (diffF hΦ), dk_smul ((contDiff_dk hΦ.1 k).differentiable one_ne_zero)]
   rfl
-
-/-- **Ground states of `n + 1` interacting particles are classical solutions** of
-`-ΔΦ + (w + Σₖ v(xₖ) - E) Φ = 0` on the open cube. -/
-theorem strong_eq_line {w : Cfg n → ℝ} {hw : Continuous w} (hws : ∀ σ x, w (pm σ x) = w x)
-    {v : Pot} {Φ : Cfg n → ℝ} (hΦ : IsGS (setting τ n w hw) v Φ) :
-    ∀ x ∈ Cube n, -lapN Φ x +
-      (w x + LN n v x - Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ) * Φ x = 0 := by
-  have hD : Φ ∈ Dom τ n := hΦ.1
-  set E := Q (setting τ n w hw) v Φ / ip (μ := μN n) Φ Φ
-  set g : Cfg n → ℝ := fun x => -lapN Φ x + (w x + LN n v x - E) * Φ x
-  have hc := hD.1.continuous
-  have hg : Continuous g :=
-    (continuous_lapN hD.1).neg.add (((hw.add (continuous_LN v)).sub continuous_const).mul hc)
-  have hgs : ∀ σ x, g (pm σ x) = ch τ σ * g x := by
-    intro σ x
-    simp only [g, lapN_pm hD, hws, LN_pm, hD.2.1 σ x]
-    ring
-  refine eq_zero_of_integral_alt hg hgs fun φ hφ => ?_
-  have hel := euler_lagrange hΦ hφ
-  change h0N n w Φ φ + ∫ x, LN n v x * (Φ x * φ x) ∂μN n = E * ∫ x, Φ x * φ x ∂μN n at hel
-  simp only [h0N] at hel
-  have hφc := hφ.1.continuous
-  have iK : ∀ k ∈ Finset.univ, Integrable (fun x => dk k Φ x * dk k φ x) (μN n) :=
-    fun k _ => integrableN ((cont_dk hD k).mul (cont_dk hφ k))
-  have jK : ∀ k ∈ Finset.univ, Integrable (fun x => dkk k Φ x * φ x) (μN n) :=
-    fun k _ => integrableN ((continuous_dkk hD.1 k).mul hφc)
-  have iw := integrableN (hw.mul (hc.mul hφc))
-  have iL := integrableN ((continuous_LN v).mul (hc.mul hφc))
-  have iP := integrableN (hc.mul hφc)
-  have iLap : Integrable (fun x => lapN Φ x * φ x) (μN n) :=
-    integrableN ((continuous_lapN hD.1).mul hφc)
-  have hkin : ∫ x, ∑ k, dk k Φ x * dk k φ x ∂μN n = -∫ x, lapN Φ x * φ x ∂μN n := by
-    rw [integral_finsetSum (f := fun k x => dk k Φ x * dk k φ x) _ iK]
-    simp only [ibpN hD.1 hφ]
-    have : ∫ x, lapN Φ x * φ x ∂μN n = ∑ k, ∫ x, dkk k Φ x * φ x ∂μN n := by
-      rw [← integral_finsetSum (f := fun k x => dkk k Φ x * φ x) _ jK]
-      congr 1; funext x; simp only [lapN, Finset.sum_mul]
-    rw [this, Finset.sum_neg_distrib]
-  have hpt : (fun x => g x * φ x) = fun x =>
-      (-(lapN Φ x * φ x) + (w x * (Φ x * φ x) + LN n v x * (Φ x * φ x))) - E * (Φ x * φ x) := by
-    funext x; simp only [g]; ring
-  rw [hpt,
-    integral_sub (f := fun x => -(lapN Φ x * φ x) + (w x * (Φ x * φ x) + LN n v x * (Φ x * φ x)))
-      (g := fun x => E * (Φ x * φ x)) (iLap.neg.add (iw.add iL)) (iP.const_mul E),
-    integral_add (f := fun x => -(lapN Φ x * φ x))
-      (g := fun x => w x * (Φ x * φ x) + LN n v x * (Φ x * φ x)) iLap.neg (iw.add iL),
-    integral_add (f := fun x => w x * (Φ x * φ x)) (g := fun x => LN n v x * (Φ x * φ x)) iw iL,
-    integral_neg, integral_const_mul]
-  rw [hkin] at hel
-  linarith
 
 end DFT.Continuum.Line

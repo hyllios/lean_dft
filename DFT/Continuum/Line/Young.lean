@@ -45,47 +45,6 @@ lemma cont_kin0 {ψ φ : Cfg n → ℝ} (hψ : ContDiff ℝ 2 ψ) (hφ : ContDif
   continuous_finsetSum _ fun k _ =>
     (contDiff_dk hψ k).continuous.mul (contDiff_dk hφ k).continuous
 
-/-- The Hohenberg–Kohn setting for states of symmetry type `s`. -/
-noncomputable def settingS (s : SymT n) (w : Cfg n → ℝ) (hw : Continuous w) :
-    Setting (μN n) Pot where
-  D := DomS s
-  h0 := h0N n w
-  h0_add a ha b hb c hc := by
-    have e : ∀ k, dk k (a + b) = dk k a + dk k b :=
-      dk_add (ha.1.differentiable (by norm_num)) (hb.1.differentiable (by norm_num))
-    simp only [h0N, e, Pi.add_apply]
-    have ia := integrableN (cont_kin0 ha.1 hc.1)
-    have ib := integrableN (cont_kin0 hb.1 hc.1)
-    have ja := integrableN (hw.mul (ha.1.continuous.mul hc.1.continuous))
-    have jb := integrableN (hw.mul (hb.1.continuous.mul hc.1.continuous))
-    have h1 : ∫ x, ∑ k, (dk k a x + dk k b x) * dk k c x ∂μN n =
-        ∫ x, ∑ k, dk k a x * dk k c x ∂μN n + ∫ x, ∑ k, dk k b x * dk k c x ∂μN n := by
-      rw [← integral_add (f := fun x => ∑ k, dk k a x * dk k c x)
-        (g := fun x => ∑ k, dk k b x * dk k c x) ia ib]
-      congr 1; funext x; rw [← Finset.sum_add_distrib]; congr 1; funext k; ring
-    have h2 : ∫ x, w x * ((a x + b x) * c x) ∂μN n =
-        ∫ x, w x * (a x * c x) ∂μN n + ∫ x, w x * (b x * c x) ∂μN n := by
-      rw [← integral_add (f := fun x => w x * (a x * c x)) (g := fun x => w x * (b x * c x)) ja jb]
-      congr 1; funext x; ring
-    rw [h1, h2]; ring
-  h0_smul r a ha c hc := by
-    have e : ∀ k, dk k (r • a) = r • dk k a := dk_smul (ha.1.differentiable (by norm_num)) r
-    simp only [h0N, e, Pi.smul_apply, smul_eq_mul]
-    have h1 : ∫ x, ∑ k, r * dk k a x * dk k c x ∂μN n =
-        r * ∫ x, ∑ k, dk k a x * dk k c x ∂μN n := by
-      rw [← integral_const_mul]; congr 1; funext x; rw [Finset.mul_sum]; congr 1; funext k; ring
-    have h2 : ∫ x, w x * (r * a x * c x) ∂μN n = r * ∫ x, w x * (a x * c x) ∂μN n := by
-      rw [← integral_const_mul]; congr 1; funext x; ring
-    rw [h1, h2]; ring
-  h0_symm ψ _ φ _ := by
-    simp only [h0N]
-    congr 1
-    · congr 1; funext x; congr 1; funext k; ring
-    · congr 1; funext x; ring
-  L := LN n
-  int_L v ψ φ hψ hφ := integrableN ((continuous_LN v).mul (hψ.1.continuous.mul hφ.1.continuous))
-  int_sq ψ φ hψ hφ := integrableN (hψ.1.continuous.mul hφ.1.continuous)
-
 /-! ### The Young subgroup -/
 
 /-- Relabellings that map the first `a` particles among themselves. -/
@@ -119,26 +78,6 @@ lemma cN_InS_S {s : SymT n} {φ : Cfg n → ℝ} (hφ : φ ∈ DomS s) : InS s f
 lemma Dir_cN_S {s : SymT n} {φ : Cfg n → ℝ} (hφ : φ ∈ DomS s) : Dir s fun m => cN m φ :=
   ⟨(hasSum_ip hφ.1.continuous).summable, by simpa [lam] using (hasSum_kin0 hφ.1 hφ.2.2).summable,
     cN_InS_S hφ⟩
-
-lemma Q_eq_Fn_S {s : SymT n} {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) {φ : Cfg n → ℝ}
-    (hφ : φ ∈ DomS s) :
-    Q (settingS s w hw) v φ = Fn (fun x => LN n v x + w x) fun m => cN m φ := by
-  have hc := hφ.1.continuous
-  have hVc : Continuous fun x => LN n v x + w x := (continuous_LN v).add hw
-  rw [Fn, Bf_cN hVc hc]
-  have hk : ∑' m, lam m * cN m φ ^ 2 = ∫ x, ∑ k, dk k φ x * dk k φ x ∂μN n := by
-    simpa [lam] using (hasSum_kin0 hφ.1 hφ.2.2).tsum_eq
-  rw [hk]
-  have hsplit : ∫ x, (LN n v x + w x) * (φ x * φ x) ∂μN n =
-      ∫ x, LN n v x * (φ x * φ x) ∂μN n + ∫ x, w x * (φ x * φ x) ∂μN n := by
-    rw [← integral_add (f := fun x => LN n v x * (φ x * φ x)) (g := fun x => w x * (φ x * φ x))
-      (integrableN ((continuous_LN v).mul (hc.mul hc)))
-      (integrableN (hw.mul (hc.mul hc)))]
-    exact integral_congr_ae (ae_of_all _ fun x => by ring)
-  rw [hsplit]
-  change ∫ x, ∑ k, dk k φ x * dk k φ x ∂μN n + ∫ x, w x * (φ x * φ x) ∂μN n +
-    ∫ x, LN n v x * (φ x * φ x) ∂μN n = _
-  ring
 
 /-! ### An admissible sequence of mixed symmetry -/
 

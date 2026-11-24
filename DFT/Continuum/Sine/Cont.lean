@@ -16,7 +16,7 @@ satisfies the abstract `ℓ²` bound `KBd V (B²)`, without any smoothness:
   `Σ (Kc)² = ∫ (Vφ)² ≤ B² ∫ φ² = B² Σ c²`;
 * general `c ∈ ℓ²`: truncate to the boxes `T_K` and pass to the limit (`lim_sum_le`).
 
-Hence the direct method in coefficient space (`KBd.exists_min`, `KBd.euler_lagrange`) applies to
+Hence the direct method in coefficient space (`KBd.exists_min`) applies to
 every continuous potential: `exists_min_cont`.
 -/
 
@@ -159,14 +159,5 @@ theorem exists_min_cont {V : Cfg n → ℝ} (hV : Continuous V) {τ : SymT n}
     IsCompact (CubeC n)).exists_bound_of_continuousOn hV.continuousOn
   exact (kBd_of_continuous hV (B := B) fun x hx => by
     simpa [Real.norm_eq_abs] using hB x hx).exists_min hne
-
-/-- The Euler–Lagrange equation for a coefficient minimiser of a continuous potential. -/
-theorem euler_lagrange_cont {V : Cfg n → ℝ} (hV : Continuous V) (hVs : ∀ σ x, V (pm σ x) = V x)
-    {τ : SymT n} {a : (Fin (n + 1) → ℕ) → ℝ} (ha : Adm τ a) (hmin : Fn V a = E0 V τ)
-    (m : Fin (n + 1) → ℕ) : lam m * a m + Kc V a m = E0 V τ * a m := by
-  obtain ⟨B, hB⟩ := (isCompact_univ_pi fun _ => isCompact_Icc :
-    IsCompact (CubeC n)).exists_bound_of_continuousOn hV.continuousOn
-  exact (kBd_of_continuous hV (B := B) fun x hx => by
-    simpa [Real.norm_eq_abs] using hB x hx).euler_lagrange hVs ha hmin m
 
 end DFT.Continuum.Sine

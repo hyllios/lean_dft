@@ -5,7 +5,8 @@ Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Box.Ground
 import DFT.Continuum.Box.PiconeEq
-import DFT.Continuum.Line.VRep
+import DFT.Continuum.Line.WeakHK
+import DFT.Continuum.General.VRep
 
 /-!
 # `v`-representable densities of one particle in a box, exactly
