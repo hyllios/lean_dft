@@ -889,6 +889,42 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   The Kohn--Sham density $\sum_j\varphi_j^2$, resp.\ $N\varphi_0^2$, is $C^2$ and vanishes at the walls.
 \end{proof}
 
+\begin{theorem}[Interacting $v$-representable densities of $N$ fermions are meagre]
+  \label{thm:line_fer_meagre}
+  \lean{DFT.Continuum.Line.D2_perturb, DFT.Continuum.Line.exists_tent_L2', DFT.Continuum.Line.Bset, DFT.Continuum.Line.isClosed_Bset, DFT.Continuum.Line.exists_not_Bset, DFT.Continuum.Line.C1Dens, DFT.Continuum.Line.D2_le_of_C1, DFT.Continuum.Line.meagre_C1Dens, DFT.Continuum.Line.int_dW_smd, DFT.Continuum.Line.coef_EL, DFT.Continuum.Line.summable_lam_sq, DFT.Continuum.Line.uS, DFT.Continuum.Line.KS, DFT.Continuum.Line.KD, DFT.Continuum.Line.hasDerivAt_KS, DFT.Continuum.Line.continuous_KD, DFT.Continuum.Line.integral_KS, DFT.Continuum.Line.Ker_x0, DFT.Continuum.Line.Bf_x0, DFT.Continuum.Line.dens_eq_KS, DFT.Continuum.Line.gs_dens_C1, DFT.Continuum.Line.fer_vrep_meagre, DFT.Continuum.Line.fer_ensvrep_meagre, DFT.Continuum.Line.fer_nonvrep_dense}
+  \leanok
+  \uses{thm:line_meagre, thm:line_nondeg_cont}
+  Densities with a $C^1$ profile form a meagre subset of $S_N$. For $N$ fermions on $H^1_0$ with continuous $v$ and a
+  continuous relabelling-invariant $w$, the sine coefficients of the ground state satisfy
+  $\lambda_mc_m+\langle s_m,V\Psi\rangle=Ec_m$, hence $\sum_m\lambda_m^2c_m^2<\infty$, and the density is
+  $N\sum_\mu u_\mu^2$ with $u_\mu(t)=\sum_kc_{(k,\mu)}s_{k+1}(t)$, a $C^1$ profile. Hence the interacting
+  $v$-representable densities (pure or ensemble) are meagre and the non-$v$-representable ones are residual.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $C^1$: $|K(t+h)-2K(t)+K(t-h)|\le h$ for small $h$ is closed; a tent of width $r^4$ and height $r^3$ costs $O(r)$ in
+  $L^2$ and adds $\approx4|g(t_0)|h/r$ at its apex. $H^2$: test the weak equation with one sine mode. Density: the
+  kernel of $v(x_0)$ in the sine basis is diagonal in the other indices; Cauchy--Schwarz gives
+  $(\sum_k(k+1)|c_{(k,\mu)}|)^2\le\zeta(2)\sum_k(k+1)^4c_{(k,\mu)}^2$, summable in $\mu$, so the series for $K$ and $K'$
+  converge uniformly.
+\end{proof}
+
+\begin{theorem}[Bosons, and both statistics]
+  \label{thm:line_vrep_meagre}
+  \lean{DFT.Continuum.Line.smdSym, DFT.Continuum.Line.smdSym_mem, DFT.Continuum.Line.int_dW_smdSym, DFT.Continuum.Line.h0W_smdSym, DFT.Continuum.Line.cN_pmI_of_symm, DFT.Continuum.Line.coef_EL_bos, DFT.Continuum.Line.summable_lam_sq_bos, DFT.Continuum.Line.gs_dens_C1_stat, DFT.Continuum.Line.vrep_meagre, DFT.Continuum.Line.ensvrep_meagre, DFT.Continuum.Line.nonvrep_residual}
+  \leanok
+  \uses{thm:line_fer_meagre}
+  The coefficient equation, $H^2$ regularity and the $C^1$ density profile hold for bosons as well. Hence, for $N$
+  bosons or fermions on $H^1_0$ with continuous $v$ and a continuous relabelling-invariant $w$, the interacting
+  $v$-representable densities (pure or ensemble) are meagre among the $N$-representable ones, and the
+  non-$v$-representable densities are residual.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Test the weak equation with the symmetrised mode $\sum_\sigma s_{m\circ\sigma}$, a bosonic $H^1_0$ state; for a
+  symmetric ground state and a symmetric potential all $N!$ terms agree.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}

@@ -21,12 +21,15 @@ import DFT.Continuum.Line.Chamber
 import DFT.Continuum.Line.Closure
 import DFT.Continuum.Line.Complete
 import DFT.Continuum.Line.ContHK
+import DFT.Continuum.Line.DensC1
+import DFT.Continuum.Line.DensSeries
 import DFT.Continuum.Line.Dense
 import DFT.Continuum.Line.Density
 import DFT.Continuum.Line.Free
 import DFT.Continuum.Line.FreeFermions
 import DFT.Continuum.Line.H1Approx
 import DFT.Continuum.Line.H2
+import DFT.Continuum.Line.H2Bos
 import DFT.Continuum.Line.HKY
 import DFT.Continuum.Line.HalfSpace
 import DFT.Continuum.Line.HardCore

@@ -713,3 +713,16 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
     (`altY` with sign 1).
   - (c) TODO: K(t) = N Σ_μ u_μ(t)², u_μ(t) = Σ_k c_{(k,μ)} s_{k+1}(t); C¹ via uniform bounds
     Σ_μ sup|u_μ| sup|u_μ'| ≲ Σ λ² c²; identify ρ(u) = ∫ u K (fiber Parseval or kernel route).
+  - (c) DONE `Line/DensSeries`: `consE`, `cc`, `uS`, `uD`, `KS`, `KD`, `A4`, `S1`, `Z2`,
+    `summable_pow4` ((m₀+1)⁴c² ≤ λ²c²/π⁴), `summable_S1_and` (Cauchy–Schwarz on partial sums),
+    `abs_uS_le`/`abs_uD_le`, `hasDerivAt_uS`, **`hasDerivAt_KS`**, **`continuous_KD`**, `KS_zero`,
+    `KS_one`, `aK`, `integral_uS_sq`, **`integral_KS`** (only needs Σλ²c² < ∞). `Line/DensC1`:
+    `dens_eq_x0`, `Ker_x0` (kernel of v(x₀) diagonal in the other indices), `Kc_x0`, `Bf_x0`,
+    **`dens_eq_KS`** (any τ), **`gs_dens_C1`**, **`fer_vrep_meagre`**, `fer_ensvrep_meagre`,
+    **`fer_nonvrep_dense`**. Standard axioms. Blueprint `thm:line_fer_meagre`.
+    Remaining: bosons (symmetric analogue of `el_all` for `coef_EL`).
+  - Bosons DONE `Line/H2Bos`: `smdSym` (Σ_σ s_{m∘σ}, a bosonic H¹₀ state), `int_dW_smdSym`,
+    `h0W_smdSym`, `cN_pmI_of_symm`, **`coef_EL_bos`**, **`summable_lam_sq_bos`**,
+    `summable_lam_sq_stat`, **`gs_dens_C1_stat`**, **`vrep_meagre`**, `ensvrep_meagre`,
+    **`nonvrep_residual`** (both statistics). Standard axioms. Blueprint `thm:line_vrep_meagre`.
+    Phase M complete.
