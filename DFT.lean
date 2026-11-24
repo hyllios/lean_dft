@@ -64,6 +64,7 @@ import DFT.Continuum.Line.WeakRep
 import DFT.Continuum.Line.Young
 import DFT.Continuum.Line.YoungChamber
 import DFT.Continuum.Line.YoungGS
+import DFT.Continuum.Line.YoungInj
 import DFT.Continuum.Line.YoungL2
 import DFT.Continuum.Line.YoungPos
 import DFT.Continuum.Line.YoungSign

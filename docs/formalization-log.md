@@ -617,4 +617,8 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
     `integral_mul_altY_of_antiY`, `isWD_altY`, `altY_memWS`, `ae_dW_pm_antiY`, `kin_mul_altY`,
     `h0W_altY`, `LN_altY`, **`el_all`** (weak equation against all H¹ test functions),
     **`Q_altY_W`** (altY_a g is an eigenstate with the energy of g).
+  - D2 DONE `Line/YoungInj`: `sum_YG_coset` (sum over YG c split along σ⁻¹Q, fibres of equal
+    size via σ ↦ σ·swap Q j), `tY g σ = sgn σ ⟨g, g∘σ⟩` with `tY_left`, `tY_right`, `tY_of_YG`,
+    `tY_conj`, `integral_mul_altY_eq`, `YG_succ_of_fix`, `YG_pred_of_fix`,
+    **`integral_mul_altY_lower_pos`**: ⟨g, altY a g⟩ > 0 for g ≠ 0 of type (a+1, b−1), b ≤ a.
 
