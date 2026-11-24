@@ -726,3 +726,14 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
     `summable_lam_sq_stat`, **`gs_dens_C1_stat`**, **`vrep_meagre`**, `ensvrep_meagre`,
     **`nonvrep_residual`** (both statistics). Standard axioms. Blueprint `thm:line_vrep_meagre`.
     Phase M complete.
+- N DONE (explicit N ≥ 2 counterexamples). `Line/Kink`: `not_C1Dens_of_kink`, `tentG`,
+  `h10_tentG`, `rhoKink`, **`kink_nrep_not_vrep`** (tent² density not v-rep for any N, both
+  statistics). Blueprint `thm:line_kink`. Next: positivity of interacting GS densities (Corso's
+  hyperplane argument), then distributional potentials.
+- O DONE (positivity of interacting GS densities, all N). `Line/Cut`: `HalfT`, `cutT`, `dk_cutT`,
+  `tendsto_cutT`, `slab`, **`isWD_cut`** (restriction to {xᵢ < t₀} if (1/δ)∫_slab|F| → 0).
+  `Line/Positive`: `bumpF`/`bumpP`, `integral_xi_eq_x0`, `integral_x0`, **`slab_small`**
+  (K ≤ L|t−t₀| ⇒ slab average O(√δ)), `Uset`, **`isWD_cutAll`**, `pos_measure_pi`,
+  **`gs_profile_pos`** (K > 0 on (0,1): K(t₀)=0 ⇒ K'(t₀)=0 ⇒ cut along all planes, energy splits,
+  UCP contradiction), **`not_vrep_of_zero`**, **`sin_nrep_not_vrep`** (2N sin²(2πt) not v-rep for
+  any N). Standard axioms. Blueprint `thm:line_positive`. Next: distributional potentials (Corso).

@@ -925,6 +925,38 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   symmetric ground state and a symmetric potential all $N!$ terms agree.
 \end{proof}
 
+\begin{theorem}[A kinked density is not $v$-representable, for any $N$]
+  \label{thm:line_kink}
+  \lean{DFT.Continuum.Line.not_C1Dens_of_kink, DFT.Continuum.Line.tentG, DFT.Continuum.Line.h10_tentG, DFT.Continuum.Line.rhoKink, DFT.Continuum.Line.kink_nrep_not_vrep}
+  \leanok
+  \uses{thm:line_vrep_meagre, thm:line_nrep}
+  $\rho\propto(1-2|x-\tfrac12|)^2$, normalised to $N$, is $N$-representable but not (ensemble) $v$-representable, for
+  $N$ bosons or fermions with continuous $v$ and continuous relabelling-invariant $w$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Its second difference at $\tfrac12$ is $\approx 8c^2h$, larger than $h$, so its profile is not $C^1$; but every
+  interacting ground-state density has a $C^1$ profile.
+\end{proof}
+
+\begin{theorem}[Interacting ground-state densities are positive]
+  \label{thm:line_positive}
+  \lean{DFT.Continuum.Line.HalfT, DFT.Continuum.Line.cutT, DFT.Continuum.Line.slab, DFT.Continuum.Line.isWD_cut, DFT.Continuum.Line.bumpF, DFT.Continuum.Line.slab_small, DFT.Continuum.Line.Uset, DFT.Continuum.Line.isWD_cutAll, DFT.Continuum.Line.gs_profile_pos, DFT.Continuum.Line.not_vrep_of_zero, DFT.Continuum.Line.sin_nrep_not_vrep}
+  \leanok
+  \uses{thm:line_vrep_meagre, thm:line_ucp_bos, thm:line_ucp_fer}
+  For $N$ bosons or fermions on $H^1_0$ with continuous $v$ and continuous relabelling-invariant $w$, the density
+  profile of the ground state is positive on $(0,1)$. Hence a density with an interior zero, e.g.\ $2N\sin^2(2\pi x)$,
+  is $N$-representable but not $v$-representable, for any $N$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  (After Corso.) If $K(t_0)=0$ then $K'(t_0)=0$, so $K(t)\le|t-t_0|$ near $t_0$ and
+  $\delta^{-1}\int_{t_0-\delta<x_i<t_0}|\Psi|=O(\sqrt\delta)$. Smooth cutoffs then show that $\mathbf 1_U\Psi$,
+  $U=\{x_i<t_0\ \forall i\}$, is an $H^1_0$ state of the same symmetry. The energy splits between $\mathbf 1_U\Psi$ and
+  $\mathbf 1_{U^c}\Psi$, so the nonzero one is a ground state vanishing on a set of positive measure, contradicting
+  unique continuation.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}
