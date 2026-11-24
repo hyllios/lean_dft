@@ -1130,3 +1130,25 @@ $(a,b)$, Young subgroup $\mathrm{YG}_a$).
   $\sum_{k<a}\Delta v_\uparrow(x_k)+\sum_{k\ge a}\Delta v_\downarrow(x_k)$ constant; moving one particle of each
   species shows that each present species sees a constant difference.
 \end{proof}
+
+\begin{theorem}[Lieb--Mattis on $H^1_0$, continuous potentials]
+  \label{thm:lieb_mattis_W_cont}
+  \lean{DFT.Continuum.Line.cardY, DFT.Continuum.Line.altY_altY, DFT.Continuum.Line.integral_altY_mul, DFT.Continuum.Line.integral_mul_altY_self_nonneg, DFT.Continuum.Line.AntiY, DFT.Continuum.Line.kin_mul_altY, DFT.Continuum.Line.h0W_altY, DFT.Continuum.Line.el_all, DFT.Continuum.Line.Q_altY_W, DFT.Continuum.Line.sum_YG_coset, DFT.Continuum.Line.tY, DFT.Continuum.Line.integral_mul_altY_lower_pos, DFT.Continuum.Line.altY_eq_zero_of_inv, DFT.Continuum.Line.bump, DFT.Continuum.Line.orb, DFT.Continuum.Line.Pst, DFT.Continuum.Line.phi0, DFT.Continuum.Line.altY_phi0, DFT.Continuum.Line.phi0_eq_Pst, DFT.Continuum.Line.boxB, DFT.Continuum.Line.lieb_mattis_W}
+  \leanok
+  \uses{thm:line_young_exists, thm:line_ucp_young, thm:line_nondeg_cont}
+  For $N$ spin-$\frac12$ particles on $[0,1]$ with continuous $v$ and a continuous relabelling-invariant $w$, the
+  ground-state energies of the $S_z$ sectors over $H^1_0$ satisfy $E(a,b)<E(a+1,b-1)$ for $a\ge b\ge1$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The weak equation of a sector ground state $\Psi$ of type $(a+1,b-1)$ holds against all $H^1$ test functions
+  (project onto the sign component of the Young group), so its lowering $f=\sum_{\sigma\in Y_a}\operatorname{sgn}\sigma\,
+  \Psi\circ\sigma$ has energy $E(a+1,b-1)$; $f\ne0$, since splitting the Young sums into cosets gives
+  $\langle\Psi,f\rangle=m(\|\Psi\|^2+(b-1)T)$ and $0\le m'(\|\Psi\|^2+(a+1)T)$ with $b-1<a+1$. Hence $E(a,b)\le E(a+1,b-1)$.
+  If equality held, $f$ would be the ground state of type $(a,b)$, with the chamber sign. The reference state
+  $\varphi_0$, the Young antisymmetrisation of a product of tents with ordered disjoint supports in which the second
+  group repeats the first group's orbitals, satisfies Fock's condition and is $\ge0$ on the Young chamber, $>0$ on a
+  box. So $\langle f,\varphi_0\rangle\ne0$, while $\langle f,\varphi_0\rangle$ is a multiple of $\langle\Psi,\varphi_0\rangle$, which
+  Fock's condition makes zero.
+\end{proof}
+

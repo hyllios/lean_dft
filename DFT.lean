@@ -39,11 +39,13 @@ import DFT.Continuum.Line.LiebMattis
 import DFT.Continuum.Line.LiebMattisSign
 import DFT.Continuum.Line.LiebMattisSpin
 import DFT.Continuum.Line.LiebMattisTotal
+import DFT.Continuum.Line.LiebMattisW
 import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Nodal
 import DFT.Continuum.Line.Nondeg
 import DFT.Continuum.Line.Pauli
 import DFT.Continuum.Line.Realize
+import DFT.Continuum.Line.RefState
 import DFT.Continuum.Line.Represent
 import DFT.Continuum.Line.SDFT
 import DFT.Continuum.Line.Smooth

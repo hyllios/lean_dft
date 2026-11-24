@@ -621,4 +621,10 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
     size via σ ↦ σ·swap Q j), `tY g σ = sgn σ ⟨g, g∘σ⟩` with `tY_left`, `tY_right`, `tY_of_YG`,
     `tY_conj`, `integral_mul_altY_eq`, `YG_succ_of_fix`, `YG_pred_of_fix`,
     **`integral_mul_altY_lower_pos`**: ⟨g, altY a g⟩ > 0 for g ≠ 0 of type (a+1, b−1), b ≤ a.
+  - D3 DONE `Line/RefState` (simpler than planned: tents instead of sine Slaters):
+    `altY_eq_zero_of_inv` (F invariant under an odd τ ∈ YG ⇒ altY F = 0), `bump`, `orb`, `Pst`,
+    `phi0 = altY a Pst`, **`altY_phi0`** (Fock: repeated orbital ⇒ altY (a+1) φ₀ = 0),
+    `phi0_eq_Pst` (= P ≥ 0 on RY off collisions: σ ≠ 1 has an in-group inversion), `boxB`.
+  - D4 DONE `Line/LiebMattisW`: **`lieb_mattis_W`**: E(a,b) < E(a+1,b−1) on H¹₀, continuous v,
+    relabelling-invariant continuous w. Standard axioms. Next: total-spin form on H¹₀ without smooth V.
 
