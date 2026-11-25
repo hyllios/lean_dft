@@ -89,9 +89,21 @@ lemma marg_nonneg (t : ℝ) : 0 ≤ marg Φ t :=
 lemma margK_nonneg (t : ℝ) : 0 ≤ margK Φ t :=
   setIntegral_nonneg measurableSet_cube' fun _ _ => sq_nonneg _
 
+/-- `C²` functions of exchange symmetry `τ`, with no boundary condition. -/
+def DomC (τ : Stat) (n : ℕ) : Set (Cfg n → ℝ) :=
+  {ψ | ContDiff ℝ 2 ψ ∧ ∀ σ x, ψ (pm σ x) = ch τ σ * ψ x}
+
+lemma domC_of_dom {ψ : Cfg n → ℝ} (h : ψ ∈ Dom τ n) : ψ ∈ DomC τ n := ⟨h.1, h.2.1⟩
+
+lemma diffC {ψ : Cfg n → ℝ} (h : ψ ∈ DomC τ n) : Differentiable ℝ ψ :=
+  h.1.differentiable (by norm_num)
+
+lemma cont_dkC {ψ : Cfg n → ℝ} (h : ψ ∈ DomC τ n) (k : Fin (n + 1)) : Continuous (dk k ψ) :=
+  (h.1.continuous_fderiv (by norm_num)).clm_apply continuous_const
+
 section dom
 
-variable (hΦ : Φ ∈ Dom τ n)
+variable (hΦ : Φ ∈ DomC τ n)
 include hΦ
 
 lemma continuous_marg : Continuous (marg Φ) :=
@@ -101,16 +113,16 @@ lemma continuous_marg : Continuous (marg Φ) :=
 lemma continuous_margD : Continuous (margD Φ) :=
   continuous_integral_cube' (G := fun t y => 2 * (Φ (Fin.cons t y) * dk 0 Φ (Fin.cons t y)))
     (continuous_const.mul ((hΦ.1.continuous.comp continuous_cons_pair).mul
-      ((cont_dk hΦ 0).comp continuous_cons_pair)))
+      ((cont_dkC hΦ 0).comp continuous_cons_pair)))
 
 lemma continuous_margK : Continuous (margK Φ) :=
   continuous_integral_cube' (G := fun t y => dk 0 Φ (Fin.cons t y) ^ 2)
-    (((cont_dk hΦ 0).comp continuous_cons_pair).pow 2)
+    (((cont_dkC hΦ 0).comp continuous_cons_pair).pow 2)
 
 /-- Differentiation under the integral: `marg' = margD`. -/
 lemma hasDerivAt_marg (t0 : ℝ) : HasDerivAt (marg Φ) (margD Φ t0) t0 := by
   have hc := hΦ.1.continuous
-  have hd := cont_dk hΦ 0
+  have hd := cont_dkC hΦ 0
   obtain ⟨C, hC⟩ := bound_cons (hc.mul hd) t0
   refine (hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := volume.restrict (Cube' n))
     (F := fun s y => Φ (Fin.cons s y) ^ 2)
@@ -126,14 +138,14 @@ lemma hasDerivAt_marg (t0 : ℝ) : HasDerivAt (marg Φ) (margD Φ t0) t0 := by
     exact mul_le_mul_of_nonneg_left (hC s hs y hy) two_pos.le
   · exact integrableOn_cube' continuous_const
   · refine ae_of_all _ fun y s _ => ?_
-    exact ((hasDerivAt_cons_slice (diffF hΦ) s y).pow 2).congr_deriv (by ring)
+    exact ((hasDerivAt_cons_slice (diffC hΦ) s y).pow 2).congr_deriv (by ring)
 
 /-- **Cauchy–Schwarz in the other particles**: `margD² ≤ 4 marg margK`. -/
 lemma margD_sq_le (t : ℝ) : margD Φ t ^ 2 ≤ 4 * marg Φ t * margK Φ t := by
   have ha : Continuous fun y : Fin n → ℝ => Φ (Fin.cons t y) :=
     hΦ.1.continuous.comp (continuous_cons_right t)
   have hb : Continuous fun y : Fin n → ℝ => dk 0 Φ (Fin.cons t y) :=
-    (cont_dk hΦ 0).comp (continuous_cons_right t)
+    (cont_dkC hΦ 0).comp (continuous_cons_right t)
   have hq : ∀ r : ℝ, 0 ≤ marg Φ t * (r * r) + margD Φ t * r + margK Φ t := by
     intro r
     have i1 := integrableOn_cube' (g := fun y => Φ (Fin.cons t y) ^ 2 * (r * r))
@@ -167,10 +179,10 @@ lemma integral_dk_sq (k : Fin (n + 1)) :
   set σ := Equiv.swap (0 : Fin (n + 1)) k
   have h : ∀ x, dk k Φ x ^ 2 = dk 0 Φ (pm σ x) ^ 2 := by
     intro x
-    have e1 := dk_comp_pm (diffF hΦ) σ k x
-    have e2 : (fun y => Φ (pm σ y)) = ch τ σ • Φ := by funext y; simp [hΦ.2.1 σ y]
+    have e1 := dk_comp_pm (diffC hΦ) σ k x
+    have e2 : (fun y => Φ (pm σ y)) = ch τ σ • Φ := by funext y; simp [hΦ.2 σ y]
     have hs : σ⁻¹ k = 0 := by simp [σ, Equiv.swap_inv]
-    rw [e2, dk_smul (diffF hΦ), hs] at e1
+    rw [e2, dk_smul (diffC hΦ), hs] at e1
     rw [← e1, Pi.smul_apply, smul_eq_mul, mul_pow, sq (ch τ σ), ch_mul_self, one_mul]
   simp only [h]
   exact integral_pm σ (fun x => dk 0 Φ x ^ 2)
@@ -178,10 +190,17 @@ lemma integral_dk_sq (k : Fin (n + 1)) :
 /-- The kinetic energy is `N ∫ |∂₀Φ|²`. -/
 lemma kin_eq : ∫ x, ∑ k, dk k Φ x * dk k Φ x ∂μN n = (n + 1) * ∫ x, dk 0 Φ x ^ 2 ∂μN n := by
   rw [integral_finsetSum (f := fun k x => dk k Φ x * dk k Φ x) _
-    fun k _ => integrableN ((cont_dk hΦ k).mul (cont_dk hΦ k))]
+    fun k _ => integrableN ((cont_dkC hΦ k).mul (cont_dkC hΦ k))]
   simp only [← sq, integral_dk_sq hΦ, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
     nsmul_eq_mul]
   push_cast; ring
+
+/-- The density is nonnegative and `C¹`, with derivative `rhoD`. -/
+lemma rho_propsC : (∀ t, 0 ≤ (n + 1 : ℝ) * marg Φ t) ∧
+    (∀ t, HasDerivAt (fun s => (n + 1 : ℝ) * marg Φ s) ((n + 1 : ℝ) * margD Φ t) t) ∧
+    Continuous fun t => (n + 1 : ℝ) * margD Φ t :=
+  ⟨fun t => mul_nonneg (by positivity) (marg_nonneg t),
+    fun t => (hasDerivAt_marg hΦ t).const_mul _, continuous_const.mul (continuous_margD hΦ)⟩
 
 end dom
 
@@ -245,11 +264,11 @@ theorem sqrt_dens_H1 (hΦ : Φ ∈ Dom τ n) :
       rw [hΦ.2.2 (Fin.cons a y) 0 (by simpa using ha)]; ring
     simp [rhoN, marg, h0]
   have hder : ∀ t, HasDerivAt (rhoN Φ) (rhoD Φ t) t := fun t =>
-    (hasDerivAt_marg hΦ t).const_mul ((n : ℝ) + 1)
-  have hcρ : Continuous (rhoN Φ) := continuous_const.mul (continuous_marg hΦ)
-  have hcD : Continuous (rhoD Φ) := continuous_const.mul (continuous_margD hΦ)
+    (hasDerivAt_marg (domC_of_dom hΦ) t).const_mul ((n : ℝ) + 1)
+  have hcρ : Continuous (rhoN Φ) := continuous_const.mul (continuous_marg (domC_of_dom hΦ))
+  have hcD : Continuous (rhoD Φ) := continuous_const.mul (continuous_margD (domC_of_dom hΦ))
   have hKint : IntegrableOn (margK Φ) (Ioo (0 : ℝ) 1) :=
-    ((continuous_margK hΦ).continuousOn.integrableOn_compact isCompact_Icc).mono_set
+    ((continuous_margK (domC_of_dom hΦ)).continuousOn.integrableOn_compact isCompact_Icc).mono_set
       Ioo_subset_Icc_self
   have hq0 : ∀ t, 0 ≤ rhoD Φ t ^ 2 / (4 * rhoN Φ t) := fun t =>
     div_nonneg (sq_nonneg _) (mul_nonneg (by norm_num) (hρ0 t))
@@ -259,7 +278,7 @@ theorem sqrt_dens_H1 (hΦ : Φ ∈ Dom τ n) :
     · rw [rhoN, ← h0, mul_zero, mul_zero, div_zero]
       exact mul_nonneg hN.le (margK_nonneg t)
     · rw [div_le_iff₀ (by rw [rhoN]; positivity)]
-      have h := margD_sq_le hΦ t
+      have h := margD_sq_le (domC_of_dom hΦ) t
       have hN2 : 0 ≤ ((n : ℝ) + 1) ^ 2 := by positivity
       calc rhoD Φ t ^ 2 = ((n : ℝ) + 1) ^ 2 * margD Φ t ^ 2 := by rw [rhoD]; ring
         _ ≤ ((n : ℝ) + 1) ^ 2 * (4 * marg Φ t * margK Φ t) := mul_le_mul_of_nonneg_left h hN2
@@ -277,7 +296,7 @@ theorem sqrt_dens_H1 (hΦ : Φ ∈ Dom τ n) :
         ≤ ∫ t in Ioo (0 : ℝ) 1, (n + 1) * margK Φ t :=
           integral_mono hqint (hKint.const_mul _) hpt
       _ = ∫ x, ∑ k, dk k Φ x * dk k Φ x ∂μN n := by
-          rw [kin_eq hΦ, integral_cube_cons (F := fun x => dk 0 Φ x ^ 2)
+          rw [kin_eq (domC_of_dom hΦ), integral_cube_cons (F := fun x => dk 0 Φ x ^ 2)
             ((cont_dk hΦ 0).pow 2), integral_const_mul]
           rfl
 

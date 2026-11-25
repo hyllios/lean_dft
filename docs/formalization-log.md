@@ -883,3 +883,15 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   form bound, evE, ofM (measures ⊂ H⁻¹), deltaH), `Line/NeuGS` (fnE, mulL, **tendsto_inner_mulL**,
   dE, **tendsto_v_dE**, QE, EH, exists_minE, dE2, euler_lagrangeE, QH, IsGSH, VRepH,
   **exists_isGSH**, **euler_lagrangeH**). Standard axioms. Next: Q2 N-body Neumann state space.
+- Q2 DONE (2026-11-25): `Line/NeuBasis` (cosines cn, cn_complete via primitive + sn_complete,
+  cb, parsevalC1, cube products cP, parsevalC, eC/bC, parsevalCW, parsevalCW_pair). `Line/NeuWeak`
+  (TestN = C¹ vanishing on faces x_k∈{0,1}, IsWDN, unique, isWDN_of_C1, dWN, H1NW, DomNS/DomN,
+  kinN, DomWS_le_DomNS, kinN_eq_kinW). `Line/NeuSeries` (bumpC, sP, dk_sP, bessel_dWN, lamC,
+  sum_lamC_le, lam_le_lamC, sL, serN, isWDN_serN, cC_pmNS, ae_eq_of_cC_eq, DirN, dirN_cC, serN_mem,
+  kinN_serN). Refactor of `Line/Density` section dom onto `DomC τ n` (C², symmetric, no walls) with
+  domC_of_dom, diffC, cont_dkC, rho_propsC, and `Line/WeakNec` reg section on DomC. `Line/NeuDens`
+  (h1N_closure, tendsto_abs_sq_of_L2, truncC, truncC_mem, tendsto_truncC, kin_truncC_le,
+  **sqrt_dens_H1N**). `Line/NeuNGS` (toE_congr, sqE_congr, sqE_eq_of_ae, gNH, rhoE = ρ as an
+  element of H1E, rhoE_eq_sqE, QNH, IsGSNH, **abs_v_rhoE_le** form bound, QNH_ge,
+  tendsto_int_rhoN, tendsto_int_w, **exists_isGSNH**). The limit density is identified through
+  pot_eq_of_integral on evE e₀², not via rhoHat. Standard axioms. Next: Q3 non-degeneracy + UCP.

@@ -1533,3 +1533,53 @@ $\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
   when $P_k\to P$ uniformly), so $v(\psi_k^2)\to v(\psi^2)$; $\|f\|^2$ is weakly lower semicontinuous. Euler--Lagrange
   from the quadratic expansion of the energy.
 \end{proof}
+
+\begin{theorem}[The $N$-body Neumann state space]
+  \label{thm:neu_states}
+  \lean{DFT.Continuum.Line.cn, DFT.Continuum.Line.cn_complete, DFT.Continuum.Line.parsevalC1, DFT.Continuum.Line.cP, DFT.Continuum.Line.parsevalC, DFT.Continuum.Line.eC, DFT.Continuum.Line.cC, DFT.Continuum.Line.bC, DFT.Continuum.Line.parsevalCW, DFT.Continuum.Line.parsevalCW_pair, DFT.Continuum.Line.TestN, DFT.Continuum.Line.IsWDN, DFT.Continuum.Line.isWDN_of_C1, DFT.Continuum.Line.dWN, DFT.Continuum.Line.H1NW, DFT.Continuum.Line.DomNS, DFT.Continuum.Line.DomN, DFT.Continuum.Line.kinN, DFT.Continuum.Line.DomWS_le_DomNS, DFT.Continuum.Line.kinN_eq_kinW, DFT.Continuum.Line.bessel_dWN, DFT.Continuum.Line.lamC, DFT.Continuum.Line.sum_lamC_le, DFT.Continuum.Line.lam_le_lamC, DFT.Continuum.Line.serN, DFT.Continuum.Line.isWDN_serN, DFT.Continuum.Line.cC_pmNS, DFT.Continuum.Line.ae_eq_of_cC_eq, DFT.Continuum.Line.DirN, DFT.Continuum.Line.dirN_cC, DFT.Continuum.Line.serN_mem, DFT.Continuum.Line.kinN_serN}
+  \leanok
+  The cosines $1,\sqrt2\cos(k\pi t)$ are a Hilbert basis of $L^2(0,1)$, and their products a Hilbert basis of $L^2$ of
+  the cube. A state $\Phi$ is in $H^1$ of the cube when it has weak derivatives in $L^2$ tested against $C^1$ functions
+  vanishing on the faces $x_k\in\{0,1\}$. Then $\sum_m\lambda^c_m\langle c_m,\Phi\rangle^2\le T(\Phi)$ with
+  $\lambda^c_m=\pi^2\sum_j m_j^2$, and conversely every symmetric cosine series with $\sum\lambda^c_ma_m^2<\infty$ is an
+  $H^1$ state with kinetic energy $\sum\lambda^c_ma_m^2$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Completeness of the cosines from that of the sines, through the primitive. The weak derivative pairs with
+  $\partial_k c_m$, a sine in $x_k$ that vanishes on the faces. Bessel's inequality in the sine basis gives the bound.
+  For the converse, the termwise derivative series converges in $L^2$ and is the weak derivative.
+\end{proof}
+
+\begin{theorem}[$\sqrt\rho\in H^1$ with Neumann walls]
+  \label{thm:neu_sqrt_dens}
+  \lean{DFT.Continuum.Line.h1N_closure, DFT.Continuum.Line.tendsto_abs_sq_of_L2, DFT.Continuum.Line.truncC, DFT.Continuum.Line.truncC_mem, DFT.Continuum.Line.tendsto_truncC, DFT.Continuum.Line.kin_truncC_le, DFT.Continuum.Line.sqrt_dens_H1N}
+  \leanok
+  \uses{thm:neu_states}
+  For every $H^1$ state $\Phi$ of the cube, $\sqrt{\rho_\Phi}$ has a representative $g\in H^1(0,1)$ with
+  $\int g'^2\le T(\Phi)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The truncated cosine series $P_M$ are $C^2$ and symmetric with $T(P_M)\le T(\Phi)$, so the regularised
+  Hoffmann-Ostenhof bound, which does not use the walls, gives $u_M=\sqrt{\rho_{P_M}+\varepsilon_M}-\sqrt{\varepsilon_M}$ with $\int u_M'^2\le T(\Phi)$, and
+  $u_M\to\sqrt{\rho_\Phi}$ in $L^2$. An $L^2$ limit of functions bounded in $H^1(0,1)$ is in $H^1(0,1)$, with the same
+  bound (weak compactness in $\mathbb R\times L^2$).
+\end{proof}
+
+\begin{theorem}[$N$-body Neumann ground states for $H^{-1}$ potentials]
+  \label{thm:neu_gs_N}
+  \lean{DFT.Continuum.Line.toE_congr, DFT.Continuum.Line.sqE_congr, DFT.Continuum.Line.sqE_eq_of_ae, DFT.Continuum.Line.gNH, DFT.Continuum.Line.gNH_spec, DFT.Continuum.Line.rhoE, DFT.Continuum.Line.rhoE_eq_sqE, DFT.Continuum.Line.integral_gNH_sq, DFT.Continuum.Line.kinM_gNH_le, DFT.Continuum.Line.QNH, DFT.Continuum.Line.IsGSNH, DFT.Continuum.Line.abs_v_rhoE_le, DFT.Continuum.Line.QNH_ge, DFT.Continuum.Line.cC_sub, DFT.Continuum.Line.exists_isGSNH}
+  \leanok
+  \uses{thm:neu_form_bound, thm:neu_gs, thm:neu_sqrt_dens}
+  For every $v\in H^{-1}$, every continuous interaction $w$, bosons or fermions, the energy
+  $T(\Phi)+\int w\Phi^2+v(\rho_\Phi)$ on normalised $H^1$ states of the cube satisfies
+  $|v(\rho_\Phi)|\le\frac12T(\Phi)+C_vN$, is bounded below, and has a minimiser.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The form bound follows from the one-particle bound applied to $g=\sqrt{\rho_\Phi}$. The direct method runs in cosine
+  coefficients. The bound $\lambda_m\le2\lambda^c_m+2\pi^2N$ gives $\ell^2$ compactness, the limit series $\Psi$ has
+  $T(\Psi)\le\liminf T(\Phi_j)$, and $\Phi_j\to\Psi$ in $L^2$. The $g_j$ are bounded in $\mathbb R\times L^2$, so along a
+  subsequence $v(g_j^2)$ converges. The uniform limit of $g_j^2$ has the integrals of $\rho_\Psi$, so it is $\rho_\Psi$.
+\end{proof}

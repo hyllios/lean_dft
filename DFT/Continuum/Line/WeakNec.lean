@@ -188,16 +188,16 @@ lemma sq_sqrt_sub_sqrt_le {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) : (√a - �
 
 section reg
 
-variable {P : Cfg n → ℝ} (hP : P ∈ Dom τ n) {ε : ℝ} (hε : 0 < ε)
+variable {P : Cfg n → ℝ} (hP : P ∈ DomC τ n) {ε : ℝ} (hε : 0 < ε)
 include hP hε
 
 lemma rhoN_add_pos (t : ℝ) : 0 < rhoN P t + ε :=
-  add_pos_of_nonneg_of_pos ((sqrt_dens_H1 hP).1 t) hε
+  add_pos_of_nonneg_of_pos ((rho_propsC hP).1 t) hε
 
 lemma hasDerivAt_ureg (t : ℝ) :
     HasDerivAt (fun s => √(rhoN P s + ε) - √ε)
       (rhoD P t / (2 * √(rhoN P t + ε))) t :=
-  ((((sqrt_dens_H1 hP).2.2.2.2.1 t).add_const ε).sqrt (rhoN_add_pos hP hε t).ne').sub_const _
+  ((((rho_propsC hP).2.1 t).add_const ε).sqrt (rhoN_add_pos hP hε t).ne').sub_const _
 
 lemma contDiff_ureg : ContDiff ℝ 1 fun s => √(rhoN P s + ε) - √ε := by
   rw [contDiff_one_iff_deriv]
@@ -205,7 +205,7 @@ lemma contDiff_ureg : ContDiff ℝ 1 fun s => √(rhoN P s + ε) - √ε := by
   rw [show deriv (fun s => √(rhoN P s + ε) - √ε) =
     fun t => rhoD P t / (2 * √(rhoN P t + ε)) from funext fun t => (hasDerivAt_ureg hP hε t).deriv]
   have hcρ : Continuous (rhoN P) := continuous_const.mul (continuous_marg hP)
-  exact (sqrt_dens_H1 hP).2.2.2.2.2.1.div (continuous_const.mul (hcρ.add continuous_const).sqrt)
+  exact (rho_propsC hP).2.2.div (continuous_const.mul (hcρ.add continuous_const).sqrt)
     fun t => by have := Real.sqrt_pos.2 (rhoN_add_pos hP hε t); positivity
 
 /-- `∫ u'² ≤ T(P)` for the regularised square root. -/
@@ -234,7 +234,7 @@ lemma integral_deriv_ureg_le :
         refine integral_mono_of_nonneg (ae_of_all _ fun t => sq_nonneg _) hK
           (ae_of_all _ hpt)
     _ = ∫ x, ∑ k, dk k P x * dk k P x ∂μN n := by
-        rw [kin_eq hP, integral_cube_cons (F := fun x => dk 0 P x ^ 2) ((cont_dk hP 0).pow 2),
+        rw [kin_eq hP, integral_cube_cons (F := fun x => dk 0 P x ^ 2) ((cont_dkC hP 0).pow 2),
           integral_const_mul]
         rfl
 
@@ -251,7 +251,7 @@ theorem sqrt_dens_H1W {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
   have hε : ∀ M, 0 < ε M := fun M => by positivity
   have hP : ∀ M, trunc M Φ ∈ Dom τ n := trunc_mem hΦ
   set u : ℕ → ℝ → ℝ := fun M s => √(rhoN (trunc M Φ) s + ε M) - √(ε M)
-  have hu : ∀ M, ContDiff ℝ 1 (u M) := fun M => contDiff_ureg (hP M) (hε M)
+  have hu : ∀ M, ContDiff ℝ 1 (u M) := fun M => contDiff_ureg (domC_of_dom (hP M)) (hε M)
   have hρm := integrable_marg hΦ.1
   have hρ0 : ∀ t, 0 ≤ rhoN Φ t := fun t => mul_nonneg (by positivity) (marg_nonneg t)
   have hint : Integrable (rhoN Φ) μ1 := hρm.const_mul _
@@ -266,7 +266,7 @@ theorem sqrt_dens_H1W {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
   have hu1 : ∀ M, u M 1 = 0 := fun M => by
     simp [u, (sqrt_dens_H1 (hP M)).2.2.1]
   have hC : ∀ M, ∫ t, deriv (u M) t ^ 2 ∂μ1 ≤ ∑ k, ∫ x, dW k Φ x * dW k Φ x ∂μN n :=
-    fun M => (integral_deriv_ureg_le (hP M) (hε M)).trans (kin_trunc_le (h1W_of_mem hΦ) M)
+    fun M => (integral_deriv_ureg_le (domC_of_dom (hP M)) (hε M)).trans (kin_trunc_le (h1W_of_mem hΦ) M)
   -- `u_M → √ρ` in `L²`
   have hlim : Tendsto (fun M => toHL (hu M).continuous) atTop (𝓝 f) := by
     rw [tendsto_iff_norm_sub_tendsto_zero]
