@@ -927,3 +927,15 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   **rhoE_pos** both statistics; integral_fnE_rhoE; VRepNH; **vrepNH_nec**: v-rep ⇒ ρ ∈ H¹, ρ > 0 on
   [0,1], ∫ρ = N). `log_estimate_fer` generalised to `log_estimate_ferη`. The bosonic slab/cut
   argument of MeasureNPos was not needed. Standard axioms. Next: Q5 sufficiency.
+- Q5 sufficiency DONE (2026-11-25), CORSO THM 2.3 COMPLETE. `Line/NeuND` (isGSNH_comb,
+  gsNH_sign_bos, gsNH_sign_fer on the chamber, **gsNH_unique**, **rhoE_gsNH_unique**: Neumann GS
+  nondegenerate, both statistics). `Line/NeuCpt` (**compact_states** extracted from exists_isGSNH,
+  gsEH, cH_le_cHr, kinN_le_of_QNH, **rhoE_eq_of_supergrad**: converse Hellmann–Feynman along
+  v + tu). `Line/NeuSuff` (intPot, ellE mass functional, gsEH_shift, exists_weak_subseq_PotH,
+  **vrepNH_of_rep**: maximise G(v) = E(v) − v(ρ₀), coercive from local N-representability with
+  bounded energy, weakly usc since E is an inf of weakly continuous affine maps; no Hahn–Banach,
+  no density matrices). `Line/NeuRep` (isWDN_tens, prodS_memN, kinN_prodS, sqrtProf with
+  h1N_sqrtProf via LipschitzOnWith.comp_absolutelyContinuousOnInterval, kinM_sqrtProf_le,
+  isWDN_slater, slater_memN, kinN_slater_le, exists_eH_bound, harrimanN, rep_of_prof,
+  **vrepNH_suff**, **vrepNH_iff**: ρ ∈ H¹ is v-rep iff ρ > 0 on [0,1] and ∫ρ = N). Standard
+  axioms. Next: Q6 HK (v − v′ = const from equal densities).

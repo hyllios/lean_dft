@@ -1650,3 +1650,51 @@ $\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
   is bounded uniformly in $\varepsilon$, while unique continuation makes it diverge. The same argument works at the walls,
   because Neumann test functions need not vanish there.
 \end{proof}
+
+\begin{theorem}[Nondegeneracy of Neumann ground states]
+  \label{thm:neu_nondeg}
+  \lean{DFT.Continuum.Line.isGSNH_neg, DFT.Continuum.Line.isGSNH_comb, DFT.Continuum.Line.not_ae_sq_lt, DFT.Continuum.Line.gsNH_sign_bos, DFT.Continuum.Line.gsNH_eq_of_pos_bos, DFT.Continuum.Line.PhiBY_eq_abs_RY, DFT.Continuum.Line.gsNH_sign_fer, DFT.Continuum.Line.ae_sq_lt_of_RY, DFT.Continuum.Line.gsNH_eq_of_pos_fer, DFT.Continuum.Line.gsNH_unique, DFT.Continuum.Line.rhoE_gsNH_unique}
+  \leanok
+  \uses{thm:neu_ucp}
+  For bosons or fermions, every $v\in H^{-1}$ and every continuous $w$, the Neumann ground state is unique up to sign.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A nonzero combination of ground states is a ground state, by the Euler--Lagrange equation. Combining $\Psi$ with $|\Psi|$,
+  or with the chamber state for fermions, and using unique continuation shows that every ground state has a strict
+  sign, on the chamber for fermions. Two normalised ground states of the same sign differ by a ground state of strict
+  sign unless they coincide, which would make one of the two squares strictly larger.
+\end{proof}
+
+\begin{theorem}[Converse of Hellmann--Feynman]
+  \label{thm:neu_chf}
+  \lean{DFT.Continuum.Line.compact_states, DFT.Continuum.Line.gsEH, DFT.Continuum.Line.gsEH_le, DFT.Continuum.Line.gsEH_of_isGSNH, DFT.Continuum.Line.isGSNH_of_le, DFT.Continuum.Line.QNH_add_smul, DFT.Continuum.Line.cHr, DFT.Continuum.Line.kinN_le_of_QNH, DFT.Continuum.Line.rhoE_eq_of_supergrad}
+  \leanok
+  \uses{thm:neu_nondeg}
+  If $\rho\in H^1(0,1)$ satisfies $E(v')\le E(v)+(v'-v)(\rho)$ for every $v'\in H^{-1}$, then $\rho$ is the ground-state density
+  of $v$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Along $v+tu$ with $t\to0$ the ground states have bounded kinetic energy, so a subsequence converges to a normalised state
+  with lower semicontinuous energy and convergent densities. The limit is a ground state of $v$, unique by nondegeneracy,
+  hence $u(\rho_{\rm GS})\le u(\rho)$ for every $u$.
+\end{proof}
+
+\begin{theorem}[Corso's Theorem 2.3]
+  \label{thm:neu_corso}
+  \lean{DFT.Continuum.Line.intPot, DFT.Continuum.Line.ellE, DFT.Continuum.Line.gsEH_shift, DFT.Continuum.Line.exists_weak_subseq_PotH, DFT.Continuum.Line.vrepNH_of_rep, DFT.Continuum.Line.isWDN_tens, DFT.Continuum.Line.prodS_memN, DFT.Continuum.Line.kinN_prodS, DFT.Continuum.Line.sqrtProf, DFT.Continuum.Line.h1N_sqrtProf, DFT.Continuum.Line.kinM_sqrtProf_le, DFT.Continuum.Line.isWDN_slater, DFT.Continuum.Line.slater_memN, DFT.Continuum.Line.kinN_slater_le, DFT.Continuum.Line.exists_eH_bound, DFT.Continuum.Line.harrimanN, DFT.Continuum.Line.rep_of_prof, DFT.Continuum.Line.vrepNH_suff, DFT.Continuum.Line.vrepNH_iff}
+  \leanok
+  \uses{thm:neu_pos, thm:neu_chf}
+  For bosons or fermions and every continuous interaction, $\rho\in H^1(0,1)$ is the density of a Neumann ground state of some
+  $v\in H^{-1}$ if and only if $\rho>0$ on $[0,1]$ and $\int\rho=N$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Necessity is Theorem~\ref{thm:neu_pos}. For sufficiency, every density near $\rho$ with the same mass is the density of a
+  product state or of a Slater determinant of Harriman orbitals $\sqrt{\rho'/N}\,e_j\!\left(\int_0^x\rho'/N\right)$, with
+  uniformly bounded kinetic energy. Hence $G(v)=E(v)-v(\rho)$ is bounded above by $M+v(h)$ for all small $h$ of mass zero.
+  It is invariant under constant shifts and coercive on the rest. A maximising sequence is bounded in $H^{-1}$ and has a
+  weakly convergent subsequence. Since $E$ is an infimum of weakly continuous affine functions, the limit is a maximiser,
+  so $\rho$ is a supergradient of $E$ there and, by Theorem~\ref{thm:neu_chf}, the ground-state density.
+\end{proof}
