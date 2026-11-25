@@ -957,6 +957,42 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   unique continuation.
 \end{proof}
 
+\begin{theorem}[One particle with measure potentials: the kink is $v$-representable]
+  \label{thm:line_measure_kink}
+  \lean{DFT.Continuum.Line.PotM, DFT.Continuum.Line.deltaM, DFT.Continuum.Line.sqP, DFT.Continuum.Line.QM, DFT.Continuum.Line.IsGSM, DFT.Continuum.Line.VRepM, DFT.Continuum.Line.sq_le_interval, DFT.Continuum.Line.four_sq_half_le, DFT.Continuum.Line.kinM_tentG, DFT.Continuum.Line.tent_isGSM, DFT.Continuum.Line.kink_vrepM_not_vrep}
+  \leanok
+  \uses{thm:line_kink}
+  Take as potentials the continuous linear functionals on $C([0,1])$ (finite signed measures), acting by $\nu(\psi^2)$.
+  For one particle with walls at $0,1$, $4\varphi(\tfrac12)^2\le\int\varphi'^2$ on $H^1_0$, so the tent $1-2|x-\tfrac12|$
+  is a ground state of $-d^2/dx^2-4\delta_{1/2}$. Hence the kinked density is $v$-representable with a measure
+  potential, but not with any continuous one.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\varphi(\tfrac12)=\int_0^{1/2}\varphi'=-\int_{1/2}^1\varphi'$ and Cauchy--Schwarz on each half. The tent has
+  $\int g'^2=4=4g(\tfrac12)^2$, energy $0$.
+\end{proof}
+
+\begin{theorem}[One particle with measure potentials: ground states and Euler--Lagrange]
+  \label{thm:line_measure_gs}
+  \lean{DFT.Continuum.Line.sq_le_H10, DFT.Continuum.Line.abs_nu_sq_le, DFT.Continuum.Line.QM_ge, DFT.Continuum.Line.dL, DFT.Continuum.Line.prim_dL, DFT.Continuum.Line.kinM_prim, DFT.Continuum.Line.abs_prim_sub_le_sqrt, DFT.Continuum.Line.exists_weak_subseq, DFT.Continuum.Line.tendsto_primP, DFT.Continuum.Line.EM, DFT.Continuum.Line.exists_min, DFT.Continuum.Line.EM_mul_le, DFT.Continuum.Line.isGSM_of_min, DFT.Continuum.Line.exists_isGSM, DFT.Continuum.Line.H10.add_const_mul, DFT.Continuum.Line.mulP, DFT.Continuum.Line.QM_add, DFT.Continuum.Line.euler_lagrange}
+  \leanok
+  \uses{thm:line_measure_kink}
+  For every finite signed measure $\nu$ on $[0,1]$ (a continuous linear functional on $C([0,1])$), the energy
+  $\int\psi'^2+\nu(\psi^2)$ has a normalised minimiser $\psi$ on $H^1_0(0,1)$, with energy $E_0$, and $\psi$ satisfies
+  $-\psi''+\nu\psi=E_0\psi$ weakly: $\int\psi'\varphi'+\nu(\psi\varphi)=E_0\int\psi\varphi$ for all $\varphi\in H^1_0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\psi(t)^2=\int_0^t2\psi\psi'\le a\int\psi^2+a^{-1}\int\psi'^2$, so $|\nu(\psi^2)|\le\frac12\int\psi'^2+C_\nu\int\psi^2$ and the energy is
+  bounded below on the unit sphere. Write $\psi=\int_0^tf$ with $f\in L^2$. A minimising sequence has bounded $\|f_k\|$;
+  $L^2$ is separable, so (sequential Banach--Alaoglu) a subsequence converges weakly to $f$. The primitives converge
+  pointwise ($f\mapsto\int_0^tf$ is continuous) and are uniformly $\frac12$-H\"older, hence converge uniformly
+  (Arzel\`a--Ascoli), so $\nu(\psi_k^2)\to\nu(\psi^2)$ and $\int\psi_k^2\to\int\psi^2=1$; $\|f\|^2\le\lim\|f_k\|^2$ by weak lower
+  semicontinuity. The Euler--Lagrange equation is the vanishing of the linear term of
+  $s\mapsto Q(\psi+s\varphi)-E_0\int(\psi+s\varphi)^2\ge0$.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}

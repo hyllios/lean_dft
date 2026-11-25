@@ -44,6 +44,8 @@ import DFT.Continuum.Line.LiebMattisW
 import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Meagre
 import DFT.Continuum.Line.MeagreC1
+import DFT.Continuum.Line.MeasureGS
+import DFT.Continuum.Line.MeasurePot
 import DFT.Continuum.Line.Nondeg
 import DFT.Continuum.Line.NotVRep
 import DFT.Continuum.Line.NotVRepDense

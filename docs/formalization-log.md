@@ -737,3 +737,22 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   **`gs_profile_pos`** (K > 0 on (0,1): K(t₀)=0 ⇒ K'(t₀)=0 ⇒ cut along all planes, energy splits,
   UCP contradiction), **`not_vrep_of_zero`**, **`sin_nrep_not_vrep`** (2N sin²(2πt) not v-rep for
   any N). Standard axioms. Blueprint `thm:line_positive`. Next: distributional potentials (Corso).
+- P STARTED (user chose: Dirichlet walls, measure potentials). `Line/MeasurePot` (N = 1):
+  potentials `PotM = StrongDual ℝ C([0,1])` (finite signed measures by Riesz, no measure API),
+  `deltaM`, `sqP`, `kinM`, `QM ν ψ = ∫ψ'² + ν(ψ²)`, `IsGSM`, `VRepM`; `sq_le_interval`,
+  **`four_sq_half_le`** (4φ(½)² ≤ ∫φ'², sharp), `kinM_tentG`, **`tent_isGSM`** (tent = GS of
+  −d² − 4δ_{½}, energy 0), **`kink_vrepM_not_vrep`** (kinked density v-rep with measures, not with
+  continuous potentials). Blueprint `thm:line_measure_kink`.
+  Next (proposal): GS existence and Euler–Lagrange for measure potentials (compactness of H¹₀ ⊂ C),
+  then the N = 1 characterisation ρ = g², g > 0 inside, g'' a measure with ∫ d|g''|/g < ∞; interior
+  zeros stay excluded; then N-body.
+- P step 2 DONE. `Line/MeasureGS` (N = 1, measure potentials): **`sq_le_H10`** (ψ(t)² ≤ a∫ψ² + ∫ψ'²/a),
+  `abs_nu_sq_le`/`QM_ge` (|ν(ψ²)| ≤ ½∫ψ'² + C_ν∫ψ², C_ν = ‖ν‖(2‖ν‖+1)); `dL`, `prim_dL`, `kinM_prim`
+  (H¹₀ ↔ primitives of L²); `abs_prim_sub_le_sqrt` (½-Hölder); **`exists_weak_subseq`** (sequential
+  Banach–Alaoglu via `toDual`; L²(0,1) separable from `Lp.SecondCountableTopology` + `Fact (2 ≠ ∞)`);
+  **`tendsto_primP`** (weak ⇒ uniform convergence of primitives, Ascoli `tendsto_uniformFun_iff_pi`);
+  `EM`, **`exists_min`**, `EM_mul_le`, **`exists_isGSM`**; `H10.add_const_mul`, `mulP`, `QM_add`,
+  **`euler_lagrange`** (∫ψ'φ' + ν(ψφ) = E₀∫ψφ ∀φ ∈ H¹₀). The sine/KBd route was not needed. Standard
+  axioms. Blueprint `thm:line_measure_gs`.
+  Next: from the weak equation, ψ' has a BV representative with dψ' = (ν − E₀)ψ as measures; then the
+  N = 1 characterisation of measure-v-representable densities (step 3).
