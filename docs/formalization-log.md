@@ -777,3 +777,10 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   Open: HK for measure potentials (ν determined by g up to atoms at the walls and a constant; needs
   measures on (0,1) determined by C_c^∞ test functions); explicit condition on g (g'' a measure,
   ∫ d|g''|/g < ∞); N-body.
+- P step 4 (HK). `Line/MeasureHK`: `h10_of_lipschitz`, `cutF` (Lipschitz cutoff); **`dense_mulP`**
+  (g > 0 inside ⇒ g·H¹₀ uniformly dense in {h ∈ C[0,1] : h(0) = h(1) = 0}; φ = cutoff × Weierstrass
+  polynomial for h/g — no measure theory needed); `eq_zero_of_dense`; **`hk_of_pos`** (any ν, ν' ∈
+  C[0,1]* with a common positive weak solution: ν − ν' = (E − E')dx + aδ₀ + bδ₁); `isGSM_gauge`
+  (converse); `exists_pos_gs`; **`hk_meas`**, **`isGSM_iff_gauge`** (measure potentials: common GS ⟺
+  ν' − ν = C dx + aδ₀ + bδ₁). Blueprint `thm:line_measure_hk`.
+  Open: explicit condition on g (g'' a measure, ∫ d|g''|/g < ∞); N-body.
