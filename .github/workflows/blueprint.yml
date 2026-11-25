@@ -104,7 +104,21 @@ jobs:
         with:
           path: home_page
 
+  # Deployment runs in its own job, after the build job has finished (GitHub's documented pattern). Run in the
+  # same job, deploy-pages queried the artifact list about two seconds after the upload and intermittently found
+  # nothing ("No artifacts named github-pages were found"), failing most pushes since 2026-11-23.
+  deploy:
+    if: github.event_name == 'push'
+    needs: build_project
+    runs-on: ubuntu-24.04
+    name: Deploy website
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Let the artifact listing catch up
+        run: sleep 20
+
       - name: Deploy to GitHub Pages
-        if: github.event_name == 'push'
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
