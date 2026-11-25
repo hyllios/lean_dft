@@ -69,51 +69,51 @@ def GD : (s : Bool) → Matrix (Fin (dD s)) (Fin (dD s)) ℝ
   | true => GSD
   | false => GTD
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma H0D_symm : (H0D).IsSymm := by
   apply Matrix.IsSymm.ext; intro i j
   fin_cases i <;> fin_cases j <;> simp [H0D]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PD_symm : ∀ s, (PD s).IsSymm := by
   intro s; cases s <;> apply Matrix.IsSymm.ext <;> intro i j <;>
     fin_cases i <;> fin_cases j <;> simp [PD, PSD, PTD]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PD_idem : ∀ s, PD s * PD s = PD s := by
   intro s; cases s <;> (ext i j; fin_cases i <;> fin_cases j <;> simp [PD, PSD, PTD, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num)
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PD_sum : ∑ s, PD s = 1 := by
   rw [Fintype.sum_bool]
   ext i j; fin_cases i <;> fin_cases j <;> simp [PD, PSD, PTD, Matrix.one_apply] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PD_comm0 : ∀ s, H0D * PD s = PD s * H0D := by
   intro s; cases s <;> (ext i j; fin_cases i <;> fin_cases j <;> simp [H0D, PD, PSD, PTD, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num)
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PD_commn : ∀ s i, diagonal (occD i) * PD s = PD s * diagonal (occD i) := by
   intro s i; cases s <;> fin_cases i <;> (ext a b; fin_cases a <;> fin_cases b <;>
     simp [occD, PD, PSD, PTD] <;> norm_num)
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PSD_B : PSD = BSD * GSD * (BSD)ᵀ := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [PSD, BSD, GSD, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PTD_B : PTD = BTD * GTD * (BTD)ᵀ := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [PTD, BTD, GTD, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PD_B : ∀ s, PD s = BD s * GD s * (BD s)ᵀ := by
   intro s; cases s
@@ -124,7 +124,7 @@ def vD : Fin 2 → ℝ := ![0, -3]
 
 def HD : Matrix (Fin 4) (Fin 4) ℝ := !![4, -1, -1, 0; -1, -3, 0, -1; -1, 0, -3, -1; 0, -1, -1, -2]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hamN_vD : hamN H0D occD vD = HD := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [hamN, H0D, occD, vD, HD,
@@ -132,14 +132,14 @@ lemma hamN_vD : hamN H0D occD vD = HD := by
 
 def HPSD0 : Matrix (Fin 4) (Fin 4) ℝ := !![1, 0, 0, 0; 0, (1/2), (1/2), 0; 0, (1/2), (1/2), 0; 0, 0, 0, 1]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSD0 : HD ^ 0 * PSD = HPSD0 := by
   rw [pow_zero, Matrix.one_mul]; rfl
 
 def HPSD1 : Matrix (Fin 4) (Fin 4) ℝ := !![4, -1, -1, 0; -1, (-3/2), (-3/2), -1; -1, (-3/2), (-3/2), -1; 0, -1, -1, -2]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSD1 : HD ^ 1 * PSD = HPSD1 := by
   rw [pow_succ', Matrix.mul_assoc, hpSD0]
@@ -147,13 +147,13 @@ lemma hpSD1 : HD ^ 1 * PSD = HPSD1 := by
 
 def HPSD2 : Matrix (Fin 4) (Fin 4) ℝ := !![18, -1, -1, 2; -1, (13/2), (13/2), 5; -1, (13/2), (13/2), 5; 2, 5, 5, 6]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSD2 : HD ^ 2 * PSD = HPSD2 := by
   rw [pow_succ', Matrix.mul_assoc, hpSD1]
   ext i j; fin_cases i <;> fin_cases j <;> simp [HD, HPSD1, HPSD2, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSD (k : Fin 3) : HD ^ (k : ℕ) * PSD = ![HPSD0, HPSD1, HPSD2] k := by
   fin_cases k
@@ -171,7 +171,7 @@ def KSD3 : Matrix (Fin 3) (Fin 3) ℝ := !![0, 0, 2; 1, -2, 6; 0, -2, 10]
 
 def KSD : Fin 4 → Matrix (Fin 3) (Fin 3) ℝ := ![KSD0, KSD1, KSD2, KSD3]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma krySD (c : Fin 4) (hc : PSD c c ≠ 0) :
     (BSD)ᵀ * symKry (d := 3) HD PSD c = KSD c := by
@@ -181,7 +181,7 @@ lemma krySD (c : Fin 4) (hc : PSD c c ≠ 0) :
   fin_cases c <;> simp [PSD] at hc <;> fin_cases a <;> fin_cases k <;>
     simp [BSD, KSD, KSD0, KSD1, KSD2, KSD3, HPSD0, HPSD1, HPSD2, PSD, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma detSD (c : Fin 4) (hc : PSD c c ≠ 0) : (KSD c).det ≠ 0 := by
   fin_cases c <;> simp [PSD] at hc <;>
@@ -189,12 +189,12 @@ lemma detSD (c : Fin 4) (hc : PSD c c ≠ 0) : (KSD c).det ≠ 0 := by
 
 def HPTD0 : Matrix (Fin 4) (Fin 4) ℝ := !![0, 0, 0, 0; 0, (1/2), (-1/2), 0; 0, (-1/2), (1/2), 0; 0, 0, 0, 0]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpTD0 : HD ^ 0 * PTD = HPTD0 := by
   rw [pow_zero, Matrix.one_mul]; rfl
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpTD (k : Fin 1) : HD ^ (k : ℕ) * PTD = ![HPTD0] k := by
   fin_cases k
@@ -210,7 +210,7 @@ def KTD3 : Matrix (Fin 1) (Fin 1) ℝ := !![0]
 
 def KTD : Fin 4 → Matrix (Fin 1) (Fin 1) ℝ := ![KTD0, KTD1, KTD2, KTD3]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma kryTD (c : Fin 4) (hc : PTD c c ≠ 0) :
     (BTD)ᵀ * symKry (d := 1) HD PTD c = KTD c := by
@@ -220,13 +220,13 @@ lemma kryTD (c : Fin 4) (hc : PTD c c ≠ 0) :
   fin_cases c <;> simp [PTD] at hc <;> fin_cases a <;> fin_cases k <;>
     simp [BTD, KTD, KTD0, KTD1, KTD2, KTD3, HPTD0, PTD, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma detTD (c : Fin 4) (hc : PTD c c ≠ 0) : (KTD c).det ≠ 0 := by
   fin_cases c <;> simp [PTD] at hc <;>
     simp [KTD, KTD0, KTD1, KTD2, KTD3, Matrix.det_succ_row_zero, Fin.sum_univ_succ, Fin.succAbove] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hstarD : ∀ s c, PD s c c ≠ 0 → symKrylovPoly H0D occD (PD s) (BD s) c ≠ 0 := by
   intro s c hc h
@@ -322,51 +322,51 @@ def GTr : (s : Bool) → Matrix (Fin (dTr s)) (Fin (dTr s)) ℝ
   | true => GSTr
   | false => GTTr
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma H0Tr_symm : (H0Tr).IsSymm := by
   apply Matrix.IsSymm.ext; intro i j
   fin_cases i <;> fin_cases j <;> simp [H0Tr]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PTr_symm : ∀ s, (PTr s).IsSymm := by
   intro s; cases s <;> apply Matrix.IsSymm.ext <;> intro i j <;>
     fin_cases i <;> fin_cases j <;> simp [PTr, PSTr, PTTr]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PTr_idem : ∀ s, PTr s * PTr s = PTr s := by
   intro s; cases s <;> (ext i j; fin_cases i <;> fin_cases j <;> simp [PTr, PSTr, PTTr, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num)
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PTr_sum : ∑ s, PTr s = 1 := by
   rw [Fintype.sum_bool]
   ext i j; fin_cases i <;> fin_cases j <;> simp [PTr, PSTr, PTTr, Matrix.one_apply] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PTr_comm0 : ∀ s, H0Tr * PTr s = PTr s * H0Tr := by
   intro s; cases s <;> (ext i j; fin_cases i <;> fin_cases j <;> simp [H0Tr, PTr, PSTr, PTTr, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num)
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PTr_commn : ∀ s i, diagonal (occTr i) * PTr s = PTr s * diagonal (occTr i) := by
   intro s i; cases s <;> fin_cases i <;> (ext a b; fin_cases a <;> fin_cases b <;>
     simp [occTr, PTr, PSTr, PTTr] <;> norm_num)
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PSTr_B : PSTr = BSTr * GSTr * (BSTr)ᵀ := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [PSTr, BSTr, GSTr, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PTTr_B : PTTr = BTTr * GTTr * (BTTr)ᵀ := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [PTTr, BTTr, GTTr, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma PTr_B : ∀ s, PTr s = BTr s * GTr s * (BTr s)ᵀ := by
   intro s; cases s
@@ -377,7 +377,7 @@ def vTr : Fin 3 → ℝ := ![0, 3, 1]
 
 def HTr : Matrix (Fin 9) (Fin 9) ℝ := !![4, -1, -1, -1, 0, 0, -1, 0, 0; -1, 3, -1, 0, -1, 0, 0, -1, 0; -1, -1, 1, 0, 0, -1, 0, 0, -1; -1, 0, 0, 3, -1, -1, -1, 0, 0; 0, -1, 0, -1, 10, -1, 0, -1, 0; 0, 0, -1, -1, -1, 4, 0, 0, -1; -1, 0, 0, -1, 0, 0, 1, -1, -1; 0, -1, 0, 0, -1, 0, -1, 4, -1; 0, 0, -1, 0, 0, -1, -1, -1, 6]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hamN_vTr : hamN H0Tr occTr vTr = HTr := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [hamN, H0Tr, occTr, vTr, HTr,
@@ -385,14 +385,14 @@ lemma hamN_vTr : hamN H0Tr occTr vTr = HTr := by
 
 def HPSTr0 : Matrix (Fin 9) (Fin 9) ℝ := !![1, 0, 0, 0, 0, 0, 0, 0, 0; 0, (1/2), 0, (1/2), 0, 0, 0, 0, 0; 0, 0, (1/2), 0, 0, 0, (1/2), 0, 0; 0, (1/2), 0, (1/2), 0, 0, 0, 0, 0; 0, 0, 0, 0, 1, 0, 0, 0, 0; 0, 0, 0, 0, 0, (1/2), 0, (1/2), 0; 0, 0, (1/2), 0, 0, 0, (1/2), 0, 0; 0, 0, 0, 0, 0, (1/2), 0, (1/2), 0; 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSTr0 : HTr ^ 0 * PSTr = HPSTr0 := by
   rw [pow_zero, Matrix.one_mul]; rfl
 
 def HPSTr1 : Matrix (Fin 9) (Fin 9) ℝ := !![4, -1, -1, -1, 0, 0, -1, 0, 0; -1, (3/2), (-1/2), (3/2), -1, (-1/2), (-1/2), (-1/2), 0; -1, (-1/2), (1/2), (-1/2), 0, (-1/2), (1/2), (-1/2), -1; -1, (3/2), (-1/2), (3/2), -1, (-1/2), (-1/2), (-1/2), 0; 0, -1, 0, -1, 10, -1, 0, -1, 0; 0, (-1/2), (-1/2), (-1/2), -1, 2, (-1/2), 2, -1; -1, (-1/2), (1/2), (-1/2), 0, (-1/2), (1/2), (-1/2), -1; 0, (-1/2), (-1/2), (-1/2), -1, 2, (-1/2), 2, -1; 0, 0, -1, 0, 0, -1, -1, -1, 6]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSTr1 : HTr ^ 1 * PSTr = HPSTr1 := by
   rw [pow_succ', Matrix.mul_assoc, hpSTr0]
@@ -400,7 +400,7 @@ lemma hpSTr1 : HTr ^ 1 * PSTr = HPSTr1 := by
 
 def HPSTr2 : Matrix (Fin 9) (Fin 9) ℝ := !![20, -6, -4, -6, 2, 2, -4, 2, 2; -6, (15/2), (-1/2), (15/2), -12, -2, (-1/2), -2, 2; -4, (-1/2), (7/2), (-1/2), 2, -1, (7/2), -1, -6; -6, (15/2), (-1/2), (15/2), -12, -2, (-1/2), -2, 2; 2, -12, 2, -12, 104, -13, 2, -13, 2; 2, -2, -1, -2, -13, 11, -1, 11, -9; -4, (-1/2), (7/2), (-1/2), 2, -1, (7/2), -1, -6; 2, -2, -1, -2, -13, 11, -1, 11, -9; 2, 2, -6, 2, 2, -9, -6, -9, 40]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSTr2 : HTr ^ 2 * PSTr = HPSTr2 := by
   rw [pow_succ', Matrix.mul_assoc, hpSTr1]
@@ -408,7 +408,7 @@ lemma hpSTr2 : HTr ^ 2 * PSTr = HPSTr2 := by
 
 def HPSTr3 : Matrix (Fin 9) (Fin 9) ℝ := !![100, -38, -22, -38, 28, 14, -22, 14, 16; -38, 43, -2, 43, -131, -5, -2, -5, 17; -22, -2, 15, -2, 23, -3, 15, -3, -41; -38, 43, -2, 43, -131, -5, -2, -5, 17; 28, -131, 23, -131, 1090, -148, 23, -148, 34; 14, -5, -3, -5, -148, 69, -3, 69, -74; -22, -2, 15, -2, 23, -3, 15, -3, -41; 14, -5, -3, -5, -148, 69, -3, 69, -74; 16, 17, -41, 17, 34, -74, -41, -74, 270]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSTr3 : HTr ^ 3 * PSTr = HPSTr3 := by
   rw [pow_succ', Matrix.mul_assoc, hpSTr2]
@@ -416,7 +416,7 @@ lemma hpSTr3 : HTr ^ 3 * PSTr = HPSTr3 := by
 
 def HPSTr4 : Matrix (Fin 9) (Fin 9) ℝ := !![520, -234, -114, -234, 328, 72, -114, 72, 112; -234, 305, -19, 305, -1386, 53, -19, 53, 116; -114, -19, 83, -19, 240, -7, 83, -7, -270; -234, 305, -19, 305, -1386, 53, -19, 53, 116; 328, -1386, 240, -1386, 11458, -1608, 240, -1608, 454; 72, 53, -7, 53, -1608, 506, -7, 506, -576; -114, -19, 83, -19, 240, -7, 83, -7, -270; 72, 53, -7, 53, -1608, 506, -7, 506, -576; 112, 116, -270, 116, 454, -576, -270, -576, 1850]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSTr4 : HTr ^ 4 * PSTr = HPSTr4 := by
   rw [pow_succ', Matrix.mul_assoc, hpSTr3]
@@ -424,13 +424,13 @@ lemma hpSTr4 : HTr ^ 4 * PSTr = HPSTr4 := by
 
 def HPSTr5 : Matrix (Fin 9) (Fin 9) ℝ := !![2776, -1508, -584, -1508, 3604, 196, -584, 196, 756; -1508, 2501, -259, 2501, -14576, 1196, -259, 1196, 628; -584, -259, 493, -259, 2452, -62, 493, -62, -1772; -1508, 2501, -259, 2501, -14576, 1196, -259, 1196, 628; 3604, -14576, 2452, -14576, 120568, -17198, 2452, -17198, 5460; 196, 1196, -62, 1196, -17198, 4162, -62, 4162, -4454; -584, -259, 493, -259, 2452, -62, 493, -62, -1772; 196, 1196, -62, 1196, -17198, 4162, -62, 4162, -4454; 756, 628, -1772, 628, 5460, -4454, -1772, -4454, 12792]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSTr5 : HTr ^ 5 * PSTr = HPSTr5 := by
   rw [pow_succ', Matrix.mul_assoc, hpSTr4]
   ext i j; fin_cases i <;> fin_cases j <;> simp [HTr, HPSTr4, HPSTr5, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpSTr (k : Fin 6) : HTr ^ (k : ℕ) * PSTr = ![HPSTr0, HPSTr1, HPSTr2, HPSTr3, HPSTr4, HPSTr5] k := by
   fin_cases k
@@ -461,7 +461,7 @@ def KSTr8 : Matrix (Fin 6) (Fin 6) ℝ := !![0, 0, 2, 16, 112, 756; 0, 0, 2, 34,
 
 def KSTr : Fin 9 → Matrix (Fin 6) (Fin 6) ℝ := ![KSTr0, KSTr1, KSTr2, KSTr3, KSTr4, KSTr5, KSTr6, KSTr7, KSTr8]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma krySTr (c : Fin 9) (hc : PSTr c c ≠ 0) :
     (BSTr)ᵀ * symKry (d := 6) HTr PSTr c = KSTr c := by
@@ -471,7 +471,7 @@ lemma krySTr (c : Fin 9) (hc : PSTr c c ≠ 0) :
   fin_cases c <;> simp [PSTr] at hc <;> fin_cases a <;> fin_cases k <;>
     simp [BSTr, KSTr, KSTr0, KSTr1, KSTr2, KSTr3, KSTr4, KSTr5, KSTr6, KSTr7, KSTr8, HPSTr0, HPSTr1, HPSTr2, HPSTr3, HPSTr4, HPSTr5, PSTr, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma detSTr (c : Fin 9) (hc : PSTr c c ≠ 0) : (KSTr c).det ≠ 0 := by
   fin_cases c <;> simp [PSTr] at hc <;>
@@ -479,14 +479,14 @@ lemma detSTr (c : Fin 9) (hc : PSTr c c ≠ 0) : (KSTr c).det ≠ 0 := by
 
 def HPTTr0 : Matrix (Fin 9) (Fin 9) ℝ := !![0, 0, 0, 0, 0, 0, 0, 0, 0; 0, (1/2), 0, (-1/2), 0, 0, 0, 0, 0; 0, 0, (1/2), 0, 0, 0, (-1/2), 0, 0; 0, (-1/2), 0, (1/2), 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, (1/2), 0, (-1/2), 0; 0, 0, (-1/2), 0, 0, 0, (1/2), 0, 0; 0, 0, 0, 0, 0, (-1/2), 0, (1/2), 0; 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpTTr0 : HTr ^ 0 * PTTr = HPTTr0 := by
   rw [pow_zero, Matrix.one_mul]; rfl
 
 def HPTTr1 : Matrix (Fin 9) (Fin 9) ℝ := !![0, 0, 0, 0, 0, 0, 0, 0, 0; 0, (3/2), (-1/2), (-3/2), 0, (1/2), (1/2), (-1/2), 0; 0, (-1/2), (1/2), (1/2), 0, (-1/2), (-1/2), (1/2), 0; 0, (-3/2), (1/2), (3/2), 0, (-1/2), (-1/2), (1/2), 0; 0, 0, 0, 0, 0, 0, 0, 0, 0; 0, (1/2), (-1/2), (-1/2), 0, 2, (1/2), -2, 0; 0, (1/2), (-1/2), (-1/2), 0, (1/2), (1/2), (-1/2), 0; 0, (-1/2), (1/2), (1/2), 0, -2, (-1/2), 2, 0; 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpTTr1 : HTr ^ 1 * PTTr = HPTTr1 := by
   rw [pow_succ', Matrix.mul_assoc, hpTTr0]
@@ -494,13 +494,13 @@ lemma hpTTr1 : HTr ^ 1 * PTTr = HPTTr1 := by
 
 def HPTTr2 : Matrix (Fin 9) (Fin 9) ℝ := !![0, 0, 0, 0, 0, 0, 0, 0, 0; 0, (11/2), (-5/2), (-11/2), 0, 4, (5/2), -4, 0; 0, (-5/2), (3/2), (5/2), 0, -3, (-3/2), 3, 0; 0, (-11/2), (5/2), (11/2), 0, -4, (-5/2), 4, 0; 0, 0, 0, 0, 0, 0, 0, 0, 0; 0, 4, -3, -4, 0, 9, 3, -9, 0; 0, (5/2), (-3/2), (-5/2), 0, 3, (3/2), -3, 0; 0, -4, 3, 4, 0, -9, -3, 9, 0; 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpTTr2 : HTr ^ 2 * PTTr = HPTTr2 := by
   rw [pow_succ', Matrix.mul_assoc, hpTTr1]
   ext i j; fin_cases i <;> fin_cases j <;> simp [HTr, HPTTr1, HPTTr2, Matrix.mul_apply, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hpTTr (k : Fin 3) : HTr ^ (k : ℕ) * PTTr = ![HPTTr0, HPTTr1, HPTTr2] k := by
   fin_cases k
@@ -528,7 +528,7 @@ def KTTr8 : Matrix (Fin 3) (Fin 3) ℝ := !![0, 0, 0; 0, 0, 0; 0, 0, 0]
 
 def KTTr : Fin 9 → Matrix (Fin 3) (Fin 3) ℝ := ![KTTr0, KTTr1, KTTr2, KTTr3, KTTr4, KTTr5, KTTr6, KTTr7, KTTr8]
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma kryTTr (c : Fin 9) (hc : PTTr c c ≠ 0) :
     (BTTr)ᵀ * symKry (d := 3) HTr PTTr c = KTTr c := by
@@ -538,13 +538,13 @@ lemma kryTTr (c : Fin 9) (hc : PTTr c c ≠ 0) :
   fin_cases c <;> simp [PTTr] at hc <;> fin_cases a <;> fin_cases k <;>
     simp [BTTr, KTTr, KTTr0, KTTr1, KTTr2, KTTr3, KTTr4, KTTr5, KTTr6, KTTr7, KTTr8, HPTTr0, HPTTr1, HPTTr2, PTTr, Fin.sum_univ_succ] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma detTTr (c : Fin 9) (hc : PTTr c c ≠ 0) : (KTTr c).det ≠ 0 := by
   fin_cases c <;> simp [PTTr] at hc <;>
     simp [KTTr, KTTr0, KTTr1, KTTr2, KTTr3, KTTr4, KTTr5, KTTr6, KTTr7, KTTr8, Matrix.det_succ_row_zero, Fin.sum_univ_succ, Fin.succAbove] <;> norm_num
 
--- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
+-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.
 set_option maxHeartbeats 4000000 in
 lemma hstarTr : ∀ s c, PTr s c c ≠ 0 → symKrylovPoly H0Tr occTr (PTr s) (BTr s) c ≠ 0 := by
   intro s c hc h

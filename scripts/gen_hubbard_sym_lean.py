@@ -190,7 +190,7 @@ def emit(m, pre, title, v0, nogs=None):
       f'  cases s\n'
       f'  · exact detT{pre} c hc (by rw [← kryT{pre} c hc]; exact this)\n'
       f'  · exact detS{pre} c hc (by rw [← kryS{pre} c hc]; exact this)\n')
-    L = [x.replace('lemma ', '-- Exact arithmetic on explicit matrices by `norm_num` needs a larger budget.\nset_option maxHeartbeats 4000000 in\nlemma ', 1) if x.startswith('lemma ') else x for x in L]
+    L = [x.replace('lemma ', '-- heartbeats: exact arithmetic on explicit matrices by `norm_num` needs a larger budget.\nset_option maxHeartbeats 4000000 in\nlemma ', 1) if x.startswith('lemma ') else x for x in L]
     return '\n'.join(L), v0
 
 
@@ -212,7 +212,8 @@ lemma rigidS_D : RigidOn PSD occD := by
   simp [occD, Fin.sum_univ_succ] at e0 e3
   exact ⟨w 0, fun i => by fin_cases i <;> simp <;> linarith⟩
 
-/-- **The polarised half-filled state is never a ground state.** The triplet has energy `v₀ + v₁`;
+/-- **The `S_z = 0` triplet of the half-filled dimer is never a ground state.** The triplet has
+energy `v₀ + v₁`;
 the trial state `(1, 2, 2, 1)` has energy `v₀ + v₁ - 8/10`. -/
 lemma noGS_D : NoGS H0D occD PTD := by
   intro v ψ hψ

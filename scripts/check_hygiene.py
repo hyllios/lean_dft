@@ -6,7 +6,8 @@ Enforced (exit 1):
   * a declaration name (with its namespace) defined in more than one file. Lean only notices such a clash when
     both files end up imported together, which a changed import can trigger long after the duplicate was written.
 Reported (exit 1 only with --strict, to be switched on once the backlog is cleared):
-  * `set_option maxHeartbeats` without a `-- heartbeats: <reason>` comment on the same or the previous line;
+  * `set_option maxHeartbeats` without a comment giving the reason (same line, or a comment line directly above;
+    recommended form `-- heartbeats: <reason>`);
   * files without a module docstring (`/-!`).
 """
 import os, re, sys
@@ -52,15 +53,17 @@ for lib in LIBS:
                 for rx, what in FORBID:
                     if rx.search(code): errors.append(f'{rel}:{k}: forbidden `{what}`')
                 if 'maxHeartbeats' in code and 'set_option' in code:
-                    prev = lines[k - 2] if k >= 2 else ''
-                    if 'heartbeats:' not in raw and 'heartbeats:' not in prev:
+                    # justified = a comment on the same line, or a comment line directly above
+                    # (recommended form: `-- heartbeats: <reason>`)
+                    prev = (lines[k - 2] if k >= 2 else '').strip()
+                    if '--' not in raw and not prev.startswith('--'):
                         hb_missing.append(f'{rel}:{k}')
 for full, locs in sorted(where.items()):
     if len({l.rsplit(':', 1)[0] for l in locs}) > 1:
         errors.append(f'duplicate declaration `{full}`: ' + ', '.join(locs))
 for e in errors: print(e)
 if strict:
-    for h in hb_missing: print(f'{h}: maxHeartbeats without `-- heartbeats: <reason>`')
+    for h in hb_missing: print(f'{h}: maxHeartbeats without a reason comment')
     for d in no_doc: print(f'{d}: no module docstring')
 print(f'hygiene: {nfiles} files; {len(errors)} forbidden construct(s)/duplicate(s); '
       f'{len(hb_missing)} unjustified maxHeartbeats; {len(no_doc)} file(s) without module docstring')

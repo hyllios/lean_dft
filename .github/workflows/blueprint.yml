@@ -54,8 +54,13 @@ jobs:
       - name: Axiom audit (only propext, Classical.choice, Quot.sound; catches sorry)
         run: scripts/check_axioms.sh
 
-      - name: Source hygiene (forbidden constructs; heartbeat and docstring report)
-        run: python3 scripts/check_hygiene.py
+      - name: Source hygiene (forbidden constructs, duplicate names, heartbeat reasons, module docstrings)
+        run: python3 scripts/check_hygiene.py --strict
+
+      - name: Generated files are reproducible
+        run: |
+          python3 -m pip install --quiet sympy
+          scripts/check_generated.sh python3
 
       - name: Layering (library order ForMathlib <- QM <- DFT, no folder-level import cycles)
         run: python3 scripts/check_layers.py
