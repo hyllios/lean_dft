@@ -908,3 +908,14 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   norm_sq_le_marg and Young, **logData_H**: ζ_a u ∈ H¹₀ feeds the Dirichlet LogData machinery,
   **gsNH_ne_zero_bos**). Standard axioms. Next: fermions (port HalfSpace/YoungChamber/YoungGS to
   IsWDN, then the chamber companion as in MeasureNFer).
+- Q3 fermions DONE (2026-11-25): refactor `log_estimate_H` into **log_estimate_gen** (any
+  symmetric u ≥ 0 in DomN .bos with an abstract weak equation whose potential term is v(e), e with
+  the integrals of uφ); `kin_truncC_le`, `tendsto_truncC_dk`, `isWDN_comp`, `isWDN_abs` generalised
+  to DomNS s, with `symT1`/`mem_symT1` (every H1NW function). `Line/NeuHalf` (isWDN_half_of_bound,
+  IsWDN.congr_right, isWDN_pairs_of_bound, truncC_plane, **isWDN_RY**, IsWDN.comp_pm). `Line/NeuYoung`
+  (isWDN_sumY, DuYN/DPhiYN/DPhiBYN, sorted_YN, PhiY_memN, PhiBY_memN, abs_PhiYN, PhiBY_ae_eq_absN,
+  abs_DPhiYN_le, kinN_PhiY_le, **isGSNH_PhiY**, phiY_memN, dWN_phiY_ae, PhiY_sgnYN, **eq_PhiBY_H**).
+  `Line/NeuFer` (DgY_diag, abs_DgY_le, etaF = η_a·Π(xᵢ - xⱼ), log_estimate_fer, logData_fer,
+  exists_Qa_ball, **gsNH_ne_zero_fer**, **gsNH_ne_zero** both statistics). Non-degeneracy not needed
+  for the pure-state route (positivity uses UCP only, as in MeasureNPos); deferred. Standard axioms.
+  Next: Q4 necessity (ρ > 0 on [0,1], interior via rhoHat_pos_of_ucp pattern, walls new).

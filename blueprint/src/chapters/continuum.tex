@@ -1583,3 +1583,51 @@ $\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
   $T(\Psi)\le\liminf T(\Phi_j)$, and $\Phi_j\to\Psi$ in $L^2$. The $g_j$ are bounded in $\mathbb R\times L^2$, so along a
   subsequence $v(g_j^2)$ converges. The uniform limit of $g_j^2$ has the integrals of $\rho_\Psi$, so it is $\rho_\Psi$.
 \end{proof}
+
+\begin{theorem}[Chain rule and Euler--Lagrange equation with Neumann walls]
+  \label{thm:neu_el}
+  \lean{DFT.Continuum.Line.tendsto_truncC_dk, DFT.Continuum.Line.isWDN_comp, DFT.Continuum.Line.isWDN_abs, DFT.Continuum.Line.abs_mem_DomN, DFT.Continuum.Line.kinN_abs_le, DFT.Continuum.Line.IsWDN.mul_C1, DFT.Continuum.Line.IsWDN.mul_cutoff, DFT.Continuum.Line.symT1, DFT.Continuum.Line.mem_symT1, DFT.Continuum.Line.evE_inj, DFT.Continuum.Line.eq_of_int, DFT.Continuum.Line.int_rhoN_N, DFT.Continuum.Line.pfN, DFT.Continuum.Line.int_rhoE, DFT.Continuum.Line.rhoE2, DFT.Continuum.Line.int_rhoE2, DFT.Continuum.Line.rhoE_expand, DFT.Continuum.Line.rhoE_smul, DFT.Continuum.Line.kinN2, DFT.Continuum.Line.kinN_expand, DFT.Continuum.Line.QNH_expand, DFT.Continuum.Line.QNH_smul, DFT.Continuum.Line.EN_mul_leH, DFT.Continuum.Line.euler_lagrangeNH, DFT.Continuum.Line.rhoE_abs, DFT.Continuum.Line.isGSNH_abs}
+  \leanok
+  \uses{thm:neu_gs_N}
+  For $G\in C^1$ with bounded derivative and $G(0)=0$, $\partial_k(G\circ\Phi)=G'(\Phi)\partial_k\Phi$ for every $H^1$ state
+  $\Phi$ of the cube. A normalised ground state $\Phi$ with energy $E$ satisfies
+  $\sum_k\int\partial_k\Phi\,\partial_k\Psi+\int w\Phi\Psi+v(\rho(\Phi,\Psi))=E\int\Phi\Psi$ for every $H^1$ state $\Psi$ of the same
+  symmetry. For bosons $|\Phi|$ is again a ground state.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The derivatives of the cosine truncations converge weakly, tested on the sine basis whose elements vanish on all
+  faces. The chain rule follows as with Dirichlet walls. The mixed density is defined by polarisation, and the
+  quadratic expansion of the energy gives the Euler--Lagrange equation.
+\end{proof}
+
+\begin{theorem}[The derivative of a marginal]
+  \label{thm:neu_marg}
+  \lean{DFT.Continuum.Line.Test1, DFT.Continuum.Line.ae_eq_zero_of_test1, DFT.Continuum.Line.ae_eq_of_int_pot, DFT.Continuum.Line.integral_fnE_mul_deriv, DFT.Continuum.Line.snd_ae_eq, DFT.Continuum.Line.mF, DFT.Continuum.Line.integral_sq_mF_le, DFT.Continuum.Line.marg_wd, DFT.Continuum.Line.snd_marg, DFT.Continuum.Line.norm_sq_le_marg, DFT.Continuum.Line.int_mF}
+  \leanok
+  If $p\in L^2$ of the cube has a weak derivative $\partial_0p\in L^2$ and $e\in H^1(0,1)$ has the integrals of
+  $N\int p(\cdot,y)\,dy$, then $e'=N\int\partial_0p(\cdot,y)\,dy$ and $\|e\|_{H^1}^2\le2N^2\left(\int p^2+\int(\partial_0p)^2\right)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Test the weak derivative with $\chi(x_0)$ and use Fubini. Both $e'$ and the marginal of $\partial_0p$ are weak
+  derivatives of the same function on $(0,1)$, and Cauchy--Schwarz in $y$ bounds the $L^2$ norm.
+\end{proof}
+
+\begin{theorem}[Unique continuation for Neumann ground states of $H^{-1}$ potentials]
+  \label{thm:neu_ucp}
+  \lean{DFT.Continuum.Line.prodB, DFT.Continuum.Line.etaA, DFT.Continuum.Line.zetaA, DFT.Continuum.Line.log_estimate_coreN, DFT.Continuum.Line.logTest_memN, DFT.Continuum.Line.memLp_logA, DFT.Continuum.Line.log_estimate_gen, DFT.Continuum.Line.log_estimate_H, DFT.Continuum.Line.logData_H, DFT.Continuum.Line.gsNH_ne_zero_bos, DFT.Continuum.Line.isWDN_half_of_bound, DFT.Continuum.Line.isWDN_pairs_of_bound, DFT.Continuum.Line.truncC_plane, DFT.Continuum.Line.isWDN_RY, DFT.Continuum.Line.IsWDN.comp_pm, DFT.Continuum.Line.isWDN_sumY, DFT.Continuum.Line.DuYN, DFT.Continuum.Line.PhiY_memN, DFT.Continuum.Line.PhiBY_memN, DFT.Continuum.Line.kinN_PhiY_le, DFT.Continuum.Line.isGSNH_PhiY, DFT.Continuum.Line.phiY_memN, DFT.Continuum.Line.dWN_phiY_ae, DFT.Continuum.Line.eq_PhiBY_H, DFT.Continuum.Line.etaF, DFT.Continuum.Line.log_estimate_fer, DFT.Continuum.Line.logData_fer, DFT.Continuum.Line.exists_Qa_ball, DFT.Continuum.Line.gsNH_ne_zero_fer, DFT.Continuum.Line.gsNH_ne_zero}
+  \leanok
+  \uses{thm:neu_el, thm:neu_marg}
+  For bosons or fermions, every $v\in H^{-1}$ and every continuous $w$, a ground state with Neumann walls is nonzero
+  almost everywhere.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Moser's test function $\eta^2/(u+\varepsilon)$ makes the mixed density the density of $p=\eta^2u/(u+\varepsilon)$,
+  with $|\partial_0p|\le|\eta\,\partial_0u/(u+\varepsilon)|+2|\partial_0\eta|$. The marginal bound and Young's inequality
+  bound the first-order potential term by a quarter of the logarithmic gradient plus a constant, which is absorbed.
+  A cutoff equal to $1$ near the support of $\eta$ moves $u$ into $H^1_0$, where the translation argument for the zero
+  set applies. For bosons $u=|\Psi|$. For fermions $u$ is the companion $|\Psi|$ of the chamber ground state, which
+  satisfies the weak equation against symmetric test functions vanishing on the diagonals.
+\end{proof}

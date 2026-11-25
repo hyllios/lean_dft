@@ -72,12 +72,15 @@ import DFT.Continuum.Line.NeuChain
 import DFT.Continuum.Line.NeuDens
 import DFT.Continuum.Line.NeuDensD
 import DFT.Continuum.Line.NeuEL
+import DFT.Continuum.Line.NeuFer
 import DFT.Continuum.Line.NeuGS
+import DFT.Continuum.Line.NeuHalf
 import DFT.Continuum.Line.NeuNGS
 import DFT.Continuum.Line.NeuPot
 import DFT.Continuum.Line.NeuSeries
 import DFT.Continuum.Line.NeuUcp
 import DFT.Continuum.Line.NeuWeak
+import DFT.Continuum.Line.NeuYoung
 import DFT.Continuum.Line.Nondeg
 import DFT.Continuum.Line.NotVRep
 import DFT.Continuum.Line.NotVRepDense

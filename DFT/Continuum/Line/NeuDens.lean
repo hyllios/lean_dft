@@ -261,18 +261,18 @@ lemma IsWDN.congr_ae {k : Fin (n + 1)} {Φ Ψ G : Cfg n → ℝ} (h : IsWDN k Φ
     exact integral_congr_ae (by filter_upwards [hΦΨ] with x hx; rw [hx])⟩
 
 /-- **The truncations have kinetic energy at most `T(Φ)`.** -/
-theorem kin_truncC_le {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (M : ℕ) :
+theorem kin_truncC_le {s : Sine.SymT n} {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomNS s) (M : ℕ) :
     ∫ x, ∑ k, dk k (truncC M Φ) x * dk k (truncC M Φ) x ∂μN n ≤ kinN Φ := by
   classical
   set a : (Fin (n + 1) → ℕ) → ℝ := fun m => if m ∈ boxI n M then cC m Φ else 0
   have hfin : ∀ m, m ∉ boxI n M → a m = 0 := fun m hm => by simp [a, hm]
-  have ha : DirN τ.toSym a :=
+  have ha : DirN s a :=
     { sq := summable_of_ne_finset_zero (s := boxI n M) fun m hm => by simp [hfin m hm]
       kin := summable_of_ne_finset_zero (s := boxI n M) fun m hm => by simp [hfin m hm]
-      sym := fun σ _ m => by
+      sym := fun σ hσ m => by
         simp only [a, pmI_mem_boxI]
         split_ifs
-        · exact cC_pmNS hΦ trivial m
+        · exact cC_pmNS hΦ hσ m
         · simp }
   have hae : serN a =ᵐ[μN n] truncC M Φ :=
     ae_eq_of_cC_eq memLp_serN (memLp_cont (continuous_truncC M Φ)) fun m => by

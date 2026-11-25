@@ -279,14 +279,19 @@ lemma G_sq_le {η A d q r : ℝ} (hη : |η| ≤ 1) (hq0 : 0 ≤ q) (hq1 : q ≤
   nlinarith [sq_nonneg ((η * q) * A - (2 * η * r) * d),
     mul_le_mul_of_nonneg_right hηq (sq_nonneg A), mul_le_mul_of_nonneg_right hηr (sq_nonneg d)]
 
-/-- **The logarithmic estimate for `H⁻¹` potentials**: for a nonnegative bosonic Neumann ground
-state `u` and a symmetric `C¹` cutoff `|η| ≤ 1`, `Σ_k ∫ η² (∂ₖu/(u+ε))²` is bounded uniformly in
+/-- **The logarithmic estimate for `H⁻¹` potentials, from the weak equation.** Let `u ≥ 0` be a
+symmetric Neumann `H¹` function satisfying the weak equation with energy `E` against Moser's test
+function `φ = logTest η u ε`, with a potential term `v(e)` for some `e ∈ H1E` having the integrals
+of `u φ`. For a symmetric `C¹` cutoff `|η| ≤ 1`, `Σ_k ∫ η² (∂ₖu/(u+ε))²` is bounded uniformly in
 `ε > 0`. -/
-theorem log_estimate_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : Cfg n → ℝ}
-    (hu : IsGSNH .bos w v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x) {η : Cfg n → ℝ}
-    (hη : ContDiff ℝ 1 η) (hηs : ∀ σ x, η (pm σ x) = η x) (hη1 : ∀ x, |η x| ≤ 1) :
+theorem log_estimate_gen {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : Cfg n → ℝ}
+    (hu : u ∈ DomN .bos n) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x) {η : Cfg n → ℝ}
+    (hη : ContDiff ℝ 1 η) (hηs : ∀ σ x, η (pm σ x) = η x) (hη1 : ∀ᵐ x ∂μN n, |η x| ≤ 1)
+    (E : ℝ) (hEL : ∀ ε > 0, ∃ e : H1E, (∀ u' : Pot, ∫ t, ext u' t * ext (evE e) t ∂μ1 =
+      ∫ x, (∑ k, ext u' (x k)) * (u x * logTest η u ε x) ∂μN n) ∧
+      kinN2 u (logTest η u ε) + ∫ x, w x * (u x * logTest η u ε x) ∂μN n + v e =
+        E * ∫ x, u x * logTest η u ε x ∂μN n) :
     ∃ K, 0 ≤ K ∧ ∀ ε > 0, ∑ k, ∫ x, (η x * (dWN k u x / (u x + ε))) ^ 2 ∂μN n ≤ K := by
-  set E := QNH .bos w v u
   obtain ⟨B, hB⟩ := ae_bound_cont (n := n) hw
   set D := ∑ k, ∫ x, dk k η x ^ 2 ∂μN n
   have hD0 : 0 ≤ D := Finset.sum_nonneg fun k _ => integral_nonneg fun x => sq_nonneg _
@@ -295,7 +300,7 @@ theorem log_estimate_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : C
   refine ⟨8 * D + 4 * K0, by positivity, fun ε hε => ?_⟩
   set S := ∑ k, ∫ x, (η x * (dWN k u x / (u x + ε))) ^ 2 ∂μN n
   set A : Fin (n + 1) → Cfg n → ℝ := fun k x => η x * (dWN k u x / (u x + ε))
-  have hAL : ∀ k, MemLp (A k) 2 (μN n) := fun k => memLp_logA hu.1 hu0 hη hε k
+  have hAL : ∀ k, MemLp (A k) 2 (μN n) := fun k => memLp_logA hu hu0 hη hε k
   have hA0 : ∫ x, A 0 x ^ 2 ∂μN n ≤ S :=
     Finset.single_le_sum (f := fun k => ∫ x, A k x ^ 2 ∂μN n)
       (fun k _ => integral_nonneg fun x => sq_nonneg _) (Finset.mem_univ 0)
@@ -304,8 +309,8 @@ theorem log_estimate_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : C
       (fun k _ => integral_nonneg fun x => sq_nonneg _) (Finset.mem_univ 0)
   -- the test function and the Euler–Lagrange equation
   set φ := logTest η u ε
-  have hφD : φ ∈ DomN .bos n := logTest_memN hu.1 hη hηs hε
-  have hel := euler_lagrangeNH hw hu hφD
+  have hφD : φ ∈ DomN .bos n := logTest_memN hu hη hηs hε
+  obtain ⟨e, hint, hel⟩ := hEL ε hε
   -- `u φ = p = η² ε Gr(u)` with its derivative
   set ζ : Cfg n → ℝ := fun x => η x * η x
   have hζ : ContDiff ℝ 1 ζ := hη.mul hη
@@ -314,40 +319,41 @@ theorem log_estimate_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : C
   have hGc : Continuous (Gr ε) :=
     continuous_iff_continuousAt.2 fun t => (hasDerivAt_Gr hε t).continuousAt
   have hgL : MemLp (fun x => ε * Gr ε (u x)) 2 (μN n) := (MemLp.of_bound
-    (hGc.comp_aestronglyMeasurable hu.1.1.aestronglyMeasurable) (1 / ε)
+    (hGc.comp_aestronglyMeasurable hu.1.aestronglyMeasurable) (1 / ε)
     (ae_of_all _ fun x => by rw [Real.norm_eq_abs]; exact abs_Gr_le hε _)).const_mul ε
   set p : Cfg n → ℝ := fun x => ζ x * (ε * Gr ε (u x))
   set G : Cfg n → ℝ := fun x => ζ x * (ε * (1 / (|u x| + ε) ^ 2 * dWN 0 u x)) +
     dk 0 ζ x * (ε * Gr ε (u x))
   have hpG : IsWDN 0 p G :=
-    ((isWDN_comp hu.1 (hasDerivAt_Gr hε) (continuous_Gr' hε) (Gr'_le hε) Gr_zero
+    ((isWDN_comp hu (hasDerivAt_Gr hε) (continuous_Gr' hε) (Gr'_le hε) Gr_zero
       0).const_mul ε).mul_C1 hgL hζ
   have hpL : MemLp p 2 (μN n) := memLp_mul_cont hζ.continuous hgL
   have hGr : ∀ t, 0 ≤ t → ε * Gr ε t = t / (t + ε) := fun t ht => by
     rw [Gr_of_nonneg ht]; field_simp; ring
-  have hη2 : ∀ x, ζ x ≤ 1 := fun x => by
-    have := hη1 x; simp only [ζ]; nlinarith [abs_nonneg (η x), abs_mul_abs_self (η x)]
+  have hη2 : ∀ᵐ x ∂μN n, ζ x ≤ 1 := by
+    filter_upwards [hη1] with x hx
+    simp only [ζ]; nlinarith [abs_nonneg (η x), abs_mul_abs_self (η x)]
   have huφ : ∀ᵐ x ∂μN n, u x * φ x = p x := by
     filter_upwards [hu0] with x h0
     have hp : 0 < u x + ε := by linarith
     simp only [φ, p, ζ, logTest, Gr_of_nonneg h0]
     field_simp; ring
   have hp01 : ∀ᵐ x ∂μN n, 0 ≤ p x ∧ p x ≤ 1 := by
-    filter_upwards [hu0] with x h0
+    filter_upwards [hu0, hη2] with x h0 hη2x
     have hp : 0 < u x + ε := by linarith
     have hr0 : 0 ≤ u x / (u x + ε) := div_nonneg h0 hp.le
     have hr1 : u x / (u x + ε) ≤ 1 := (div_le_one hp).2 (by linarith)
     simp only [p, hGr _ h0]
     exact ⟨mul_nonneg (mul_self_nonneg _) hr0,
-      (mul_le_mul (hη2 x) hr1 hr0 zero_le_one).trans (by norm_num)⟩
+      (mul_le_mul hη2x hr1 hr0 zero_le_one).trans (by norm_num)⟩
   have hpsym : ∀ σ : Equiv.Perm (Fin (n + 1)), ∀ᵐ x ∂μN n, p (pm σ x) = p x := fun σ => by
-    filter_upwards [hu.1.2.2 σ trivial] with x hx
+    filter_upwards [hu.2.2 σ trivial] with x hx
     simp only [ch_bos, one_mul] at hx
     simp only [p, ζ, hηs, hx]
   -- the mixed density is the density of `p`
-  have he : ∀ u' : Pot, ∫ t, ext u' t * ext (evE (rhoE2 .bos u φ)) t ∂μ1 =
+  have he : ∀ u' : Pot, ∫ t, ext u' t * ext (evE e) t ∂μ1 =
       ∫ t, ext u' t * ((n + 1) * mF p t) ∂μ1 := fun u' => by
-    rw [int_rhoE2 hu.1 hφD, int_mF (hpL.integrable one_le_two) hpsym, pfN]
+    rw [hint u', int_mF (hpL.integrable one_le_two) hpsym]
     refine integral_congr_ae ?_
     filter_upwards [huφ] with x hx
     rw [hx]
@@ -367,21 +373,20 @@ theorem log_estimate_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : C
       ((hAL 0).integrable_sq.const_mul 2).add ((integrableN (hdη.pow 2)).const_mul 8)
     calc ∫ x, G x ^ 2 ∂μN n ≤ ∫ x, (2 * A 0 x ^ 2 + 8 * dk 0 η x ^ 2) ∂μN n := by
           refine integral_mono_ae (int_sq hpG.1) i1 ?_
-          filter_upwards [hu0] with x h0
+          filter_upwards [hu0, hη1] with x h0 hη1x
           have hp : 0 < u x + ε := by linarith
           have eG : G x = (η x * (ε / (u x + ε))) * A 0 x +
               (2 * η x * (u x / (u x + ε))) * dk 0 η x := by
             simp only [G, A, ζ, hdζ, abs_of_nonneg h0, hGr _ h0]
             exact eG_identity hp
           rw [eG]
-          exact G_sq_le (hη1 x) (div_nonneg hε.le hp.le) ((div_le_one hp).2 (by linarith))
+          exact G_sq_le hη1x (div_nonneg hε.le hp.le) ((div_le_one hp).2 (by linarith))
             (div_nonneg h0 hp.le) ((div_le_one hp).2 (by linarith))
       _ = 2 * ∫ x, A 0 x ^ 2 ∂μN n + 8 * ∫ x, dk 0 η x ^ 2 ∂μN n := by
           rw [integral_add (f := fun x => 2 * A 0 x ^ 2) (g := fun x => 8 * dk 0 η x ^ 2)
             ((hAL 0).integrable_sq.const_mul 2) ((integrableN (hdη.pow 2)).const_mul 8),
             integral_const_mul, integral_const_mul]
   -- `|v(ρ(u, φ))| ≤ ‖ρ‖² / (16 N²) + 4 N² ‖v‖²`
-  set e := rhoE2 .bos u φ
   have hN : (0 : ℝ) < (n + 1) ^ 2 := by positivity
   have hve : |v e| ≤ ‖e‖ ^ 2 / (16 * (n + 1) ^ 2) + 4 * (n + 1) ^ 2 * ‖v‖ ^ 2 := by
     have h1 : |v e| ≤ ‖v‖ * ‖e‖ := by rw [← Real.norm_eq_abs]; exact v.le_opNorm e
@@ -399,7 +404,7 @@ theorem log_estimate_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : C
       _ = (1 + 8 * D) / 8 + S / 4 := by field_simp; ring
   have hve' : |v e| ≤ (1 + 8 * D) / 8 + S / 4 + 4 * (n + 1) ^ 2 * ‖v‖ ^ 2 := by linarith
   -- `0 ≤ u φ ≤ 1`: the energy and interaction terms
-  have iuφ := int_mul_L2 hu.1.1 hφD.1
+  have iuφ := int_mul_L2 hu.1 hφD.1
   have hb1 : ∀ᵐ x ∂μN n, 0 ≤ u x * φ x ∧ u x * φ x ≤ 1 := by
     filter_upwards [huφ, hp01] with x h1 h2
     rw [h1]; exact h2
@@ -423,19 +428,29 @@ theorem log_estimate_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : C
     calc |E| * ∫ x, u x * φ x ∂μN n ≤ |E| * 1 := mul_le_mul_of_nonneg_left hI.2 (abs_nonneg _)
       _ = |E| := mul_one _
   -- Moser
-  have hEdef : E = QNH .bos w v u := rfl
   have hK0def : K0 = |E| + max B 0 + (1 + 8 * D) / 8 + 4 * (n + 1) ^ 2 * ‖v‖ ^ 2 := rfl
   have hk2 : kinN2 u φ = ∑ k, ∫ x, dWN k u x * dWN k (logTest η u ε) x ∂μN n := rfl
   have hel' : kinN2 u φ = E * ∫ x, u x * φ x ∂μN n - ∫ x, w x * (u x * φ x) ∂μN n - v e := by
-    rw [hEdef]; linarith
+    linarith
   have hlow : -(K0 + S / 4) ≤ ∑ k, ∫ x, dWN k u x * dWN k (logTest η u ε) x ∂μN n := by
     rw [← hk2, hel', hK0def]
     linarith [neg_abs_le (E * ∫ x, u x * φ x ∂μN n), le_abs_self (∫ x, w x * (u x * φ x) ∂μN n),
       le_abs_self (v e)]
-  have hcore := log_estimate_coreN hu.1 hu0 hη hε hlow
+  have hcore := log_estimate_coreN hu hu0 hη hε hlow
   have hS : S = ∑ k, ∫ x, (η x * (dWN k u x / (u x + ε))) ^ 2 ∂μN n := rfl
   rw [← hS] at hcore
   linarith
+
+/-- **The logarithmic estimate for `H⁻¹` potentials**: for a nonnegative bosonic Neumann ground
+state `u` and a symmetric `C¹` cutoff `|η| ≤ 1`, `Σ_k ∫ η² (∂ₖu/(u+ε))²` is bounded uniformly in
+`ε > 0`. -/
+theorem log_estimate_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : Cfg n → ℝ}
+    (hu : IsGSNH .bos w v u) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x) {η : Cfg n → ℝ}
+    (hη : ContDiff ℝ 1 η) (hηs : ∀ σ x, η (pm σ x) = η x) (hη1 : ∀ x, |η x| ≤ 1) :
+    ∃ K, 0 ≤ K ∧ ∀ ε > 0, ∑ k, ∫ x, (η x * (dWN k u x / (u x + ε))) ^ 2 ∂μN n ≤ K :=
+  log_estimate_gen hw hu.1 hu0 hη hηs (ae_of_all _ hη1) (QNH .bos w v u) fun ε hε =>
+    ⟨rhoE2 .bos u (logTest η u ε), fun u' => int_rhoE2 hu.1 (logTest_memN hu.1 hη hηs hε) u',
+      euler_lagrangeNH hw hu (logTest_memN hu.1 hη hηs hε)⟩
 
 /-! ### The logarithmic data -/
 

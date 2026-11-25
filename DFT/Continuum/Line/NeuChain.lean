@@ -45,7 +45,7 @@ lemma integral_smd_dkN (k : Fin (n + 1)) (m : Fin (n + 1) → ℕ) {Ψ G : Cfg n
 
 section truncC
 
-variable {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
+variable {s : Sine.SymT n} {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomNS s)
 include hΦ
 
 /-- The cosine truncations have kinetic energy at most that of `Φ`, in each direction. -/
@@ -261,14 +261,16 @@ theorem isWDN_abs (k : Fin (n + 1)) :
   rw [heq] at hlhs
   exact tendsto_nhds_unique hlhs hrhs.neg
 
+end truncC
+
 /-- `|Φ|` is a bosonic Neumann state, for either statistics of `Φ`. -/
-theorem abs_mem_DomN : (fun x => |Φ x|) ∈ DomN .bos n :=
+theorem abs_mem_DomN {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) : (fun x => |Φ x|) ∈ DomN .bos n :=
   ⟨hΦ.1.abs, fun k => ⟨_, isWDN_abs hΦ k⟩, fun σ _ => by
     filter_upwards [hΦ.2.2 σ trivial] with x hx
     rw [hx, abs_mul, abs_ch, ch_bos]⟩
 
 /-- **Kato's inequality with Neumann walls**: `T(|Φ|) ≤ T(Φ)`. -/
-theorem kinN_abs_le : kinN (fun x => |Φ x|) ≤ kinN Φ := by
+theorem kinN_abs_le {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) : kinN (fun x => |Φ x|) ≤ kinN Φ := by
   refine Finset.sum_le_sum fun k _ => ?_
   have hd := dWN_ae_eq (isWDN_abs hΦ k)
   have hm := memLp_dWN (h1NW_of_mem hΦ) k
@@ -287,7 +289,17 @@ theorem kinN_abs_le : kinN (fun x => |Φ x|) ≤ kinN Φ := by
     _ ≤ 1 * (dWN k Φ x * dWN k Φ x) := mul_le_mul_of_nonneg_right h1 h2
     _ = _ := one_mul _
 
-end truncC
+
+/-- The trivial symmetry type: no constraint. -/
+def symT1 (n : ℕ) : Sine.SymT n := ⟨fun σ => σ = 1, fun _ => 1⟩
+
+/-- Every Neumann `H¹` function is a state of the trivial symmetry type. -/
+lemma mem_symT1 {Φ : Cfg n → ℝ} (h : H1NW Φ) : Φ ∈ DomNS (symT1 n) :=
+  ⟨h.1, h.2, fun σ hσ => by
+    subst hσ
+    exact ae_of_all _ fun x => by
+      change Φ (pm 1 x) = 1 * Φ x
+      rw [one_mul]; rfl⟩
 
 /-- **The product rule** with a `C¹` function, Neumann walls. -/
 lemma IsWDN.mul_C1 {k : Fin (n + 1)} {f G : Cfg n → ℝ} (h : IsWDN k f G)
