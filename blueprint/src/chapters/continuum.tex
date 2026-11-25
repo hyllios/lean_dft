@@ -1175,6 +1175,58 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $\|p\|$. Positivity is the cutting argument of Theorem~\ref{thm:line_measureN_ucp}.
 \end{proof}
 
+\begin{theorem}[Hohenberg--Kohn for interacting particles along continuous directions]
+  \label{thm:line_measureN_hkc}
+  \lean{DFT.Continuum.Line.vCLM, DFT.Continuum.Line.gsN_ne_zero, DFT.Continuum.Line.hk_cont_dir, DFT.Continuum.Line.hk_cont_pert, DFT.Continuum.Line.rhoHat_nonneg, DFT.Continuum.Line.rhoHat2_sq_le, DFT.Continuum.Line.abs_rhoHat2_le, DFT.Continuum.Line.rhoHat_le, DFT.Continuum.Line.abs_rhoHat2_le_H1}
+  \leanok
+  \uses{thm:line_measureN_fer, thm:line_measureN_hk}
+  For $N$ interacting bosons or fermions (continuous $w$) and a measure potential $\nu$: if $\nu$ and $\nu+v\,dx$, $v$ continuous,
+  have ground states with the same density, then $v$ is constant. So a measure potential is determined by its ground-state
+  density within $\nu+C([0,1])$. Moreover $\hat\rho(A,B)^2\le\hat\rho(A)\hat\rho(B)$ pointwise and
+  $\hat\rho(X)\le aN\int X^2+T(X)/a$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Both Euler--Lagrange equations hold for the common ground state $\Phi$; subtracting, $\int(\sum_kv(x_k)-c)\Phi\Psi=0$ for all
+  $\Psi\in H^1_0$, so $(\sum_kv(x_k)-c)\Phi=0$ a.e., and unique continuation gives $\sum_kv(x_k)=c$. Cauchy--Schwarz: $\hat\rho(A+sB)\ge0$
+  for all $s$. The sup bound is the one-particle bound for $\sqrt{\hat\rho}$.
+\end{proof}
+
+\begin{theorem}[The pair density against a measure is absolutely continuous]
+  \label{thm:line_pair_density}
+  \lean{DFT.Continuum.Line.FF, DFT.Continuum.Line.mem_FF_mul, DFT.Continuum.Line.TX, DFT.Continuum.Line.rhoHat2_FF, DFT.Continuum.Line.rhoHat_eq_marg, DFT.Continuum.Line.rX, DFT.Continuum.Line.intCLM_TXP, DFT.Continuum.Line.integral_abs_rX_sub_le, DFT.Continuum.Line.kinW_eq_tsum, DFT.Continuum.Line.tendsto_kinW_sub_trunc, DFT.Continuum.Line.kinW_mul_le, DFT.Continuum.Line.SH, DFT.Continuum.Line.TG, DFT.Continuum.Line.norm_TG_sub_le, DFT.Continuum.Line.integral_abs_mul_le, DFT.Continuum.Line.exists_pair_density}
+  \leanok
+  \uses{thm:line_measureN_hkc}
+  Let $\Phi\in H^1_0$ ($N\ge2$) and $T_\Phi f=\hat\rho(\Phi,F_f\Phi)-f\hat\rho_\Phi$, $F_f(x)=\sum_kf(x_k)$ (the pair-density operator). For
+  every finite measure $\rho$ on $[0,1]$ there is $R\in L^1(0,1)$ with $\int T_\Phi f\,d\rho=\int fR$ for all bounded $C^1$ functions
+  $f$ with bounded derivative.
+\end{theorem}
+\begin{proof}
+  \leanok
+  For the sine truncations $\Phi_M$ (smooth) $T_{\Phi_M}f(t)=N\int\Phi_M(t,y)^2\sum_jf(y_j)\,dy$ pointwise, so by Fubini
+  $\int T_{\Phi_M}f\,d\rho=\int fr_M$. $\Phi_M\to\Phi$ in $H^1$, $T$ is continuous in $H^1$ (pointwise Cauchy--Schwarz and the sup bound for
+  mixed densities), and $\int|r_M-r_{M'}|\le C\sqrt{S(\Phi_M-\Phi_{M'})S(\Phi_M+\Phi_{M'})}$, so $r_M\to R$ in $L^1$.
+\end{proof}
+
+\begin{theorem}[Hohenberg--Kohn for interacting particles in measure potentials]
+  \label{thm:line_measureN_hk_full}
+  \lean{DFT.Continuum.Line.intCLM_add, DFT.Continuum.Line.exists_pair_density', DFT.Continuum.Line.D_rhoHat2, DFT.Continuum.Line.bump01, DFT.Continuum.Line.D_rhoHat_ac, DFT.Continuum.Line.rhoHat_pos_gs, DFT.Continuum.Line.D_eq_integral, DFT.Continuum.Line.integrable_x0_sq, DFT.Continuum.Line.int_rhoHat2_L1, DFT.Continuum.Line.int_rhoHat2_sym, DFT.Continuum.Line.rhoHat2_vanish, DFT.Continuum.Line.sum_ae_zero, DFT.Continuum.Line.product_identity, DFT.Continuum.Line.D_vanish, DFT.Continuum.Line.D_vanish_walls, DFT.Continuum.Line.hk_meas_N, DFT.Continuum.Line.hk_meas_N_dens}
+  \leanok
+  \uses{thm:line_pair_density, thm:line_measureN_fer, thm:line_measureN_hk}
+  For $N$ interacting bosons or fermions (continuous interaction) on $[0,1]$ with walls: if two measure potentials $\nu,\nu'$ have
+  ground states with the same density, then $\nu-\nu'=C\,dx+a\delta_0+b\delta_1$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A common ground state $\Phi$ exists (first half). With $D=\nu-\nu'-c\,dx$, the Euler--Lagrange equations give
+  $D(\hat\rho(\Phi,\Psi))=0$ for all $\Psi$. For $\Psi=F_f\Phi$: $D(f\hat\rho)=-D(T_\Phi f)=-\int fR$, so (as $\hat\rho>0$ inside)
+  $D(h)=\int he$ on functions supported in $[a,1-a]$, $e=-R/\hat\rho$. For $\Psi=\chi\Phi$ with $\chi$ symmetric and supported in
+  $[a,1-a]^N$: $\int e(x_0)\chi\Phi^2=0$; symmetrising arbitrary tests and the fundamental lemma give $\sum_ke(x_k)\Phi^2=0$, so
+  $\sum_ke(x_k)=0$ a.e.\ (unique continuation). Testing with $\phi(x_0)\prod_{j\ge1}\eta(x_j)$, $\int\eta=1$, gives
+  $\int\phi e+n\int\phi\int\eta e=0$, hence $\int\eta e=0$ and $\int\phi e=0$. So $D$ vanishes on functions vanishing at the
+  walls, and $D=a\delta_0+b\delta_1$.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}

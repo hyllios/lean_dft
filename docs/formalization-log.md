@@ -814,4 +814,33 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   `logData_ballY_meas`, **`gsN_ne_zero_fer`**, **`rhoHat_pos_fer`**; `norm_pot_le_of_int` and
   `rhoHat_pos_of_ucp` (MeasureNPos made generic in τ). **`vrepMeasN_pos`**: ground-state densities
   of measure potentials are positive on (0,1), both statistics, any continuous w.
-  Still open: the final interacting-HK step (above).
+  `Line/MeasureNHKc`: **`hk_cont_dir`**, **`hk_cont_pert`** (interacting HK within ν + C[0,1], both
+  statistics: sep_lineW + UCP + rigidL_line); `rhoHat2_sq_le` (pointwise Cauchy–Schwarz, via
+  discriminant of ρ̂(A + sB) ≥ 0), `rhoHat_le` (ρ̂_X ≤ aN∫X² + T(X)/a), `abs_rhoHat2_le_H1`.
+  PLAN for the general interacting HK (ν − ν' an arbitrary measure; D := ν − ν' − c dx annihilates
+  ρ̂(Φ, Ψ) for all Ψ, Φ the common GS):
+  (C) T f := ρ̂(Φ, Φ Σ_k f(x_k)) − f ρ̂_Φ (pair-density operator). For the smooth truncations
+      Φ_M = trunc M Φ: T_M f(t) = N(N−1) ∫ f(u) P_M(t, u) du pointwise (P_M continuous pair
+      density), so D(T_M f) = ∫ f r_M with r_M(u) = ∫ P_M(t, u) dD(t) (Fubini, continuous integrand).
+  (D) Φ_M → Φ in H¹ (kinW(Φ − Φ_M) = tail of Σλc²) ⇒ T_M f → T f uniformly (abs_rhoHat2_le_H1),
+      and r_M Cauchy in L¹ (∫|P_M − P_M'|(t, ·) ≤ √(ρ̂(Φ_M − Φ_M') ρ̂(Φ_M + Φ_M'))(t)) ⇒ D(T f) = ∫ f r.
+  (E) EL: 0 = D(ρ̂(Φ, Φ Σf)) = D(f ρ̂) + D(T f) ⇒ D(f ρ̂) = −∫ f r for all f ∈ C[0,1].
+  (F) ρ̂ > 0 on (0,1) ⇒ D(h) = ∫ h d for h ∈ C_c(0,1), d = −r/ρ̂ ∈ L¹_loc.
+  (G) extend int_rhoHat2 to bounded L¹ weights; test with Ψ = Φχ, χ ∈ C_c^∞((0,1)^N) symmetric:
+      ∫ Φ² χ (Σ_k d(x_k)) = 0 ⇒ Φ² Σ d(x_k) = 0 a.e. (fundamental lemma) ⇒ (UCP) Σ d(x_k) = 0 a.e.
+      ⇒ d = 0 a.e. ⇒ D = 0 on C_0 ⇒ ν − ν' = C dx + aδ₀ + bδ₁ (as in hk_of_pos).
+  (A), (B) done (rhoHat2_sq_le, rhoHat_le). Estimated 1000–1500 lines for (C)–(G).
+  (C), (D) DONE (2026-11-26): `Line/MeasurePair`: `FF`, `mem_FF_mul`, `TX`, **`rhoHat2_FF`**
+  (ρ̂(X, F_f X) = f ρ̂_X + T_X f for continuous symmetric X), `rhoHat_eq_marg` (ρ̂_X(t) = N∫X(t,y)²
+  at every t), `hP`, `rX`, **`intCLM_TXP`** (∫ T_X f dρ = ∫ f r_X, Fubini), `integral_abs_rX_sub_le`.
+  `Line/MeasureHKgen`: `kinW_eq_tsum`, **`tendsto_kinW_sub_trunc`** (truncations converge in H¹),
+  `kinW_mul_le`, bilinearity of ρ̂(·,·), `SH` (= N∫X² + T), `dk_FF`, `TG` (T_Y f = ρ̂(Y,F_f Y) − fρ̂_Y),
+  **`norm_TG_sub_le`** (T continuous in H¹), `le_two_sqrt_of_forall`, `integral_abs_mul_le` (CS),
+  `integral_abs_sq_sub_le_SH`, **`exists_pair_density`**: for every H¹₀ state Φ (N ≥ 2) and finite
+  measure ρ on [0,1] there is R ∈ L¹ with ∫ T_Φ f dρ = ∫ f R for all bounded C¹ f with bounded f'
+  (r_M of the truncations are L¹-Cauchy; limits on both sides).
+  (E)–(H) DONE (2026-11-26): `Line/MeasureHKend`: `D_rhoHat_ac`, `D_eq_integral`,
+  `integrable_x0_sq`, `int_rhoHat2_L1`, `rhoHat2_vanish`, `sum_ae_zero`, `product_identity`,
+  `D_vanish`, `D_vanish_walls`, **`hk_meas_N`**, **`hk_meas_N_dens`**: FULL Hohenberg–Kohn for N
+  interacting bosons/fermions (continuous w) in measure potentials on a line: same GS density ⇒
+  ν − ν' = C dx + aδ₀ + bδ₁. N5 COMPLETE. Standard axioms.
