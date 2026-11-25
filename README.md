@@ -205,6 +205,7 @@ Three Lean libraries, strictly layered (`ForMathlib ← QM ← DFT`, enforced in
 * `docs/generic-hk-paper-proof.md`: the informal proof of the generic HK theorem, with the literature context
   and an independent review.
 * `docs/formalization-log.md`: how the formal proofs were assembled.
+* `docs/ROADMAP.md`: where the project is going (quantum mechanics → many-body theory → Green's functions → DFT).
 * `docs/ARCHITECTURE.md`, `docs/MODULES.md`, `docs/AGENTS.md`: structure, module index, contribution rules.
 * `scripts/`: Python scripts used for exploration and for exact certificates, e.g. (H\*) for all connected
   graphs up to 7 sites, and sector by sector for the spinful Hubbard model up to 6 sites. Outputs are in

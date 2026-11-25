@@ -2,7 +2,8 @@
 
 The repository holds three Lean libraries, strictly layered. The layering is checked in CI by
 `scripts/check_layers.py`: no import may go against the order below, and inside a library no two folders may import
-each other, directly or through a loop. Rules for contributors are in [`AGENTS.md`](AGENTS.md).
+each other, directly or through a loop. Rules for contributors are in [`AGENTS.md`](AGENTS.md); plans in
+[`ROADMAP.md`](ROADMAP.md).
 
 ```
 Mathlib  ←  Physlib (leanprover-community/physlib, pinned tag; brings Mathlib)
