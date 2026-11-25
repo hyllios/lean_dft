@@ -90,17 +90,17 @@ end cut
 
 /-! ### Moser's estimate for the companion -/
 
-/-- **The logarithmic estimate for the companion of a fermionic Neumann ground state.** -/
-theorem log_estimate_fer {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Ψ : Cfg n → ℝ}
-    (hΨ : IsGSNH .fer w v Ψ) {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) :
-    ∃ K, 0 ≤ K ∧ ∀ ε > 0, ∑ k, ∫ x, (etaF ha ha2 x *
+/-- **The logarithmic estimate for the companion of a fermionic Neumann ground state**, for a
+symmetric `C¹` cutoff `|η| ≤ 1` vanishing on the diagonals. -/
+theorem log_estimate_ferη {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Ψ : Cfg n → ℝ}
+    (hΨ : IsGSNH .fer w v Ψ) {η : Cfg n → ℝ} (hη : ContDiff ℝ 1 η)
+    (hηs : ∀ σ x, η (pm σ x) = η x) (hη1 : ∀ᵐ x ∂μN n, |η x| ≤ 1)
+    (hplane : ∀ x i j, i ≠ j → x i = x j → η x = 0) :
+    ∃ K, 0 ≤ K ∧ ∀ ε > 0, ∑ k, ∫ x, (η x *
       (dWN k (PhiBY (n + 1) Ψ) x / (PhiBY (n + 1) Ψ x + ε))) ^ 2 ∂μN n ≤ K := by
   set u := PhiBY (n + 1) Ψ
-  set η := etaF (n := n) ha ha2
   have hu : u ∈ DomN .bos n := PhiBY_memN hΨ.1
-  have hη : ContDiff ℝ 1 η := contDiff_etaF ha ha2
-  have hηs : ∀ σ x, η (pm σ x) = η x := etaF_pm ha ha2
-  refine log_estimate_gen (v := v) hw hu (ae_of_all _ (PhiBY_nonneg Ψ)) hη hηs (abs_etaF_le ha ha2)
+  refine log_estimate_gen (v := v) hw hu (ae_of_all _ (PhiBY_nonneg Ψ)) hη hηs hη1
     (QNH .fer w v (PhiY (n + 1) Ψ)) fun ε hε => ?_
   set φ := logTest η u ε
   have hφ : H1NW φ := h1NW_of_mem (logTest_memN hu hη hηs hε)
@@ -125,7 +125,7 @@ theorem log_estimate_fer {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Ψ 
     intro p hp
     have hp' := (Finset.mem_filter.1 hp).2
     obtain ⟨Lp, hLp0, hLp⟩ := abs_le_of_plane' hη hp'.1.ne
-      fun x hx => etaF_plane ha ha2 x hp'.1.ne hx
+      fun x hx => hplane x _ _ hp'.1.ne hx
     refine ⟨max Bη 0 / ε * Lp, mul_nonneg (div_nonneg (le_max_right _ _) hε.le) hLp0, ?_⟩
     filter_upwards [hφη, hLp] with x h1 h2
     calc |φ x| ≤ max Bη 0 / ε * |η x| := h1
@@ -133,6 +133,14 @@ theorem log_estimate_fer {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Ψ 
           mul_le_mul_of_nonneg_left h2 (div_nonneg (le_max_right _ _) hε.le)
       _ = _ := by ring
   exact eq_PhiBY_H hw hΨ hφ hφs hL
+
+/-- The estimate with the cutoff `etaF`. -/
+theorem log_estimate_fer {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Ψ : Cfg n → ℝ}
+    (hΨ : IsGSNH .fer w v Ψ) {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 1 / 2) :
+    ∃ K, 0 ≤ K ∧ ∀ ε > 0, ∑ k, ∫ x, (etaF ha ha2 x *
+      (dWN k (PhiBY (n + 1) Ψ) x / (PhiBY (n + 1) Ψ x + ε))) ^ 2 ∂μN n ≤ K :=
+  log_estimate_ferη hw hΨ (contDiff_etaF ha ha2) (etaF_pm ha ha2) (abs_etaF_le ha ha2)
+    fun x _ _ hij h => etaF_plane ha ha2 x hij h
 
 /-- A fermionic Neumann ground state gives the logarithmic data for `ζ_a B` on closed balls in
 the chamber inside `[a, 1 - a]ᴺ`. -/

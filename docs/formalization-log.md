@@ -919,3 +919,11 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   exists_Qa_ball, **gsNH_ne_zero_fer**, **gsNH_ne_zero** both statistics). Non-degeneracy not needed
   for the pure-state route (positivity uses UCP only, as in MeasureNPos); deferred. Standard axioms.
   Next: Q4 necessity (ρ > 0 on [0,1], interior via rhoHat_pos_of_ucp pattern, walls new).
+- Q4 necessity DONE (2026-11-25): `Line/NeuPos` (tentR, nbump, chiAB 1D tests; dk0_eq_zero,
+  integral_coord0, **log_wall_ineq**: ∫ log(1+u/ε) α(x₀) Z ≤ (2ε³)⁻¹ ∫u²β(x₀) + ε/2 + √K/c from the
+  Neumann weak derivative of log(1+u/ε) tested with χ(x₀)Z, χ' = α − β; exists_grid (windows for
+  the other particles); sq_sub_le_H1N; **rho_pos_core** (β of width aε⁴ at t₀, ρ ≤ L|t − t₀|,
+  windows keep Π(xᵢ − xⱼ) ≥ c, UCP makes the left side diverge; works at walls and inside alike);
+  **rhoE_pos** both statistics; integral_fnE_rhoE; VRepNH; **vrepNH_nec**: v-rep ⇒ ρ ∈ H¹, ρ > 0 on
+  [0,1], ∫ρ = N). `log_estimate_fer` generalised to `log_estimate_ferη`. The bosonic slab/cut
+  argument of MeasureNPos was not needed. Standard axioms. Next: Q5 sufficiency.

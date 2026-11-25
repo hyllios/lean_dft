@@ -1631,3 +1631,22 @@ $\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
   set applies. For bosons $u=|\Psi|$. For fermions $u$ is the companion $|\Psi|$ of the chamber ground state, which
   satisfies the weak equation against symmetric test functions vanishing on the diagonals.
 \end{proof}
+
+\begin{theorem}[Neumann ground-state densities are positive on the closed interval]
+  \label{thm:neu_pos}
+  \lean{DFT.Continuum.Line.tentR, DFT.Continuum.Line.nbump, DFT.Continuum.Line.chiAB, DFT.Continuum.Line.log_estimate_ferη, DFT.Continuum.Line.dk0_eq_zero, DFT.Continuum.Line.integral_coord0, DFT.Continuum.Line.log_wall_ineq, DFT.Continuum.Line.exists_grid, DFT.Continuum.Line.sq_sub_le_H1N, DFT.Continuum.Line.DgY_ne_zero_of_inj, DFT.Continuum.Line.memLp_Lg, DFT.Continuum.Line.rho_pos_core, DFT.Continuum.Line.rhoE_pos_bos, DFT.Continuum.Line.rhoE_pos_fer, DFT.Continuum.Line.rhoE_pos, DFT.Continuum.Line.integral_fnE_rhoE, DFT.Continuum.Line.VRepNH, DFT.Continuum.Line.vrepNH_nec}
+  \leanok
+  \uses{thm:neu_ucp}
+  For bosons or fermions, every $v\in H^{-1}$ and every continuous $w$, the density of a normalised Neumann ground state
+  is an $H^1(0,1)$ function with $\int\rho=N$ and $\rho>0$ on $[0,1]$, walls included.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Let $u=|\Psi|$, or the companion of the chamber ground state for fermions, and suppose $\rho(t_0)=0$. Then
+  $\rho(t)\le L|t-t_0|$, since $\rho=g^2$ with $g\in H^1$ and $g(t_0)=0$. Test the weak derivative of $\log(1+u/\varepsilon)$
+  with $\chi(x_0)Z(x)$, where $\chi'=\alpha-\beta$, $\beta$ is a normalised bump of width $a\varepsilon^4$ at $t_0$, $\alpha$ is a
+  fixed normalised bump nearby, and $Z$ keeps the other particles in separated windows. On the support of the test
+  function the weight $\prod_{i\ne j}(x_i-x_j)$ of Moser's estimate is bounded below. Hence $\int\log(1+u/\varepsilon)\,\alpha Z$
+  is bounded uniformly in $\varepsilon$, while unique continuation makes it diverge. The same argument works at the walls,
+  because Neumann test functions need not vanish there.
+\end{proof}

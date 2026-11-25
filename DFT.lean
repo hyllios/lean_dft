@@ -76,6 +76,7 @@ import DFT.Continuum.Line.NeuFer
 import DFT.Continuum.Line.NeuGS
 import DFT.Continuum.Line.NeuHalf
 import DFT.Continuum.Line.NeuNGS
+import DFT.Continuum.Line.NeuPos
 import DFT.Continuum.Line.NeuPot
 import DFT.Continuum.Line.NeuSeries
 import DFT.Continuum.Line.NeuUcp
