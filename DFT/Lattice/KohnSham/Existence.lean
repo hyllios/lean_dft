@@ -3,9 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.KohnSham.Representability
-import DFT.Lattice.KohnSham.Aufbau
 import DFT.Lattice.GenericHK
+import DFT.Lattice.KohnSham.Representability
 
 /-!
 # Existence of Kohn–Sham potentials for lattice fermions

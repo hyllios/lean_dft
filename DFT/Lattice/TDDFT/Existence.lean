@@ -3,12 +3,12 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.TDDFT.Dynamics
 import Mathlib.Analysis.Calculus.ContDiff.Operations
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+import DFT.Lattice.TDDFT.Dynamics
 
 /-!
 # Existence and uniqueness of lattice TDDFT (Farzanehpour–Tokatly Theorem 1)

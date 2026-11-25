@@ -3,10 +3,10 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Spectral.Kernel
 import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
 import Mathlib.Analysis.Normed.Operator.Compact.Basic
 import Mathlib.MeasureTheory.Function.L2Space
+import DFT.Continuum.Spectral.Kernel
 
 /-!
 # The Green operator on `L²(0, 1)`: compact and symmetric

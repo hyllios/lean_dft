@@ -3,10 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques, Stefano Pittalis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques, Stefano Pittalis
 -/
-import DFT.Lattice.Spin.TwoElectron
-import DFT.Lattice.Spin.SpinResolved
 import DFT.Lattice.Bridge.Hubbard
 import DFT.Lattice.Bridge.Square
+import DFT.Lattice.TDDFT.TwoElectron
 
 /-!
 # Bridge: one up and one down electron of `H0S` is one particle on `G □ G`

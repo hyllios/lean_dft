@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Sine.Form
-import DFT.Continuum.Box.Basic
 
 /-!
 # A minimiser in coefficient space

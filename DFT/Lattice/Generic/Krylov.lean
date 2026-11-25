@@ -3,12 +3,12 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.HK.Basic
 import Mathlib.Analysis.Analytic.Polynomial
 import Mathlib.Analysis.Analytic.Uniqueness
 import Mathlib.Algebra.MvPolynomial.Funext
 import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
 import Mathlib.Topology.Algebra.MvPolynomial
+import DFT.Lattice.HK.Basic
 
 /-!
 # The Krylov criterion and generic Hohenberg–Kohn (topological version)

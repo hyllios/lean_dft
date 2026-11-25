@@ -3,8 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Spectral.Injective
 import Mathlib.Analysis.ODE.ExistUnique
+import DFT.Continuum.Box.Extend
+import DFT.Continuum.Spectral.Operator
 
 /-!
 # Eigenvectors of the Green operator are classical eigenfunctions

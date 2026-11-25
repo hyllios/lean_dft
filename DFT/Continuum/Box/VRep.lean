@@ -3,9 +3,10 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
+import Mathlib.Algebra.Order.Star.Real
 import DFT.Continuum.Box.Ground
 import DFT.Continuum.Box.PiconeEq
-import DFT.Continuum.Line.WeakHK
+import DFT.Continuum.General.Lieb
 import DFT.Continuum.General.VRep
 
 /-!

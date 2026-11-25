@@ -3,7 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.Generic.Krylov
+import Mathlib.Algebra.MvPolynomial.Funext
+import Mathlib.Analysis.Normed.Field.Basic
+import Mathlib.Order.Interval.Set.Infinite
 
 /-!
 # Rational functions on generic points and simultaneous non-vanishing

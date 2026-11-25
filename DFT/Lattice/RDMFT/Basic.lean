@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Lattice.Fermions.SecondQuantization
-import DFT.Lattice.HK.Gap
 
 /-!
 # Density-matrix functional theory on a lattice

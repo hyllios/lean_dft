@@ -3,8 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.KohnSham.Duality
 import DFT.Lattice.Generic.Krylov
+import DFT.Lattice.KohnSham.Duality
 
 /-!
 # A maximiser of `E(v) − v·ρ`

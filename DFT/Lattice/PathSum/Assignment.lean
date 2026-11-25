@@ -3,9 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.Fermions.FirstQuantization
-import DFT.Lattice.StrongPotential.PowerSums
 import Mathlib.Combinatorics.SimpleGraph.Metric
+import DFT.Lattice.Fermions.SecondQuantization
+import DFT.Lattice.StrongPotential.LeadingCoefficient
 
 /-!
 # Optimal particle assignments

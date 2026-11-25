@@ -3,6 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
+import DFT.Lattice.Fermions.Configurations
 import DFT.Lattice.Fermions.Slater
 import DFT.Lattice.HK.Basic
 

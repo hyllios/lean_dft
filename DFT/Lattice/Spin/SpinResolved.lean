@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Lattice.GenericHK
+import DFT.Lattice.KohnSham.Aufbau
 import DFT.Lattice.Spin.KronSum
 
 /-!
@@ -51,11 +52,6 @@ lemma H0S_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] {t : Fin M → F
 lemma sum_occS (w : Fin M ⊕ Fin M → ℝ) (x : Conf M Nu × Conf M Nd) :
     ∑ σi, w σi * occS σi x = wC (fun i => w (Sum.inl i)) x.1 + wC (fun i => w (Sum.inr i)) x.2 := by
   simp [occS, wC, Fintype.sum_sum_type]
-
-lemma conf_nonempty {N : ℕ} (hN : N ≤ M) : Nonempty (Conf M N) := by
-  obtain ⟨s, -, hs⟩ := Finset.exists_subset_card_eq (s := (Finset.univ : Finset (Fin M)))
-    (by simpa using hN)
-  exact ⟨⟨s, hs⟩⟩
 
 /-- **Rigidity for two species**: modulo a constant on each spin. -/
 theorem rigid_occS (hNu0 : 0 < Nu) (hNuM : Nu < M) (hNd0 : 0 < Nd) (hNdM : Nd < M) :

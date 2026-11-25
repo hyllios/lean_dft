@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques, Stefano Pittalis
 -/
 import DFT.Lattice.Bridge.FrustratedSquareCertificates
-import DFT.Lattice.Generic.ShortestPathSign
+import DFT.Lattice.GenericHK.SignGauge
 
 /-!
 # Generic Hohenberg–Kohn on the square with one negative bond

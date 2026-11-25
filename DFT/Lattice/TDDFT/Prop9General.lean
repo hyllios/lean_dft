@@ -3,8 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques, Stefano Pittalis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques, Stefano Pittalis
 -/
+import DFT.Lattice.Generic.SquarePlane
 import DFT.Lattice.TDDFT.Counterexample
-import DFT.Lattice.HK.SquarePlane
 
 /-!
 # The force-balance counterexample in its general and normalized forms

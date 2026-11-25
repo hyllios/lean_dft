@@ -3,9 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
+import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 import DFT.Continuum.General.HK
 import DFT.Lattice.TDDFT.ForceBalance
-import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 
 /-!
 # The lattice as an instance of the general Hohenberg–Kohn setting

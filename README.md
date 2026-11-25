@@ -138,7 +138,7 @@ Schrödinger equation.
   a null set. Hence `hk_interacting_bosons_line` and `hk_interacting_fermions_line` need no assumption
   beyond the existence of ground states, and in Lieb's form (`lieb_line`) `-v` is the only subgradient
   of the Lieb functional up to constants at a ground-state density.
-  For free bosons ground states exist (`Continuum/Line/Free`): the energy splits into one-particle
+  For free bosons ground states exist (`Continuum/Line/Free/Free`): the energy splits into one-particle
   slice energies along each coordinate, so `ψ₀(x₀)⋯ψ₀(xₙ)` is a ground state, and
   `hk_free_bosons_line` and `lieb_free_bosons_line` hold with no assumption at all.
   Free fermions need the whole one-particle spectrum (`Continuum/Spectral`). The Green operator of

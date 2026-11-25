@@ -3,9 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.TDDFT.Existence
-import DFT.Lattice.Spin.HubbardCertificates
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import DFT.Lattice.Spin.HubbardCertificates
+import DFT.Lattice.TDDFT.Existence
 
 /-!
 # Frozen densities: a total failure of TDDFT uniqueness

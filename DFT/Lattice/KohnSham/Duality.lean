@@ -3,9 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
+import Mathlib.Analysis.Convex.Function
 import DFT.Lattice.Basic.Spectral
 import DFT.Lattice.HK.Basic
-import Mathlib.Analysis.Convex.Function
 
 /-!
 # Lieb's functional and convex duality

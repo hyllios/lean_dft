@@ -3,8 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Spectral.Operator
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
+import DFT.Continuum.Spectral.Operator
 
 /-!
 # The Green operator is injective

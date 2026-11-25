@@ -3,10 +3,10 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.TDDFT.KohnSham
 import Mathlib.Analysis.Matrix.PosDef
 import Mathlib.Analysis.Matrix.Spectrum
 import Mathlib.Algebra.Order.Star.Real
+import DFT.Lattice.TDDFT.KohnSham
 
 /-!
 # Ensembles in lattice TDDFT (purification)

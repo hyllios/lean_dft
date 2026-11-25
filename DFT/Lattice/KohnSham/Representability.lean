@@ -3,9 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.KohnSham.Maximizer
 import Mathlib.Analysis.LocallyConvex.Separation
 import Mathlib.Topology.Instances.Matrix
+import DFT.Lattice.KohnSham.Maximizer
 
 /-!
 # Ensemble v-representability

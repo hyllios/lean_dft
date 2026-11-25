@@ -3,7 +3,9 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
+import DFT.Lattice.Fermions.FirstQuantization
 import DFT.Lattice.PathSum.Assignment
+import DFT.Lattice.StrongPotential.PowerSums
 
 /-!
 # Leading coefficients of free fermions

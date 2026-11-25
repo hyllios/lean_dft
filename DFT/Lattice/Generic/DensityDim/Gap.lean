@@ -3,8 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
+import Mathlib.Topology.Instances.Matrix
 import DFT.Lattice.HK.Gap
-import DFT.Lattice.Basic.Spectral
 
 /-!
 # Spectral gaps of non-degenerate ground states and Lipschitz densities

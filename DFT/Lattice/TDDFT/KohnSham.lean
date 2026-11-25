@@ -3,8 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Lattice.TDDFT.GroundStart
 import DFT.Lattice.KohnSham.Existence
+import DFT.Lattice.TDDFT.GroundStart
 
 /-!
 # Time-dependent Kohn–Sham on the lattice (van Leeuwen's theorem)

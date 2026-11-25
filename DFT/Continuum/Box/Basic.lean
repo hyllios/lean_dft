@@ -3,11 +3,11 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.General.HK
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.Calculus.Deriv.Slope
+import DFT.Continuum.General.HK
 
 /-!
 # An unconditional continuum Hohenberg–Kohn theorem: one particle in a box

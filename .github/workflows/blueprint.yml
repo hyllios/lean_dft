@@ -57,8 +57,8 @@ jobs:
       - name: Source hygiene (forbidden constructs; heartbeat and docstring report)
         run: python3 scripts/check_hygiene.py
 
-      - name: Layering (report-only until the folder cycles are broken)
-        run: python3 scripts/check_layers.py --report-only
+      - name: Layering (library order ForMathlib <- QM <- DFT, no folder-level import cycles)
+        run: python3 scripts/check_layers.py
 
       # The blueprint, checkdecls and the static home page are built explicitly (instead of with docgen-action),
       # because docgen-action still ran doc-gen on the dependencies and exhausted the runner's memory.

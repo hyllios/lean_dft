@@ -3,10 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques, Stefano Pittalis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques, Stefano Pittalis
 -/
-import DFT.Lattice.TDDFT.Existence
-import DFT.Lattice.TDDFT.ForceBalance
-import DFT.Lattice.GenericHK
-import DFT.Lattice.HK.SquarePlane
+import DFT.Lattice.Generic.SquarePlane
 import DFT.Lattice.TDDFT.GroundStart
 
 /-!

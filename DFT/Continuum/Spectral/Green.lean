@@ -3,9 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Box.Sturm
-import DFT.Continuum.Box.Extend
 import DFT.Continuum.Box.Solve
+import DFT.Continuum.Box.Sturm
 
 /-!
 # The Green function of `-d²/dx² + W` on `[0, 1]`

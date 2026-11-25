@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Lattice.Generic.Eliminate
-import DFT.Lattice.RDMFT.KohnSham
 import DFT.Lattice.RDMFT.Counting
+import DFT.Lattice.RDMFT.KohnSham
 
 /-!
 # Interacting ground states are generically not Slater determinants (conditional)

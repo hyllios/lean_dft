@@ -3,10 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques, Stefano Pittalis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques, Stefano Pittalis
 -/
-import DFT.Lattice.HK.Gap
-import DFT.Lattice.HK.Examples
-import DFT.Lattice.HK.SquareWall
 import DFT.Lattice.Basic.SingleParticle
+import DFT.Lattice.HK.SquareWall
 
 /-!
 # The counterexamples to strong Hohenberg–Kohn have non-degenerate ground states
