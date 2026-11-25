@@ -129,29 +129,6 @@ Schrödinger equation.
   search, gives back `E(v) = inf_ψ (F(ρ_ψ) + ρ_ψ(v))`, is convex, and has `-v` as a subgradient at a
   ground-state density of `v`; Hohenberg–Kohn says this subgradient is unique up to constants
   (`subgrad_unique`). In the box this is unconditional (`lieb_box`).
-  Any number of interacting particles on a line (`Continuum/Line`): `N = n + 1` bosons or fermions on
-  `[0, 1]`, on the cube `(0, 1)^N`, with any continuous interaction invariant under relabelling.
-  Ground states solve the Schrödinger equation classically and have zero gradient at their zeros
-  (the competitor is the smoothed modulus `h_ε(Φ)`, for fermions multiplied by a smooth sign of the
-  ordering), so Hopf's lemma rules out sign changes. A bosonic ground state has no zeros in the cube
-  (`gs_ne_zero_bos`); a fermionic one vanishes exactly where two particles meet (`gs_ne_zero_line`),
-  a null set. Hence `hk_interacting_bosons_line` and `hk_interacting_fermions_line` need no assumption
-  beyond the existence of ground states, and in Lieb's form (`lieb_line`) `-v` is the only subgradient
-  of the Lieb functional up to constants at a ground-state density.
-  For free bosons ground states exist (`Continuum/Line/Free/Free`): the energy splits into one-particle
-  slice energies along each coordinate, so `ψ₀(x₀)⋯ψ₀(xₙ)` is a ground state, and
-  `hk_free_bosons_line` and `lieb_free_bosons_line` hold with no assumption at all.
-  Free fermions need the whole one-particle spectrum (`Continuum/Spectral`). The Green operator of
-  `-d²/dx² + W` is compact, symmetric and injective on `L²(0, 1)`, so its eigenvectors form a Hilbert
-  basis, and each is a classical `C²` eigenfunction. In this basis the energy of a state is
-  `Σᵢ λᵢ ⟨φᵢ, ψ⟩²`, which gives the bound `Λ ‖ψ‖² − Σⱼ (Λ − λⱼ) ⟨φⱼ, ψ⟩² ≤ ⟨ψ, hψ⟩` for the `N`
-  lowest eigenfunctions (`exists_orbitals`). Applied slice by slice, together with the Pauli
-  principle `Σₖ ⟨Φ, PₖΦ⟩ ≤ ‖Φ‖²` for each orbital (`Line/Pauli`), it shows that every fermionic state
-  has energy at least `λ₀ + ⋯ + λₙ`. The Slater determinant `det[φⱼ(xᵢ)]` reaches this bound and is
-  not zero, so `hk_free_fermions_line` and `lieb_free_fermions_line` hold with no assumption. For interacting
-  particles, existence in the `C²` form domain is false in general for merely continuous potentials
-  (the ground state is only `C^{1,α}`); it needs Hölder potentials and Schauder theory, or a Sobolev
-  form domain.
 * Dimer reality check (`TDDFT/Dimer`): for one particle on two sites the general machinery gives
   `K = 2Tb [[1,-1],[-1,1]]` with `b = Re(ψ̄₀ψ₁)`, so `Ω = {b ≠ 0}`; the speed limit
   `ṅ₀² ≤ 4T² n₀n₁` holds with equality exactly outside `Ω`; the potential is

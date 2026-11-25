@@ -58,13 +58,3 @@ or kept on purpose.
 | `DFT.van_leeuwen` | yes |
 | `DFT.van_leeuwen_ens` | yes |
 | `DFT.van_leeuwen_unique` | yes |
-
-## Names in the README that no longer exist
-
-The README section "Main results" cites these names, but no declaration with that name exists (they were removed
-in earlier commits such as "Delete the smooth-V code, superseded by the continuous-V results"). The README text
-needs to be updated to the current theorems (likely `hk_line_W_cont_stat`, `lieb_line_W_cont`, `lieb_line_WY`, …);
-that is a statement-level decision and has not been made automatically.
-
-`hk_free_bosons_line`, `hk_free_fermions_line`, `hk_interacting_bosons_line`, `hk_interacting_fermions_line`,
-`lieb_free_bosons_line`, `lieb_free_fermions_line`, `lieb_line`, `gs_ne_zero_line`, `gs_ne_zero_bos`.
