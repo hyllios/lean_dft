@@ -5,31 +5,41 @@
 % to be used later for Wick's theorem via its universality property, if our operators fit its hypotheses.
 
 \begin{definition}[Fermionic Fock space of $M$ modes]\label{def:fock}
+  \lean{QM.ManyBody.Fock, QM.ManyBody.FockOp, QM.ManyBody.finrank_fock}\leanok
   $\mathcal F_M$ is the Hilbert space of functions $\Psi\colon \mathcal P(\{0,\dots,M-1\})\to\mathbb C$ on all configurations
   (subsets of the modes), with $\langle\Psi,\Phi\rangle=\sum_s\overline{\Psi(s)}\Phi(s)$; $\dim\mathcal F_M = 2^M$.
   The basis vector $|s\rangle$ is the indicator of the configuration $s$.
-  (statement pending approval)
 \end{definition}
 
 \begin{definition}[Creation and annihilation operators]\label{def:cdag}
+  \lean{QM.ManyBody.jwSign, QM.ManyBody.cre, QM.ManyBody.ann, QM.ManyBody.ann_eq_adjoint,
+    QM.ManyBody.cre_mulVec_single, QM.ManyBody.ann_mulVec_single,
+    QM.ManyBody.creOp, QM.ManyBody.annOp, QM.ManyBody.annOp_eq_adjoint}\leanok
   \uses{def:fock}
   With the Jordan–Wigner sign $\sigma_i(s)=(-1)^{|\{j\in s:\ j<i\}|}$:
   $c_i^\dagger|s\rangle=\sigma_i(s)\,|s\cup\{i\}\rangle$ if $i\notin s$ and $0$ otherwise;
   $c_i=(c_i^\dagger)^\dagger$, so $c_i|s\rangle=\sigma_i(s)\,|s\setminus\{i\}\rangle$ if $i\in s$ and $0$ otherwise.
-  (statement pending approval)
 \end{definition}
 
 \begin{theorem}[Canonical anticommutation relations]\label{thm:car}
+  \lean{QM.ManyBody.ann_mul_cre_add, QM.ManyBody.ann_mul_ann_add, QM.ManyBody.cre_mul_cre_add,
+    QM.ManyBody.annOp_mul_creOp_add, QM.ManyBody.annOp_mul_annOp_add, QM.ManyBody.creOp_mul_creOp_add}\leanok
   \uses{def:cdag}
   For all modes $i,j$: $\{c_i,c_j^\dagger\}=\delta_{ij}\,\mathbb 1$ and $\{c_i,c_j\}=\{c_i^\dagger,c_j^\dagger\}=0$.
-  (statement pending approval)
 \end{theorem}
+\begin{proof}\leanok
+  Compare the action on vectors. Adding an unoccupied mode $j$ multiplies $\sigma_i$ by $-1$ exactly when $j<i$; for
+  $i\neq j$ the two exchange factors multiply to $-1$, so the two terms of each anticommutator cancel. For $i=j$,
+  $\sigma_i(s)^2=1$ and exactly one of the two terms of $\{c_i,c_i^\dagger\}$ survives on each configuration.
+  $\{c_i^\dagger,c_j^\dagger\}=0$ is the conjugate transpose of $\{c_j,c_i\}=0$. The identities hold first for the
+  matrices indexed by configurations and are transported to bounded operators on $\mathcal F_M$ by the star-algebra
+  equivalence between matrices and operators (\texttt{Matrix.toEuclideanCLM}).
+\end{proof}
 
 \begin{theorem}[Number operator]\label{thm:number}
   \uses{def:cdag}
   $\hat N=\sum_i c_i^\dagger c_i$ acts as $\hat N|s\rangle=|s|\,|s\rangle$; $\hat n_i=c_i^\dagger c_i$ acts as the occupation
   $\mathtt{occF}\ i\ s$ of the lattice code (\texttt{QM.ManyBody.Configurations}).
-  (statement pending approval)
 \end{theorem}
 
 \begin{theorem}[Bridge to the lattice code]\label{thm:fock-bridge}
@@ -37,15 +47,15 @@
   For a real single-particle matrix $h$, the operator $\sum_{ij}h_{ij}\,c_i^\dagger c_j$ preserves the $N$-particle sector
   $\{s:|s|=N\}$ and its matrix there is the many-body matrix $\Gamma\,h$ of \texttt{DFT/Lattice/Fermions/SecondQuantization}
   (\texttt{Conf M N} ordered as in that file). Consequently the lattice Hamiltonians \texttt{H0F} are restrictions of
-  second-quantized Hamiltonians on $\mathcal F_M$. (statement pending approval)
+  second-quantized Hamiltonians on $\mathcal F_M$.
 \end{theorem}
 
 \begin{definition}[Gibbs state]\label{def:gibbs}
-  $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$. (statement pending approval)
+  $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$.
 \end{definition}
 
 \begin{theorem}[KMS condition]\label{thm:kms}
   \uses{def:gibbs}
   $\operatorname{Tr}\rho_\beta\, A(t) B = \operatorname{Tr}\rho_\beta\, B A(t+i\beta)$ (finite dimensions: an identity of
-  entire functions of $t$). (statement pending approval)
+  entire functions of $t$).
 \end{theorem}

@@ -59,8 +59,9 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   To do: symmetrizer and antisymmetrizer as projections.
 
 ### Track B: many-body theory with finitely many modes (`QM/ManyBody`, `QM/Thermal`)
-- B1 🟡 Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. **Proposal (2026-11-26, awaiting
-  approval; blueprint Part III):** a concrete Fock space, functions `Finset (Fin M) → ℂ` (dimension 2^M), with Jordan–Wigner
+- B1 🟡 Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. **Approved 2026-11-26; Fock space
+  and CAR proved** (`QM/ManyBody/Fock`: matrix form and bounded operators on the Hilbert space). Next: number operator, bridge.
+  Design (blueprint Part III): a concrete Fock space, functions `Finset (Fin M) → ℂ` (dimension 2^M), with Jordan–Wigner
   signs; first theorems: CAR, the number operator, and the **bridge** `Σ h_ij c_i† c_j = Γ h` on the N-particle sector, which
   connects all of the existing lattice DFT. The lattice code (`DFT/Lattice/Fermions/SecondQuantization`) works only at fixed N with
   real matrices, so it cannot host `c_i` itself. Physlib's Wick algebra is abstract and QFT-oriented (no finite-mode Hilbert
@@ -152,3 +153,5 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
 - 2026-11-26: roadmap moved into the repository (`docs/ROADMAP.md`) and updated to the state after the reorganization.
 - 2026-11-26: heartbeat backlog closed (all overrides justified; check enforcing); generated certificates reproducible (CI).
 - 2026-11-26: B1 proposal written (concrete Fock space + bridge to the lattice code), awaiting approval.
+- 2026-11-26: Part III statements approved. Fock space, c_i†/c_i (Jordan–Wigner), c_i = (c_i†)† and the CAR proved
+  (`QM/ManyBody/Fock`), as matrix identities and as identities of bounded operators on the Fock Hilbert space.

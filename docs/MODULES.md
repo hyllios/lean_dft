@@ -41,7 +41,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-5 modules, 653 lines.
+6 modules, 962 lines.
 
 ### `QM/`
 
@@ -60,6 +60,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `QM.ManyBody.Configurations` | 30 | Spinless lattice fermions: configurations and occupations |
+| `QM.ManyBody.Fock` | 309 | The fermionic Fock space of `M` modes |
 | `QM.ManyBody.Slater` | 84 | Slater determinants in first quantisation |
 
 ### `QM/Spin/`
@@ -436,4 +437,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 59467 lines of Lean.
+Total: 59776 lines of Lean.
