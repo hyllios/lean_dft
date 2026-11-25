@@ -895,3 +895,16 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   element of H1E, rhoE_eq_sqE, QNH, IsGSNH, **abs_v_rhoE_le** form bound, QNH_ge,
   tendsto_int_rhoN, tendsto_int_w, **exists_isGSNH**). The limit density is identified through
   pot_eq_of_integral on evE e₀², not via rhoHat. Standard axioms. Next: Q3 non-degeneracy + UCP.
+- Q3 bosons DONE (2026-11-25): `Line/NeuChain` (testN_smd, **tendsto_truncC_dk**: ∂ₖ truncC ⇀ ∂ₖΦ
+  tested on the sine basis, **isWDN_comp** chain rule, **isWDN_abs**, abs_mem_DomN, kinN_abs_le,
+  IsWDN.mul_C1, IsWDN.mul_cutoff: ζ C¹ vanishing on ∂ ⇒ ζΦ ∈ H¹₀). `Line/NeuEL` (evE_inj, eq_of_int,
+  int_rhoN_N, pfN, int_rhoE, rhoE2 mixed density in H1E, rhoE_expand, rhoE_smul, rhoE_null, kinN2,
+  kinN_expand, kinN_smul, QNH_expand, QNH_smul, QNH_null, EN_mul_leH, **euler_lagrangeNH**, rhoE_abs,
+  **isGSNH_abs**). `Line/NeuDensD` (Test1, ae_eq_zero_of_test1, ae_eq_of_int_pot,
+  integral_fnE_mul_deriv, snd_ae_eq, mF, integral_sq_mF_le, **marg_wd**: the marginal of p has weak
+  derivative the marginal of ∂₀p, snd_marg, **norm_sq_le_marg**: ‖e‖² ≤ 2N²(∫p² + ∫(∂₀p)²), int_mF).
+  `Line/NeuUcp` (prodB, bmp, etaA, zetaA cutoffs from ContDiffBump, log_estimate_coreN, logTest_memN,
+  **log_estimate_H**: the H⁻¹ term of Moser's estimate is ≤ ¼ of the log gradient + const via
+  norm_sq_le_marg and Young, **logData_H**: ζ_a u ∈ H¹₀ feeds the Dirichlet LogData machinery,
+  **gsNH_ne_zero_bos**). Standard axioms. Next: fermions (port HalfSpace/YoungChamber/YoungGS to
+  IsWDN, then the chamber companion as in MeasureNFer).

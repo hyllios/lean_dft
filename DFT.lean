@@ -68,11 +68,15 @@ import DFT.Continuum.Line.MeasureReg
 import DFT.Continuum.Line.MeasureTrap
 import DFT.Continuum.Line.MeasureUCP
 import DFT.Continuum.Line.NeuBasis
+import DFT.Continuum.Line.NeuChain
 import DFT.Continuum.Line.NeuDens
+import DFT.Continuum.Line.NeuDensD
+import DFT.Continuum.Line.NeuEL
 import DFT.Continuum.Line.NeuGS
 import DFT.Continuum.Line.NeuNGS
 import DFT.Continuum.Line.NeuPot
 import DFT.Continuum.Line.NeuSeries
+import DFT.Continuum.Line.NeuUcp
 import DFT.Continuum.Line.NeuWeak
 import DFT.Continuum.Line.Nondeg
 import DFT.Continuum.Line.NotVRep
