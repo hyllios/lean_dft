@@ -860,3 +860,26 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   (D² ≤ L h^{5/8}), **`exists_not_BsetH`** (tent width r¹⁶, height r⁹), **`vrepMeasN_meagre`**,
   **`vrepMeasN_nonrep_dense`**: interacting measure-v-rep densities are meagre (both statistics,
   continuous w). Standard axioms.
+
+## Corso's setting: Neumann walls, H⁻¹ potentials (plan, 2026-11-25)
+Target: Corso, Lett. Math. Phys. 2026 (arXiv:2504.05501), Thm 2.3 + 2.9 on [0,1] with Neumann
+walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (Stat).
+- Encoding: H¹(0,1) ≅ ℝ × L² via ρ ↦ (ρ(0), ρ'), `H1E := WithLp 2 (ℝ × L2I)`, potentials
+  `PotH := StrongDual ℝ H1E`, i.e. v(ρ) = α ρ(0) + ∫ β ρ' (β ∈ L²); δₓ is α = 1, β = 1_[0,x].
+  No Sobolev library needed.
+- Q1 one particle: `H1N` (AC, ψ' ∈ L², no boundary values), density ψ² ∈ H¹, KLMN bound
+  |v(ψ²)| ≤ ε∫ψ'² + C_ε∫ψ², GS existence (direct method), Euler–Lagrange.
+- Q2 N-body Neumann state space (weak derivatives tested against C¹ φ with compact support in the
+  open cube), ρ̂ ∈ H¹, GS existence for PotH and continuous w.
+- Q3 non-degeneracy + UCP of the GS (bosons |Ψ|; fermions via the chamber). Risky: first-order
+  term ∫ β (ρ_Ψ)'.
+- Q4 necessity: ρ ∈ H¹, ρ > 0 on [0,1] (interior: Courant + non-degeneracy; walls: weak UCP on
+  the boundary).
+- Q5 sufficiency: every ρ ∈ H¹, ρ > 0, ∫ρ = N is v-rep (F convex, bounded near ρ via Harriman
+  orbitals ⇒ subgradient; converse Hellmann–Feynman + uniqueness as in `Line/Dense`).
+- Q6 HK: same GS density ⇒ v − v' = const (Corso's operator K / our pair-density argument).
+- Later: periodic/antiperiodic BCs, xc differentiability, exact KS (Thm 2.12, 2.15).
+- Q1 DONE (2026-11-25): `Line/NeuPot` (H1N, H1E, PotH, toE, sq_le_H1N, H1N.mul, **abs_v_sq_le**
+  form bound, evE, ofM (measures ⊂ H⁻¹), deltaH), `Line/NeuGS` (fnE, mulL, **tendsto_inner_mulL**,
+  dE, **tendsto_v_dE**, QE, EH, exists_minE, dE2, euler_lagrangeE, QH, IsGSH, VRepH,
+  **exists_isGSH**, **euler_lagrangeH**). Standard axioms. Next: Q2 N-body Neumann state space.

@@ -1497,3 +1497,39 @@ $(a,b)$, Young subgroup $\mathrm{YG}_a$).
   $E(a,b)<E(a+1,b-1)$ (Theorem~\ref{thm:lieb_mattis_W_cont}), so it vanishes, and the lift has total spin exactly $S$.
 \end{proof}
 
+
+\section{Neumann walls and $H^{-1}$ potentials (Corso's setting)}
+
+Following Corso (Lett.\ Math.\ Phys.\ 2026), particles on $[0,1]$ with Neumann walls move in potentials from the
+dual of $H^1(0,1)$. The map $g\mapsto(g(0),g')$ identifies $H^1(0,1)$ with the Hilbert space $\mathbb R\times L^2(0,1)$,
+so every potential acts as $v(\rho)=\alpha\rho(0)+\int\beta\rho'$ with $\beta\in L^2$; $\delta_x$ is $\alpha=1$,
+$\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
+
+\begin{theorem}[Form bound for $H^{-1}$ potentials]
+  \label{thm:neu_form_bound}
+  \lean{DFT.Continuum.Line.H1N, DFT.Continuum.Line.H1E, DFT.Continuum.Line.PotH, DFT.Continuum.Line.toE, DFT.Continuum.Line.sqE, DFT.Continuum.Line.sq_le_H1N, DFT.Continuum.Line.H1N.mul, DFT.Continuum.Line.norm_sqE_sq_le, DFT.Continuum.Line.cH, DFT.Continuum.Line.abs_v_sq_le, DFT.Continuum.Line.evE, DFT.Continuum.Line.ofM, DFT.Continuum.Line.ofM_sqE, DFT.Continuum.Line.deltaH, DFT.Continuum.Line.deltaH_toE}
+  \leanok
+  For $\psi\in H^1(0,1)$ and $v\in H^{-1}$, $|v(\psi^2)|\le\frac12\int\psi'^2+C_v\int\psi^2$. Measure potentials embed in
+  $H^{-1}$, compatibly with $\nu(\psi^2)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\psi(t)^2\le(1+a)\int\psi^2+\frac1a\int\psi'^2$ (average $\psi(t)^2-\psi(s)^2=\int_s^t(\psi^2)'$ over $s$), and
+  $\|(\psi(0)^2,2\psi\psi')\|^2\le M^2+4M\int\psi'^2$ with $M=\sup\psi^2$; then Young's inequality.
+\end{proof}
+
+\begin{theorem}[Neumann ground states for $H^{-1}$ potentials]
+  \label{thm:neu_gs}
+  \lean{DFT.Continuum.Line.fnE, DFT.Continuum.Line.toE_fnE, DFT.Continuum.Line.mulL, DFT.Continuum.Line.tendsto_inner_mulL, DFT.Continuum.Line.dE, DFT.Continuum.Line.sqE_eq_dE, DFT.Continuum.Line.tendsto_v_dE, DFT.Continuum.Line.QE, DFT.Continuum.Line.EH, DFT.Continuum.Line.exists_minE, DFT.Continuum.Line.EH_mul_le, DFT.Continuum.Line.euler_lagrangeE, DFT.Continuum.Line.QH, DFT.Continuum.Line.IsGSH, DFT.Continuum.Line.VRepH, DFT.Continuum.Line.exists_isGSH, DFT.Continuum.Line.QH_of_isGSH, DFT.Continuum.Line.euler_lagrangeH}
+  \leanok
+  \uses{thm:neu_form_bound}
+  Every $v\in H^{-1}$ has a normalised ground state $\psi\in H^1(0,1)$ of $-\frac{d^2}{dt^2}+v$ with Neumann walls, and
+  $\int\psi'\varphi'+v(\psi\varphi)=E_0\int\psi\varphi$ for all $\varphi\in H^1(0,1)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Direct method in $\mathbb R\times L^2$: along a minimising sequence $(c_k,f_k)$ the constants converge and $f_k\rightharpoonup g$
+  weakly; the functions converge uniformly. The density's derivative $2\psi_k f_k$ converges weakly ($P_kf_k\rightharpoonup Pg$
+  when $P_k\to P$ uniformly), so $v(\psi_k^2)\to v(\psi^2)$; $\|f\|^2$ is weakly lower semicontinuous. Euler--Lagrange
+  from the quadratic expansion of the energy.
+\end{proof}
