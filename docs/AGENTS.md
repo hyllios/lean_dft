@@ -21,7 +21,10 @@ The architecture is described in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 - `PhyslibAlpha` (unreviewed) must not be imported.
 - Folders inside a library must not import each other in a cycle. If you need something from a "later" folder, the
   thing you need is in the wrong place: move it down.
-- Namespaces follow folders (`DFT.Lattice.HK`, `QM.ManyBody`, ...); `ForMathlib` uses the Mathlib namespace of the object.
+- Namespaces of *new* code follow folders (`DFT.Lattice.HK`, `QM.ManyBody`, ...); new `ForMathlib` code uses the Mathlib
+  namespace of the object. Files moved into `ForMathlib`/`QM` from `DFT` keep their `DFT.…` names until upstreamed
+  (no cosmetic renames, §5).
+- The folder order inside each library is in `ARCHITECTURE.md`.
 - Import only what you use (`lake exe shake` must not report your file).
 
 ## 3. Rigor (enforced in CI)

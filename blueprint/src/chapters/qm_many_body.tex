@@ -1,0 +1,22 @@
+\chapter{Many-body theory with finitely many modes}
+
+\begin{definition}[Fermionic Fock space]\label{def:fock}
+  For $M$ modes, $\mathcal F_M = \bigoplus_{N=0}^{M}\Lambda^N\mathbb C^M$, of dimension $2^M$, with
+  creation/annihilation operators $c_i^\dagger, c_i$. (statement pending approval; reuse lean\_dft second quantization and
+  check Physlib's \texttt{WickAlgebra})
+\end{definition}
+
+\begin{theorem}[Canonical anticommutation relations]\label{thm:car}
+  \uses{def:fock}
+  $\{c_i,c_j^\dagger\}=\delta_{ij}$, $\{c_i,c_j\}=0$. (statement pending approval)
+\end{theorem}
+
+\begin{definition}[Gibbs state]\label{def:gibbs}
+  $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$. (statement pending approval)
+\end{definition}
+
+\begin{theorem}[KMS condition]\label{thm:kms}
+  \uses{def:gibbs}
+  $\operatorname{Tr}\rho_\beta\, A(t) B = \operatorname{Tr}\rho_\beta\, B A(t+i\beta)$ (finite dimensions: an identity of
+  entire functions of $t$). (statement pending approval)
+\end{theorem}

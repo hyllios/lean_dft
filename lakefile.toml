@@ -1,7 +1,7 @@
 name = "lean_dft"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["DFT"]
+defaultTargets = ["ForMathlib", "QM", "DFT"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -14,6 +14,15 @@ maxSynthPendingDepth = 3
 name = "Physlib"
 git = "https://github.com/leanprover-community/physlib.git"
 rev = "v4.36.0"
+
+# Libraries, strictly layered (scripts/check_layers.py): ForMathlib <- QM <- DFT.
+# ForMathlib: pure mathematics (Mathlib candidates). QM: generic quantum mechanics and many-body theory
+# (Physlib candidates). DFT: density-functional theory proper.
+[[lean_lib]]
+name = "ForMathlib"
+
+[[lean_lib]]
+name = "QM"
 
 [[lean_lib]]
 name = "DFT"

@@ -1,0 +1,29 @@
+\chapter{Basic quantum mechanics (from Physlib)}
+
+Basic quantum mechanics is \emph{not} redeveloped here: we build on Physlib, where states, observables and
+expectation values are defined for possibly unbounded operators $T\colon \mathcal H\to\mathcal H$
+(Lean: \texttt{LinearPMap}). Finite-dimensional or bounded operators enter with domain $\mathcal H$.
+
+\begin{definition}[Expectation value, Physlib]\label{def:expectation}
+  \lean{LinearPMap.expectedValue}\leanok
+  $\langle T\rangle_\psi = \operatorname{Re}\langle\psi, T\psi\rangle$ for $\psi$ in the domain of $T$.
+\end{definition}
+
+\begin{definition}[Variance, Physlib]\label{def:variance}
+  \lean{LinearPMap.variance}\leanok
+  \uses{def:expectation}
+  $(\Delta T)^2_\psi = \|(T-\langle T\rangle_\psi)\psi\|^2$.
+\end{definition}
+
+\begin{theorem}[Robertson uncertainty relation, Physlib]\label{thm:robertson}
+  \lean{LinearPMap.state_uncertainty_of_raw_commutator}\leanok
+  \uses{def:variance}
+  For symmetric $A,B$ and normalized $\psi$ in the relevant domains with $\langle\psi,[A,B]\psi\rangle = ic$:
+  $(\Delta A)_\psi(\Delta B)_\psi\ge |c|/2$.
+\end{theorem}
+
+\begin{theorem}[Schrödinger evolution in finite dimensions]\label{thm:evolution}
+  For self-adjoint $H$ on a finite-dimensional space, $U(t)=e^{-itH}$ is unitary, $U(t+s)=U(t)U(s)$, and
+  $\psi(t)=U(t)\psi_0$ is the unique solution of $i\dot\psi = H\psi$, $\psi(0)=\psi_0$.
+  (Statement pending approval. First check Physlib's \texttt{UnitaryOneParameterGroup}, which covers bounded generators.)
+\end{theorem}

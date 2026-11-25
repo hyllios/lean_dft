@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Box.Ground
-import DFT.Continuum.Spectral.Basis
+import ForMathlib.Analysis.InnerProductSpace.CompactEigenbasis
 import DFT.Continuum.Spectral.Eigen
 import DFT.Continuum.Spectral.Injective
 

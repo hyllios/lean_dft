@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import DFT.Lattice.Basic.GroundState
+import QM.Finite.GroundState
 
 /-!
 # Hohenberg–Kohn on a general configuration space (conditional form)

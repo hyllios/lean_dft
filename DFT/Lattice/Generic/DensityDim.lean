@@ -6,7 +6,7 @@ Authors: Miguel A. L. Marques
 import DFT.Lattice.Basic.Spectral
 import DFT.Lattice.Generic.DensityDim.Gap
 import DFT.Lattice.Generic.Krylov
-import DFT.Lattice.Generic.ZeroSetDim
+import ForMathlib.MeasureTheory.ZeroSetDim
 
 /-!
 # Non-uniquely v-representable densities have codimension at least two

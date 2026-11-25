@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import Mathlib.Analysis.Matrix.Spectrum
-import DFT.Lattice.Basic.GroundState
+import QM.Finite.GroundState
 
 /-!
 # Existence of ground states and the ground-state energy

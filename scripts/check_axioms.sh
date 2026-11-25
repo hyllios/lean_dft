@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export PATH=$HOME/.elan/toolchains/$(sed 's|leanprover/lean4:|leanprover--lean4---|' lean-toolchain)/bin:$PATH
-lake build DFT >/dev/null
+lake build ForMathlib QM DFT >/dev/null
 out=$(lake env lean scripts/AxiomCheck.lean 2>&1) || { echo "$out"; exit 1; }
 echo "$out"
 echo "$out" | grep -q "axiom check OK" || exit 1

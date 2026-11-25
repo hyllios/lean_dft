@@ -1,0 +1,32 @@
+\chapter{Green's functions}
+
+\begin{definition}[Retarded one-body Green's function]\label{def:green-ret}
+  \uses{def:fock}
+  $G^R_{ij}(t) = -i\,\theta(t)\,\langle\{c_i(t),c_j^\dagger\}\rangle$, with $c_i(t)=e^{iHt}c_ie^{-iHt}$, in the ground state
+  or a Gibbs state. (statement pending approval)
+\end{definition}
+
+\begin{theorem}[Lehmann representation]\label{thm:lehmann}
+  \uses{def:green-ret, thm:car}
+  For $\operatorname{Im}z>0$,
+  $G_{ij}(z) = \sum_{n}\frac{\langle 0|c_i|n\rangle\langle n|c_j^\dagger|0\rangle}{z-(E_n-E_0)}
+             + \sum_{m}\frac{\langle 0|c_j^\dagger|m\rangle\langle m|c_i|0\rangle}{z+(E_m-E_0)}$,
+  and the spectral function $A(\omega) = -\pi^{-1}\operatorname{Im}G(\omega+i0)$ is a positive matrix-valued measure of total
+  mass the identity. (statement pending approval)
+\end{theorem}
+
+\begin{definition}[Self-energy]\label{def:self-energy}
+  \uses{thm:lehmann}
+  $\Sigma(z) = G_0(z)^{-1} - G(z)^{-1}$ (Dyson equation). (statement pending approval)
+\end{definition}
+
+\begin{theorem}[Herglotz property of the self-energy]\label{thm:herglotz}
+  \uses{def:self-energy}
+  $\operatorname{Im}\Sigma(z)\le 0$ for $\operatorname{Im}z>0$, and $\Sigma(z)\to\Sigma_\infty$ (the Hartree–Fock self-energy)
+  as $|z|\to\infty$. (statement pending approval)
+\end{theorem}
+
+\begin{theorem}[Galitskii–Migdal formula]\label{thm:galitskii-migdal}
+  \uses{thm:lehmann}
+  $E_0 = \tfrac12\sum_{ij}\int\! d\omega\,\theta(\mu-\omega)\,(\omega\,\delta_{ij}+h_{ij})A_{ji}(\omega)$. (statement pending approval)
+\end{theorem}

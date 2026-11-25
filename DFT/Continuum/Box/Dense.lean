@@ -5,7 +5,7 @@ Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Box.Lieb
 import DFT.Continuum.Box.VRep
-import DFT.Continuum.General.Ekeland
+import ForMathlib.Analysis.Convex.Ekeland
 
 /-!
 # Supergradient densities are dense (one particle in a box)
