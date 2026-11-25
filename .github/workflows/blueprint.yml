@@ -47,6 +47,19 @@ jobs:
           lint: false
           mk_all-check: true
 
+      # Rigor gates (docs/AGENTS.md §3). The audit self-test runs first, so a weakened audit cannot pass silently.
+      - name: Axiom audit self-test
+        run: scripts/test_axiom_check.sh
+
+      - name: Axiom audit (only propext, Classical.choice, Quot.sound; catches sorry)
+        run: scripts/check_axioms.sh
+
+      - name: Source hygiene (forbidden constructs; heartbeat and docstring report)
+        run: python3 scripts/check_hygiene.py
+
+      - name: Layering (report-only until the folder cycles are broken)
+        run: python3 scripts/check_layers.py --report-only
+
       # The blueprint, checkdecls and the static home page are built explicitly (instead of with docgen-action),
       # because docgen-action still ran doc-gen on the dependencies and exhausted the runner's memory.
       - name: Build blueprint and copy to `home_page/blueprint`
