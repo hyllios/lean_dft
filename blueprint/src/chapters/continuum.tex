@@ -1244,6 +1244,51 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   Theorem~\ref{thm:line_fer_meagre} adds $\approx4|g(t_0)|h/r$ at its apex, which beats $Lh$ for small $r$.
 \end{proof}
 
+\begin{theorem}[Ground states in measure potentials are $H^{1+1/4}$ in each variable]
+  \label{thm:line_measure_reg}
+  \lean{DFT.Continuum.Line.boxT, DFT.Continuum.Line.sum_boxI_cons, DFT.Continuum.Line.integral_sum_smd_sq, DFT.Continuum.Line.trace_le, DFT.Continuum.Line.sumS, DFT.Continuum.Line.sumS_cons, DFT.Continuum.Line.sumS_mem, DFT.Continuum.Line.integral_mul_sumS, DFT.Continuum.Line.h0W_sumS, DFT.Continuum.Line.rpow_le_lam, DFT.Continuum.Line.fW, DFT.Continuum.Line.rhoHat_sumS_le, DFT.Continuum.Line.summable_lam54}
+  \leanok
+  \uses{thm:line_measureN_hk_full}
+  For $N$ interacting bosons or fermions (continuous $w$) in a measure potential $\nu$, the sine coefficients of a ground
+  state satisfy $\sum_m\lambda_m^{5/4}c_m^2<\infty$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Trace inequality: for a finite sine sum, $\int(\sum_me_m\beta_{m_0}s_{m'}(y))^2dy\le(\sum_mW_{m_0}e_m^2)(\sum_k\beta_k^2/W_k)$;
+  with $\beta_k=s_k(t)$ and $W_k=(k+1)^{3/2}$ this gives $\sup\hat\rho_F\le NZ\sum\lambda^{3/4}e^2$. Test the Euler--Lagrange
+  equation with $\Psi=\sum_{m\le M}\lambda_m^{-3/4}(\lambda_m-E)c_ms_m$: with $X_M=\sum_{m\le M}\lambda^{-3/4}(\lambda-E)^2c^2$,
+  $X_M=-\sum a_m\langle s_m,w\Phi\rangle-\nu(\hat\rho(\Phi,\Psi))\le\sqrt{X_M}\,\|w\Phi\|+\|\nu\|\sqrt{\|\hat\rho_\Phi\|NZX_M}$,
+  so $X_M$ is bounded.
+\end{proof}
+
+\begin{theorem}[Ground-state densities in measure potentials are $5/8$-H\"older]
+  \label{thm:line_measure_holder}
+  \lean{DFT.Continuum.Line.sn_diff_sq_le, DFT.Continuum.Line.sum_sn_diff_le, DFT.Continuum.Line.rhoHat_sumS_holder, DFT.Continuum.Line.tendsto_rhoHat_trunc, DFT.Continuum.Line.rhoHat_holder}
+  \leanok
+  \uses{thm:line_measure_reg}
+  $|\hat\rho_\Phi(t')-\hat\rho_\Phi(t)|\le C|t'-t|^{5/8}$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  For a finite sine sum, $\hat\rho_F(t')-\hat\rho_F(t)=N\int(F(t')-F(t))(F(t')+F(t))\,dy$; the trace inequality with
+  $\beta_k=s_k(t')-s_k(t)$, $\beta_k^2\le3(5(k+1)|t'-t|)^{5/4}$ and $W_k=(k+1)^{5/2}$ gives the bound for the truncations,
+  whose densities converge pointwise.
+\end{proof}
+
+\begin{theorem}[Interacting measure-$v$-representable densities are meagre]
+  \label{thm:line_measureN_meagre}
+  \lean{DFT.Continuum.Line.BsetH, DFT.Continuum.Line.isClosed_BsetH, DFT.Continuum.Line.exists_not_BsetH, DFT.Continuum.Line.BsetHS, DFT.Continuum.Line.isNowhereDense_BsetHS, DFT.Continuum.Line.mem_BsetH_of_holder, DFT.Continuum.Line.vrepMeasN_meagre, DFT.Continuum.Line.vrepMeasN_nonrep_dense}
+  \leanok
+  \uses{thm:line_measure_holder, thm:line_measure_meagre}
+  For $N$ interacting bosons or fermions (continuous $w$), the ground-state densities of measure potentials form a meagre
+  subset of $S_N$; the non-representable densities are residual.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The densities have second differences at most $Lh^{5/8}$. A tent of width $r^{16}$ and height $r^9$ costs $O(r)$ in $L^2$
+  and adds $\approx4|g(t_0)|r^9$ to the second difference at $h=r^{16}$, beating $Lh^{5/8}=Lr^{10}$.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}

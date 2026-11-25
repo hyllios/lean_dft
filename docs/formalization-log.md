@@ -852,3 +852,11 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   **`vrepMeasN_bos_meagre`**: even with measure potentials, v-representable densities (one particle,
   N non-interacting bosons) are meagre in S_N. Standard axioms. Interacting case open (needs
   Lipschitz/regularity of ρ̂ for GS of measure potentials).
+  INTERACTING CASE DONE (2026-11-25): `Line/MeasureReg`: `trace_le` (trace inequality for finite
+  sine sums), `sumS` (finite sine sums as tests: `sumS_mem`, `h0W_sumS`), `rhoHat_sumS_le`,
+  **`summable_lam54`** (GS of N interacting particles in a measure potential: Σ λ^{5/4} c² < ∞;
+  EL tested with Σ λ^{-3/4}(λ−E)c s_m, duality). `Line/MeasureHolder`: `rhoHat_sumS_holder`,
+  `tendsto_rhoHat_trunc`, **`rhoHat_holder`** (ρ̂ is 5/8-Hölder). `Line/MeasureMeagreN`: `BsetH`
+  (D² ≤ L h^{5/8}), **`exists_not_BsetH`** (tent width r¹⁶, height r⁹), **`vrepMeasN_meagre`**,
+  **`vrepMeasN_nonrep_dense`**: interacting measure-v-rep densities are meagre (both statistics,
+  continuous w). Standard axioms.
