@@ -1124,6 +1124,40 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   Conversely, equality forces $g/\sqrt N$ to be a one-particle minimiser.
 \end{proof}
 
+\begin{theorem}[Hohenberg--Kohn for $N$ particles in measure potentials: partial results]
+  \label{thm:line_measureN_hk}
+  \lean{DFT.Continuum.Line.QMN_sub, DFT.Continuum.Line.isGSN_of_same_dens, DFT.Continuum.Line.gs1_of_isGSN', DFT.Continuum.Line.hk_bos0}
+  \leanok
+  \uses{thm:line_measureN_bos, thm:line_measure_hk}
+  (i) For any statistics and continuous $w$: ground states of $\nu$ and $\nu'$ with the same density are ground states of
+  both. (ii) For non-interacting bosons: two measure potentials with ground states of the same density differ by
+  $C\,dx+a\delta_0+b\delta_1$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  (i) The usual variational argument. (ii) A common ground state $\Phi$ makes $\sqrt{\hat\rho_\Phi/N}$ a one-particle ground
+  state of both potentials; apply Theorem~\ref{thm:line_measure_hk}.
+\end{proof}
+
+\begin{theorem}[Euler--Lagrange, unique continuation and positivity for bosons in measure potentials]
+  \label{thm:line_measureN_ucp}
+  \lean{DFT.Continuum.Line.int_rhoHat, DFT.Continuum.Line.rhoHat2, DFT.Continuum.Line.int_rhoHat2, DFT.Continuum.Line.rhoHat_expand, DFT.Continuum.Line.QMN_expand, DFT.Continuum.Line.rhoHat_smul, DFT.Continuum.Line.QMN_smul, DFT.Continuum.Line.QMN_null, DFT.Continuum.Line.EN_mul_le, DFT.Continuum.Line.euler_lagrangeN, DFT.Continuum.Line.rhoHat_abs, DFT.Continuum.Line.isGSN_abs, DFT.Continuum.Line.log_estimate_core, DFT.Continuum.Line.pot_le_of_int, DFT.Continuum.Line.pot_nonneg_of_int, DFT.Continuum.Line.norm_rhoHat2_le, DFT.Continuum.Line.logData_meas, DFT.Continuum.Line.gsN_ne_zero_bos, DFT.Continuum.Line.sq_sub_le_H10, DFT.Continuum.Line.rhoHat2_eq_zero, DFT.Continuum.Line.rhoHat_pos_bos}
+  \leanok
+  \uses{thm:line_measureN_gs}
+  For $N$ bosons with a measure potential and a continuous interaction, a ground state $\Phi$ satisfies
+  $h_0(\Phi,\Psi)+\nu(\hat\rho(\Phi,\Psi))=E\int\Phi\Psi$ for all $\Psi\in H^1_0$; it is nonzero almost everywhere; and its density
+  $\hat\rho$ is positive on $(0,1)$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  The mixed density is defined by polarisation and characterised by its integrals. Unique continuation follows the
+  proof for continuous potentials: Moser's estimate needs only a lower bound on
+  $\sum_k\int\partial_ku\,\partial_k\varphi$ for $\varphi=\eta^2/(u+\varepsilon)$, and here $0\le u\varphi\le\eta^2\le1$ gives
+  $0\le\hat\rho(u,\varphi)\le N$, so $|\nu(\hat\rho(u,\varphi))|\le N\|\nu\|$. Positivity: if $\hat\rho(t_0)=0$, $\hat\rho=g^2$ with
+  $g\in H^1_0$, $g(t_0)=0$, so $\hat\rho(t)\le|t-t_0|\int g'^2$; the cut along the planes $x_i=t_0$ splits the energy, and one piece
+  is a ground state vanishing on a set of positive measure.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}

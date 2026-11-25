@@ -797,4 +797,16 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   `rhoHat_prodS`, `isGSN_prodS`, `gs1_of_isGSN`, **`vrepMeasN_bos_iff`** (N-boson measure-v-rep ⟺ ρ/N
   one-particle measure-v-rep), **`trap_vrepMeasN`** (plateau density, N bosons, −3δ_{1/3} − 3δ_{2/3}).
   Blueprint `thm:line_measureN`, `thm:line_measureN_gs`, `thm:line_measureN_bos`.
-  Open (N5, parked): interacting HK / UCP for measure potentials; fermion examples.
+  N5 (attacked 2026-11-25, partial):
+  `Line/MeasureNHK`: **`isGSN_of_same_dens`** (first half of HK, any statistics, any continuous w),
+  **`hk_bos0`** (full HK, non-interacting bosons). `Line/MeasureNEL`: `rhoHat2` (mixed density by
+  polarisation), `rhoHat_expand`, `QMN_expand`, `EN_mul_le`, **`euler_lagrangeN`**, **`isGSN_abs`**.
+  `Line/MeasureNUcp`: `log_estimate_core` (Moser from a lower bound), `pot_le_of_int`,
+  `norm_rhoHat2_le` (0 ≤ uφ ≤ M ⇒ ‖ρ̂(u,φ)‖ ≤ NM), `logData_meas`, **`gsN_ne_zero_bos`** (UCP for
+  bosonic GS of measure potentials, any continuous w). `Line/MeasureNPos`: `sq_sub_le_H10`,
+  **`rhoHat_pos_bos`** (ρ̂ > 0 on (0,1); slab bound from ρ̂ = g², g(t₀) = 0 — no C¹ needed).
+  Remaining for interacting HK (bosons): from D(ρ̂(Φ, Φ Σ s(x_k))) = 0 for all s (D = ν − ν' − c dx)
+  conclude D = aδ₀ + bδ₁. Paper argument: ρ̂(Φ,ΦΣs) = sρ̂ + (N−1)∫P(·,u)s(u)du (P pair density), so
+  ρ̂·D is absolutely continuous, hence D = d dt (ρ̂ > 0), then Φ²Σ d(x_k) = 0 a.e. and UCP give d = 0.
+  Needs a pair-density / Fubini argument with pointwise control where D is singular — new work.
+  Fermions: UCP via the Young-chamber analogue (`Line/UcpY`) of `logData_meas` — not done.
