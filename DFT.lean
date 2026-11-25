@@ -50,6 +50,7 @@ import DFT.Continuum.Line.MeasureHK
 import DFT.Continuum.Line.MeasureN
 import DFT.Continuum.Line.MeasureNBos
 import DFT.Continuum.Line.MeasureNEL
+import DFT.Continuum.Line.MeasureNFer
 import DFT.Continuum.Line.MeasureNGS
 import DFT.Continuum.Line.MeasureNHK
 import DFT.Continuum.Line.MeasureNPos

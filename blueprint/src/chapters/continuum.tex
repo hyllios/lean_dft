@@ -1141,7 +1141,7 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
 
 \begin{theorem}[Euler--Lagrange, unique continuation and positivity for bosons in measure potentials]
   \label{thm:line_measureN_ucp}
-  \lean{DFT.Continuum.Line.int_rhoHat, DFT.Continuum.Line.rhoHat2, DFT.Continuum.Line.int_rhoHat2, DFT.Continuum.Line.rhoHat_expand, DFT.Continuum.Line.QMN_expand, DFT.Continuum.Line.rhoHat_smul, DFT.Continuum.Line.QMN_smul, DFT.Continuum.Line.QMN_null, DFT.Continuum.Line.EN_mul_le, DFT.Continuum.Line.euler_lagrangeN, DFT.Continuum.Line.rhoHat_abs, DFT.Continuum.Line.isGSN_abs, DFT.Continuum.Line.log_estimate_core, DFT.Continuum.Line.pot_le_of_int, DFT.Continuum.Line.pot_nonneg_of_int, DFT.Continuum.Line.norm_rhoHat2_le, DFT.Continuum.Line.logData_meas, DFT.Continuum.Line.gsN_ne_zero_bos, DFT.Continuum.Line.sq_sub_le_H10, DFT.Continuum.Line.rhoHat2_eq_zero, DFT.Continuum.Line.rhoHat_pos_bos}
+  \lean{DFT.Continuum.Line.int_rhoHat, DFT.Continuum.Line.rhoHat2, DFT.Continuum.Line.int_rhoHat2, DFT.Continuum.Line.rhoHat_expand, DFT.Continuum.Line.QMN_expand, DFT.Continuum.Line.rhoHat_smul, DFT.Continuum.Line.QMN_smul, DFT.Continuum.Line.QMN_null, DFT.Continuum.Line.EN_mul_le, DFT.Continuum.Line.euler_lagrangeN, DFT.Continuum.Line.rhoHat_abs, DFT.Continuum.Line.isGSN_abs, DFT.Continuum.Line.log_estimate_core, DFT.Continuum.Line.pot_le_of_int, DFT.Continuum.Line.pot_nonneg_of_int, DFT.Continuum.Line.norm_rhoHat2_le, DFT.Continuum.Line.logData_meas, DFT.Continuum.Line.gsN_ne_zero_bos, DFT.Continuum.Line.norm_pot_le_of_int, DFT.Continuum.Line.sq_sub_le_H10, DFT.Continuum.Line.rhoHat2_eq_zero, DFT.Continuum.Line.rhoHat_pos_of_ucp, DFT.Continuum.Line.rhoHat_pos_bos}
   \leanok
   \uses{thm:line_measureN_gs}
   For $N$ bosons with a measure potential and a continuous interaction, a ground state $\Phi$ satisfies
@@ -1156,6 +1156,23 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $0\le\hat\rho(u,\varphi)\le N$, so $|\nu(\hat\rho(u,\varphi))|\le N\|\nu\|$. Positivity: if $\hat\rho(t_0)=0$, $\hat\rho=g^2$ with
   $g\in H^1_0$, $g(t_0)=0$, so $\hat\rho(t)\le|t-t_0|\int g'^2$; the cut along the planes $x_i=t_0$ splits the energy, and one piece
   is a ground state vanishing on a set of positive measure.
+\end{proof}
+
+\begin{theorem}[Fermions in measure potentials: unique continuation and positive densities]
+  \label{thm:line_measureN_fer}
+  \lean{DFT.Continuum.Line.mem_fer_iff, DFT.Continuum.Line.isGSN_PhiY, DFT.Continuum.Line.eq_PhiBY_meas, DFT.Continuum.Line.logData_ballY_meas, DFT.Continuum.Line.gsN_ne_zero_fer, DFT.Continuum.Line.rhoHat_pos_fer, DFT.Continuum.Line.vrepMeasN_pos}
+  \leanok
+  \uses{thm:line_measureN_ucp}
+  For $N$ fermions with a measure potential and a continuous interaction, every ground state is nonzero almost everywhere
+  and its density is positive on $(0,1)$. Hence, for bosons and fermions alike, a density with an interior zero is not the
+  ground-state density of any measure potential.
+\end{theorem}
+\begin{proof}
+  \leanok
+  As for continuous potentials, via the chamber state $\Phi=\sum_\sigma\operatorname{sgn}\sigma\,(1_R|\Psi|)\circ\sigma$ and its
+  companion $B=|\Psi|$, which satisfies the weak equation against symmetric test functions vanishing on the diagonals. The
+  potential term is $\nu(p)$ with $p$ continuous with the integrals of $B\varphi$, and $0\le B\varphi\le\sup\eta^2$ bounds
+  $\|p\|$. Positivity is the cutting argument of Theorem~\ref{thm:line_measureN_ucp}.
 \end{proof}
 
 \begin{theorem}[Supergradient densities are dense]

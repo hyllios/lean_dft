@@ -56,13 +56,15 @@ lemma rhoHat2_eq_zero (hw : Continuous w) {τ : Stat} {Φ Ψ : Cfg n → ℝ} (h
     rw [int_rhoHat2 hw hΦ hΨ]
     simp [pf, h, Box.ext]
 
-/-- **The density of a bosonic ground state of a measure potential is positive on `(0, 1)`.** -/
-theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ : IsGSN .bos w ν Ψ)
-    {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < ext (rhoHat .bos Ψ) t0 := by
+/-- **Given unique continuation, the density of a ground state of a measure potential is positive
+on `(0, 1)`.** -/
+theorem rhoHat_pos_of_ucp (hw : Continuous w) {τ : Stat} {ν : PotM}
+    (hucp : ∀ Φ : Cfg n → ℝ, IsGSN τ w ν Φ → ∀ᵐ x ∂μN n, Φ x ≠ 0) {Ψ : Cfg n → ℝ}
+    (hΨ : IsGSN τ w ν Ψ) {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < ext (rhoHat τ Ψ) t0 := by
   have ht0I := Ioo_subset_Icc_self ht0
-  set g := gN .bos Ψ
+  set g := gN τ Ψ
   have hg : H10 g := h10_gN Ψ
-  set K := ext (rhoHat .bos Ψ)
+  set K := ext (rhoHat τ Ψ)
   have hKg : ∀ t ∈ Icc (0 : ℝ) 1, K t = g t ^ 2 := fun t ht => ext_rhoHat ht
   have hK0 : 0 ≤ K t0 := by rw [hKg t0 ht0I]; positivity
   by_contra hcon
@@ -81,7 +83,7 @@ theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ
     have := sq_sub_le_H10 hg ht0I htI
     rw [hg0, sub_zero] at this
     linarith [mul_comm L |t - t0|]
-  have hρ : ∀ v : Pot, dens (settingW .bos n w hw) Ψ v = ∫ t, ext v t * K t ∂μ1 := fun v =>
+  have hρ : ∀ v : Pot, dens (settingW τ n w hw) Ψ v = ∫ t, ext v t * K t ∂μ1 := fun v =>
     (int_rhoHat hw hΨ.1 v).symm
   have hKi : Integrable K μ1 :=
     (continuous_ext _).integrableOn_Icc.mono_set Ioo_subset_Icc_self
@@ -95,7 +97,7 @@ theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ
   set ΨU := U.indicator Ψ
   have hWD : ∀ k, IsWD k ΨU (U.indicator (dW k Ψ)) :=
     isWD_cutAll (h1W_of_mem hΨ.1) t0 hslab Finset.univ
-  have hUD : ΨU ∈ DomW .bos n := by
+  have hUD : ΨU ∈ DomW τ n := by
     refine ⟨hΨ.1.1.indicator hU.nullMeasurableSet, fun k => ⟨_, hWD k⟩, fun σ _ => ?_⟩
     filter_upwards [hΨ.1.2.2 σ trivial] with x hx
     have hσ : pm σ x ∈ U ↔ x ∈ U := by
@@ -106,7 +108,7 @@ theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ
     · simp only [ΨU, indicator_of_notMem hxU, indicator_of_notMem (fun h => hxU (hσ.1 h)),
         mul_zero]
   set ΨV := Ψ - ΨU
-  have hVD : ΨV ∈ DomW .bos n := (DomW .bos n).sub_mem hΨ.1 hUD
+  have hVD : ΨV ∈ DomW τ n := (DomW τ n).sub_mem hΨ.1 hUD
   have hsplit : Ψ = ΨU + (1 : ℝ) • ΨV := by simp [ΨV]
   have hUV : ∀ x, ΨU x * ΨV x = 0 := fun x => by
     by_cases hxU : x ∈ U <;> simp [ΨV, ΨU, hxU]
@@ -128,8 +130,8 @@ theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ
         by_cases hxU : x ∈ U <;> simp [hxU])
     simp only [hk, Finset.sum_const_zero, zero_add]
     exact integral_eq_zero_of_ae (Eventually.of_forall fun x => by simp [hUV x])
-  have hQ : QMN .bos w ν Ψ = QMN .bos w ν ΨU + QMN .bos w ν ΨV := by
-    rw [congrArg (QMN .bos w ν) hsplit, QMN_expand hw ν hUD hVD, hcross_h0,
+  have hQ : QMN τ w ν Ψ = QMN τ w ν ΨU + QMN τ w ν ΨV := by
+    rw [congrArg (QMN τ w ν) hsplit, QMN_expand hw ν hUD hVD, hcross_h0,
       rhoHat2_eq_zero hw hUD hVD hUV, map_zero]
     ring
   have hsq : ∀ (F : Cfg n → ℝ), ∫ x, F x ^ 2 ∂μN n = ip (μ := μN n) F F := fun F => by
@@ -138,14 +140,14 @@ theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ
     have hcross_ip : ip (μ := μN n) ΨU ΨV = 0 :=
       integral_eq_zero_of_ae (Eventually.of_forall fun x => by simp [hUV x])
     rw [congrArg (fun φ => ip (μ := μN n) φ φ) hsplit]
-    rw [ip_expand (S := settingW .bos n w hw) hUD hVD, hcross_ip]; ring
-  set E := QMN .bos w ν Ψ
-  have hge : ∀ φ ∈ DomW .bos n, E * ip (μ := μN n) φ φ ≤ QMN .bos w ν φ := fun φ hφ => by
+    rw [ip_expand (S := settingW τ n w hw) hUD hVD, hcross_ip]; ring
+  set E := QMN τ w ν Ψ
+  have hge : ∀ φ ∈ DomW τ n, E * ip (μ := μN n) φ φ ≤ QMN τ w ν φ := fun φ hφ => by
     rw [← hsq]; exact EN_mul_le hw hΨ hφ
   have hp1 : ip (μ := μN n) Ψ Ψ = 1 := by rw [← hsq]; exact hΨ.2.1
   have h1 := hge ΨU hUD
   have h2 := hge ΨV hVD
-  have hQU : QMN .bos w ν ΨU = E * ip (μ := μN n) ΨU ΨU := by
+  have hQU : QMN τ w ν ΨU = E * ip (μ := μN n) ΨU ΨU := by
     have : E = E * ip (μ := μN n) Ψ Ψ := by rw [hp1, mul_one]
     rw [hip] at this; linarith
   have hipU0 : 0 ≤ ip (μ := μN n) ΨU ΨU := integral_nonneg fun x => mul_self_nonneg _
@@ -160,18 +162,18 @@ theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ
     set c := 1 / √(ip (μ := μN n) ΨU ΨU)
     have hc2 : c ^ 2 = 1 / ip (μ := μN n) ΨU ΨU := by
       rw [div_pow, Real.sq_sqrt hpos.le, one_pow]
-    have hcD : c • ΨU ∈ DomW .bos n := Submodule.smul_mem _ c hUD
+    have hcD : c • ΨU ∈ DomW τ n := Submodule.smul_mem _ c hUD
     have hcn : ∫ x, (c • ΨU) x ^ 2 ∂μN n = 1 := by
       rw [hsq]; simp only [ip, Pi.smul_apply, smul_eq_mul]
       rw [show (fun x => c * ΨU x * (c * ΨU x)) = fun x => c ^ 2 * (ΨU x * ΨU x) from
         funext fun x => by ring, integral_const_mul, hc2]
       exact one_div_mul_cancel hpos.ne'
-    have hGS : IsGSN .bos w ν (c • ΨU) := ⟨hcD, hcn, fun φ hφ hφn => by
+    have hGS : IsGSN τ w ν (c • ΨU) := ⟨hcD, hcn, fun φ hφ hφn => by
       rw [QMN_smul hw ν hUD, hQU, hc2]
       have := hge φ hφ
       rw [← hsq, hφn, mul_one] at this
       field_simp; linarith⟩
-    refine not_ae_ne_of_zero_on hPV (fun x hx => ?_) (gsN_ne_zero_bos hw hGS)
+    refine not_ae_ne_of_zero_on hPV (fun x hx => ?_) (hucp _ hGS)
     have hx0 : ¬ x 0 < t0 := by
       have := hx 0 trivial; simp only [↓reduceIte] at this; exact not_lt.2 this.1.le
     have hxU : x ∉ U := fun h => hx0 ((hmemU x).1 h 0)
@@ -182,14 +184,19 @@ theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ
         (int_mul_L2 hUD.1 hUD.1)).1 hzero.symm
       filter_upwards [this] with x hx
       exact mul_self_eq_zero.1 hx
-    have hucp := gsN_ne_zero_bos hw hΨ
+    have hucp' := hucp _ hΨ
     have hP : μN n (Set.pi univ fun _ : Fin (n + 1) => Ioo 0 t0) = 0 := by
-      have : μN n {x | ¬ (Ψ x ≠ 0 ∧ ΨU x = 0)} = 0 := ae_iff.1 (hucp.and hz)
+      have : μN n {x | ¬ (Ψ x ≠ 0 ∧ ΨU x = 0)} = 0 := ae_iff.1 (hucp'.and hz)
       refine measure_mono_null (fun x hx => ?_) this
       intro ⟨h1, h2⟩
       have hxU : x ∈ U := (hmemU x).2 fun i => (hx i trivial).2
       simp only [ΨU, indicator_of_mem hxU] at h2
       exact h1 h2
     exact hPU.ne' hP
+
+/-- **The density of a bosonic ground state of a measure potential is positive on `(0, 1)`.** -/
+theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ : IsGSN .bos w ν Ψ)
+    {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < ext (rhoHat .bos Ψ) t0 :=
+  rhoHat_pos_of_ucp hw (fun _ h => gsN_ne_zero_bos hw h) hΨ ht0
 
 end DFT.Continuum.Line

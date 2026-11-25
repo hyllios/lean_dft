@@ -809,4 +809,9 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   conclude D = aδ₀ + bδ₁. Paper argument: ρ̂(Φ,ΦΣs) = sρ̂ + (N−1)∫P(·,u)s(u)du (P pair density), so
   ρ̂·D is absolutely continuous, hence D = d dt (ρ̂ > 0), then Φ²Σ d(x_k) = 0 a.e. and UCP give d = 0.
   Needs a pair-density / Fubini argument with pointwise control where D is singular — new work.
-  Fermions: UCP via the Young-chamber analogue (`Line/UcpY`) of `logData_meas` — not done.
+  Fermions DONE: `Line/MeasureNFer`: `isGSN_PhiY`, `eq_PhiBY_meas` (companion B = |Ψ| satisfies
+  the weak equation, potential term ν(p) with p continuous having the integrals of Bφ),
+  `logData_ballY_meas`, **`gsN_ne_zero_fer`**, **`rhoHat_pos_fer`**; `norm_pot_le_of_int` and
+  `rhoHat_pos_of_ucp` (MeasureNPos made generic in τ). **`vrepMeasN_pos`**: ground-state densities
+  of measure potentials are positive on (0,1), both statistics, any continuous w.
+  Still open: the final interacting-HK step (above).

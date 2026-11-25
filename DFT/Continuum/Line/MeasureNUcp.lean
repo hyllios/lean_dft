@@ -182,33 +182,37 @@ lemma integral_LN (v : Pot) : ∫ x, LN n v x ∂μN n = (n + 1) * ∫ t, ext v 
   simp only [hk, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   push_cast; ring
 
-/-- If `0 ≤ u φ ≤ M`, then `0 ≤ ρ̂(u, φ) ≤ N M`. -/
-lemma norm_rhoHat2_le {w : Cfg n → ℝ} (hw : Continuous w) {u φ : Cfg n → ℝ}
-    (hu : u ∈ DomW .bos n) (hφ : φ ∈ DomW .bos n) {M : ℝ} (hM : 0 ≤ M)
-    (h0 : ∀ᵐ x ∂μN n, 0 ≤ u x * φ x) (h1 : ∀ᵐ x ∂μN n, u x * φ x ≤ M) :
-    ‖rhoHat2 .bos u φ‖ ≤ (n + 1) * M := by
-  have hint := int_rhoHat2 (w := w) hw hu hφ
+/-- A continuous `p` with the integrals of `F`, `0 ≤ F ≤ M`, has `‖p‖ ≤ N M`. -/
+lemma norm_pot_le_of_int {p : Pot} {F : Cfg n → ℝ} (hFi : Integrable F (μN n)) {M : ℝ}
+    (hM : 0 ≤ M) (h0 : ∀ᵐ x ∂μN n, 0 ≤ F x) (h1 : ∀ᵐ x ∂μN n, F x ≤ M)
+    (hint : ∀ v : Pot, ∫ t, ext v t * ext p t ∂μ1 = ∫ x, LN n v x * F x ∂μN n) :
+    ‖p‖ ≤ (n + 1) * M := by
   have hLN : ∀ v : Pot, (∀ t, 0 ≤ v t) → ∀ x, 0 ≤ LN n v x := fun v hv x => by
     change 0 ≤ ∑ k, Box.ext v (x k)
     exact Finset.sum_nonneg fun k _ => hv _
-  have iuφ := int_mul_L2 hu.1 hφ.1
-  have iL : ∀ v : Pot, Integrable (fun x => LN n v x * (u x * φ x)) (μN n) := fun v => by
+  have iL : ∀ v : Pot, Integrable (fun x => LN n v x * F x) (μN n) := fun v => by
     obtain ⟨C, hC⟩ := ae_bound_cont (n := n) (continuous_LN v)
-    exact iuφ.bdd_mul (continuous_LN v).aestronglyMeasurable hC
-  have hupper := pot_le_of_int (p := rhoHat2 .bos u φ) (M := (n + 1) * M) fun v hv => by
+    exact hFi.bdd_mul (continuous_LN v).aestronglyMeasurable hC
+  have hupper := pot_le_of_int (p := p) (M := (n + 1) * M) fun v hv => by
     rw [hint]
-    change ∫ x, LN n v x * (u x * φ x) ∂μN n ≤ _
-    calc ∫ x, LN n v x * (u x * φ x) ∂μN n ≤ ∫ x, M * LN n v x ∂μN n := by
+    calc ∫ x, LN n v x * F x ∂μN n ≤ ∫ x, M * LN n v x ∂μN n := by
           refine integral_mono_ae (iL v) ((integrableN (continuous_LN v)).const_mul M) ?_
           filter_upwards [h1] with x hx
           nlinarith [hLN v hv x]
       _ = (n + 1) * M * ∫ t, ext v t ∂μ1 := by rw [integral_const_mul, integral_LN]; ring
-  have hlower := pot_nonneg_of_int (p := rhoHat2 .bos u φ) fun v hv => by
+  have hlower := pot_nonneg_of_int (p := p) fun v hv => by
     rw [hint]
     exact integral_nonneg_of_ae (by filter_upwards [h0] with x hx; exact mul_nonneg (hLN v hv x) hx)
   refine (ContinuousMap.norm_le _ (by positivity)).2 fun t => ?_
   rw [Real.norm_eq_abs, abs_le]
   exact ⟨by linarith [hlower t, (by positivity : (0 : ℝ) ≤ (n + 1) * M)], hupper t⟩
+
+/-- If `0 ≤ u φ ≤ M`, then `0 ≤ ρ̂(u, φ) ≤ N M`. -/
+lemma norm_rhoHat2_le {w : Cfg n → ℝ} (hw : Continuous w) {τ : Stat} {u φ : Cfg n → ℝ}
+    (hu : u ∈ DomW τ n) (hφ : φ ∈ DomW τ n) {M : ℝ} (hM : 0 ≤ M)
+    (h0 : ∀ᵐ x ∂μN n, 0 ≤ u x * φ x) (h1 : ∀ᵐ x ∂μN n, u x * φ x ≤ M) :
+    ‖rhoHat2 τ u φ‖ ≤ (n + 1) * M :=
+  norm_pot_le_of_int (int_mul_L2 hu.1 hφ.1) hM h0 h1 fun v => int_rhoHat2 (w := w) hw hu hφ v
 
 /-! ### The logarithmic data and unique continuation -/
 
