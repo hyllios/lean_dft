@@ -784,3 +784,7 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   (converse); `exists_pos_gs`; **`hk_meas`**, **`isGSM_iff_gauge`** (measure potentials: common GS ⟺
   ν' − ν = C dx + aδ₀ + bδ₁). Blueprint `thm:line_measure_hk`.
   Open: explicit condition on g (g'' a measure, ∫ d|g''|/g < ∞); N-body.
+- P step 5. `Line/MeasureChar`: `Gρ_add`, `Gρ_smul`, `weak_of_deriv` (Fubini backwards);
+  **`vrepMeas_iff_explicit`** (ρ measure-v-rep ⟺ ρ = g², g ∈ H¹₀ continuous normalised, g > 0
+  inside, g'(t) = c + ∫_{x<t} g dμ₊ − ∫_{x<t} g dμ₋ a.e.: g'' = g(μ₊ − μ₋), i.e. g''/g a finite measure).
+  Blueprint `thm:line_measure_char`. N = 1 measure-potential theory complete. Open: N-body.

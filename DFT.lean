@@ -44,6 +44,7 @@ import DFT.Continuum.Line.LiebMattisW
 import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Meagre
 import DFT.Continuum.Line.MeagreC1
+import DFT.Continuum.Line.MeasureChar
 import DFT.Continuum.Line.MeasureGS
 import DFT.Continuum.Line.MeasureHK
 import DFT.Continuum.Line.MeasurePos
