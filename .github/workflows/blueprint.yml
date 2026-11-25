@@ -60,6 +60,14 @@ jobs:
       - name: Layering (library order ForMathlib <- QM <- DFT, no folder-level import cycles)
         run: python3 scripts/check_layers.py
 
+      - name: Module index is up to date
+        run: python3 scripts/gen_module_index.py --check
+
+      - name: Main results exist (docs/MAIN_RESULTS.md); blueprint coverage reported
+        run: |
+          python3 scripts/check_main_results.py --list main_results.txt
+          ~/.elan/bin/lake exe checkdecls main_results.txt
+
       # The blueprint, checkdecls and the static home page are built explicitly (instead of with docgen-action),
       # because docgen-action still ran doc-gen on the dependencies and exhausted the runner's memory.
       - name: Build blueprint and copy to `home_page/blueprint`

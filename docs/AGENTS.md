@@ -38,6 +38,9 @@ Status of the gates (update when a report-only gate becomes enforcing):
 | Unjustified `maxHeartbeats` (49 at the start), module docstrings | `scripts/check_hygiene.py --strict` | report-only (backlog) |
 | Layering (library order, folder DAG) | `scripts/check_layers.py` | **enforcing** |
 | Blueprint references exist | `lake exe checkdecls blueprint/lean_decls` | **enforcing** |
+| Main results exist (`docs/MAIN_RESULTS.md`) | `scripts/check_main_results.py --list f` + `lake exe checkdecls f` | **enforcing** |
+| Main results are in the blueprint | `scripts/check_main_results.py --strict` | report-only until the list is curated |
+| Module index up to date | `scripts/gen_module_index.py --check` | **enforcing** |
 
 - No `sorry`, no `axiom`, no `native_decide`, no `implemented_by`/`unsafe`. `scripts/check_axioms.sh` allows only `propext`,
   `Classical.choice`, `Quot.sound`. Its self-test `scripts/test_axiom_check.sh` must pass.

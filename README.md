@@ -186,91 +186,17 @@ proof is wrong.
 
 ## Structure
 
-The library `DFT` has two parts. `DFT/Lattice/` holds everything on finite lattices (namespace `DFT`);
-`DFT/Continuum/` holds the general configuration-space theory (namespace `DFT.Continuum`), which takes
-the lattice results as a special case. Module paths below are relative to these two folders.
+Three Lean libraries, strictly layered (`ForMathlib ← QM ← DFT`, enforced in CI):
 
-### `DFT/Lattice/`
-
-| Module | Content |
+| Library | Content |
 |---|---|
-| `Basic/GroundState` | Rayleigh-quotient ground states; ground states are eigenvectors |
-| `Basic/Spectral` | existence of ground states; ground-state energy |
-| `Basic/SingleParticle` | single-particle HK theorem; failure for frustrated hopping |
-| `HK/Basic` | many-body Hamiltonian `hamN`, density, weak and strong HK, spin-DFT-type non-uniqueness |
-| `HK/Examples` | HK counterexamples: two fermions on a triangle and on a square |
-| `HK/Gap` | gapped ground states and invisible potential directions |
-| `HK/SquareWall` | HK fails at every gapped point of the plane `v₀+v₂ = v₁+v₃` of the two-fermion square (hidden involution) |
-| `HK/Nondegenerate` | the counterexamples to strong HK (square, two-fermion triangle, frustrated triangle) have non-degenerate ground states, with gap bounds (sum-of-squares certificates) |
-| `HK/SquarePlane` | the plane `v₀+v₂ = v₁+v₃` of the two-fermion square without a gap: every non-constant potential is exceptional, the exceptional set and the shared densities are not closed (also with complex states and ensembles: complex states give no new ensemble densities of a real Hamiltonian); the exact segment of a shared ground state along `(1, 1, −1, −1)` |
-| `Generic/Krylov` | Krylov criterion; (H\*) ⇒ HK on an open dense set |
-| `Generic/NullSets` | zero sets of nonzero polynomials are null; (H\*) ⇒ HK almost everywhere |
-| `Generic/ZeroSetDim` | zero sets of nonzero polynomials have Hausdorff dimension ≤ d − 1; pointwise-Lipschitz maps do not raise Hausdorff dimension |
-| `Generic/DensityDim`, `DensityDim/Gap`, `DensityDim/Fermions` | non-uv densities have Hausdorff dimension ≤ M − 3 (gap from non-degeneracy, gap persistence, Lipschitz density, slicing) |
-| `Generic/RationalFunctions` | rational functions on generic points; simultaneous non-vanishing |
-| `Generic/SquareCertificate` | (H\*) for the square by exact computation in Lean |
-| `Generic/SignGauge` | orbital sign changes: the generic HK theorem for hopping that they bring to a common sign; triangle, 4-cycle |
-| `Generic/ShortestPathSign` | (H\*), generic HK and the dimension bound when all shortest paths between two sites have hopping products of one sign; the class (complete graphs, gauge class, bipartite graphs, the square) |
-| `Generic/Excited` | outside one closed, nowhere dense, null set of potentials no eigenvector has a zero amplitude and every eigenvalue is simple |
-| `Fermions/Configurations` | `N`-particle configurations, occupations |
-| `Fermions/Slater` | Slater determinants in first quantization |
-| `Fermions/SecondQuantization` | second quantization `Γ h` via determinants; `H0F` (uniform) and `H0Fw` (edge-dependent hopping) |
-| `Fermions/FirstQuantization` | many-body powers as signed sums of single-particle powers |
-| `Fermions/CauchyBinet` | Cauchy–Binet for Slater determinants; orthonormality of Slater states |
-| `StrongPotential/*` | strong-potential leading coefficients, power sums, explicit coefficients |
-| `PathSum/*` | optimal assignments, free-fermion leading coefficients, route sums, resonance argument |
-| `GenericHK` | the generic HK theorem (uniform and edge-dependent hopping) |
-| `KohnSham/Aufbau` | aufbau: the Slater determinant of the lowest orbitals is a non-interacting ground state, with energy the smallest orbital sum |
-| `KohnSham/Duality` | Lieb's functional, convex duality |
-| `KohnSham/Maximizer`, `KohnSham/Representability` | ensemble v-representability (maximiser, limit argument, separation) |
-| `KohnSham/Existence` | existence of Kohn–Sham potentials for lattice fermions |
-| `KohnSham/Hypersimplex` | interior densities are positive mixtures of configurations; KS potentials for every density with `0 < ρ_i < 1` |
-| `KohnSham/Uniqueness` | generic uniqueness of the Kohn–Sham potential |
-| `Spin/Symmetric`, `Spin/HubbardCertificates` | generic HK with a symmetry (sector-wise Krylov condition); total-density HK for the Hubbard dimer and triangle |
-| `Spin/KronSum`, `Spin/SpinResolved`, `Spin/SpinField` | two spin species: Kronecker sums, factorisation of the leading coefficients, spin-resolved generic HK; the same in terms of `(v, B)` |
-| `Spin/TwoElectron` | one up and one down electron (one particle on `G □ G`): total-density HK for every potential, uniform hopping `t > 0` |
-| `TDDFT/ForceBalance` | force-balance matrix at a ground state: f-sum rule, counterexample to Farzanehpour–Tokatly Theorem 2, generic v-representability of ground states |
-| `TDDFT/Prop9General` | the force-balance counterexample in its general and normalized forms |
-| `TDDFT/SharedGround` | ground states shared by two potentials that differ by more than a constant lie outside `Ω` (real and complex); a pair of real states with negative semidefinite `kMat` forms, the first with only constant zero modes, lies in `Ω`; outside the exceptional set the density determines the potential |
-| `TDDFT/Dynamics`, `TDDFT/Existence`, `TDDFT/GroundStart` | continuity and force-balance equations, local existence and uniqueness of the TDDFT potential, TDDFT from generic ground states |
-| `TDDFT/Global` | uniform Picard–Lindelöf steps, norm conservation, blow-up alternative and global uniqueness for lattice TDDFT |
-| `TDDFT/Spin` | spin-resolved TDDFT: reduced observables with one conserved sum, Krylov shift invariance, generic ground-state start, existence and uniqueness of `(v↑, v↓)` up to one constant per spin |
-| `TDDFT/Frozen` | frozen densities: eigenstates whose configurations share one occupation pattern keep their density under every potential; the Hubbard-dimer triplet lies outside `Ω` for all `t`, `U` |
-| `TDDFT/FrozenUnique`, `TDDFT/FrozenPair` | uniqueness for the linear Schrödinger equation, so frozen densities never change; frozen densities for complex eigenstates |
-| `TDDFT/Dimer` | reality check: one particle on two sites; `Ω = {bond order ≠ 0}`, speed limit, closed-form TD potential, Rabi oscillation outside `Ω` (numerical check in `scripts/dimer_check.py`) |
-| `TDDFT/KohnSham` | van Leeuwen's theorem, time-dependent Kohn–Sham from a generic ground state |
-| `TDDFT/Ensemble` | purification of ensembles, van Leeuwen's theorem for ensembles, time-dependent Kohn–Sham from a ground-state ensemble |
-| `TDDFT/EnsemblePure` | ground-state ensembles of a generic Hamiltonian are pure: ensemble time-dependent Kohn–Sham adds no case |
-| `Convex/MoreauYosida` | Moreau–Yosida envelope and proximal map on a compact convex domain |
-| `KohnSham/Iteration`, `KohnSham/RegularizedKS` | convergence of the regularised Kohn–Sham iteration (MYKSODA, corrected form) |
-| `KohnSham/MyksodaEnsemble` | the limit densities of the regularised Kohn–Sham scheme are ground-state-ensemble densities |
-| `Bridge/Square`, `Bridge/Triangle` | `H0F` is the hand-typed square and triangle minus `4·I`, entry by entry; on the square the generic theorems are not vacuous |
-| `Bridge/SquareHopping` | the square with edge-dependent hopping: an eigenvector vanishing on `01`, `23` with `ψ(02)`, `ψ(13)` not both zero needs `t₁₂² = t₃₀²`; a ground state shared by `v` and `v + ε(1, 1, −1, −1)`, `ε ≠ 0`, needs `t₁₂² = t₃₀²` or `t₀₁ = t₂₃ = 0` (so with four nonzero bonds only `t₁₂² = t₃₀²`; necessary conditions) |
-| `Bridge/FrustratedSquare`, `Bridge/FrustratedSquareCertificates` | the square with one negative bond (`t₀₁ < 0 < t₁₂, t₂₃, t₃₀`, any magnitudes), `0 < N < 4`, any diagonal interaction: (H\*), generic HK and the dimension bound by exact leading-coefficient certificates; with orbital sign changes, generic HK and the dimension bound for every nonzero hopping on the square |
-| `Bridge/Hubbard`, `Bridge/TwoElectron` | the hand-typed Hubbard matrices are the general two-species Hamiltonian `H0S`; one up and one down electron of `H0S` is one particle on `G □ G` |
+| `ForMathlib` | pure mathematics, candidates for Mathlib (Ekeland and Brøndsted–Rockafellar, Moreau–Yosida, weak derivatives, eigenbases of compact operators, zero sets of polynomials) |
+| `QM` | generic quantum mechanics and many-body theory, candidates for Physlib; basic QM is imported from [Physlib](https://github.com/leanprover-community/physlib) |
+| `DFT` | density-functional theory: `DFT/Lattice/` (finite lattices, namespace `DFT`) and `DFT/Continuum/` (general configuration spaces, the box, `N` particles on a line; namespace `DFT.Continuum`) |
 
-### `DFT/Continuum/`
-
-| Module | Content |
-|---|---|
-| `General/HK` | Hohenberg–Kohn on a general configuration space `(X, μ)`, conditional on separation, rigidity and unique continuation |
-| `General/FromLattice` | the lattice as the counting-measure instance; (H\*) supplies unique continuation |
-| `General/Lieb` | the Lieb functional `F(ρ) = sup_v (E(v) − ρ(v))`: constrained-search bound, variational principle, convexity, subgradients ⇔ ground states, HK as uniqueness of the subgradient |
-| `Box/Basic` | one particle in a box with a continuous potential: separation, rigidity, the Schrödinger equation, unique continuation (ODE uniqueness), `hk_box` |
-| `Box/Solve`, `Box/Sturm`, `Box/Picone`, `Box/PiconeEq`, `Box/Extend`, `Box/Ground` | existence of ground states by shooting (truncated Picard–Lindelöf + Grönwall, Sturm comparison, Picone inequality and its equality case, cutoff extension); `hk_box_complete` |
-| `Box/Lieb` | the Lieb functional in the box, unconditional (`lieb_box`) |
-| `Line/Basic` | `N = n + 1` bosons or fermions on `[0, 1]`: relabelling (measure preserving), the exchange character, the `C²` domain of either symmetry, (anti)symmetrisation, separation, rigidity, one-body density (Fubini); `hk_line_of_ucp` conditional on unique continuation |
-| `Line/Strong`, `Line/Hopf`, `Line/Smooth` | ground states are classical solutions (integration by parts along each coordinate, the Laplacian commutes with relabelling); Hopf's lemma in `n + 1` dimensions on any connected open set; the smoothed modulus `h_ε` |
-| `Line/Nodal`, `Line/Bosons` | zero gradient at zeros (smoothed-modulus competitors); bosonic ground states have no zeros; `hk_interacting_bosons_line`: HK for `N` interacting bosons on a line, no extra assumption |
-| `Line/Chamber`, `Line/Fermions` | the smooth sign of the ordering, its `O(1/ε)` derivative bound, `|Φ| ≤ M |xᵢ − xⱼ|`, the near-collision set has measure `O(ε)`; no sign change on the ordered chamber, zeros only at collisions; `hk_interacting_fermions_line`: HK for `N` interacting fermions on a line, no extra assumption |
-| `Line/Free` | `N` free bosons: lower bound `NE₀` by slicing along each coordinate, the product ground state; `hk_free_bosons_line`, `lieb_free_bosons_line`, unconditional |
-| `Line/Pauli`, `Line/FreeFermions` | the Pauli principle for one orbital; `N` free fermions: lower bound `λ₀ + ⋯ + λₙ` slice by slice, the Slater determinant of the lowest orbitals is a ground state (Laplace expansion and the adjugate); `hk_free_fermions_line`, `lieb_free_fermions_line`, unconditional |
-| `Line/Lieb` | the Lieb functional for `N` bosons or fermions on a line: at every ground-state density the subgradient is unique up to constants (`lieb_line`) |
-| `Spectral/Green`, `Spectral/Kernel`, `Spectral/Operator`, `Spectral/Injective` | the Green function of `-d²/dx² + W` (`W ≥ 0`) on `[0, 1]`, and the Green operator on `L²(0, 1)`, compact (Arzelà–Ascoli), symmetric and injective |
-| `Spectral/Eigen`, `Spectral/Basis`, `Spectral/Expand` | eigenvectors are classical `C²` eigenfunctions with positive eigenvalues, the eigenbasis of a compact symmetric injective operator, infinitely many eigenvalues accumulating only at zero, the energy in the eigenbasis, and the one-particle bound for the `N` lowest orbitals (`exists_orbitals`) |
-| `Sobolev/Weak` | weak derivatives on open subsets of the plane: uniqueness, classical case, linearity, limits; chain rule for `|f|` and Kato's inequality (first step of the Perron–Frobenius argument) |
-
-About 20,000 lines of Lean in total.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): the libraries, the order of the folders inside each library, and where new material goes.
+- [`docs/MODULES.md`](docs/MODULES.md): every module with its content (generated from the module docstrings).
+- [`docs/AGENTS.md`](docs/AGENTS.md): rules and checks for contributions (written with AI agents in mind; they apply to everyone).
 
 ## Further material
 
@@ -279,6 +205,7 @@ About 20,000 lines of Lean in total.
 * `docs/generic-hk-paper-proof.md`: the informal proof of the generic HK theorem, with the literature context
   and an independent review.
 * `docs/formalization-log.md`: how the formal proofs were assembled.
+* `docs/ARCHITECTURE.md`, `docs/MODULES.md`, `docs/AGENTS.md`: structure, module index, contribution rules.
 * `scripts/`: Python scripts used for exploration and for exact certificates, e.g. (H\*) for all connected
   graphs up to 7 sites, and sector by sector for the spinful Hubbard model up to 6 sites. Outputs are in
   `scripts/data/`.
@@ -286,12 +213,17 @@ About 20,000 lines of Lean in total.
 ## Building
 
 ```bash
-lake exe cache get   # download the Mathlib cache
-lake build
+lake exe cache get              # download the Mathlib cache
+lake build ForMathlib QM DFT
+scripts/test_axiom_check.sh     # the axiom audit must catch planted violations
+scripts/check_axioms.sh         # only propext, Classical.choice, Quot.sound (catches sorry)
+python3 scripts/check_hygiene.py
+python3 scripts/check_layers.py
 ```
 
-Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0-rc2`) and Mathlib as pinned in
-`lake-manifest.json`.
+Requires the Lean toolchain in `lean-toolchain` (currently `v4.36.0`). Mathlib is the one pinned by Physlib
+(`lake-manifest.json`). On a shared machine, cap the build's parallelism, e.g. `LEAN_NUM_THREADS=16 lake build …`
+(Lake has no `-j`; without the cap it starts one job per core).
 
 ## Scope and open directions
 
