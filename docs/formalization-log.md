@@ -788,3 +788,13 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   **`vrepMeas_iff_explicit`** (ρ measure-v-rep ⟺ ρ = g², g ∈ H¹₀ continuous normalised, g > 0
   inside, g'(t) = c + ∫_{x<t} g dμ₊ − ∫_{x<t} g dμ₋ a.e.: g'' = g(μ₊ − μ₋), i.e. g''/g a finite measure).
   Blueprint `thm:line_measure_char`. N = 1 measure-potential theory complete. Open: N-body.
+- P N-body (user: N1–N4). `Line/MeasureN` (N1, N2): `gN`, **`rhoHat`** (continuous density ρ̂ = g²,
+  g ∈ H¹₀ from `sqrt_dens_H1W`), `rhoHat_spec`/`rhoHat_unique` (via `pot_eq_of_integral`), `QMN`,
+  `IsGSN`, `VRepMeasN`, **`abs_nu_rhoHat_le`** (|ν(ρ̂)| ≤ ½T + C_ν N∫Φ²), `QMN_ge`.
+  `Line/MeasureNGS` (N3): **`exists_isGSN`** (GS for every measure ν, continuous w, bosons/fermions:
+  coefficient compactness + L² convergence + uniform convergence of √ρ̂ via 1D weak compactness).
+  `Line/MeasureNBos` (N4, w = 0): **`QMN_ge_EM`** (T + ν(ρ̂) ≥ N E₀, any statistics), `kinW_prodS`,
+  `rhoHat_prodS`, `isGSN_prodS`, `gs1_of_isGSN`, **`vrepMeasN_bos_iff`** (N-boson measure-v-rep ⟺ ρ/N
+  one-particle measure-v-rep), **`trap_vrepMeasN`** (plateau density, N bosons, −3δ_{1/3} − 3δ_{2/3}).
+  Blueprint `thm:line_measureN`, `thm:line_measureN_gs`, `thm:line_measureN_bos`.
+  Open (N5, parked): interacting HK / UCP for measure potentials; fermion examples.

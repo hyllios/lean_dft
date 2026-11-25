@@ -1077,6 +1077,53 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $-g''+(\mu_+-\mu_-)g=0$ weakly; apply Theorem~\ref{thm:line_measure_ucp}.
 \end{proof}
 
+\begin{theorem}[$N$ particles in a measure potential: energy and form bound]
+  \label{thm:line_measureN}
+  \lean{DFT.Continuum.Line.pot_eq_of_integral, DFT.Continuum.Line.gN, DFT.Continuum.Line.rhoHat, DFT.Continuum.Line.rhoHat_spec, DFT.Continuum.Line.rhoHat_unique, DFT.Continuum.Line.integral_gN_sq, DFT.Continuum.Line.kinM_gN_le, DFT.Continuum.Line.QMN, DFT.Continuum.Line.IsGSN, DFT.Continuum.Line.VRepMeasN, DFT.Continuum.Line.abs_nu_rhoHat_le, DFT.Continuum.Line.QMN_ge}
+  \leanok
+  \uses{thm:line_measure_gs}
+  For $\Phi\in H^1_0$, the density has a unique continuous version $\hat\rho_\Phi=g^2$ with $g\in H^1_0$, $\int g'^2\le T(\Phi)$. A measure
+  potential $\nu\in C([0,1])^*$ acts by $\nu(\hat\rho_\Phi)$, and $|\nu(\hat\rho_\Phi)|\le\frac12T(\Phi)+C_\nu N\int\Phi^2$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\sqrt\rho\in H^1_0$ with the Hoffmann-Ostenhof bound; two continuous functions with the same integrals against $C([0,1])$
+  agree; then the one-particle sup bound for $g$.
+\end{proof}
+
+\begin{theorem}[$N$-particle ground states for measure potentials]
+  \label{thm:line_measureN_gs}
+  \lean{DFT.Continuum.Line.cN_sub, DFT.Continuum.Line.int_abs_sq_sub_le, DFT.Continuum.Line.tendsto_int_abs_sq_sub, DFT.Continuum.Line.tendsto_int_pot, DFT.Continuum.Line.exists_isGSN}
+  \leanok
+  \uses{thm:line_measureN}
+  For every measure potential, every continuous interaction $w$, bosons or fermions, $T+w+\nu$ has a normalised ground
+  state in $H^1_0$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Direct method. A minimising sequence has bounded kinetic energy; its sine coefficients converge coordinatewise and in
+  $\ell^2$ along a subsequence, so $\Phi_j\to\Phi$ in $L^2$, the interaction energy converges and $T$ is lower semicontinuous.
+  The square roots $g_j=\sqrt{\hat\rho_j}$ are bounded in $H^1_0$, so (weak compactness and Arzel\`a--Ascoli) a further
+  subsequence converges uniformly; its limit has the integrals of $\rho_\Phi$, hence is $\hat\rho_\Phi$, and
+  $\nu(\hat\rho_j)\to\nu(\hat\rho_\Phi)$.
+\end{proof}
+
+\begin{theorem}[Non-interacting bosons in a measure potential]
+  \label{thm:line_measureN_bos}
+  \lean{DFT.Continuum.Line.QMN_ge_EM, DFT.Continuum.Line.kinW_prodS, DFT.Continuum.Line.rhoHat_prodS, DFT.Continuum.Line.QMN_prodS, DFT.Continuum.Line.isGSN_prodS, DFT.Continuum.Line.exists_isGSN_bos, DFT.Continuum.Line.gs1_of_isGSN, DFT.Continuum.Line.vrepMeasN_bos_iff, DFT.Continuum.Line.trap_vrepMeasN}
+  \leanok
+  \uses{thm:line_measureN, thm:line_measure_char, thm:line_measure_trap}
+  For $w=0$, $T(\Psi)+\nu(\hat\rho_\Psi)\ge N E_0(\nu)$ for all normalised states (bosons or fermions), with equality for the
+  product of a one-particle ground state. Hence $\rho$ is the ground-state density of $N$ non-interacting bosons in a
+  measure potential iff $\rho/N$ is a one-particle one (Theorem~\ref{thm:line_measure_char}); e.g.\ the plateau density
+  $N(c\,g_{\rm trap})^2$ (potential $-3\delta_{1/3}-3\delta_{2/3}$).
+\end{theorem}
+\begin{proof}
+  \leanok
+  $T(\Psi)+\nu(g^2)\ge\int g'^2+\nu(g^2)\ge E_0\int g^2=NE_0$ for $g=\sqrt{\hat\rho_\Psi}$. Products: $T=N\int g'^2$, $\hat\rho=Ng^2$.
+  Conversely, equality forces $g/\sqrt N$ to be a one-particle minimiser.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}

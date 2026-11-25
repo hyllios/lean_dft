@@ -47,6 +47,9 @@ import DFT.Continuum.Line.MeagreC1
 import DFT.Continuum.Line.MeasureChar
 import DFT.Continuum.Line.MeasureGS
 import DFT.Continuum.Line.MeasureHK
+import DFT.Continuum.Line.MeasureN
+import DFT.Continuum.Line.MeasureNBos
+import DFT.Continuum.Line.MeasureNGS
 import DFT.Continuum.Line.MeasurePos
 import DFT.Continuum.Line.MeasurePot
 import DFT.Continuum.Line.MeasureTrap
