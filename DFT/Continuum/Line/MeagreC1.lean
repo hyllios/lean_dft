@@ -220,7 +220,7 @@ lemma integral_sq_le_mu1 (x : L2I) {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (h
     ∫ s in a..b, (x : ℝ → ℝ) s ^ 2 ≤ ‖x‖ ^ 2 := by
   rw [norm_sq_L2I, intervalIntegral.integral_of_le hab, integral_Ioc_eq_integral_Ioo]
   exact setIntegral_mono_set (show IntegrableOn _ (Ioo (0 : ℝ) 1) volume from integrable_sq_L2I x)
-    (ae_of_all _ fun s => sq_nonneg _) (Ioo_subset_Ioo ha hb).eventuallyLE
+    (ae_of_all _ fun s => sq_nonneg _) (LE.le.eventuallySubset (Ioo_subset_Ioo ha hb))
 
 /-! ### The closed sets `Bset k` -/
 

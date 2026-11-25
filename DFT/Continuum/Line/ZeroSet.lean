@@ -114,7 +114,8 @@ lemma hasDerivAt_Lg (t : ℝ) : HasDerivAt (Lg ε) (1 / (|t| + ε)) t := by
   ring
 
 lemma continuous_Lg' : Continuous fun t : ℝ => 1 / (|t| + ε) :=
-  continuous_const.div (continuous_abs.add continuous_const) fun t => by positivity
+  continuous_const.div (continuous_abs.add continuous_const) fun t =>
+    (add_pos_of_nonneg_of_pos (abs_nonneg t) hε).ne'
 
 lemma Lg'_le (t : ℝ) : |1 / (|t| + ε)| ≤ 1 / ε := by
   rw [abs_of_pos (by positivity)]

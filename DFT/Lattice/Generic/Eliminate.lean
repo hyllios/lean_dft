@@ -114,7 +114,9 @@ lemma eval_colPoly_map (HP : Matrix C C (MvPolynomial V ℝ)) (F : MvPolynomial 
   unfold colPoly
   rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_comp_left]
   have hid : g.comp (algebraMap ℝ (MvPolynomial V ℝ)[X]) = RingHom.id ℝ :=
-    RingHom.ext fun r => by simp [g]
+    RingHom.ext fun r => by
+      simp only [g, RingHom.comp_apply, Polynomial.algebraMap_apply, Polynomial.coe_eval₂RingHom,
+        Polynomial.eval₂_C, MvPolynomial.algebraMap_eq, MvPolynomial.eval_C, RingHom.id_apply]
   rw [hid]
   have hadj : g.mapMatrix (adjugate (shiftMat HP)) = adjugate (g.mapMatrix (shiftMat HP)) :=
     RingHom.map_adjugate g _

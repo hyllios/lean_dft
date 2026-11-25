@@ -233,8 +233,7 @@ lemma isWDN_slater (hφ : ∀ j, H1N (φ j)) (hφc : ∀ j, Continuous (φ j)) (
     (Φs := fun σ x => sgn σ * tens (fun i => φ (σ i)) x)
     (Gs := fun σ x => sgn σ *
       tens (Function.update (fun i => φ (σ i)) k (deriv (φ (σ k)))) x)
-    (fun σ _ => memLp_cont (continuous_const.mul
-      (continuous_finsetProd _ fun i _ => (hφc _).comp (continuous_apply i))))
+    (fun σ _ => memLp_cont (continuous_const.mul (continuous_tens fun i => hφc (σ i))))
     (fun σ _ => IsWDN.const_mul (sgn σ)
       (isWDN_tens (fun i => hφ (σ i)) (fun i => hφc (σ i)) k))
   rw [slater_tens_sum]

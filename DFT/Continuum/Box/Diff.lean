@@ -147,9 +147,11 @@ lemma int_sq_close {h f g : ℝ → ℝ} (hh : ContinuousOn h (Icc 0 1)) (hf : C
   have hH0 : 0 ≤ H := (abs_nonneg _).trans (hH 0 h0)
   have hδ0 : 0 ≤ δ := (abs_nonneg _).trans (hδ 0 h0)
   have hM0 : 0 ≤ M := (abs_nonneg _).trans (hM 0 h0)
-  rw [← integral_sub (f := fun s => h s * f s ^ 2) (g := fun s => h s * g s ^ 2)
-    (integrable_mu1_of_continuousOn (hh.mul (hf.pow 2)))
-    (integrable_mu1_of_continuousOn (hh.mul (hg.pow 2))), ← Real.norm_eq_abs]
+  have e : ∫ s, h s * f s ^ 2 ∂μ1 - ∫ s, h s * g s ^ 2 ∂μ1 =
+      ∫ s, (h s * f s ^ 2 - h s * g s ^ 2) ∂μ1 :=
+    (integral_sub (integrable_mu1_of_continuousOn (hh.mul (hf.pow 2)))
+      (integrable_mu1_of_continuousOn (hh.mul (hg.pow 2)))).symm
+  rw [e, ← Real.norm_eq_abs]
   have hb := norm_setIntegral_le_of_norm_le_const_ae' (μ := volume) (s := Ioo (0 : ℝ) 1)
     (f := fun s => h s * f s ^ 2 - h s * g s ^ 2) (C := H * (δ * (2 * M + δ)))
     (by simp [Real.volume_Ioo]) (Eventually.of_forall fun s hs => ?_)

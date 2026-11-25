@@ -224,6 +224,11 @@ lemma continuous_hP {X : Cfg (m + 1) → ℝ} (hX : Continuous X) (j : Fin (m + 
     (f := fun (p : ℝ × ℝ) (z : Fin m → ℝ) => X (Fin.cons p.1 (Fin.insertNth j p.2 z)) ^ 2)
     (by fun_prop) isCompact_Icc
 
+/-- `hP X j · u` is continuous in the first variable. -/
+lemma continuous_hP_left {X : Cfg (m + 1) → ℝ} (hX : Continuous X) (j : Fin (m + 1)) (u : ℝ) :
+    Continuous fun t => hP X j t u :=
+  (continuous_hP hX j).comp (f := fun t : ℝ => (t, u)) (continuous_id.prodMk continuous_const)
+
 lemma abs_hP_le {X : Cfg (m + 1) → ℝ} {C : ℝ} (hC : ∀ x, |X x| ≤ C) (j : Fin (m + 1)) (t u : ℝ) :
     |hP X j t u| ≤ C ^ 2 := by
   rw [hP, ← Real.norm_eq_abs]
@@ -376,11 +381,9 @@ theorem integral_abs_rX_sub_le (ρ : Measure ℝ) [IsMeas01 ρ] {X X' : Cfg (m +
   have hpt : ∀ u, |rX ρ X u - rX ρ X' u| ≤
       N * ∑ j, ∫ t, |hP X j t u - hP X' j t u| ∂ρ := fun u => by
     have hiX : ∀ j : Fin (m + 1), Integrable (fun t => hP X j t u) ρ := fun j =>
-      integrable_bdd_cont (C := CX ^ 2) ((continuous_hP hX j).comp
-        (continuous_id.prodMk continuous_const)) fun t => abs_hP_le hCX j t u
+      integrable_bdd_cont (C := CX ^ 2) (continuous_hP_left hX j u) fun t => abs_hP_le hCX j t u
     have hiX' : ∀ j : Fin (m + 1), Integrable (fun t => hP X' j t u) ρ := fun j =>
-      integrable_bdd_cont (C := CX ^ 2) ((continuous_hP hX' j).comp
-        (continuous_id.prodMk continuous_const)) fun t => abs_hP_le hCX' j t u
+      integrable_bdd_cont (C := CX ^ 2) (continuous_hP_left hX' j u) fun t => abs_hP_le hCX' j t u
     rw [rX, rX, ← mul_sub, abs_mul, abs_of_nonneg hN, ← Finset.sum_sub_distrib]
     refine mul_le_mul_of_nonneg_left ((Finset.abs_sum_le_sum_abs _ _).trans
       (Finset.sum_le_sum fun j _ => ?_)) hN
@@ -395,11 +398,9 @@ theorem integral_abs_rX_sub_le (ρ : Measure ℝ) [IsMeas01 ρ] {X X' : Cfg (m +
           integrable_finsetSum _ fun j _ => (hd j).integral_prod_right
         refine ((h1.const_mul N).aestronglyMeasurable).congr (ae_of_all _ fun u => ?_)
         have hiX : ∀ j : Fin (m + 1), Integrable (fun t => hP X j t u) ρ := fun j =>
-          integrable_bdd_cont (C := CX ^ 2) ((continuous_hP hX j).comp
-            (continuous_id.prodMk continuous_const)) fun t => abs_hP_le hCX j t u
+          integrable_bdd_cont (C := CX ^ 2) (continuous_hP_left hX j u) fun t => abs_hP_le hCX j t u
         have hiX' : ∀ j : Fin (m + 1), Integrable (fun t => hP X' j t u) ρ := fun j =>
-          integrable_bdd_cont (C := CX ^ 2) ((continuous_hP hX' j).comp
-            (continuous_id.prodMk continuous_const)) fun t => abs_hP_le hCX' j t u
+          integrable_bdd_cont (C := CX ^ 2) (continuous_hP_left hX' j u) fun t => abs_hP_le hCX' j t u
         simp only [rX, ← mul_sub, ← Finset.sum_sub_distrib]
         congr 1
         exact Finset.sum_congr rfl fun j _ => integral_sub (hiX j) (hiX' j)

@@ -126,7 +126,8 @@ lemma hasDerivAt_Gr (t : ℝ) : HasDerivAt (Gr ε) (1 / (|t| + ε) ^ 2) t := by
   simp [id]; field_simp
 
 lemma continuous_Gr' : Continuous fun t : ℝ => 1 / (|t| + ε) ^ 2 :=
-  continuous_const.div ((continuous_abs.add continuous_const).pow 2) fun t => by positivity
+  continuous_const.div ((continuous_abs.add continuous_const).pow 2) fun t =>
+    pow_ne_zero 2 (add_pos_of_nonneg_of_pos (abs_nonneg t) hε).ne'
 
 lemma Gr'_le (t : ℝ) : |1 / (|t| + ε) ^ 2| ≤ 1 / ε ^ 2 := by
   rw [abs_of_pos (by positivity)]

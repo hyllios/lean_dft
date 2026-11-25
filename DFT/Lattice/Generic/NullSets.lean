@@ -78,7 +78,7 @@ theorem volume_zeroSet_fin : ∀ (n : ℕ) (P : MvPolynomial (Fin n) ℝ), P ≠
       filter_upwards [hy0] with y hy
       have hmap : Polynomial.map (eval y) Q ≠ 0 := by
         intro h0
-        have h1 := congrArg (fun p => Polynomial.coeff p Q.natDegree) h0
+        have h1 := congrArg (fun p : Polynomial ℝ => p.coeff Q.natDegree) h0
         simp only [Polynomial.coeff_map, Polynomial.coeff_natDegree, Polynomial.coeff_zero] at h1
         exact hy h1
       apply Set.Finite.measure_zero

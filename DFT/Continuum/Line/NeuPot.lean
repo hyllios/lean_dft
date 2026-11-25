@@ -116,7 +116,7 @@ theorem sq_le_H1N {ψ : ℝ → ℝ} (hψ : H1N ψ) {a : ℝ} (ha : 0 < a) {t : 
       rwa [show deriv ψ x * ψ x + ψ x * deriv ψ x = 2 * ψ x * deriv ψ x by ring]
     have h2 : ∫ x in Ι s t, g x ≤ ∫ x, g x ∂μ1 :=
       setIntegral_mono_set hg (ae_of_all _ hg0)
-        (hsub.eventuallyLE.trans Ioo_ae_eq_Ioc.symm.le)
+        ((LE.le.eventuallySubset hsub).congr .rfl Ioo_ae_eq_Ioc.symm)
     have h3 := le_abs_self (∫ x in s..t, deriv (fun x => ψ x * ψ x) x)
     rw [hFTC] at h1 h3
     nlinarith

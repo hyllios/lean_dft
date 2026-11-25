@@ -184,7 +184,8 @@ def omega : Set ((C → ℝ) × (C → ℝ)) := {ψ | (kJ H0 n ψ).det ≠ 0}
 
 lemma isOpen_omega : IsOpen (omega H0 n) := by
   have hc : Continuous (fun ψ : (C → ℝ) × (C → ℝ) => (kJ H0 n ψ).det) :=
-    (contDiff_det_of_entries _ (contDiff_kJ_entry H0 n)).continuous.comp
+    (contDiff_det_of_entries (fun p : PS C V => kJ H0 n p.1) (contDiff_kJ_entry H0 n)).continuous.comp
+      (f := fun ψ : (C → ℝ) × (C → ℝ) => ((ψ, (0 : V → ℝ)) : PS C V))
       (continuous_id.prodMk (continuous_const (y := (0 : V → ℝ))))
   exact isOpen_ne_fun hc continuous_const
 

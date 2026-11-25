@@ -64,13 +64,14 @@ lemma smd_update (m : Fin (n + 1) → ℕ) (x : Cfg n) (j : Fin (n + 1)) (t : �
       sn (m j + 1) t * ∏ i ∈ Finset.univ.erase j, sn (m i + 1) (x i) := by
   simp only [smd]
   rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ j), Function.update_self]
-  congr 1
+  refine congrArg (sn (m j + 1) t * ·) ?_
   refine Finset.prod_congr rfl fun i hi => ?_
   rw [Function.update_of_ne (Finset.ne_of_mem_erase hi)]
 
 lemma contDiff_smd (m : Fin (n + 1) → ℕ) : ContDiff ℝ 2 (smd m) :=
-  contDiff_prod fun j _ => (by unfold sn; fun_prop : ContDiff ℝ 2 (sn (m j + 1))).comp
-    (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin (n + 1) => ℝ) j).contDiff
+  contDiff_prod fun j _ => by
+    have h : ContDiff ℝ 2 (sn (m j + 1)) := by unfold sn; fun_prop
+    exact h.comp (by fun_prop)
 
 lemma dk_smd_update (m : Fin (n + 1) → ℕ) (x : Cfg n) (j : Fin (n + 1)) (t : ℝ) :
     dk j (smd m) (Function.update x j t) = √2 * (π * (m j + 1 : ℕ)) *

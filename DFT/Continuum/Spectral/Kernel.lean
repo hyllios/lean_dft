@@ -77,9 +77,10 @@ lemma ae_mem_Icc : ∀ᵐ y ∂μ1, y ∈ Icc (0 : ℝ) 1 :=
 
 lemma aestronglyMeasurable_Kg {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
     AEStronglyMeasurable (fun y => Kg hWc x y) μ1 := by
-  have hc : ContinuousOn (fun y => Kg hWc x y) (Icc 0 1) :=
-    (continuousOn_Kg hWc).comp (continuousOn_const.prodMk continuousOn_id)
-      fun y hy => ⟨hx, hy⟩
+  have hc : ContinuousOn (fun y => Kg hWc x y) (Icc 0 1) := by
+    refine (continuousOn_Kg hWc).comp (f := fun y : ℝ => (x, y)) ?_ ?_
+    · exact (continuousOn_const (c := x)).prodMk continuousOn_id
+    · exact fun y hy => Set.mk_mem_prod hx hy
   exact (hc.mono Ioo_subset_Icc_self).aestronglyMeasurable measurableSet_Ioo
 
 lemma integrable_Kg_mul {f : ℝ → ℝ} (hf : Integrable f μ1) {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :

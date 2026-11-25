@@ -131,10 +131,8 @@ lemma integral_W_slater (W : Fin (n + 1) → ℝ → ℝ) (hW : ∀ i, Continuou
     simp only [Finset.prod_mul_distrib]
     ring
   have hc : ∀ (σ τ : Equiv.Perm (Fin (n + 1))), Continuous fun x : Cfg n =>
-      sgn σ * sgn τ * ∏ i, (W i (x i) * (φ (σ i) (x i) * φ (τ i) (x i))) := fun σ τ =>
-    continuous_const.mul (continuous_finsetProd _ fun i _ =>
-      ((hW i).comp (continuous_apply i)).mul
-        (((hφ _).comp (continuous_apply i)).mul ((hφ _).comp (continuous_apply i))))
+      sgn σ * sgn τ * ∏ i, (W i (x i) * (φ (σ i) (x i) * φ (τ i) (x i))) := fun σ τ => by
+    fun_prop
   simp only [e]
   rw [integral_finsetSum _ fun σ _ => integrable_finsetSum _ fun τ _ => integrableN (hc σ τ)]
   refine Finset.sum_congr rfl fun σ _ => ?_
@@ -196,8 +194,7 @@ lemma integral_LN_slater (v : Pot) :
   have hS : Continuous fun x : Cfg n => slater φ x * slater φ x := by
     have : Continuous (slater φ) := by
       rw [show slater φ = fun x => _ from funext (slater_eq_sum φ)]
-      exact continuous_finsetSum _ fun σ _ => continuous_const.mul
-        (continuous_finsetProd _ fun i _ => (hφ _).comp (continuous_apply i))
+      exact continuous_finsetSum _ fun σ _ => by fun_prop
     exact this.mul this
   rw [integral_LN_mul v hS]
   simp only [integral_W1_slater hφ hon _ (continuous_ext v)]

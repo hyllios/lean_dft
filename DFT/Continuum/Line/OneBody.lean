@@ -173,6 +173,15 @@ lemma isGS_shift {v : Pot} {Ψ : Cfg 0 → ℝ} :
 
 /-! ### The transfer -/
 
+/-- The density in `settingW` does not depend on the interaction: only the potential coupling
+`L = LN 0` enters. (Stated as a lemma so that the kernel never has to compare two settings with
+different interactions.) -/
+lemma dens_settingW_indep (w w' : Cfg 0 → ℝ) (hw : Continuous w) (hw' : Continuous w')
+    (ψ : Cfg 0 → ℝ) : dens (settingW τ 0 w hw) ψ = dens (settingW τ 0 w' hw') ψ := by
+  have hL : ∀ (u : Cfg 0 → ℝ) (hu : Continuous u), (settingW τ 0 u hu).L = LN 0 := fun _ _ => rfl
+  funext v
+  simp only [dens, pf, hL]
+
 /-- **Ground-state densities of one particle on `H¹₀` are those of the box**, the interaction
 acting as the potential `wPot w`. -/
 theorem pureDens_one_iff (v : Pot) (ρ : Pot → ℝ) :
@@ -188,7 +197,8 @@ theorem pureDens_one_iff (v : Pot) (ρ : Pot → ℝ) :
     have hφ1 : ip (μ := μN 0) (lift φ) (lift φ) = 1 := by rw [ip_lift]; exact hφN.1.2
     refine ⟨φ, hφ, hφN.1.2, ?_⟩
     have := dens_eq_of_ae_smul (S := settingW τ 0 (fun _ => 0) continuous_const) hc h1 hφ1
-    rw [← dens_lift (τ := τ) (w := fun _ => 0) (hw := continuous_const)]
+    rw [← dens_lift (τ := τ) (w := fun _ => 0) (hw := continuous_const),
+      dens_settingW_indep w (fun _ => 0) hw continuous_const]
     exact this.symm
   · rintro ⟨φ, hφ, h1, rfl⟩
     exact ⟨lift φ, isGS_shift.2 (isGS_lift hφ), by rw [ip_lift]; exact h1, dens_lift φ⟩

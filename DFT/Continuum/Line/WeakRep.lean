@@ -124,6 +124,10 @@ end H10
 /-- The tensor product `Π_j f_j(x_j)`. -/
 noncomputable def tens (f : Fin (n + 1) → ℝ → ℝ) (x : Cfg n) : ℝ := ∏ j, f j (x j)
 
+/-- A tensor product of continuous orbitals is continuous. -/
+lemma continuous_tens {f : Fin (n + 1) → ℝ → ℝ} (hf : ∀ j, Continuous (f j)) : Continuous (tens f) :=
+  continuous_finsetProd _ fun j _ => (hf j).comp (continuous_apply j)
+
 lemma memLp_tens {f : Fin (n + 1) → ℝ → ℝ} (hm : ∀ j, AEStronglyMeasurable (f j) μ1)
     (hs : ∀ j, Integrable (fun t => f j t ^ 2) μ1) : MemLp (tens f) 2 (μN n) := by
   rw [Sine.muN_eq]
@@ -270,8 +274,7 @@ lemma integral_cumF' (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) {h
 lemma continuous_slater {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, Continuous (φ j)) :
     Continuous (slater φ) := by
   rw [show slater φ = fun x => _ from funext (slater_eq_sum φ)]
-  exact continuous_finsetSum _ fun σ _ => continuous_const.mul
-    (continuous_finsetProd _ fun i _ => (hφ _).comp (continuous_apply i))
+  exact continuous_finsetSum _ fun σ _ => by fun_prop
 
 /-- A Slater determinant of continuous `H10` orbitals is an `H¹₀` fermionic state. -/
 lemma slater_memW {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, H10 (φ j))
@@ -283,8 +286,7 @@ lemma slater_memW {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, H10 (φ j))
       (Φs := fun σ x => sgn σ * tens (fun i => φ (σ i)) x)
       (Gs := fun σ x => sgn σ *
         tens (Function.update (fun i => φ (σ i)) k (deriv (φ (σ k)))) x)
-      (fun σ _ => memLp_cont (continuous_const.mul
-        (continuous_finsetProd _ fun i _ => (hφc _).comp (continuous_apply i))))
+      (fun σ _ => memLp_cont (continuous_const.mul (continuous_tens fun i => hφc (σ i))))
       (fun σ _ => IsWD.const_mul (sgn σ) (isWD_tens (fun i => hφ (σ i)) k))
     rw [e]
     exact ⟨_, h.2⟩

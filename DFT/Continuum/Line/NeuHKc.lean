@@ -176,9 +176,11 @@ lemma integrable_hQ_beta {β : ℝ → ℝ} (hβ : Integrable β μ1) {F : Cfg (
 lemma integrable_RfD (D : PotH) {X : Cfg (m + 1) → ℝ} (hX1 : ContDiff ℝ 1 X) :
     Integrable (RfD D X) μ1 := by
   unfold RfD
-  refine Integrable.const_mul (integrable_finsetSum _ fun j _ => ?_) _
+  apply Integrable.const_mul
+  refine integrable_finsetSum Finset.univ fun j _ => ?_
   refine (Integrable.const_mul (integrable_cont_mu1 ((continuous_hQ (hX1.continuous.mul
-    hX1.continuous) j).comp (Continuous.prodMk continuous_const continuous_id))) _).add ?_
+    hX1.continuous) j).comp (f := fun u : ℝ => ((0 : ℝ), u))
+      (Continuous.prodMk continuous_const continuous_id))) _).add ?_
   exact integrable_hQ_beta (integrable_L2I _) (continuous_dk_of_C1 (hX1.mul hX1) 0) j
 
 lemma cauchySeq_of_dist_le_add {α : Type*} [PseudoMetricSpace α] {s : ℕ → α} {f : ℕ → ℝ}

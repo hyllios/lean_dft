@@ -189,7 +189,8 @@ section march
 variable (H0 : Matrix C C ℝ) (n : V → C → ℝ)
 
 lemma continuous_det_kJ : Continuous (fun ψ : (C → ℝ) × (C → ℝ) => (kJ H0 n ψ).det) :=
-  (contDiff_det_of_entries _ (contDiff_kJ_entry H0 n)).continuous.comp
+  (contDiff_det_of_entries (fun p : PS C V => kJ H0 n p.1) (contDiff_kJ_entry H0 n)).continuous.comp
+    (f := fun ψ : (C → ℝ) × (C → ℝ) => ((ψ, (0 : V → ℝ)) : PS C V))
     (continuous_id.prodMk (continuous_const (y := (0 : V → ℝ))))
 
 /-- States of squared norm `P` at distance `δ` (in determinant) from the boundary of `Ω`. -/

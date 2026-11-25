@@ -61,7 +61,7 @@ lemma abs_integral_le_mu1 {h : ℝ → ℝ} (hh : Integrable h μ1) {t : ℝ} (h
     _ = ∫ x in Ioo (0 : ℝ) t, |h x| := by simp_rw [Real.norm_eq_abs]
     _ ≤ ∫ s, |h s| ∂μ1 := setIntegral_mono_set
         (show IntegrableOn (fun x => |h x|) (Ioo (0 : ℝ) 1) volume from hh.abs)
-        (ae_of_all _ fun x => abs_nonneg _) (Ioo_subset_Ioo_right ht.2).eventuallyLE
+        (ae_of_all _ fun x => abs_nonneg _) (LE.le.eventuallySubset (Ioo_subset_Ioo_right ht.2))
 
 lemma norm_sq_L2I (f : L2I) : ‖f‖ ^ 2 = ∫ t, (f : ℝ → ℝ) t ^ 2 ∂μ1 := by
   rw [← real_inner_self_eq_norm_sq, L2.inner_def]
