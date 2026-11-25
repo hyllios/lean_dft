@@ -45,7 +45,10 @@ import DFT.Continuum.Line.LogEst
 import DFT.Continuum.Line.Meagre
 import DFT.Continuum.Line.MeagreC1
 import DFT.Continuum.Line.MeasureGS
+import DFT.Continuum.Line.MeasurePos
 import DFT.Continuum.Line.MeasurePot
+import DFT.Continuum.Line.MeasureTrap
+import DFT.Continuum.Line.MeasureUCP
 import DFT.Continuum.Line.Nondeg
 import DFT.Continuum.Line.NotVRep
 import DFT.Continuum.Line.NotVRepDense

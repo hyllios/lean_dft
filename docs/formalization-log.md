@@ -756,3 +756,24 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   axioms. Blueprint `thm:line_measure_gs`.
   Next: from the weak equation, ψ' has a BV representative with dψ' = (ν − E₀)ψ as measures; then the
   N = 1 characterisation of measure-v-representable densities (step 3).
+- P step 3 (sufficiency). `Line/MeasurePos`: `deriv_abs_sq_le` (at zeros |ψ| has a local min, so
+  deriv = 0), `H10.abs`, `kinM_abs_le`, `QM_abs_le`, `exists_min_nonneg`; **`isGSM_of_pos_weak`**
+  (g ∈ H¹₀, g > 0 on (0,1), −g'' + νg = Eg weakly ⇒ E = E₀ and g is a GS: test with a nonnegative GS),
+  `vrepM_of_pos_weak`. `Line/MeasureTrap`: trapezoid min(3t, 1, 3(1−t)) is the GS of
+  −d² − 3δ_{1/3} − 3δ_{2/3} (`trap_isGSM`, energy 0), `trap_vrepM`, **`trap_nrep_not_vrep`** (any N, not
+  v-rep with continuous potentials). Blueprint `thm:line_measure_pos`, `thm:line_measure_trap`.
+  Open (necessity): a GS of a measure potential is positive on (0,1), and ν is determined by g. Both
+  need ODE uniqueness for −ψ'' = (E − ν)ψ with measure coefficients (Riesz representation of ν as a
+  signed measure + Grönwall), which the functional-only `PotM` setting does not yet have.
+- P step 3 (necessity, route (b) chosen by user: ν given as a measure). `Line/MeasureUCP`: `IsMeas01`
+  (finite measure carried by [0,1]), `intCLM`, `nuOf μ₊ μ₋ : PotM`; **`integral_mul_eq_neg`** (Fubini:
+  ∫ψφ dρ = −∫φ' G_ρ, G_ρ(t) = ∫_{x<t} ψ dρ); **`ae_eq_const_of_orth`** (du Bois-Reymond);
+  **`deriv_ae_eq_R`** (ψ' = R = c + G₊ − G₋ − E G_L a.e.); `R_sub_le` (|R(t) − R(a)| ≤ Λ sup|ψ|),
+  `psi_sub`; **`step_zero`**/**`eq_zero_of_R_zero`** (ψ(a) = R(a) = 0 ⇒ ψ ≡ 0: uniform step
+  δ = 1/(2Λ+2), no Grönwall, atoms harmless); **`R_zero_of_min`**; **`gs_ne_zero`**, **`gs_pos_or_neg`**
+  (every GS of a measure potential has a strict sign on (0,1)); **`vrepMeas_iff`** (N = 1: ρ is a
+  measure-potential GS density ⟺ ρ = g², g ∈ H¹₀ normalised, g > 0 inside, −g'' + νg = Eg weakly for
+  some measure ν). Standard axioms. Blueprint `thm:line_measure_ucp`.
+  Open: HK for measure potentials (ν determined by g up to atoms at the walls and a constant; needs
+  measures on (0,1) determined by C_c^∞ test functions); explicit condition on g (g'' a measure,
+  ∫ d|g''|/g < ∞); N-body.

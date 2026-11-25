@@ -993,6 +993,56 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   $s\mapsto Q(\psi+s\varphi)-E_0\int(\psi+s\varphi)^2\ge0$.
 \end{proof}
 
+\begin{theorem}[Positive weak solutions are ground states]
+  \label{thm:line_measure_pos}
+  \lean{DFT.Continuum.Line.deriv_abs_sq_le, DFT.Continuum.Line.H10.abs, DFT.Continuum.Line.kinM_abs_le, DFT.Continuum.Line.QM_abs_le, DFT.Continuum.Line.exists_min_nonneg, DFT.Continuum.Line.integral_mul_pos, DFT.Continuum.Line.isGSM_of_pos_weak, DFT.Continuum.Line.vrepM_of_pos_weak}
+  \leanok
+  \uses{thm:line_measure_gs}
+  Let $\nu$ be a measure potential. If $g\in H^1_0(0,1)$ is positive on $(0,1)$ and $-g''+\nu g=Eg$ weakly, then
+  $E=E_0(\nu)$ and $g$ is a ground state of $\nu$; in particular $g^2/\int g^2$ is $v$-representable with a measure potential.
+\end{theorem}
+\begin{proof}
+  \leanok
+  $|\psi|\in H^1_0$ with $\int|\psi|'^2\le\int\psi'^2$ (at a zero of $\psi$, $|\psi|$ has a local minimum), so there is a nonnegative
+  ground state $\psi_0$. Testing the equation of $g$ with $\psi_0$ and the Euler--Lagrange equation of $\psi_0$ with $g$ gives
+  $(E-E_0)\int g\psi_0=0$, and $\int g\psi_0>0$. Then $Q(g)=E_0\int g^2$.
+\end{proof}
+
+\begin{theorem}[A plateau density needs two $\delta$-functions]
+  \label{thm:line_measure_trap}
+  \lean{DFT.Continuum.Line.trapG, DFT.Continuum.Line.h10_trapG, DFT.Continuum.Line.integral_dtrap, DFT.Continuum.Line.nuTrap, DFT.Continuum.Line.trap_isGSM, DFT.Continuum.Line.IsGSM.const_mul, DFT.Continuum.Line.trap_vrepM, DFT.Continuum.Line.trap_nrep_not_vrep}
+  \leanok
+  \uses{thm:line_measure_pos, thm:line_kink}
+  The trapezoid $g=\min(3x,1,3(1-x))$ is the ground state of $-d^2/dx^2-3\delta_{1/3}-3\delta_{2/3}$, with energy $0$. So the
+  plateau density $\propto g^2$ is $v$-representable with a measure potential, but for any $N$ it is not $v$-representable
+  with continuous potentials (it has kinks at $\tfrac13$, $\tfrac23$).
+\end{theorem}
+\begin{proof}
+  \leanok
+  $\int g'\varphi'=3\varphi(\tfrac13)+3\varphi(\tfrac23)=-\nu(g\varphi)$ by integrating on the three pieces; $g>0$ on $(0,1)$, so
+  Theorem~\ref{thm:line_measure_pos} applies. The kink rules out a $C^1$ profile.
+\end{proof}
+
+\begin{theorem}[Measure potentials: no interior zeros, and the $N=1$ characterisation]
+  \label{thm:line_measure_ucp}
+  \lean{DFT.Continuum.Line.IsMeas01, DFT.Continuum.Line.intCLM, DFT.Continuum.Line.nuOf, DFT.Continuum.Line.Gρ, DFT.Continuum.Line.integral_mul_eq_neg, DFT.Continuum.Line.ae_eq_const_of_orth, DFT.Continuum.Line.Rψ, DFT.Continuum.Line.deriv_ae_eq_R, DFT.Continuum.Line.LamM, DFT.Continuum.Line.R_sub_le, DFT.Continuum.Line.psi_sub, DFT.Continuum.Line.step_zero, DFT.Continuum.Line.eq_zero_of_R_zero, DFT.Continuum.Line.R_zero_of_min, DFT.Continuum.Line.QM_eq_EM_of_isGSM, DFT.Continuum.Line.gs_ne_zero, DFT.Continuum.Line.gs_pos_or_neg, DFT.Continuum.Line.VRepMeas, DFT.Continuum.Line.vrepMeas_iff}
+  \leanok
+  \uses{thm:line_measure_pos}
+  Let $\nu=\mu_+-\mu_-$ with $\mu_\pm$ finite measures on $[0,1]$. Every ground state of $-d^2/dx^2+\nu$ on $H^1_0(0,1)$ has no zero
+  in $(0,1)$, hence a strict sign there. Consequently a density $\rho$ is the ground-state density of such a potential iff
+  $\rho=g^2$ with $g\in H^1_0$, $\int g^2=1$, $g>0$ on $(0,1)$, and $-g''+\nu g=Eg$ weakly for some measure $\nu$ and some $E$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Fubini gives $\int\psi\varphi\,d\rho=-\int\varphi'(t)G_\rho(t)\,dt$ with $G_\rho(t)=\int_{x<t}\psi\,d\rho$, so the weak equation says
+  $\int\varphi'(\psi'-G_++G_-+EG_L)=0$ for all $\varphi\in H^1_0$, and by du Bois-Reymond $\psi'=R=c+G_+-G_--EG_L$ a.e.
+  Take a nonnegative ground state $\chi=|\psi|/\|\psi\|$. At an interior zero $t_0$, $R(t_0)=0$: $R$ is continuous at $t_0$ up to
+  $\Lambda\sup|\chi|$ near $t_0$, and $R(t_0)\ne0$ would make $\chi$ negative on one side. If $\chi(a)=R(a)=0$, then on an interval of
+  length $\delta=1/(2\Lambda+2)$ around $a$, $\sup|\chi|\le\delta\Lambda\sup|\chi|\le\frac12\sup|\chi|$, so $\chi=0$ and $R=0$ at its
+  end; repeating, $\chi\equiv0$, a contradiction. The sign follows from the intermediate value theorem; the characterisation
+  combines this with the Euler--Lagrange equation and Theorem~\ref{thm:line_measure_pos}.
+\end{proof}
+
 \begin{theorem}[Supergradient densities are dense]
   \label{thm:box_dense}
   \lean{DFT.Continuum.ekeland, DFT.Continuum.exists_minorant_of_ge_neg_norm, DFT.Continuum.exists_supergrad_near, DFT.Continuum.Box.gsEr, DFT.Continuum.Box.densL, DFT.Continuum.Box.gsEr_concave, DFT.Continuum.Box.gsEr_lipschitz, DFT.Continuum.Box.supergrad_of_isNGS, DFT.Continuum.Box.liebF_of_supergrad, DFT.Continuum.Box.dense_supergrad, DFT.Continuum.Box.dense_supergrad_of_nst}
