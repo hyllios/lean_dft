@@ -37,10 +37,18 @@
 \end{proof}
 
 \begin{theorem}[Number operator]\label{thm:number}
+  \lean{QM.ManyBody.num, QM.ManyBody.numTot, QM.ManyBody.num_mulVec_single, QM.ManyBody.num_mulVec_single_conf,
+    QM.ManyBody.numTot_mulVec_single, QM.ManyBody.num_isHermitian, QM.ManyBody.numTot_isHermitian,
+    QM.ManyBody.num_mul_num, QM.ManyBody.numTotOp_isSelfAdjoint}\leanok
   \uses{def:cdag}
   $\hat N=\sum_i c_i^\dagger c_i$ acts as $\hat N|s\rangle=|s|\,|s\rangle$; $\hat n_i=c_i^\dagger c_i$ acts as the occupation
   $\mathtt{occF}\ i\ s$ of the lattice code (\texttt{QM.ManyBody.Configurations}).
 \end{theorem}
+\begin{proof}\leanok
+  $c_i^\dagger c_i|s\rangle$: $c_i$ removes $i$ with the sign $\sigma_i(s\setminus\{i\})$ and $c_i^\dagger$ puts it back with the
+  same sign, whose square is $1$; if $i\notin s$ the result is $0$. Summing the indicators $[i\in s]$ over $i$ gives $|s|$.
+  Both operators are self-adjoint, and $\hat n_i^2=\hat n_i$.
+\end{proof}
 
 \begin{theorem}[Bridge to the lattice code]\label{thm:fock-bridge}
   \uses{def:cdag}
