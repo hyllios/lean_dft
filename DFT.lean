@@ -75,6 +75,9 @@ import DFT.Continuum.Line.NeuDensD
 import DFT.Continuum.Line.NeuEL
 import DFT.Continuum.Line.NeuFer
 import DFT.Continuum.Line.NeuGS
+import DFT.Continuum.Line.NeuHKa
+import DFT.Continuum.Line.NeuHKb
+import DFT.Continuum.Line.NeuHKc
 import DFT.Continuum.Line.NeuHalf
 import DFT.Continuum.Line.NeuND
 import DFT.Continuum.Line.NeuNGS

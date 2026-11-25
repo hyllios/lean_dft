@@ -939,3 +939,15 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   isWDN_slater, slater_memN, kinN_slater_le, exists_eH_bound, harrimanN, rep_of_prof,
   **vrepNH_suff**, **vrepNH_iff**: ρ ∈ H¹ is v-rep iff ρ > 0 on [0,1] and ∫ρ = N). Standard
   axioms. Next: Q6 HK (v − v′ = const from equal densities).
+- Q6 HK DONE (2026-11-25), CORSO THM 2.9 COMPLETE. `Line/NeuHKa` (kinN_eq_tsum,
+  **tendsto_kinN_sub_truncC**, SHN = N∫X² + T(X), norm_rhoE_le, bilinearity of rhoE2,
+  **norm_rhoE2_le**: ‖ρ(A, B)‖ ≤ 8√(SHN A · SHN B)). `Line/NeuHKb` (hQ pair marginals, Riesz form
+  D_apply, LgD, RfD, **D_smooth**: D(ρ(X, X FF g)) = D(gρ_X) + ∫ g R_X for C² X, N ≥ 2,
+  **integral_abs_RfD_sub_le**). `Line/NeuHKc` (dE2 products in H1E with norm_dE2_le and LgD_eq,
+  mul_memN, SHN_mul_le, rhoE_sub_eq, integrable_RfD, **exists_R_succ**: R_{X_M} Cauchy in L¹ along
+  the cosine truncations, dE2_rhoE_one, **exists_R** all N, **D_dE2_eq**: Riesz on
+  h ↦ D(hρ) + ∫ hR tested with bump01 and bump01·∫ext u, h1N_inv, **D_eq_integral_d**: D(e) = ∫ e d,
+  d = −R/ρ, int_rhoE2_L1N, **D_eq_zero_of_gs**, ellE_rhoE2, **hkNH**: equal GS densities ⇒
+  v − v′ = c·ellE). `Line/MeasureHKend` refactored so that the Tonelli bound and the symmetrised
+  fundamental lemma take a marginal bound and a symmetry hypothesis (**integrable_x0_sq_of**,
+  **sum_ae_zero_of**, sq_sym_ae_of) and serve both settings. Standard axioms.

@@ -311,23 +311,15 @@ lemma integrable_of_cons_prod {F : Cfg n → ℝ}
   refine (hr.integrable_comp_emb e.symm.measurableEmbedding).1 ?_
   simpa [Function.comp_def, hcomp, Fin.insertNth_zero'] using hF
 
-/-- **Tonelli on the cube**: for `u ∈ L¹(0, 1)`, `u(x₀) Φ²` is integrable and
-`∫ |u(x₀)| Φ² ≤ ‖ρ̂‖ / N ∫ |u|`. -/
-theorem integrable_x0_sq {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {u : ℝ → ℝ}
+/-- **Tonelli on the cube**: if the marginal of `Φ²` is a.e. at most `B`, then for `u ∈ L¹(0, 1)`,
+`u(x₀) Φ²` is integrable and `∫ |u(x₀)| Φ² ≤ B ∫ |u|`. -/
+theorem integrable_x0_sq_of {Φ : Cfg n → ℝ} (hΦ1 : MemLp Φ 2 (μN n)) {B : ℝ}
+    (hmarg : ∀ᵐ t ∂μ1, ∫ y in Cube' n, Φ (Fin.cons t y) ^ 2 ≤ B) {u : ℝ → ℝ}
     (hu : Integrable u μ1) :
     Integrable (fun x => u (x 0) * Φ x ^ 2) (μN n) ∧
-      ∫ x, |u (x 0)| * Φ x ^ 2 ∂μN n ≤ ‖rhoHat τ Φ‖ / (n + 1) * ∫ t, |u t| ∂μ1 := by
-  have hN : (0 : ℝ) < n + 1 := by positivity
-  have hΦ2 := integrable_cons_prod (int_sq hΦ.1)
+      ∫ x, |u (x 0)| * Φ x ^ 2 ∂μN n ≤ B * ∫ t, |u t| ∂μ1 := by
+  have hΦ2 := integrable_cons_prod (int_sq hΦ1)
   have hslice := hΦ2.prod_right_ae
-  -- the slice integrals are the marginal, bounded by `‖ρ̂‖ / N`
-  have hmarg : ∀ᵐ t ∂μ1, ∫ y in Cube' n, Φ (Fin.cons t y) ^ 2 ≤ ‖rhoHat τ Φ‖ / (n + 1) := by
-    filter_upwards [ae_ext_rhoHat hΦ, ae_restrict_mem measurableSet_Ioo] with t h1 ht
-    have hb : ext (rhoHat τ Φ) t ≤ ‖rhoHat τ Φ‖ := (le_abs_self _).trans (ext_le_norm _ _)
-    rw [h1] at hb
-    rw [le_div_iff₀ hN]
-    simp only [rhoN, marg] at hb
-    linarith
   have hGm : AEStronglyMeasurable (fun p : ℝ × (Fin n → ℝ) => u p.1 * Φ (Fin.cons p.1 p.2) ^ 2)
       ((volume.restrict (Ioo (0 : ℝ) 1)).prod (volume.restrict (Cube' n))) :=
     (hu.1.comp_fst (ν := volume.restrict (Cube' n))).mul hΦ2.1
@@ -335,7 +327,7 @@ theorem integrable_x0_sq {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {u : ℝ 
       ((volume.restrict (Ioo (0 : ℝ) 1)).prod (volume.restrict (Cube' n))) := by
     rw [integrable_prod_iff hGm]
     refine ⟨hslice.mono fun t ht => ht.const_mul (u t), ?_⟩
-    refine ((hu.norm.mul_const (‖rhoHat τ Φ‖ / (n + 1)))).mono' hGm.norm.integral_prod_right' ?_
+    refine ((hu.norm.mul_const B)).mono' hGm.norm.integral_prod_right' ?_
     filter_upwards [hmarg] with t ht
     rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun _ => norm_nonneg _)]
     simp only [norm_mul, norm_pow, Real.norm_eq_abs, sq_abs]
@@ -354,8 +346,23 @@ theorem integrable_x0_sq {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {u : ℝ 
   · exact (integrable_cons_prod hIa).integral_prod_left.congr (ae_of_all _ fun t => by
       simp only [Fin.cons_zero])
   · filter_upwards [hmarg] with t ht
-    rw [integral_const_mul, mul_comm (‖rhoHat τ Φ‖ / (n + 1))]
+    rw [integral_const_mul, mul_comm B]
     exact mul_le_mul_of_nonneg_left ht (abs_nonneg _)
+
+/-- **Tonelli on the cube**: for `u ∈ L¹(0, 1)`, `u(x₀) Φ²` is integrable and
+`∫ |u(x₀)| Φ² ≤ ‖ρ̂‖ / N ∫ |u|`. -/
+theorem integrable_x0_sq {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {u : ℝ → ℝ}
+    (hu : Integrable u μ1) :
+    Integrable (fun x => u (x 0) * Φ x ^ 2) (μN n) ∧
+      ∫ x, |u (x 0)| * Φ x ^ 2 ∂μN n ≤ ‖rhoHat τ Φ‖ / (n + 1) * ∫ t, |u t| ∂μ1 := by
+  have hN : (0 : ℝ) < n + 1 := by positivity
+  refine integrable_x0_sq_of hΦ.1 ?_ hu
+  filter_upwards [ae_ext_rhoHat hΦ, ae_restrict_mem measurableSet_Ioo] with t h1 ht
+  have hb : ext (rhoHat τ Φ) t ≤ ‖rhoHat τ Φ‖ := (le_abs_self _).trans (ext_le_norm _ _)
+  rw [h1] at hb
+  rw [le_div_iff₀ hN]
+  simp only [rhoN, marg] at hb
+  linarith
 
 lemma integral_xk_ae {G : Cfg n → ℝ} (hG : ∀ σ, ∀ᵐ x ∂μN n, G (pm σ x) = G x) (g : ℝ → ℝ)
     (k : Fin (n + 1)) : ∫ x, g (x k) * G x ∂μN n = ∫ x, g (x 0) * G x ∂μN n := by
@@ -371,11 +378,16 @@ lemma mem_mul_sym {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {χ : Cfg n → 
   filter_upwards [hΦ.2.2 σ trivial] with x hx
   simp only [hχs, hx]; ring
 
+lemma sq_sym_ae_of {Φ : Cfg n → ℝ} (hs : ∀ σ, ∀ᵐ x ∂μN n, Φ (pm σ x) = ch τ σ * Φ x)
+    {χ : Cfg n → ℝ} (hχs : ∀ σ x, χ (pm σ x) = χ x) (σ : Equiv.Perm (Fin (n + 1))) :
+    ∀ᵐ x ∂μN n, χ (pm σ x) * Φ (pm σ x) ^ 2 = χ x * Φ x ^ 2 := by
+  filter_upwards [hs σ] with x hx
+  rw [hχs, hx, mul_pow, sq (ch τ σ), ch_mul_self, one_mul]
+
 lemma sq_sym_ae {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {χ : Cfg n → ℝ}
     (hχs : ∀ σ x, χ (pm σ x) = χ x) (σ : Equiv.Perm (Fin (n + 1))) :
-    ∀ᵐ x ∂μN n, χ (pm σ x) * Φ (pm σ x) ^ 2 = χ x * Φ x ^ 2 := by
-  filter_upwards [hΦ.2.2 σ trivial] with x hx
-  rw [hχs, hx, mul_pow, sq (ch τ σ), ch_mul_self, one_mul]
+    ∀ᵐ x ∂μN n, χ (pm σ x) * Φ (pm σ x) ^ 2 = χ x * Φ x ^ 2 :=
+  sq_sym_ae_of (fun σ => hΦ.2.2 σ trivial) hχs σ
 
 /-- **The mixed density against an `L¹` weight**:
 `∫ e ρ̂(Φ, χΦ) = N ∫ e(x₀) χ Φ²` for a bounded symmetric `C¹` function `χ`. -/
@@ -590,22 +602,22 @@ lemma pm_mem_boxU {σ : Equiv.Perm (Fin (n + 1))} {x : Cfg n} {a : ℝ} :
 
 /-- **From symmetric tests to an a.e. statement**: if `∫ e(x₀) χ Φ² = 0` for all smooth
 symmetric `χ` supported in the box, then `Σₖ e(xₖ) Φ² = 0` a.e. in the box. -/
-theorem sum_ae_zero {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {e : ℝ → ℝ} (he : Integrable e μ1)
+theorem sum_ae_zero_of {Φ : Cfg n → ℝ} (hs : ∀ σ, ∀ᵐ x ∂μN n, Φ (pm σ x) = ch τ σ * Φ x)
+    {e : ℝ → ℝ} (hT : Integrable (fun x => e (x 0) * Φ x ^ 2) (μN n))
     {a : ℝ} (ha : 0 ≤ a)
     (htest : ∀ χ : Cfg n → ℝ, ContDiff ℝ (⊤ : ℕ∞) χ → HasCompactSupport χ → tsupport χ ⊆ boxU n a →
       (∀ σ x, χ (pm σ x) = χ x) → ∫ x, e (x 0) * (χ x * Φ x ^ 2) ∂μN n = 0) :
     ∀ᵐ x ∂(volume : Measure (Cfg n)), x ∈ boxU n a → (∑ k, e (x k)) * Φ x ^ 2 = 0 := by
   set G : Cfg n → ℝ := fun x => (∑ k, e (x k)) * Φ x ^ 2
-  have hT := (integrable_x0_sq hΦ he).1
   have hk : ∀ k : Fin (n + 1), Integrable (fun x => e (x k) * Φ x ^ 2) (μN n) := fun k => by
     refine (integrable_comp_pm hT (Equiv.swap 0 k)).congr ?_
-    filter_upwards [hΦ.2.2 (Equiv.swap 0 k) trivial] with x hx
+    filter_upwards [hs (Equiv.swap 0 k)] with x hx
     simp only [pm_apply, Equiv.swap_apply_left, hx, mul_pow, sq (ch τ _), ch_mul_self, one_mul]
   have hGi : Integrable G (μN n) :=
     (integrable_finsetSum Finset.univ fun k _ => hk k).congr (ae_of_all _ fun x => by
       simp only [G, Finset.sum_mul])
   have hGs : ∀ σ, ∀ᵐ x ∂μN n, G (pm σ x) = G x := fun σ => by
-    filter_upwards [hΦ.2.2 σ trivial] with x hx
+    filter_upwards [hs σ] with x hx
     simp only [G, pm_apply, hx, mul_pow, sq (ch τ σ), ch_mul_self, one_mul]
     congr 1
     exact Equiv.sum_comp σ fun k => e (x k)
@@ -672,7 +684,7 @@ theorem sum_ae_zero {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {e : ℝ → �
       funext x; simp only [G, Finset.sum_mul, Finset.mul_sum]; congr 1; funext k; ring
     rw [e1, integral_finsetSum _ fun k _ => hχk k]
     have hs : ∀ σ, ∀ᵐ x ∂μN n, χ (pm σ x) * Φ (pm σ x) ^ 2 = χ x * Φ x ^ 2 :=
-      sq_sym_ae hΦ hχs
+      sq_sym_ae_of hs hχs
     simp only [integral_xk_ae (G := fun x => χ x * Φ x ^ 2) hs e, Finset.sum_const,
       Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
     push_cast; ring
@@ -681,6 +693,14 @@ theorem sum_ae_zero {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {e : ℝ → �
   have hcard : (Fintype.card (Equiv.Perm (Fin (n + 1))) : ℝ) ≠ 0 := by
     exact_mod_cast Fintype.card_ne_zero
   exact (mul_eq_zero.1 hχG.symm).resolve_left hcard
+
+/-- `sum_ae_zero_of` for `H¹₀` states. -/
+theorem sum_ae_zero {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) {e : ℝ → ℝ} (he : Integrable e μ1)
+    {a : ℝ} (ha : 0 ≤ a)
+    (htest : ∀ χ : Cfg n → ℝ, ContDiff ℝ (⊤ : ℕ∞) χ → HasCompactSupport χ → tsupport χ ⊆ boxU n a →
+      (∀ σ x, χ (pm σ x) = χ x) → ∫ x, e (x 0) * (χ x * Φ x ^ 2) ∂μN n = 0) :
+    ∀ᵐ x ∂(volume : Measure (Cfg n)), x ∈ boxU n a → (∑ k, e (x k)) * Φ x ^ 2 = 0 :=
+  sum_ae_zero_of (fun σ => hΦ.2.2 σ trivial) (integrable_x0_sq hΦ he).1 ha htest
 
 /-! ### (G4) Product test functions -/
 

@@ -1698,3 +1698,39 @@ $\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
   weakly convergent subsequence. Since $E$ is an infimum of weakly continuous affine functions, the limit is a maximiser,
   so $\rho$ is a supergradient of $E$ there and, by Theorem~\ref{thm:neu_chf}, the ground-state density.
 \end{proof}
+
+\begin{theorem}[The pair-density identity with Neumann walls]
+  \label{thm:neu_pair}
+  \lean{DFT.Continuum.Line.D_smooth, DFT.Continuum.Line.integral_abs_RfD_sub_le, DFT.Continuum.Line.norm_rhoE2_le, DFT.Continuum.Line.tendsto_kinN_sub_truncC, DFT.Continuum.Line.exists_R_succ, DFT.Continuum.Line.dE2_rhoE_one, DFT.Continuum.Line.exists_R}
+  \leanok
+  \uses{thm:neu_gs_N}
+  Let $D\in H^{-1}$ annihilate every mixed density $\rho(\Phi,\chi)$ of a Neumann state $\Phi$. Then there is $R\in L^1(0,1)$
+  with $D(g\rho_\Phi)+\int gR=0$ for every compactly supported $C^1$ function $g$.
+\end{theorem}
+\begin{proof}
+  \leanok
+  For one particle $\rho(\Phi,g\Phi)=g\rho_\Phi$ and $R=0$. For $N\ge2$ write $D(e)=\alpha e(0)+\int\beta e'$. For a $C^2$
+  state $X$ the mixed density of $X$ and $X\sum_k g(x_k)$ is $g\rho_X$ plus a two-body term, and $D$ of the two-body term is
+  $\int gR_X$ with an explicit $R_X$ built from the pair marginals of $X^2$ and $\partial_0X^2$. Cauchy--Schwarz on the
+  marginals gives $\|R_X-R_Y\|_{L^1}\le C\,\|X-Y\|_{H^1}(\|X+Y\|_{H^1}+\|X\|_{H^1}+\|Y\|_{H^1})$. Along the cosine
+  truncations $X_M\to\Phi$ in $H^1$ the $R_{X_M}$ are Cauchy in $L^1$, the mixed densities converge in $H^1$, and the limit
+  of the identity for $X_M$ is the claim.
+\end{proof}
+
+\begin{theorem}[Corso's Theorem 2.9, Hohenberg--Kohn with Neumann walls]
+  \label{thm:neu_hk}
+  \lean{DFT.Continuum.Line.D_dE2_eq, DFT.Continuum.Line.h1N_inv, DFT.Continuum.Line.D_eq_integral_d, DFT.Continuum.Line.int_rhoE2_L1N, DFT.Continuum.Line.integrable_x0_sq_of, DFT.Continuum.Line.sum_ae_zero_of, DFT.Continuum.Line.D_eq_zero_of_gs, DFT.Continuum.Line.ellE_rhoE2, DFT.Continuum.Line.hkNH}
+  \leanok
+  \uses{thm:neu_pair, thm:neu_pos}
+  For bosons or fermions and every continuous interaction, if Neumann ground states of $v,v'\in H^{-1}$ have the same density,
+  then $v-v'$ is a constant potential.
+\end{theorem}
+\begin{proof}
+  \leanok
+  A ground state $\Phi$ of $v'$ is also one of $v$. Subtracting the two Euler--Lagrange equations shows that
+  $D=v-v'-c\int$ annihilates every $\rho(\Phi,\chi)$ for a suitable constant $c$. Testing the pair-density identity with
+  $g=1$ and with primitives of continuous functions, and using the Riesz representation of the functional
+  $h\mapsto D(h\rho)+\int hR$, gives $D(h\rho)=-\int hR$ for all $h\in H^1$. Since $\rho>0$ on $[0,1]$ every $e\in H^1$ is
+  $(e/\rho)\rho$, so $D(e)=\int ed$ with $d=-R/\rho\in L^1$. Symmetric test states $\chi\Phi$ and the fundamental lemma give
+  $\sum_kd(x_k)\Phi^2=0$, unique continuation gives $\sum_kd(x_k)=0$ a.e., and product test functions give $d=0$.
+\end{proof}
