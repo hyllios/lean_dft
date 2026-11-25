@@ -2,7 +2,9 @@
 """Source hygiene checks for lean_dft (see docs/AGENTS.md §3).
 
 Enforced (exit 1):
-  * forbidden constructs: `sorry`, `native_decide`, `implemented_by`, `unsafe`, `axiom` declarations, `admit`.
+  * forbidden constructs: `sorry`, `native_decide`, `implemented_by`, `unsafe`, `axiom` declarations, `admit`;
+  * a declaration name (with its namespace) defined in more than one file. Lean only notices such a clash when
+    both files end up imported together, which a changed import can trigger long after the duplicate was written.
 Reported (exit 1 only with --strict, to be switched on once the backlog is cleared):
   * `set_option maxHeartbeats` without a `-- heartbeats: <reason>` comment on the same or the previous line;
   * files without a module docstring (`/-!`).
@@ -27,6 +29,9 @@ def strip_comments(line, in_block):
             out += line[i]; i += 1
     return out, in_block
 errors, hb_missing, no_doc, nfiles = [], [], [], 0
+DECL = re.compile(r'^(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|nonrec)\s+)*'
+                  r'(theorem|lemma|def|abbrev|structure|instance\s+\w+|class)\s+([^\s:({\[]+)')
+where = {}
 for lib in LIBS:
     for dp, _, fs in os.walk(os.path.join(ROOT, lib)):
         for f in sorted(fs):
@@ -34,8 +39,15 @@ for lib in LIBS:
             p = os.path.join(dp, f); rel = os.path.relpath(p, ROOT); nfiles += 1
             lines = open(p, encoding='utf-8').read().split('\n')
             if not any(l.lstrip().startswith('/-!') for l in lines): no_doc.append(rel)
-            in_block = False
+            in_block, ns = False, []
             for k, raw in enumerate(lines, 1):
+                if raw.startswith('namespace '): ns.append(raw.split()[1])
+                elif raw.startswith('end ') and ns and raw.split()[1:2] == [ns[-1]]: ns.pop()
+                md = DECL.match(raw)
+                if md and not raw.lstrip().startswith('private'):
+                    nm = md.group(2)
+                    full = nm[7:] if nm.startswith('_root_.') else '.'.join(ns + [nm])
+                    where.setdefault(full, []).append(f'{rel}:{k}')
                 code, in_block = strip_comments(raw, in_block)
                 for rx, what in FORBID:
                     if rx.search(code): errors.append(f'{rel}:{k}: forbidden `{what}`')
@@ -43,10 +55,13 @@ for lib in LIBS:
                     prev = lines[k - 2] if k >= 2 else ''
                     if 'heartbeats:' not in raw and 'heartbeats:' not in prev:
                         hb_missing.append(f'{rel}:{k}')
+for full, locs in sorted(where.items()):
+    if len({l.rsplit(':', 1)[0] for l in locs}) > 1:
+        errors.append(f'duplicate declaration `{full}`: ' + ', '.join(locs))
 for e in errors: print(e)
 if strict:
     for h in hb_missing: print(f'{h}: maxHeartbeats without `-- heartbeats: <reason>`')
     for d in no_doc: print(f'{d}: no module docstring')
-print(f'hygiene: {nfiles} files; {len(errors)} forbidden construct(s); '
+print(f'hygiene: {nfiles} files; {len(errors)} forbidden construct(s)/duplicate(s); '
       f'{len(hb_missing)} unjustified maxHeartbeats; {len(no_doc)} file(s) without module docstring')
 sys.exit(1 if errors or (strict and (hb_missing or no_doc)) else 0)
