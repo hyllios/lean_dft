@@ -257,14 +257,50 @@ lemma isClosed_Bset (k : ℕ) : IsClosed (Bset k) := by
       exact absurd ⟨h0, hk, h1, h2⟩ hc
     rw [e2]; exact isClosed_univ
 
+/-- Second differences of `ρ_f` at most `L h` for `h ≤ 1/(k+1)`. -/
+def BsetL (L : ℝ) (k : ℕ) : Set L2I :=
+  {f | ∀ t h : ℝ, 0 ≤ h → h ≤ 1 / ((k : ℝ) + 1) → 0 ≤ t - h → t + h ≤ 1 →
+    |D2 (fun s => prim f s ^ 2) t h| ≤ L * h}
+
+lemma Bset_eq (k : ℕ) : Bset k = BsetL 1 k := by
+  ext f; simp [Bset, BsetL]
+
+lemma isClosed_BsetL (L : ℝ) (k : ℕ) : IsClosed (BsetL L k) := by
+  have e : BsetL L k = ⋂ t : ℝ, ⋂ h : ℝ, {f : L2I | 0 ≤ h → h ≤ 1 / ((k : ℝ) + 1) → 0 ≤ t - h →
+      t + h ≤ 1 → |D2 (fun s => prim f s ^ 2) t h| ≤ L * h} := by
+    ext f; simp [BsetL]
+  rw [e]
+  refine isClosed_iInter fun t => isClosed_iInter fun h => ?_
+  by_cases hc : 0 ≤ h ∧ h ≤ 1 / ((k : ℝ) + 1) ∧ 0 ≤ t - h ∧ t + h ≤ 1
+  · obtain ⟨h0, hk, h1, h2⟩ := hc
+    have m1 : t + h ∈ Icc (0 : ℝ) 1 := ⟨by linarith, h2⟩
+    have m2 : t ∈ Icc (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+    have m3 : t - h ∈ Icc (0 : ℝ) 1 := ⟨h1, by linarith⟩
+    have e2 : {f : L2I | 0 ≤ h → h ≤ 1 / ((k : ℝ) + 1) → 0 ≤ t - h → t + h ≤ 1 →
+        |D2 (fun s => prim f s ^ 2) t h| ≤ L * h} =
+        {f : L2I | |D2 (fun s => prim f s ^ 2) t h| ≤ L * h} := by
+      ext f; exact ⟨fun H => H h0 hk h1 h2, fun H _ _ _ _ => H⟩
+    rw [e2]
+    refine isClosed_le ?_ continuous_const
+    simp only [D2]
+    exact continuous_abs.comp ((((continuous_prim_at m1).pow 2).sub
+      (((continuous_prim_at m2).pow 2).const_mul 2)).add ((continuous_prim_at m3).pow 2))
+  · have e2 : {f : L2I | 0 ≤ h → h ≤ 1 / ((k : ℝ) + 1) → 0 ≤ t - h → t + h ≤ 1 →
+        |D2 (fun s => prim f s ^ 2) t h| ≤ L * h} = univ := by
+      ext f
+      simp only [mem_ofPred_eq, mem_univ, iff_true]
+      intro h0 hk h1 h2
+      exact absurd ⟨h0, hk, h1, h2⟩ hc
+    rw [e2]; exact isClosed_univ
+
 /-! ### Empty interior -/
 
 variable {n : ℕ}
 
 set_option maxHeartbeats 1000000 in -- many local definitions; the final term is slow to check
-/-- **`Bset k` has empty interior in `SN n`.** -/
-theorem exists_not_Bset (k : ℕ) {x : L2I} (hx : x ∈ SN n) (hxB : x ∈ Bset k) {ε : ℝ}
-    (hε : 0 < ε) : ∃ y ∈ SN n, ‖y - x‖ < ε ∧ y ∉ Bset k := by
+/-- **`BsetL L k` has empty interior in `SN n`.** -/
+theorem exists_not_BsetL {L : ℝ} (hL : 0 ≤ L) (k : ℕ) {x : L2I} (hx : x ∈ SN n)
+    (hxB : x ∈ BsetL L k) {ε : ℝ} (hε : 0 < ε) : ∃ y ∈ SN n, ‖y - x‖ < ε ∧ y ∉ BsetL L k := by
   set g := prim x
   have hN : ∫ t, g t ^ 2 ∂μ1 = n + 1 := hx.2
   set N : ℝ := n + 1
@@ -286,7 +322,7 @@ theorem exists_not_Bset (k : ℕ) {x : L2I} (hx : x ∈ SN n) (hxB : x ∈ Bset 
   have hc2 : 0 < c2 := by simp only [c2]; positivity
   have hc2t : c2 ≤ t0 := by simp only [c2]; linarith [min_le_left t0 (1 - t0)]
   have hc2s : c2 ≤ 1 - t0 := by simp only [c2]; linarith [min_le_right t0 (1 - t0)]
-  set c3 := 4 * |γ| / (3 + (1 + 2 * M ^ 2) / |γ|)
+  set c3 := 4 * |γ| / (3 * L + (L + 2 * M ^ 2) / |γ| + 1)
   have hc3 : 0 < c3 := by positivity
   set c4 := N / (4 * (2 * M + 1))
   have hc4 : 0 < c4 := by positivity
@@ -447,7 +483,7 @@ theorem exists_not_Bset (k : ℕ) {x : L2I} (hx : x ∈ SN n) (hxB : x ∈ Bset 
   have key := D2_perturb (lam := lam) (δ := δ) hw hh0 hhw ht1 ht2 hqp hg0 hlam2' hD
   refine ⟨y, hySN, hclose, fun hyB => ?_⟩
   have hyD := hyB t0 h hh0.le hhk ht1 ht2
-  change |D2 (fun s => prim (lam • (x + δ • q)) s ^ 2) t0 h| ≤ h at hyD
+  change |D2 (fun s => prim (lam • (x + δ • q)) s ^ 2) t0 h| ≤ L * h at hyD
   set S := ∫ s in (t0 - h)..(t0 + h), (x : ℝ → ℝ) s ^ 2
   have hS : S ≤ M ^ 2 := integral_sq_le_mu1 x ht1 (by linarith) ht2
   have hS0 : 0 ≤ S := intervalIntegral.integral_nonneg (by linarith) fun s _ => sq_nonneg _
@@ -455,29 +491,37 @@ theorem exists_not_Bset (k : ℕ) {x : L2I} (hx : x ∈ SN n) (hxB : x ∈ Bset 
     change 4 * (δ * γ) / w = _
     rw [hδγ]; simp only [w]; field_simp
   rw [hA] at key
-  -- `4|γ|/r > 3 + (1 + 2M²)/|γ|`
-  have hbig : 3 + (1 + 2 * M ^ 2) / |γ| < 4 * |γ| / r := by
+  -- `4|γ|/r > 3L + (L + 2M²)/|γ|`
+  have hbig : 3 * L + (L + 2 * M ^ 2) / |γ| < 4 * |γ| / r := by
     have := hr3
     simp only [c3] at this
     rw [lt_div_iff₀ (by positivity)] at this
     rw [lt_div_iff₀ hr0]
-    linarith
-  have herr : |δ| * (h + 2 * (h * S)) / |prim x t0| ≤ h * ((1 + 2 * M ^ 2) / |γ|) := by
-    change |δ| * (h + 2 * (h * S)) / |γ| ≤ _
+    have : 0 ≤ (L + 2 * M ^ 2) / |γ| := by positivity
+    nlinarith
+  have herr : |δ| * (L * h + 2 * (h * S)) / |prim x t0| ≤ h * ((L + 2 * M ^ 2) / |γ|) := by
+    change |δ| * (L * h + 2 * (h * S)) / |γ| ≤ _
     rw [div_le_iff₀ hγ]
-    have h1 : h + 2 * (h * S) ≤ h + 2 * (h * M ^ 2) := by
+    have h1 : L * h + 2 * (h * S) ≤ L * h + 2 * (h * M ^ 2) := by
       have := mul_le_mul_of_nonneg_left hS hh0.le; linarith
-    have : |δ| * (h + 2 * (h * S)) ≤ 1 * (h + 2 * (h * M ^ 2)) :=
+    have : |δ| * (L * h + 2 * (h * S)) ≤ 1 * (L * h + 2 * (h * M ^ 2)) :=
       mul_le_mul hδ1 h1 (by positivity) zero_le_one
-    calc |δ| * (h + 2 * (h * S)) ≤ h * (1 + 2 * M ^ 2) := by linarith
-      _ = h * ((1 + 2 * M ^ 2) / |γ|) * |γ| := by field_simp
-  have : h < (4 * |γ| / r * h - h - |δ| * (h + 2 * (h * S)) / |prim x t0|) / 2 := by
+    calc |δ| * (L * h + 2 * (h * S)) ≤ h * (L + 2 * M ^ 2) := by linarith
+      _ = h * ((L + 2 * M ^ 2) / |γ|) * |γ| := by field_simp
+  have : L * h < (4 * |γ| / r * h - L * h - |δ| * (L * h + 2 * (h * S)) / |prim x t0|) / 2 := by
     have h3 := mul_lt_mul_of_pos_left hbig hh0
-    have e1 : h * (3 + (1 + 2 * M ^ 2) / |γ|) = 3 * h + h * ((1 + 2 * M ^ 2) / |γ|) := by ring
+    have e1 : h * (3 * L + (L + 2 * M ^ 2) / |γ|) =
+        3 * (L * h) + h * ((L + 2 * M ^ 2) / |γ|) := by ring
     have e2 : h * (4 * |γ| / r) = 4 * |γ| / r * h := by ring
     rw [e1, e2] at h3
     linarith only [h3, herr]
   linarith only [this, key, hyD]
+
+/-- **`Bset k` has empty interior in `SN n`.** -/
+theorem exists_not_Bset (k : ℕ) {x : L2I} (hx : x ∈ SN n) (hxB : x ∈ Bset k) {ε : ℝ}
+    (hε : 0 < ε) : ∃ y ∈ SN n, ‖y - x‖ < ε ∧ y ∉ Bset k := by
+  rw [Bset_eq] at hxB ⊢
+  exact exists_not_BsetL zero_le_one k hx hxB hε
 
 /-! ### Meagreness -/
 

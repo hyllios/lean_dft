@@ -49,6 +49,7 @@ import DFT.Continuum.Line.MeasureGS
 import DFT.Continuum.Line.MeasureHK
 import DFT.Continuum.Line.MeasureHKend
 import DFT.Continuum.Line.MeasureHKgen
+import DFT.Continuum.Line.MeasureMeagre
 import DFT.Continuum.Line.MeasureN
 import DFT.Continuum.Line.MeasureNBos
 import DFT.Continuum.Line.MeasureNEL

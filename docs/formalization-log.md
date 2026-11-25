@@ -844,3 +844,11 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   `D_vanish`, `D_vanish_walls`, **`hk_meas_N`**, **`hk_meas_N_dens`**: FULL Hohenberg–Kohn for N
   interacting bosons/fermions (continuous w) in measure potentials on a line: same GS density ⇒
   ν − ν' = C dx + aδ₀ + bδ₁. N5 COMPLETE. Standard axioms.
+  MEAGRENESS IN MEASURE POTENTIALS DONE (2026-11-25): `Line/MeagreC1` generalised: `BsetL L k`
+  (|D²_h (prim f)²| ≤ L h), `Bset_eq`, `isClosed_BsetL`, **`exists_not_BsetL`** (tent beats L h).
+  `Line/MeasureMeagre`: **`lipschitz_of_vrepMeas`** (ρ = g², g bounded and Lipschitz, from
+  vrepMeas_iff_explicit + Gρ_bdd + FTC for AC g), `MeasDensN`, `mem_BsetL_of_MeasDensN`,
+  `isNowhereDense_BsetLS`, **`vrepMeas_meagre`**, **`vrepMeas_nonrep_dense`**,
+  **`vrepMeasN_bos_meagre`**: even with measure potentials, v-representable densities (one particle,
+  N non-interacting bosons) are meagre in S_N. Standard axioms. Interacting case open (needs
+  Lipschitz/regularity of ρ̂ for GS of measure potentials).
