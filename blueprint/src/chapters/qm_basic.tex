@@ -1,5 +1,11 @@
 \chapter{Basic quantum mechanics (from Physlib)}
 
+This part of the blueprint describes the formalization of quantum mechanics, many-body theory and
+Green's function theory in finite dimensions: finite-dimensional Hilbert spaces and a finite number of single-particle modes.
+In this setting a large part of the standard theory is \emph{exactly} true, without the analytic subtleties of the continuum:
+the Lehmann representation, Dyson's equation, the KMS condition and Matsubara sums, Wick's theorem and linear response.
+The continuum theory (unbounded operators, spectral theorem) is developed in Physlib; we align our definitions with it.
+
 Basic quantum mechanics is \emph{not} redeveloped here: we build on Physlib, where states, observables and
 expectation values are defined for possibly unbounded operators $T\colon \mathcal H\to\mathcal H$
 (Lean: \texttt{LinearPMap}). Finite-dimensional or bounded operators enter with domain $\mathcal H$.
