@@ -59,9 +59,12 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   To do: symmetrizer and antisymmetrizer as projections.
 
 ### Track B: many-body theory with finitely many modes (`QM/ManyBody`, `QM/Thermal`)
-- B1 🟡 Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. lean_dft already has lattice second
-  quantization (`DFT/Lattice/Fermions/SecondQuantization`, which depends on `HK/Basic`). Decide whether to move its generic
-  part into `QM` or to build on Physlib's Wick algebra.
+- B1 🟡 Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. **Proposal (2026-11-26, awaiting
+  approval; blueprint Part III):** a concrete Fock space, functions `Finset (Fin M) → ℂ` (dimension 2^M), with Jordan–Wigner
+  signs; first theorems: CAR, the number operator, and the **bridge** `Σ h_ij c_i† c_j = Γ h` on the N-particle sector, which
+  connects all of the existing lattice DFT. The lattice code (`DFT/Lattice/Fermions/SecondQuantization`) works only at fixed N with
+  real matrices, so it cannot host `c_i` itself. Physlib's Wick algebra is abstract and QFT-oriented (no finite-mode Hilbert
+  space); use it later for Wick's theorem (B3) via its universality property, if our operators satisfy its hypotheses.
 - B2 ⬜ One-body operators in second quantization; one- and two-body RDMs; Coleman's N-representability for the 1-RDM.
   `DFT/Lattice/RDMFT` has pieces to reuse.
 - B3 ⬜ Quasi-free states, **Wick's theorem** for finitely many modes, Hartree–Fock as the minimum over quasi-free states (Lieb's
@@ -129,7 +132,7 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
 ## 5. Next steps (from 2026-11-26)
 
 1. **Housekeeping from the reorganization:** curate `MAIN_RESULTS.md` (Miguel) and then make its blueprint check strict; replace
-   the 9 stale theorem names in the README; start the heartbeat backlog (49 overrides without a reason).
+   the 9 stale theorem names in the README. (Heartbeat backlog: closed on 2026-11-26, all 49 overrides have a reason.)
 2. **Approve the Part III statements** in the blueprint (Fock space, CAR, Gibbs/KMS, Lehmann, self-energy, Herglotz, Galitskii–Migdal),
    or amend them.
 3. **A1/A2:** the bridge between Physlib's operators and QuantumInfo's density matrices; time evolution in finite dimensions.
@@ -147,3 +150,5 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
   libraries ForMathlib ← QM ← DFT; layered folders with imports from true dependencies; CI checks; ARCHITECTURE, AGENTS,
   MODULES, MAIN_RESULTS.
 - 2026-11-26: roadmap moved into the repository (`docs/ROADMAP.md`) and updated to the state after the reorganization.
+- 2026-11-26: heartbeat backlog closed (all overrides justified; check enforcing); generated certificates reproducible (CI).
+- 2026-11-26: B1 proposal written (concrete Fock space + bridge to the lattice code), awaiting approval.

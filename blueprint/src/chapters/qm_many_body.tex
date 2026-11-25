@@ -1,14 +1,43 @@
 \chapter{Many-body theory with finitely many modes}
 
-\begin{definition}[Fermionic Fock space]\label{def:fock}
-  For $M$ modes, $\mathcal F_M = \bigoplus_{N=0}^{M}\Lambda^N\mathbb C^M$, of dimension $2^M$, with
-  creation/annihilation operators $c_i^\dagger, c_i$. (statement pending approval; reuse lean\_dft second quantization and
-  check Physlib's \texttt{WickAlgebra})
+% B1 proposal (2026-11-26): concrete Fock space on configurations, bridged to the lattice code.
+% Alternative considered: Physlib's WickAlgebra (abstract, QFT-oriented, no finite-mode Hilbert space);
+% to be used later for Wick's theorem via its universality property, if our operators fit its hypotheses.
+
+\begin{definition}[Fermionic Fock space of $M$ modes]\label{def:fock}
+  $\mathcal F_M$ is the Hilbert space of functions $\Psi\colon \mathcal P(\{0,\dots,M-1\})\to\mathbb C$ on all configurations
+  (subsets of the modes), with $\langle\Psi,\Phi\rangle=\sum_s\overline{\Psi(s)}\Phi(s)$; $\dim\mathcal F_M = 2^M$.
+  The basis vector $|s\rangle$ is the indicator of the configuration $s$.
+  (statement pending approval)
+\end{definition}
+
+\begin{definition}[Creation and annihilation operators]\label{def:cdag}
+  \uses{def:fock}
+  With the Jordan–Wigner sign $\sigma_i(s)=(-1)^{|\{j\in s:\ j<i\}|}$:
+  $c_i^\dagger|s\rangle=\sigma_i(s)\,|s\cup\{i\}\rangle$ if $i\notin s$ and $0$ otherwise;
+  $c_i=(c_i^\dagger)^\dagger$, so $c_i|s\rangle=\sigma_i(s)\,|s\setminus\{i\}\rangle$ if $i\in s$ and $0$ otherwise.
+  (statement pending approval)
 \end{definition}
 
 \begin{theorem}[Canonical anticommutation relations]\label{thm:car}
-  \uses{def:fock}
-  $\{c_i,c_j^\dagger\}=\delta_{ij}$, $\{c_i,c_j\}=0$. (statement pending approval)
+  \uses{def:cdag}
+  For all modes $i,j$: $\{c_i,c_j^\dagger\}=\delta_{ij}\,\mathbb 1$ and $\{c_i,c_j\}=\{c_i^\dagger,c_j^\dagger\}=0$.
+  (statement pending approval)
+\end{theorem}
+
+\begin{theorem}[Number operator]\label{thm:number}
+  \uses{def:cdag}
+  $\hat N=\sum_i c_i^\dagger c_i$ acts as $\hat N|s\rangle=|s|\,|s\rangle$; $\hat n_i=c_i^\dagger c_i$ acts as the occupation
+  $\mathtt{occF}\ i\ s$ of the lattice code (\texttt{QM.ManyBody.Configurations}).
+  (statement pending approval)
+\end{theorem}
+
+\begin{theorem}[Bridge to the lattice code]\label{thm:fock-bridge}
+  \uses{def:cdag}
+  For a real single-particle matrix $h$, the operator $\sum_{ij}h_{ij}\,c_i^\dagger c_j$ preserves the $N$-particle sector
+  $\{s:|s|=N\}$ and its matrix there is the many-body matrix $\Gamma\,h$ of \texttt{DFT/Lattice/Fermions/SecondQuantization}
+  (\texttt{Conf M N} ordered as in that file). Consequently the lattice Hamiltonians \texttt{H0F} are restrictions of
+  second-quantized Hamiltonians on $\mathcal F_M$. (statement pending approval)
 \end{theorem}
 
 \begin{definition}[Gibbs state]\label{def:gibbs}
