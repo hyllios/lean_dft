@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-11 modules, 2295 lines.
+12 modules, 2353 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -58,9 +58,15 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `ForMathlib.MeasureTheory.ZeroSetDim` | 259 | Hausdorff dimension of zero sets of polynomials |
 
+### `ForMathlib/Topology/Instances/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `ForMathlib.Topology.Instances.UnitaryGroup` | 58 | The unitary group of complex matrices is compact |
+
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-39 modules, 12226 lines.
+40 modules, 12664 lines.
 
 ### `QM/`
 
@@ -111,6 +117,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `QM.ManyBody.Configurations` | 30 | Spinless lattice fermions: configurations and occupations |
 | `QM.ManyBody.Fock` | 341 | The fermionic Fock space of `M` modes |
+| `QM.ManyBody.HartreeFock` | 438 | Hartree–Fock theory and Lieb's variational principle |
 | `QM.ManyBody.ModeRotation` | 505 | Mode rotations |
 | `QM.ManyBody.NaturalOrbitals` | 119 | Natural orbitals |
 | `QM.ManyBody.Number` | 109 | The number operator |
@@ -504,4 +511,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 72310 lines of Lean.
+Total: 72806 lines of Lean.

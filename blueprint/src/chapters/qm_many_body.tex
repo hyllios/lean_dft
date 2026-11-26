@@ -325,6 +325,34 @@
   (the weights are a product measure). The weights are nonnegative for $0\le n\le1$ and sum to $\prod_k(n_k+1-n_k)=1$.
 \end{proof}
 
+\begin{definition}[Hamiltonian and Hartree--Fock functional]\label{def:hf}
+  % Statements approved by Miguel 2026-11-26 (B3 step 3).
+  \lean{QM.ManyBody.twoBody, QM.ManyBody.ham, QM.ManyBody.pairForm, QM.ManyBody.hfEnergy}\leanok
+  \uses{def:slater-state}
+  $H=\sum_{ij}h_{ij}c_i^\dagger c_j+\tfrac12\sum V_{ij,kl}c_i^\dagger c_j^\dagger c_lc_k$ and
+  $E_{\mathrm{HF}}(\gamma)=\operatorname{Re}\big(\sum h_{ij}\gamma_{ij}+\tfrac12\sum V_{ij,kl}(\gamma_{ik}\gamma_{jl}-\gamma_{il}\gamma_{jk})\big)$.
+\end{definition}
+
+\begin{theorem}[Lieb's variational principle]\label{thm:lieb-variational}
+  \lean{QM.ManyBody.energy_eq_rdm, QM.ManyBody.energy_slater, QM.ManyBody.exists_vertex_le,
+    QM.ManyBody.lieb_variational, QM.ManyBody.exists_state_le_hf, QM.ManyBody.ground_le_hf,
+    QM.ManyBody.exists_hf_minimizer, Matrix.isCompact_unitaryGroup}\leanok
+  \uses{def:hf, thm:wick-slater}
+  On a Slater state $\langle H\rangle=E_{\mathrm{HF}}(\gamma)$. If $V\succeq0$ on the pair space, then for every $0\le\gamma\le1$
+  with $\operatorname{tr}\gamma=N$ there is a Hermitian projection $P$ with $\operatorname{tr}P=N$ and
+  $E_{\mathrm{HF}}(P)\le E_{\mathrm{HF}}(\gamma)$. Hence some $N$-particle Slater state has energy at most $E_{\mathrm{HF}}(\gamma)$, the
+  ground-state energy is at most $\inf_\gamma E_{\mathrm{HF}}(\gamma)$, and (for $N\le M$) a Slater state minimizes $E_{\mathrm{HF}}$ over
+  all admissible $\gamma$.
+\end{theorem}
+\begin{proof}\leanok
+  $\langle H\rangle=\sum h\gamma+\frac12\sum VD$, and $D=\gamma\wedge\gamma$ on Slater states (Wick). Write
+  $\gamma=\bar v\,\mathrm{diag}(n)\,v^T$. Along $n+t(e_a-e_b)$, $E_{\mathrm{HF}}$ is quadratic in $t$ with leading coefficient
+  $-\frac12\langle w,Vw\rangle\le0$, $w_{kl}=v_{ka}v_{lb}-v_{kb}v_{la}$ (the rank-one terms vanish). If $n_a$ is fractional, so is some
+  $n_b$ (the trace is an integer); one of the two endpoints, where $n_a$ or $n_b$ reaches $0$ or $1$, does not raise the energy.
+  Induction on the number of fractional occupations gives a $0/1$ vector. The minimizer: the unitary group is compact
+  (closed, entries of modulus $\le1$), so each $s\mapsto\min_vE_{\mathrm{HF}}(\bar vD_sv^T)$ is attained; take the best $s$.
+\end{proof}
+
 \begin{definition}[Gibbs state]\label{def:gibbs}
   $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$.
 \end{definition}
