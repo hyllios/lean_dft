@@ -27,7 +27,7 @@ The proof goes through Pauli's principle rather than through explicit Slater-det
 Degenerate non-interacting ground states, and ensembles of them, are not covered. They are where
 fractional occupations at the Fermi level enter.
 
-* `gamma_transpose`, `rdm_isSymm`, `dot_rdm_mulVec`.
+* `rdm_isSymm`, `dot_rdm_mulVec` (with `gamma_transpose` from `SecondQuantization`).
 * `qf_gamma_nonneg`, `qf_gamma_rank_one_le`: `0 ≤ γ ≤ 1`.
 * `rdm_slater_mulVec`, `rdm_slater_idem`.
 * `rdm_idem_of_gap`: **non-interacting ⇒ idempotent**.
@@ -47,28 +47,6 @@ open Matrix
 variable {M N : ℕ}
 
 /-! ### Transposition and symmetry of `γ` -/
-
-theorem gamma_transpose (h : Matrix (Fin M) (Fin M) ℝ) :
-    (Γ h : Matrix (Conf M N) (Conf M N) ℝ)ᵀ = Γ hᵀ := by
-  ext s s'
-  rw [Matrix.transpose_apply, gamma_leibniz, gamma_leibniz]
-  rw [← Equiv.sum_comp (Equiv.inv (Equiv.Perm (Fin N)))]
-  apply Finset.sum_congr rfl; intro σ _
-  simp only [Equiv.inv_apply, Equiv.Perm.sign_inv]
-  congr 1
-  rw [← Equiv.sum_comp σ]
-  apply Finset.sum_congr rfl; intro j0 _
-  have e1 : σ⁻¹ (σ j0) = j0 := by simp
-  rw [e1, Matrix.transpose_apply]
-  congr 1
-  rw [← Equiv.prod_comp σ]
-  apply Finset.prod_congr rfl; intro j _
-  have e2 : σ⁻¹ (σ j) = j := by simp
-  rw [e2]
-  by_cases hj : j = j0
-  · simp [hj]
-  · have : σ j ≠ σ j0 := fun h' => hj (σ.injective h')
-    simp [hj, this, eq_comm]
 
 lemma qf_transpose {C : Type*} [Fintype C] (A : Matrix C C ℝ) (ψ : C → ℝ) :
     qf Aᵀ ψ = qf A ψ := by

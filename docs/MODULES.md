@@ -41,7 +41,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-7 modules, 1071 lines.
+9 modules, 1419 lines.
 
 ### `QM/`
 
@@ -62,6 +62,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `QM.ManyBody.Configurations` | 30 | Spinless lattice fermions: configurations and occupations |
 | `QM.ManyBody.Fock` | 309 | The fermionic Fock space of `M` modes |
 | `QM.ManyBody.Number` | 109 | The number operator |
+| `QM.ManyBody.OneBody` | 125 | Second-quantized one-body operators |
+| `QM.ManyBody.ParticleHole` | 223 | The particle–hole transformation |
 | `QM.ManyBody.Slater` | 84 | Slater determinants in first quantisation |
 
 ### `QM/Spin/`
@@ -72,7 +74,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-209 modules, 57146 lines.
+211 modules, 57394 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -319,7 +321,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `DFT.Lattice.Fermions.CauchyBinet` | 83 | Cauchy–Binet for Slater determinants |
 | `DFT.Lattice.Fermions.FirstQuantization` | 251 | Powers of the many-body Hamiltonian via first quantisation |
-| `DFT.Lattice.Fermions.SecondQuantization` | 335 | Second quantisation via determinants |
+| `DFT.Lattice.Fermions.FockBridge` | 188 | The lattice second quantization is the Fock-space one |
+| `DFT.Lattice.Fermions.SecondQuantization` | 340 | Second quantisation via determinants |
 
 ### `DFT/Lattice/Generic/`
 
@@ -391,8 +394,9 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `DFT.Lattice.RDMFT.Basic` | 128 | Density-matrix functional theory on a lattice |
 | `DFT.Lattice.RDMFT.Counting` | 150 | Universal failure of the RDMFT Hohenberg–Kohn theorem by dimension counting |
+| `DFT.Lattice.RDMFT.FockRDM` | 77 | The lattice one-body reduced density matrix is `⟨Ψ, c_i† c_j Ψ⟩` |
 | `DFT.Lattice.RDMFT.Generic` | 121 | Interacting ground states are generically not Slater determinants (conditional) |
-| `DFT.Lattice.RDMFT.KohnSham` | 492 | No Kohn–Sham scheme for RDMFT |
+| `DFT.Lattice.RDMFT.KohnSham` | 470 | No Kohn–Sham scheme for RDMFT |
 | `DFT.Lattice.RDMFT.Stabilizer` | 149 | The one-body stabilizer decides the RDMFT Hohenberg–Kohn theorem |
 | `DFT.Lattice.RDMFT.Witness` | 249 | An unconditional instance: two fermions on four sites with pair hopping |
 
@@ -438,4 +442,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 59885 lines of Lean.
+Total: 60481 lines of Lean.

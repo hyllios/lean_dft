@@ -59,9 +59,10 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   To do: symmetrizer and antisymmetrizer as projections.
 
 ### Track B: many-body theory with finitely many modes (`QM/ManyBody`, `QM/Thermal`)
-- B1 🟡 Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. **Approved 2026-11-26; Fock space
+- B1 ✅ Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. **Approved 2026-11-26; Fock space
   and CAR proved** (`QM/ManyBody/Fock`: matrix form and bounded operators on the Hilbert space); **number operator proved**
-  (`QM/ManyBody/Number`). Next: the bridge to the lattice code.
+  (`QM/ManyBody/Number`); **bridge to the lattice code proved** (`DFT/Lattice/Fermions/FockBridge`); **particle–hole transformation proved**
+  (`QM/ManyBody/ParticleHole`). B1 complete 2026-11-26.
   Design (blueprint Part III): a concrete Fock space, functions `Finset (Fin M) → ℂ` (dimension 2^M), with Jordan–Wigner
   signs; first theorems: CAR, the number operator, and the **bridge** `Σ h_ij c_i† c_j = Γ h` on the N-particle sector, which
   connects all of the existing lattice DFT. The lattice code (`DFT/Lattice/Fermions/SecondQuantization`) works only at fixed N with
@@ -131,16 +132,15 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
 - **Build time and memory:** keep files small and imports minimal (imports must reflect real use); cap parallelism on the shared host.
 - **Continuity:** the blueprint plus `README`, `ARCHITECTURE`, `AGENTS` and this roadmap must be enough for a new person or agent to continue.
 
-## 5. Next steps (from 2026-11-26)
+## 5. Next steps (from 2026-11-26, after B1)
 
-1. **Housekeeping from the reorganization:** curate `MAIN_RESULTS.md` (Miguel) and then make its blueprint check strict; replace
-   the 9 stale theorem names in the README. (Heartbeat backlog: closed on 2026-11-26, all 49 overrides have a reason.)
-2. **Approve the Part III statements** in the blueprint (Fock space, CAR, Gibbs/KMS, Lehmann, self-energy, Herglotz, Galitskii–Migdal),
-   or amend them.
-3. **A1/A2:** the bridge between Physlib's operators and QuantumInfo's density matrices; time evolution in finite dimensions.
-4. **B1 decision and implementation:** the representation of Fock space (generic part of the lattice second quantization vs. Physlib's
-   Wick algebra), then CAR.
-5. **C1:** the Lehmann representation, with the two-site Hubbard model as the sanity theorem.
+1. **Housekeeping:** curate `MAIN_RESULTS.md` (Miguel) and then make its blueprint check strict.
+2. **Review and approval (Miguel):** the particle–hole statement (written while finishing B1) and the C1–C3 statements
+   (Lehmann, self-energy, Herglotz, Galitskii–Migdal) in blueprint Part III.
+3. **B2:** one- and two-body RDMs on the Fock space, Coleman's N-representability of the 1-RDM (reuse `DFT/Lattice/RDMFT`).
+   Also the spin bridge: the Fock space over `Fin M ⊕ Fin M` restricts to the lattice `H0S` plus the Hubbard term.
+4. **C1:** the Lehmann representation, with the two-site Hubbard model as the sanity theorem.
+5. **A1/A2:** the bridge between Physlib's operators and QuantumInfo's density matrices; time evolution in finite dimensions.
 6. In parallel: C2 + B4; semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
 ## Log
@@ -158,3 +158,10 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
   (`QM/ManyBody/Fock`), as matrix identities and as identities of bounded operators on the Fock Hilbert space.
 - 2026-11-26: number operator proved (`QM/ManyBody/Number`): n̂_i|s⟩ = [i∈s]|s⟩ (= occF on N-particle configurations),
   N̂|s⟩ = |s||s⟩, both self-adjoint, n̂_i² = n̂_i; N̂ self-adjoint on the Fock Hilbert space.
+- 2026-11-26: bridge proved (`QM/ManyBody/OneBody`, `DFT/Lattice/Fermions/FockBridge`). On N-particle configurations the
+  matrix of Σ h_ij c_i† c_j is the lattice Γ h, the operator conserves the particle number, and H0F and hamN (H0F …)
+  are restrictions of second-quantized Hamiltonians. Creation strings have the lattice determinants as coefficients.
+- 2026-11-26: the lattice RDM is the Fock-space one (`DFT/Lattice/RDMFT/FockRDM`): γ_ij = ⟨Ψ, c_i† c_j Ψ⟩.
+- 2026-11-26: particle–hole transformation proved (`QM/ManyBody/ParticleHole`): P|s⟩ = |sᶜ⟩ is a self-adjoint unitary
+  involution, P c_i† P = (-1)^i c_i, P n̂_i P = 1 - n̂_i, P N̂ P = M - N̂, and one-body operators go to tr h minus the
+  staggered transpose. B1 complete.

@@ -143,6 +143,7 @@ import DFT.Lattice.Bridge.Triangle
 import DFT.Lattice.Bridge.TwoElectron
 import DFT.Lattice.Fermions.CauchyBinet
 import DFT.Lattice.Fermions.FirstQuantization
+import DFT.Lattice.Fermions.FockBridge
 import DFT.Lattice.Fermions.SecondQuantization
 import DFT.Lattice.Generic.DensityDim
 import DFT.Lattice.Generic.DensityDim.Gap
@@ -176,6 +177,7 @@ import DFT.Lattice.PathSum.ResonantPoint
 import DFT.Lattice.PathSum.RouteSums
 import DFT.Lattice.RDMFT.Basic
 import DFT.Lattice.RDMFT.Counting
+import DFT.Lattice.RDMFT.FockRDM
 import DFT.Lattice.RDMFT.Generic
 import DFT.Lattice.RDMFT.KohnSham
 import DFT.Lattice.RDMFT.Stabilizer

@@ -50,13 +50,61 @@
   Both operators are self-adjoint, and $\hat n_i^2=\hat n_i$.
 \end{proof}
 
+% Particle-hole statements written 2026-11-26 while finishing B1, to be reviewed by Miguel.
+\begin{theorem}[Particle–hole transformation]\label{thm:particle-hole}
+  \lean{QM.ManyBody.ph, QM.ManyBody.ph_mulVec_single, QM.ManyBody.card_compl_conf, QM.ManyBody.ph_mul_ph,
+    QM.ManyBody.ph_isHermitian, QM.ManyBody.ph_mul_conjTranspose, QM.ManyBody.jwSign_compl,
+    QM.ManyBody.ph_cre_ph, QM.ManyBody.ph_ann_ph, QM.ManyBody.ph_num_ph, QM.ManyBody.ph_numTot_ph,
+    QM.ManyBody.stag, QM.ManyBody.ph_oneBody_ph, QM.ManyBody.phOp, QM.ManyBody.phOp_isSelfAdjoint,
+    QM.ManyBody.phOp_mul_phOp, QM.ManyBody.phOp_creOp_phOp}\leanok
+  \uses{def:cdag, thm:car, thm:number}
+  Let $P|s\rangle=|s^c\rangle$. Then $P$ is a self-adjoint unitary with $P^2=1$, and it maps the $N$-particle sector onto
+  the $(M-N)$-particle sector. It acts on the operators as
+  $Pc_i^\dagger P=(-1)^i c_i$, $Pc_iP=(-1)^i c_i^\dagger$, $P\hat n_iP=1-\hat n_i$ and $P\hat NP=M-\hat N$. For a one-body
+  operator, $P\big(\sum_{ij}h_{ij}c_i^\dagger c_j\big)P=(\operatorname{tr}h)\,\mathbb 1-\sum_{ij}\tilde h_{ji}\,c_i^\dagger c_j$
+  with the staggered matrix $\tilde h_{ij}=(-1)^{i+j}h_{ij}$.
+\end{theorem}
+\begin{proof}\leanok
+  Every mode below $i$ lies either in $s$ or in $s^c$, so $\sigma_i(s)\,\sigma_i(s^c)=(-1)^i$. Comparing the action on vectors
+  gives $Pc_i^\dagger=(-1)^ic_iP$, and $P^2=1$ turns this into $Pc_i^\dagger P=(-1)^ic_i$. The conjugate transpose gives the
+  relation for $c_i$. Then $Pc_i^\dagger c_jP=(-1)^{i+j}c_ic_j^\dagger=(-1)^{i+j}(\delta_{ij}-c_j^\dagger c_i)$ by the
+  anticommutation relations, which gives the number operators and the one-body operators.
+\end{proof}
+
 \begin{theorem}[Bridge to the lattice code]\label{thm:fock-bridge}
-  \uses{def:cdag}
+  \lean{QM.ManyBody.oneBody, QM.ManyBody.oneBody_apply_eq_zero_of_card_ne, QM.ManyBody.slaterVec,
+    QM.ManyBody.hop_mulVec_slaterVec, DFT.Lattice.Fermions.slaterVec_apply, DFT.Lattice.Fermions.slaterVec_τs,
+    DFT.Lattice.Fermions.oneBody_apply_conf, DFT.Lattice.Fermions.fockHam_apply_conf,
+    DFT.Lattice.Fermions.H0F_eq_fock, DFT.Lattice.Fermions.hamN_H0F_eq_fock}\leanok
+  \uses{def:cdag, thm:car}
   For a real single-particle matrix $h$, the operator $\sum_{ij}h_{ij}\,c_i^\dagger c_j$ preserves the $N$-particle sector
   $\{s:|s|=N\}$ and its matrix there is the many-body matrix $\Gamma\,h$ of \texttt{DFT/Lattice/Fermions/SecondQuantization}
   (\texttt{Conf M N} ordered as in that file). Consequently the lattice Hamiltonians \texttt{H0F} are restrictions of
   second-quantized Hamiltonians on $\mathcal F_M$.
 \end{theorem}
+\begin{proof}\leanok
+  From the anticommutation relations, $c_i^\dagger c_j c_a^\dagger=\delta_{ja}c_i^\dagger+c_a^\dagger c_i^\dagger c_j$. By
+  induction on $N$, $c_i^\dagger c_j$ acts on a creation string $c_{\tau_0}^\dagger\cdots c_{\tau_{N-1}}^\dagger|\emptyset\rangle$
+  as a derivation. It replaces each occurrence of the mode $j$ in $\tau$ by $i$. Expanding the determinant $\mathtt{amp}\,s\,\tau$
+  along its first row shows, again by induction on $N$, that the coefficient of the creation string on $s$ is
+  $\mathtt{amp}\,s\,\tau$. The sign $(-1)^k$ of the cofactor is the Jordan–Wigner sign, because the $k$-th occupied mode of
+  $s$ has exactly $k$ occupied modes below it. For the sorted modes of $s'$ the creation string is $|s'\rangle$. Hence
+  $\langle s|\sum_{ij}h_{ij}c_i^\dagger c_j|s'\rangle=\sum_k\sum_i h_{i,\tau_k}\,\mathtt{amp}\,s\,(\tau\text{ with }\tau_k\to i)$,
+  which is $(\Gamma\,h^{T})_{s's}=(\Gamma\,h)_{ss'}$. Each term $c_i^\dagger c_j$ removes one particle and adds one, so the
+  matrix elements between different particle numbers vanish.
+\end{proof}
+
+\begin{corollary}[The lattice one-body reduced density matrix]\label{cor:fock-rdm}
+  \lean{DFT.rdm, DFT.Lattice.RDMFT.toFock, DFT.Lattice.RDMFT.oneBody_single, DFT.Lattice.RDMFT.rdm_eq_inner}\leanok
+  \uses{thm:fock-bridge}
+  Let $\psi$ be a real $N$-particle state on the lattice and $\Psi\in\mathcal F_M$ its extension by zero outside the
+  $N$-particle sector. The one-body reduced density matrix of the lattice code, $\gamma_{ij}=\langle\psi,\Gamma(E_{ij})\psi\rangle$,
+  is $\gamma_{ij}=\langle\Psi,c_i^\dagger c_j\Psi\rangle$.
+\end{corollary}
+\begin{proof}\leanok
+  $\sum_{kl}(E_{ij})_{kl}c_k^\dagger c_l=c_i^\dagger c_j$. Both sums over configurations reduce to the $N$-particle sector,
+  where Theorem~\ref{thm:fock-bridge} identifies the matrix elements of $c_i^\dagger c_j$ with those of $\Gamma(E_{ij})$.
+\end{proof}
 
 \begin{definition}[Gibbs state]\label{def:gibbs}
   $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$.
