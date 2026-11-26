@@ -21,6 +21,9 @@ import QM.ManyBody.RDM2
 import QM.ManyBody.Slater
 import QM.ManyBody.Spin
 import QM.ManyBody.Symmetrizer
+import QM.Spin.CGSeries
 import QM.Spin.ClebschGordan
+import QM.Spin.Coupling
 import QM.Spin.Ladder
 import QM.Spin.SpinAlg
+import QM.Spin.SpinRep

@@ -117,6 +117,83 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
   configurations.
 \end{proof}
 
+% A4+ statements (stages 1 and 2) written and approved by Miguel 2026-11-26.
+\begin{definition}[The spin-$j$ representation]\label{def:spin-rep}
+  \lean{QM.spinSz, QM.spinSm, QM.spinSp, QM.spinE}\leanok
+  \uses{thm:su2-ladder}
+  For $n\in\mathbb N$ and $j=n/2$, the spin-$j$ representation is $V_j=\mathbb C^{n+1}$ with basis $e_0,\dots,e_n$ (the
+  unnormalized ladder) and $S_ze_k=(j-k)e_k$, $S_-e_k=e_{k+1}$ ($e_{n+1}=0$), $S_+e_0=0$, $S_+e_{k+1}=(k+1)(n-k)e_k$.
+\end{definition}
+
+\begin{theorem}[Irreducible representations]\label{thm:spin-rep}
+  \lean{QM.isSU2_spinRep, QM.spinRep_S2, QM.spinRep_irreducible,
+    QM.IsSU2.exists_spinRep_iso}\leanok
+  \uses{def:spin-rep}
+  $V_j$ satisfies the su(2) relations, it is irreducible, and $S^2=j(j+1)$ on it. Conversely, if $v\ne0$ is a highest-weight
+  vector of a representation and its ladder stops at $v_{n}$, the span of the ladder is isomorphic to $V_{n/2}$ by an
+  isomorphism that intertwines $S_\pm$ and $S_z$.
+\end{theorem}
+\begin{proof}\leanok
+  The relations and $S^2=j(j+1)$ are checked coordinatewise. An invariant subspace is also invariant under
+  $S_z=\tfrac12[S_+,S_-]$, so applying $S_z-(j-k)$ removes coordinates one at a time until a basis vector $e_k$ is left. Then
+  $S_+$ reaches $e_0$ (the factors $(k+1)(n-k)$ are nonzero) and $S_-$ reaches every $e_k$. For a stopped ladder, $e_k\mapsto v_k$
+  is injective by the ladder theorem and intertwines the operators because $2m=n$.
+\end{proof}
+
+\begin{theorem}[Coupling of two angular momenta]\label{thm:coupling}
+  \lean{QM.Commutes, QM.IsSU2.add, QM.spinOrbit, QM.IsSU2.add_S2, QM.IsSU2.rTensor,
+    QM.IsSU2.lTensor, QM.IsSU2.tensor, QM.IsSU2.tensor_S2}\leanok
+  \uses{thm:su2-ladder}
+  If $L_\pm,L_z$ on $V$ and $S_\pm,S_z$ on $W$ satisfy the su(2) relations, so does $J=L\otimes1+1\otimes S$ on $V\otimes W$, and
+  $J^2=L^2\otimes1+1\otimes S^2+2\,L\cdot S$ with $L\cdot S=\tfrac12(L_+\otimes S_-+L_-\otimes S_+)+L_z\otimes S_z$.
+\end{theorem}
+\begin{proof}\leanok
+  For commuting $L$ and $S$ the commutators of $J=L+S$ are the sums of those of $L$ and $S$, and expanding $J_-J_++J_z^2+J_z$
+  gives $J^2=L^2+S^2+2L\cdot S$. On $V\otimes W$ the operators $A\otimes1$ and $1\otimes B$ commute.
+\end{proof}
+
+\begin{theorem}[Clebsch--Gordan series]\label{thm:cg-series}
+  \lean{QM.onFst, QM.onSnd, QM.isSU2_pair, QM.cgc, QM.hw, QM.pairJp_hw, QM.pairJz_hw,
+    QM.hw_ladder_stop, QM.cgVec, QM.linearIndependent_of_joint_eigen, QM.sum_cg_dims, QM.cg_series}\leanok
+  \uses{thm:coupling, def:spin-rep}
+  $V_{j_1}\otimes V_{j_2}\cong\bigoplus_{J=|j_1-j_2|}^{j_1+j_2}V_J$ (in integer steps): for each such $J$ there is an explicit
+  highest-weight vector of weight $J$, and the ladder vectors $|J,M\rangle$, $M=-J,\dots,J$, of all these $J$ form a basis of
+  $V_{j_1}\otimes V_{j_2}$.
+\end{theorem}
+\begin{proof}\leanok
+  The product is realized as functions on pairs of indices, with $L$ acting on the first index and $S$ on the second. For
+  $p\le\min(n_1,n_2)$ the vector $\sum_{a+b=p}c_a\,e_a\otimes e_b$ with $c_{a+1}=-c_a(p-a)(n_2-p+a+1)/((a+1)(n_1-a))$ is
+  annihilated by $J_+$ and has $J_z=j_1+j_2-p$. By the ladder theorem its ladder stops after $2J+1$ vectors. The ladder
+  vectors of all these highest weights are common eigenvectors of $J^2$ and $J_z$ with distinct pairs of eigenvalues, hence
+  linearly independent, and there are $\sum_{p=0}^{\min(n_1,n_2)}(n_1+n_2-2p+1)=(n_1+1)(n_2+1)$ of them.
+\end{proof}
+
+\begin{corollary}[Spin--orbit coupling]\label{cor:spin-orbit}
+  \lean{QM.IsSU2.map_S2, QM.spin_orbit}\leanok
+  \uses{thm:cg-series}
+  $V_l\otimes V_{1/2}\cong V_{l+1/2}\oplus V_{l-1/2}$ for $l\ge\tfrac12$, and $L\cdot S=\tfrac l2$ on $V_{l+1/2}$ and
+  $L\cdot S=-\tfrac{l+1}2$ on $V_{l-1/2}$.
+\end{corollary}
+\begin{proof}\leanok
+  $2L\cdot S=J^2-L^2-S^2$ with $L^2=l(l+1)$, $S^2=\tfrac34$ and $J^2=J(J+1)$ on each multiplet.
+\end{proof}
+
+\begin{definition}[Clebsch--Gordan coefficients]\label{def:cg-coeff}
+  \uses{thm:cg-series}
+  Give $V_j$ the inner product in which $|j,m\rangle$, the normalized ladder vectors, are orthonormal. The Clebsch--Gordan
+  coefficients $\langle j_1m_1;j_2m_2|JM\rangle$ are the coefficients of the normalized $|J,M\rangle$ in the product basis, with the
+  Condon--Shortley phase $\langle j_1j_1;j_2\,(J-j_1)|JJ\rangle>0$.
+\end{definition}
+
+\begin{theorem}[Properties of the Clebsch--Gordan coefficients]\label{thm:cg-coeff}
+  \uses{def:cg-coeff}
+  The coefficients are real and vanish unless $M=m_1+m_2$. They satisfy the two orthogonality relations, the recursion
+  obtained from $J_-$, and Racah's closed formula.
+\end{theorem}
+% Stage 3 (later, statements to be written): Wigner 3j symbols and their symmetries, 6j and 9j symbols, the
+% Biedenharn--Elliott identity.
+
+
 \begin{definition}[Symmetrizer and antisymmetrizer]\label{def:symmetrizer}
   \lean{QM.ManyBody.permL, QM.ManyBody.symm, QM.ManyBody.anti, QM.ManyBody.IsSymmFun,
     QM.ManyBody.IsAntiFun}\leanok
