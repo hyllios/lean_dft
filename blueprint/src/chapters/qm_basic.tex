@@ -179,6 +179,7 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
 \end{proof}
 
 \begin{definition}[Clebsch--Gordan coefficients]\label{def:cg-coeff}
+  \lean{QM.spinIp, QM.pairIp, QM.cgState, QM.prodState, QM.cgCoeff}\leanok
   \uses{thm:cg-series}
   Give $V_j$ the inner product in which $|j,m\rangle$, the normalized ladder vectors, are orthonormal. The Clebsch--Gordan
   coefficients $\langle j_1m_1;j_2m_2|JM\rangle$ are the coefficients of the normalized $|J,M\rangle$ in the product basis, with the
@@ -186,10 +187,24 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
 \end{definition}
 
 \begin{theorem}[Properties of the Clebsch--Gordan coefficients]\label{thm:cg-coeff}
+  \lean{QM.spinIp_Sp, QM.pairIp_Jp, QM.pairIp_prodState, QM.pairIp_cgState, QM.cgCoeff_eq_pairIp,
+    QM.cgCoeff_eq_zero, QM.cgCoeff_phase, QM.cg_orthogonal_left, QM.cg_orthogonal_right,
+    QM.cg_recursion, QM.cg_racah}\leanok
   \uses{def:cg-coeff}
   The coefficients are real and vanish unless $M=m_1+m_2$. They satisfy the two orthogonality relations, the recursion
   obtained from $J_-$, and Racah's closed formula.
 \end{theorem}
+\begin{proof}\leanok
+  With $\|e_k\|^2=\prod_{i<k}(i+1)(n-i)$ the operator $S_+$ is the adjoint of $S_-$, so $J_+^\dagger=J_-$ on the product.
+  Then $J^2$ and $J_z$ are self-adjoint, and the coupled states are orthonormal because their eigenvalue pairs differ. The
+  coefficient matrix is square by the dimension count of the Clebsch--Gordan series. Its columns are orthonormal, so its rows
+  are too, which is the second orthogonality relation. The selection rule holds because $J_-$ raises $x+y$ by one. Applying
+  $J_-$ to $|J,M\rangle$ and comparing norms, $\|J_-v\|^2=\langle v,J_+J_-v\rangle$, gives the recursion. The highest weight
+  has coefficient $1$ on $e_0\otimes e_p$, which fixes the phase. For Racah's formula, extend $1/n!$ by zero to negative
+  integers. Racah's sum then satisfies the same recursion as the unnormalized components of $J_-^k\,\mathrm{hw}_p$, up to
+  an alternating telescoping sum. Induction on $k$ identifies the two. The norm of the highest weight is a Vandermonde-type
+  sum $\sum_x\binom{r+x}{r}\binom{t+p-x}{t}=\binom{r+t+1+p}{r+t+1}$, obtained from $(1-X)^{-(r+1)}(1-X)^{-(t+1)}=(1-X)^{-(r+t+2)}$.
+\end{proof}
 % Stage 3 (later, statements to be written): Wigner 3j symbols and their symmetries, 6j and 9j symbols, the
 % Biedenharn--Elliott identity.
 
