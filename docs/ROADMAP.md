@@ -98,7 +98,7 @@ this section keeps only pointers.
   2026-11-26**). Physlib's Wick algebra (abstract, time-ordered QFT operators) cannot express state expectation values, so
   Wick's theorem is proved directly from `ModeRotation` (Laplace expansion, Gram determinants). Conventions as in `RDM`:
   `γ_ij = ⟨c_i† c_j⟩`, `D_ij,kl = ⟨c_i† c_j† c_l c_k⟩`.
-  - Step 1, `QM/ManyBody/QuasiFree` (Slater states): `slaterState u s := U(u)|s⟩`; `slaterState_isNState`;
+  - Step 1 ✅ (2026-11-26), `QM/ManyBody/QuasiFree` (Slater states): `slaterState u s := U(u)|s⟩`; `slaterState_isNState`;
     `rdm1_slater_proj` (γ Hermitian, γ² = γ, tr γ = N); `exists_slater_of_proj` (every rank-N projection is the γ of a
     Slater state); `wick_slater`: `⟨Ψ, c_{i₀}† ⋯ c_{iₙ₋₁}† c_{jₙ₋₁} ⋯ c_{j₀} Ψ⟩ = det (γ_{i_a j_b})`; `rdm2_slater`:
     `D_ij,kl = γ_ik γ_jl − γ_il γ_jk`.
