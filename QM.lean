@@ -1,5 +1,7 @@
 import QM.Basic
 import QM.Finite.GroundState
+import QM.Green.Lehmann
+import QM.Green.Spectral
 import QM.ManyBody.Configurations
 import QM.ManyBody.Fock
 import QM.ManyBody.ModeRotation

@@ -3,12 +3,21 @@
 % C1-C3 statements approved by Miguel 2026-11-26.
 
 \begin{definition}[Retarded one-body Green's function]\label{def:green-ret}
+  \lean{QM.Green.evol, QM.Green.heis, QM.Green.greenRet, QM.Green.greenZ, QM.Green.evol_apply_of_eigen,
+    QM.Green.star_evol}\leanok
   \uses{def:fock}
   $G^R_{ij}(t) = -i\,\theta(t)\,\langle\{c_i(t),c_j^\dagger\}\rangle$, with $c_i(t)=e^{iHt}c_ie^{-iHt}$, in the ground state
   or a Gibbs state.
 \end{definition}
+% Formalized 2026-11-26 for an eigenstate of H (in particular the ground state), with e^{-iHt} the exponential of a
+% bounded operator and G(z) = int_0^infty e^{izt} G^R(t) dt. The Gibbs-state version follows by linearity once the
+% Gibbs state (def:gibbs, B4) is defined.
 
 \begin{theorem}[Lehmann representation]\label{thm:lehmann}
+  \lean{QM.Green.lehmannPole, QM.Green.lehmannWeight, QM.Green.greenRet_eq_sum, QM.Green.greenZ_eq_sum,
+    QM.Green.lehmannWeight_posSemidef, QM.Green.sum_lehmannWeight, QM.Green.imPart, QM.Green.greenMat,
+    QM.Green.neg_inv_pi_imPart_greenMat, QM.Green.tendsto_spectral, ForMathlib.poissonKernel,
+    ForMathlib.tendsto_integral_poissonKernel}\leanok
   \uses{def:green-ret, thm:car}
   For $\operatorname{Im}z>0$,
   $G_{ij}(z) = \sum_{n}\frac{\langle 0|c_i|n\rangle\langle n|c_j^\dagger|0\rangle}{z-(E_n-E_0)}
@@ -16,6 +25,18 @@
   and the spectral function $A(\omega) = -\pi^{-1}\operatorname{Im}G(\omega+i0)$ is a positive matrix-valued measure of total
   mass the identity.
 \end{theorem}
+\begin{proof}\leanok
+  Let $\varphi_n$ be an orthonormal eigenbasis of $H$ with energies $E_n$, and let $|0\rangle$ be an eigenstate with energy
+  $E_0$. Then $e^{-iHt}\varphi_n=e^{-iE_nt}\varphi_n$, from the exponential series, and $\langle0|e^{-iHt}=e^{-iE_0t}\langle0|$
+  because $e^{-iHt}$ has adjoint $e^{iHt}$. Inserting $\sum_n|\varphi_n\rangle\langle\varphi_n|$ gives, for $t>0$,
+  $G^R_{ij}(t)=-i\sum_kW_{k,ij}\,e^{-i\omega_kt}$ with the poles $\omega_n=E_n-E_0$ and $\omega_m=E_0-E_m$. Integrating
+  $\int_0^\infty e^{i(z-\omega)t}\,dt=i/(z-\omega)$ for $\operatorname{Im}z>0$ gives the formula. Each weight is a rank-one
+  matrix $u\,u^\dagger$, with $u_i=\langle0|c_i|\varphi_n\rangle$ or $u_i=\langle\varphi_m|c_i|0\rangle$, so it is positive
+  semidefinite. Completeness turns the sum of the weights into $\langle0|\{c_i,c_j^\dagger\}|0\rangle=\delta_{ij}$. Finally
+  $-\pi^{-1}\operatorname{Im}G(\omega+i\eta)=\sum_kW_kP_\eta(\omega-\omega_k)$ with the Poisson kernel
+  $P_\eta(x)=\eta/\pi(x^2+\eta^2)$. The kernel is an approximate identity (substitute $x=\eta s$ and use dominated
+  convergence with $\int(1+s^2)^{-1}ds=\pi$), so $A=\sum_kW_k\,\delta_{\omega_k}$.
+\end{proof}
 
 \begin{definition}[Self-energy]\label{def:self-energy}
   \uses{thm:lehmann}

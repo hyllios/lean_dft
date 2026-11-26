@@ -5,13 +5,19 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-7 modules, 1668 lines.
+8 modules, 1775 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
 | Module | Lines | Content |
 |---|---|---|
 | `ForMathlib.Algebra.MvPolynomial.RationalFunctions` | 148 | Rational functions on generic points and simultaneous non-vanishing |
+
+### `ForMathlib/Analysis/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `ForMathlib.Analysis.PoissonKernel` | 107 | The Poisson kernel of the upper half-plane is an approximate identity |
 
 ### `ForMathlib/Analysis/Convex/`
 
@@ -41,7 +47,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-13 modules, 2786 lines.
+15 modules, 3162 lines.
 
 ### `QM/`
 
@@ -54,6 +60,13 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `QM.Finite.GroundState` | 119 | Ground states on finite-dimensional real Hilbert spaces |
+
+### `QM/Green/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `QM.Green.Lehmann` | 259 | The Lehmann representation |
+| `QM.Green.Spectral` | 117 | The spectral function |
 
 ### `QM/ManyBody/`
 
@@ -449,4 +462,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 62250 lines of Lean.
+Total: 62733 lines of Lean.

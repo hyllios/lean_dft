@@ -82,8 +82,10 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
 
 ### Track C: Green's functions, exact in finite dimensions (`QM/Green`, `QM/Response`)
 Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
-- C1 ⬜ Time-ordered, retarded and advanced one-body Green's functions; **Lehmann representation**; spectral function, positivity,
-  sum rules.
+- C1 🟡 Time-ordered, retarded and advanced one-body Green's functions; **Lehmann representation**; spectral function, positivity,
+  sum rules. **Proved 2026-11-26** for an eigenstate (`QM/Green/Lehmann`, `QM/Green/Spectral`): G^R from e^{-iHt}, the Lehmann
+  representation in time and frequency, positive weights summing to 1, A = -π⁻¹ Im G(ω+i0) = Σ W_k δ(ω-ω_k). Remaining: the
+  Gibbs-state version (with B4), time-ordered and advanced functions, the two-site Hubbard sanity theorem.
 - C2 ⬜ Self-energy defined by **Dyson's equation**; Herglotz property; the HF self-energy as the large-|z| limit.
 - C3 ⬜ Galitskii–Migdal formula; Koopmans; quasiparticle poles.
 - C4 ⬜ Matsubara formalism: KMS ⇒ (anti)periodicity, Matsubara sums as residues.
@@ -144,7 +146,7 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
 2. **Approved 2026-11-26:** the particle–hole statement and the C1–C3 statements (Lehmann, self-energy, Herglotz,
    Galitskii–Migdal).
 3. **B2 follow-up done:** the spin bridge (`QM/ManyBody/Spin`, `DFT/Lattice/Spin/FockBridge`).
-4. **C1:** the Lehmann representation, with the two-site Hubbard model as the sanity theorem.
+4. **C1 (mostly done):** remaining are the time-ordered and advanced functions and the two-site Hubbard sanity theorem.
 5. **A1/A2:** the bridge between Physlib's operators and QuantumInfo's density matrices; time evolution in finite dimensions.
 6. In parallel: C2 + B4; semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
@@ -188,3 +190,7 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   the (N↑, N↓) sector it is `kronSum (Γ h↑) (Γ h↓)`. The Hubbard operator restricts to `hubbard U`, and `H0S G t (hubbard U)`
   and `hamN (H0S …) occS v` are restrictions of Fock Hamiltonians.
 - 2026-11-26: `DFT.generic_hk_hubbard` removed from the main results. The main-results blueprint check is now strict.
+- 2026-11-26: C1 Lehmann representation proved (`QM/Green/Lehmann`, `QM/Green/Spectral`, `ForMathlib/Analysis/PoissonKernel`).
+  For an eigenstate Ψ of a Hermitian H, G^R_ij(t) = -iθ(t)⟨Ψ, {c_i(t), c_j†} Ψ⟩ with e^{-iHt} the operator exponential. Its
+  Laplace transform is Σ_k W_k/(z - ω_k) for Im z > 0, the weights are rank-one positive semidefinite and sum to 1, and
+  -π⁻¹ Im G(ω+iη) → Σ_k W_k δ(ω - ω_k) against bounded continuous functions (Poisson kernel approximate identity).
