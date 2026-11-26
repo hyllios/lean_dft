@@ -141,6 +141,15 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
 - C5 ⬜ Coupling-constant expansion: analytic in finite dimensions ⇒ the diagram series converges for small coupling; Feynman
   rules at first and second order. Later, as research: Luttinger–Ward / Baym–Kadanoff conserving approximations.
 - C6 ⬜ Two-particle Green's functions, linear response (**Kubo formula**), f-sum rule, fluctuation–dissipation theorem.
+- C7 ⬜ N-representability of the one-body Green's function (proposed 2026-11-26, speculative, statements not yet
+  drafted). Which matrix-valued `G(z)` are Green's functions of an `N`-particle state? Necessary layers: (i) Herglotz,
+  positive matrix spectral measure of total mass `1` (`{c_i, c_j†} = δ_ij`; C1 for eigenstates); (ii) hole and particle
+  parts separately positive, the hole part integrating to `γ`, which obeys Coleman (`0 ≤ γ ≤ 1`, `tr γ = N`; B2);
+  (iii) pole weights are sums of rank-one terms `⟨Ψ|c_i†|k⟩⟨k|c_j|Ψ⟩`, with the number of poles bounded by the
+  dimensions of the `N ± 1` sectors. Questions: are (i)–(iii) sufficient when the Hamiltonian is free (conjecture:
+  almost)? With `H` fixed, the first moment is tied to `h` plus the HF self-energy (B3, D4-style scope). Trap: for
+  ground states do *not* impose removal poles below addition poles (IP ≥ EA ⇔ convexity of `E(N)`, false for general
+  finite-dimensional `H`; a counterexample Hamiltonian is a good sanity theorem). After C2, B4 and D4.
 
 ### Track D: DFT (`DFT`), ongoing
 - D0 ✅ Lattice DFT (HK, generic HK, Kohn–Sham, TDDFT, RDMFT); continuum on a line (H¹₀, unique continuation, HK, Neumann walls,
@@ -262,3 +271,4 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 - 2026-11-26: item D4 added (unified framework after arXiv:2606.06676); statements drafted, pending approval.
 - 2026-11-26: items B3+ (no unfilled shells), B5 (Borland–Dennis, Schilling's pinning) and F3 (generic pure-state
   v-representability) added as proposals.
+- 2026-11-26: item C7 (N-representability of the Green's function) added as a proposal.
