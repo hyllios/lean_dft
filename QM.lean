@@ -26,6 +26,7 @@ import QM.Spin.CGSeries
 import QM.Spin.ClebschGordan
 import QM.Spin.Coupling
 import QM.Spin.Ladder
+import QM.Spin.NineJ
 import QM.Spin.Recoupling
 import QM.Spin.SixJ
 import QM.Spin.SpinAlg

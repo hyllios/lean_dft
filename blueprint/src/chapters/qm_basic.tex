@@ -256,6 +256,7 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
 \end{theorem}
 
 \begin{definition}[Wigner $9j$ symbols]\label{def:9j}
+  \lean{QM.nineJ, QM.nineJTerm}\leanok
   \uses{def:6j}
   $\begin{Bmatrix}j_1&j_2&j_{12}\\j_3&j_4&j_{34}\\j_{13}&j_{24}&J\end{Bmatrix}=\sum_x(-1)^{2x}(2x+1)
   \begin{Bmatrix}j_1&j_3&j_{13}\\j_{24}&J&x\end{Bmatrix}\begin{Bmatrix}j_2&j_4&j_{24}\\j_3&x&j_{34}\end{Bmatrix}
@@ -263,6 +264,8 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
 \end{definition}
 
 \begin{theorem}[Recoupling of four angular momenta]\label{thm:9j}
+  \lean{QM.cg_exchange, QM.cV_complete, QM.cU_expand, QM.recoup4, QM.recoup4_chain,
+    QM.recoup4_eq_nineJ}
   \uses{def:9j, thm:6j}
   The overlap $\langle(j_1j_2)j_{12},(j_3j_4)j_{34};J|(j_1j_3)j_{13},(j_2j_4)j_{24};J\rangle$ equals
   $\sqrt{(2j_{12}+1)(2j_{34}+1)(2j_{13}+1)(2j_{24}+1)}$ times the $9j$ symbol. The $9j$ symbol satisfies the corresponding
