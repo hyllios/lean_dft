@@ -131,6 +131,44 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
   linearity in N for ensembles).
 - D2 ⬜ Link to Track C: the Sham–Schlüter equation (lattice), Kohn–Sham versus interacting response (Dyson-like equation with f_xc).
 - D3 ⬜ RDMFT ↔ quasi-free states (B3).
+- D4 ⬜ Unified framework for finite-dimensional functional theories, after Wang, Liebert, Penz, Schilling,
+  arXiv:2606.06676 (proposed by Miguel 2026-11-26; **statements drafted 2026-11-26, pending approval**). Layout:
+  `DFT/Scope/` (abstract theory), instances in the existing folders; general convex analysis in `ForMathlib`.
+  Goal: prove the structural results once and re-derive lattice DFT, RDMFT and spin-DFT as instances.
+  Notation: `d`-dimensional Hilbert space `Fin d → ℂ`, states are unit vectors `ψ` or density matrices `Γ`
+  (`Γ ⪰ 0`, `tr Γ = 1`).
+  - Definitions. `structure Scope (V) (d)`: a finite-dimensional real vector space `V`, a linear map
+    `ι : V →ₗ[ℝ] Matrix (Fin d) (Fin d) ℂ` with Hermitian values, and a Hermitian `H₀`; `H v = H₀ + ι v`.
+    Density `dens Γ : Module.Dual ℝ V := v ↦ Re tr(Γ ι v)`, `densPure ψ` for `Γ = |ψ⟩⟨ψ|`.
+    Ranges `Bp = densPure '' {unit ψ}`, `Be = dens '' {density matrices}`. Energy
+    `E v = inf_ψ Re⟨ψ, H v ψ⟩`. Constrained-search functionals `Fp ρ, Fe ρ : EReal` (`inf ⟨H₀⟩` over states
+    with density `ρ`, `⊤` off the range). `IsCritical ψ :⇔ ∃ v, ι v ∉ ℝ·1 ∧ ψ is an eigenvector of ι v`;
+    `Bc` (densities of critical states), `Br = Bp \ Bc`. `IsAbelian :⇔ the ι v commute`. `NoRedundancy :⇔
+    ι injective ∧ 1 ∉ range ι`.
+  - Stage 1 (geometry, duality, Hohenberg–Kohn):
+    `isCompact_Bp`, `isCompact_Be`, `Be_eq_convexHull_Bp`; `Bp_eq_Be_of_abelian` (and both are the convex hull of
+    the finitely many joint-eigenvalue densities); `Fp_attained`, `Fe_attained` (minimizers exist on the ranges);
+    `E_eq_iInf_Fp`, `E_eq_iInf_Fe` (`E v = inf_ρ (F ρ + ρ v)`); `convexOn_Fe`; `lowerSemicontinuous_Fp`,
+    `lowerSemicontinuous_Fe`; `Fe_le_Fp`; `Fe_eq_sup` (`Fe ρ = sup_v (E v − ρ v)` on `Be`);
+    `Fe_greatest_convex_lsc_minorant` (`G` convex, lsc, `G ≤ Fp` ⇒ `G ≤ Fe`);
+    `isCritical_iff` (under `NoRedundancy`: critical ⇔ `ψ, B₁ψ, …, B_mψ` linearly dependent over ℝ ⇔ their real
+    Gram determinant vanishes);
+    `weak_hk` (equal ground-state densities for `v₁, v₂` ⇒ each ground state of `H v₁` is one of `H v₂`; also for
+    ensembles); `strong_hk` (`ρ ∈ Br` with a pure ground state of `H v` and of `H v'` ⇒ `ι (v − v') ∈ ℝ·1`, so
+    `v = v'` under `NoRedundancy`); `ensemble_vrep` (every `ρ` in the intrinsic interior of `Be` is the density of
+    an ensemble ground state of some `H v`, with `−v` a subgradient of `Fe`); `Fp_eq_Fe_of_pure_gs` (Lemma 5.7).
+    Instances: lattice DFT (`Be` is the hypersimplex), RDMFT (`Be = {0 ≤ γ ≤ 1, tr γ = N}`, via Coleman), spin
+    chains (`Be = [−1, 1]^m`); `KohnSham/Duality` restated as an instance.
+  - Stage 2 (representability by eigenstates): `eigenstate_vrep` (Thm 5.3(i)): every `ρ ∈ Br` is
+    `densPure ψ` for a unit `ψ` with `H v ψ = λ ψ` for some `v`, `λ`, and `ψ` attains `Fp ρ` (Lagrange multiplier
+    on the unit sphere; check whether the paper's omission of `NoRedundancy` here is harmless);
+    `continuousOn_Fe` (on the intrinsic interior of `Be`).
+  - Stage 3 (change of scope and examples): reduction of scope (`dens` of `S ∘ f` is `f* ∘ dens`) and
+    purification (`Fe` of `S` equals `Fp` of the purified scope on `H ⊗ H`, §VII.B; exact form to be checked against
+    the paper); Bloch example (`Bp` the unit sphere, `Be` the ball, so `Bp` need not be convex); the double-qubit
+    example with `Fe < Fp` at an interior point (Appendix A), if its values are exact.
+  - Out of scope for now: the moment-map description of Lie-algebra scopes (§VIII) and the generalized Pauli
+    constraints, which need Kirwan/Atiyah–Guillemin–Sternberg convexity.
 
 ### Track E: continuum operator theory (contributions to Physlib / Mathlib)
 - E1 ⬜ Spectral theorem for unbounded self-adjoint operators (multiplication-operator form), functional calculus: **coordinate
@@ -180,7 +218,8 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 3. **C1 remainder:** time-ordered and advanced functions, two-site Hubbard sanity theorem.
 4. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
 5. **A6** Kato cusp, Tiers 1–2.
-6. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
+6. **D4** unified functional-theory framework: statements drafted, awaiting approval; then stages 1 → 2 → 3.
+7. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
 ## Log
 - 2026-11-25: roadmap written; Physlib inspected (~437k lines). Decisions (Miguel): depend on Physlib, our work is meant to
@@ -195,3 +234,4 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
   bridge to Physlib's `𝐋` (Schwartz space and L²(ℝ³)). General su(2) theory moved from `QM/Spin` to `QM/AngularMomentum`.
 - 2026-11-26: items A6 (Kato cusp) and A4++ (spherical harmonics, statements approved) added; roadmap cleaned up.
 - 2026-11-26: B3 statements approved (Slater states and Wick, mixed quasi-free states, HF and Lieb's variational principle).
+- 2026-11-26: item D4 added (unified framework after arXiv:2606.06676); statements drafted, pending approval.
