@@ -110,6 +110,24 @@ this section keeps only pointers.
     states); `lieb_variational` (V ⪰ 0 on the pair space: for `0 ≤ γ ≤ 1`, `tr γ = N` there is a rank-N projection P with
     `E_HF(P) ≤ E_HF(γ)`; proof: shift between two fractional eigenvalues, E_HF is concave in the shift);
     `exists_hf_minimizer` (a Slater minimizer over all admissible γ); `ground_le_hf` (`E₀(N) ≤ E_HF(γ)` for all admissible γ).
+- B3+ ⬜ No unfilled shells in Hartree–Fock (Bach–Lieb–Loss–Solovej 1994; proposed 2026-11-26, quick win, statements
+  not yet drafted). For `V ⪰ 0` on pairs, a minimizing HF projection `P` is aufbau-filled: with the Fock operator
+  `F(P) = h + 2·pairForm(P, ·)` and its eigenvalues `ε`, every occupied `ε_a` is `≤` every unoccupied `ε_b`. Proof plan:
+  exchanging an occupied orbital `a` for an unoccupied `b` is the shift `e_b − e_a` of `lieb_variational`; its linear
+  coefficient is `ε_b − ε_a` and its quadratic coefficient is `≤ 0` (`pairForm_shift_re_nonpos`), so `ε_b < ε_a` would
+  lower the energy. Also: the first-order condition `[F(P), P] = 0` (the HF equations) at a minimizer.
+- B5 ⬜ Pure-state N-representability: the Borland–Dennis constraints (proposed 2026-11-26, high gain / high risk,
+  statements not yet drafted). For `N = 3`, `M = 6` (`∧³ℂ⁶`, dimension 20), the natural occupations `λ₁ ≥ … ≥ λ₆` of
+  every pure state satisfy `λ₁ + λ₆ = λ₂ + λ₅ = λ₃ + λ₄ = 1` and `λ₄ ≤ λ₅ + λ₆`; to our knowledge the first formalized
+  generalized Pauli constraint, and the model example where pure and ensemble RDMFT differ (`Bp ≠ Be`, D4). Plan: the
+  equalities from a normal form of `Ψ ∈ ∧³ℂ⁶` (mode rotations, `QM/ManyBody/ModeRotation`); the inequality needs an
+  elementary proof (literature check first: Borland–Dennis 1972, Ruskai 2007; Klyachko's representation-theoretic
+  route is out of reach). Risk: no usable elementary proof of the inequality.
+  - Follow-up (Schilling): pinning and quasipinning (Schilling, Gross, Christandl, PRL 2013). If a constraint is
+    saturated (`λ₄ = λ₅ + λ₆`), `Ψ` obeys a selection rule: it lies in the span of the natural-orbital configurations
+    annihilated by the operator `D̂ = n̂₅ + n̂₆ − n̂₄` (here `|123⟩, |145⟩, |246⟩`); and a stability estimate for
+    quasipinning (distance of `Ψ` from that span controlled by `λ₅ + λ₆ − λ₄`). See also D4, which is Schilling et al.'s
+    unified framework.
 - B4 ⬜ Gibbs states, the KMS condition, the Gibbs variational principle, Peierls–Bogoliubov.
 
 ### Track C: Green's functions, exact in finite dimensions (`QM/Green`, `QM/Response`)
@@ -187,6 +205,11 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
   the exact t-representation, shape universality, and a rigorous proof (not done yet).
   Next: Tier 1 in Lean (`ForMathlib` + `DFT`), the paper proof of Tier 2.
 - F2 ⬜ Lattice → continuum limits of HK/KS; thermodynamic limits.
+- F3 ⬜ Generic pure-state ground-state v-representability in lattice DFT (proposed 2026-11-26, high gain / high risk,
+  conjecture). For generic `H₀` (hopping and interaction), every density in the hypersimplex outside a Lebesgue-null set
+  is the density of a pure ground state of some `H(v)`; the exceptions come from degeneracies. D4's Theorem 5.3(i) gives
+  only eigenstate representability. Tools: the generic-HK machinery (`DFT/Lattice/Generic`, `GenericHK`). First step:
+  numerics on small lattices (do the non-pure-representable regions have positive measure?); the conjecture may be false.
 
 ## 3. Operating procedure (the daily routine)
 
@@ -219,7 +242,9 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 4. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
 5. **A6** Kato cusp, Tiers 1–2.
 6. **D4** unified functional-theory framework: statements drafted, awaiting approval; then stages 1 → 2 → 3.
-7. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
+7. Speculative (2026-11-26): **B3+** no unfilled shells (quick win); **F3** numerics first; **B5** Borland–Dennis
+   after a literature check for an elementary proof of the inequality, then Schilling's pinning.
+8. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
 ## Log
 - 2026-11-25: roadmap written; Physlib inspected (~437k lines). Decisions (Miguel): depend on Physlib, our work is meant to
@@ -235,3 +260,5 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 - 2026-11-26: items A6 (Kato cusp) and A4++ (spherical harmonics, statements approved) added; roadmap cleaned up.
 - 2026-11-26: B3 statements approved (Slater states and Wick, mixed quasi-free states, HF and Lieb's variational principle).
 - 2026-11-26: item D4 added (unified framework after arXiv:2606.06676); statements drafted, pending approval.
+- 2026-11-26: items B3+ (no unfilled shells), B5 (Borland–Dennis, Schilling's pinning) and F3 (generic pure-state
+  v-representability) added as proposals.
