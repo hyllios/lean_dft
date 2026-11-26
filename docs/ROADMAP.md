@@ -41,82 +41,68 @@ theory). Each one is a research-grade result.
 | Unbounded operators (`LinearPMap`), adjoint, `IsSelfAdjoint` | definitions and basics (Physlib builds on them) |
 | Schwartz space, Fourier transform, Plancherel, tempered distributions, Sobolev spaces H^{s,p} | yes |
 | Spectral theorem for unbounded self-adjoint operators, Stone (unbounded), Kato–Rellich, Hardy | **no** (Physlib: spectral measures started; Stone for bounded generators) |
-| 3D spherical coordinates for non-radial integrands | **no** (only 2D polar and radial integrals) |
+| Integration on spheres | generalized polar coordinates (`Measure.toSphere`, `measurePreserving_homeomorphUnitSphereProd`); **no** explicit (θ, φ) coordinates |
 | Fock space as a Hilbert space, CAR/CCR, quasi-free states | **no** (Physlib: only the QFT Wick algebra) |
 
 ## 2. Tracks
 
-Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume the current working mode (Miguel daily plus agents).
+Status: ✅ done · 🟡 partly done · ⬜ not started. Details of finished items are in the blueprint and `MODULES.md`;
+this section keeps only pointers.
 
 ### Track A: foundations of QM, finite-dimensional (`QM/Finite`, `QM/Spin`, `QM/AngularMomentum`, `QM/ManyBody`)
-- A1 ✅ States, observables, Born rule, expectation values, uncertainty: **from Physlib** (`QM/Basic.lean`). Density matrices and
-  partial trace: **from QuantumInfo**. Bridge (`QM/Finite/States`) and qubit sanity theorem (`QM/Finite/Qubit`) done 2026-11-26.
-- A2 ✅ Time evolution, the Heisenberg picture and Ehrenfest (`QM/Finite/Evolution`, on Physlib's
-  `UnitaryOneParameterGroup`). The time-dependent propagator (`QM/Finite/Propagator`, with global linear ODE existence in
-  `ForMathlib/Analysis/ODE/Linear`), the adiabatic theorem (`QM/Finite/Adiabatic`) and smooth Riesz eigenprojections
-  (`QM/Finite/Riesz`) done 2026-11-26.
-- A3 ✅ Schmidt decomposition and product states (`QM/Finite/Schmidt`, on QuantumInfo's `Ket` and partial traces) and natural
-  orbitals (`QM/ManyBody/NaturalOrbitals`) done 2026-11-26.
-- A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/AngularMomentum/Ladder`) and Clebsch–Gordan for
-  two and three spins (`QM/Spin/ClebschGordan`) done 2026-11-26.
-- A4+ ✅ Coupling of angular momenta (requested by Miguel 2026-11-26). (i) Orbital angular momentum and spin: `J = L + S` on
-  functions `SpinC n → V` satisfies the su(2) relations when `L` does on `V`; `l ⊗ ½ = (l + ½) ⊕ (l − ½)` with explicit
-  highest weights and the spin–orbit values `L·S = l/2, −(l+1)/2`. (ii) The sum of two angular momenta `L₁ + L₂`:
-  `j₁ ⊗ j₂ = |j₁ − j₂| ⊕ … ⊕ (j₁ + j₂)`, with highest weights and dimension count. (iii) Clebsch–Gordan coefficients: the
-  recursion from `J₋`, orthogonality, Racah's closed formula, Wigner 3j symbols and their symmetries; then the recoupling
-  of three and four angular momenta (6j and 9j symbols, Biedenharn–Elliott). Optional: a concrete orbital `L = -i r × ∇`
-  on homogeneous harmonic polynomials of degree `l` (spin-`l` irreducible representation).
-  Stage 1 done 2026-11-26 (`QM/AngularMomentum/SpinRep`, `QM/AngularMomentum/Coupling`, `QM/AngularMomentum/CGSeries`): the spin-j representation, its
-  irreducibility and uniqueness, coupling of commuting angular momenta, the Clebsch–Gordan series and spin–orbit coupling.
-  Stage 2 done 2026-11-26 (`QM/AngularMomentum/CGCoeff`): the Clebsch–Gordan coefficients with the Condon–Shortley phase, the
-  selection rule, both orthogonality relations, the `J₋` recursion and Racah's formula. Stage 3 done 2026-11-26
-  (`QM/AngularMomentum/ThreeJ`, `QM/AngularMomentum/Recoupling`, `QM/AngularMomentum/SixJ`, `QM/AngularMomentum/NineJ`, `QM/AngularMomentum/BiedenharnElliott`): 3j symbols and
-  their symmetries, recoupling of three and four angular momenta (6j and 9j symbols, 6j symmetries and orthogonality)
-  and the Biedenharn–Elliott identity. Orbital `L = -i r × ∇` done 2026-11-26 (`QM/AngularMomentum/Orbital`,
-  `ForMathlib/Algebra/MvPolynomial/Harmonic`): the harmonic polynomials of degree `l` are the spin-`l` representation. Physlib bridge done 2026-11-26
-  (`QM/AngularMomentum/Schwartz`): `p ↦ p e^{-|x|²/2}` intertwines `ℏL` with Physlib's `𝐋` on Schwartz functions, so
-  every `l ∈ ℕ`, `|m| ≤ l` occurs as a joint eigenvalue `ℏ²l(l+1)`, `ℏm` of `𝐋²`, `𝐋_z`.
-- A5 ✅ Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
-  Symmetrizer and antisymmetrizer as orthogonal projections (`QM/ManyBody/Symmetrizer`) done 2026-11-26.
+- A1 ✅ States, observables, Born rule, uncertainty (Physlib, `QM/Basic.lean`); density matrices (QuantumInfo); bridge
+  `QM/Finite/States`, qubit sanity theorem `QM/Finite/Qubit`.
+- A2 ✅ Time evolution, Heisenberg picture, Ehrenfest (`QM/Finite/Evolution`); propagator (`QM/Finite/Propagator`,
+  `ForMathlib/Analysis/ODE/Linear`); adiabatic theorem (`QM/Finite/Adiabatic`, `QM/Finite/Riesz`).
+- A3 ✅ Schmidt decomposition (`QM/Finite/Schmidt`); natural orbitals (`QM/ManyBody/NaturalOrbitals`).
+- A4 ✅ N spin-½ particles (`QM/Spin/SpinAlg`, `QM/Spin/ClebschGordan`); su(2) ladder theorem (`QM/AngularMomentum/Ladder`).
+- A4+ ✅ Angular momentum (`QM/AngularMomentum`): spin-j representation (`SpinRep`), coupling `J = L + S` and `L₁ + L₂`
+  (`Coupling`, `CGSeries`), Clebsch–Gordan coefficients and Racah's formula (`CGCoeff`), 3j/6j/9j and Biedenharn–Elliott
+  (`ThreeJ`, `Recoupling`, `SixJ`, `NineJ`, `BiedenharnElliott`), orbital `L = -i r × ∇` on harmonic polynomials (`Orbital`,
+  `ForMathlib/Algebra/MvPolynomial/Harmonic`), bridge to Physlib's `𝐋` on Schwartz functions and on L²(ℝ³) (`Schwartz`).
+- A4++ ⬜ Spherical harmonics (requested by Miguel 2026-11-26; **statements approved 2026-11-26**). Notation:
+  `S2 = sphere (0 : Space 3) 1`, `σ = (volume : Measure (Space 3)).toSphere`. Layout: pure maths (Fischer decomposition,
+  sphere integrals, associated Legendre functions) in `ForMathlib`; physics in `QM/AngularMomentum/SphericalHarmonics/`,
+  one file per stage.
+  - Stage A, spherical harmonics on S²: `σ_univ : σ univ = 4π`; `sphRestrict : Poly3 →ₗ[ℂ] C(S2, ℂ)`;
+    `sphericalHarmonics l := (harmonic l).map sphRestrict`; `sphRestrict` injective on homogeneous polynomials of degree `l`;
+    `finrank_sphericalHarmonics : = 2l + 1`.
+  - Stage B, orthogonality: `p ∈ H_l`, `q ∈ H_l'`, `l ≠ l'` ⇒ `∫ conj p · q dσ = 0`; the same for `L_z` eigenvectors with
+    `m ≠ m'`. Proof plan: `pG`, `qG` are eigenvectors of Physlib's symmetric `𝓛²` (`𝓛_z`) with different eigenvalues, and
+    polar coordinates factor `∫_{ℝ³}` into a positive radial integral times `∫_{S²}`.
+  - Stage C, explicit `Y_lm` (Condon–Shortley): `assocLegendre l m` by Rodrigues,
+    `(-1)^m (1-t²)^{m/2} d^{l+m}/dt^{l+m} (t²-1)^l / (2^l l!)`; `Ylm l m : Poly3` with `Ylm_mem_harmonic` (`|m| ≤ l`),
+    `Lz_Ylm : Lz Y = m Y`, `Lp_Ylm : Lp Y_lm = √((l-m)(l+m+1)) Y_l,m+1` (and `Lm_Ylm`),
+    `Ylm_spherical : Y_lm(sin θ cos φ, sin θ sin φ, cos θ) = √((2l+1)/(4π) · (l-m)!/(l+m)!) P_l^m(cos θ) e^{imφ}`,
+    `Ylm_orthonormal : ∫ conj Y_lm · Y_l'm' dσ = δ_ll' δ_mm'`. Proof plan for the norm: `‖L₋Y‖² = (l+m)(l-m+1)‖Y‖²` by
+    symmetry, so only `∫|x+iy|^{2l} dσ` is computed (Gaussian integral).
+  - Stage D, completeness: Fischer decomposition `P_n = H_n ⊕ r² P_{n-2}` (homogeneous polynomials); `Ylm_hilbertBasis`:
+    the `Y_lm`, `|m| ≤ l`, form a Hilbert basis of `L²(S², σ)` (Stone–Weierstrass on S², continuous functions dense in L²).
+  - Stage E (later, not yet approved): addition theorem `Σ_m Y_lm(u) conj Y_lm(v) = (2l+1)/(4π) P_l(u·v)`.
+- A5 ✅ Ground states (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`), symmetrizer and
+  antisymmetrizer (`QM/ManyBody/Symmetrizer`).
 - A6 ⬜ Kato cusp conditions (requested by Miguel 2026-11-26), in three tiers.
-  Tier 1: the cusp from the radial equation. If `u ∈ C²[0, ∞)` solves `-(1/2μ)(u'' + 2u'/r) + (q/r) u = E u` for `r > 0`,
-  then `u'(0) = 2μ q u(0)`. With `μ = 1`, `q = -Z` this is the nuclear cusp `u'(0) = -Z u(0)`, and with `μ = ½`, `q = 1`
-  (relative coordinate) the electron–electron cusp `u'(0) = ½ u(0)`.
-  Tier 2: sanity checks. The hydrogen-like ground state `e^{-Zr}` satisfies the nuclear cusp, and the spherical-average form
-  reduces to Tier 1 for spherically symmetric states.
-  Tier 3: Kato's theorem (1957). Every eigenfunction of the N-electron Coulomb Hamiltonian is Lipschitz and its spherical
-  averages around each coalescence point satisfy the cusp conditions. Needs elliptic regularity for `-Δ + V` with Coulomb `V`,
-  integration on spheres in ℝ³ (E6) and the many-body Coulomb domain (E3): a research-scale item for Tracks E/F, possibly with
-  Physlib.
+  Tier 1: if `u ∈ C²[0, ∞)` solves `-(1/2μ)(u'' + 2u'/r) + (q/r) u = E u` for `r > 0`, then `u'(0) = 2μ q u(0)` (nuclear cusp
+  `μ = 1`, `q = -Z`; electron–electron cusp `μ = ½`, `q = 1`).
+  Tier 2: `e^{-Zr}` satisfies the nuclear cusp; the spherical-average form reduces to Tier 1 for spherical states.
+  Tier 3: Kato's theorem (1957) for N-electron Coulomb eigenfunctions. Needs elliptic regularity, integration on spheres
+  (E6, A4++) and the Coulomb domain (E3): research scale, possibly with Physlib.
 
 ### Track B: many-body theory with finitely many modes (`QM/ManyBody`, `QM/Thermal`)
-- B1 ✅ Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. **Approved 2026-11-26; Fock space
-  and CAR proved** (`QM/ManyBody/Fock`: matrix form and bounded operators on the Hilbert space); **number operator proved**
-  (`QM/ManyBody/Number`); **bridge to the lattice code proved** (`DFT/Lattice/Fermions/FockBridge`); **particle–hole transformation proved**
-  (`QM/ManyBody/ParticleHole`). B1 complete 2026-11-26.
-  Design (blueprint Part III): a concrete Fock space, functions `Finset (Fin M) → ℂ` (dimension 2^M), with Jordan–Wigner
-  signs; first theorems: CAR, the number operator, and the **bridge** `Σ h_ij c_i† c_j = Γ h` on the N-particle sector, which
-  connects all of the existing lattice DFT. The lattice code (`DFT/Lattice/Fermions/SecondQuantization`) works only at fixed N with
-  real matrices, so it cannot host `c_i` itself. Physlib's Wick algebra is abstract and QFT-oriented (no finite-mode Hilbert
-  space); use it later for Wick's theorem (B3) via its universality property, if our operators satisfy its hypotheses.
-- B2 ✅ One- and two-body RDMs; Coleman's N-representability for the 1-RDM. One-body operators done (`QM/ManyBody/OneBody`).
-  **Statements approved 2026-11-26** (blueprint Part III). **Proved:** the 1-RDM necessary conditions (`QM/ManyBody/RDM`) and
-  the N-representability of the density (`DFT/Lattice/RDMFT/DensityRep`); the 2-RDM with antisymmetry, contraction, trace and
-  the P, Q, G conditions (`QM/ManyBody/RDM2`); mode rotations U(u) (`QM/ManyBody/ModeRotation`) and Coleman's theorem
-  (`DFT/Lattice/RDMFT/Coleman`). B2 complete 2026-11-26. Statements: γ_ij = ⟨c_i† c_j⟩ (Miguel's choice, as in the
-  lattice code), necessary conditions 0 ≤ γ ≤ 1 and tr γ = N, N-representability of the density (pure and ensemble),
-  the 2-RDM with antisymmetry, contraction and trace, the P, Q, G conditions, mode rotations U(u), Coleman's theorem
-  (kept in B2). Order: 1-RDM conditions, density, 2-RDM, mode rotations, Coleman. `DFT/Lattice/RDMFT` has pieces to reuse.
+- B1 ✅ Fock space over `Fin M` modes with Jordan–Wigner signs and the CAR (`QM/ManyBody/Fock`), number operator (`Number`),
+  particle–hole transformation (`ParticleHole`), bridge to the lattice code (`DFT/Lattice/Fermions/FockBridge`), spin bridge
+  (`QM/ManyBody/Spin`, `DFT/Lattice/Spin/FockBridge`).
+- B2 ✅ One-body operators (`OneBody`), 1-RDM conditions (`RDM`), density N-representability (`DFT/Lattice/RDMFT/DensityRep`),
+  2-RDM with P, Q, G (`RDM2`), mode rotations (`ModeRotation`), Coleman's theorem (`DFT/Lattice/RDMFT/Coleman`).
 - B3 ⬜ Quasi-free states, **Wick's theorem** for finitely many modes, Hartree–Fock as the minimum over quasi-free states (Lieb's
-  variational principle).
+  variational principle). Check Physlib's Wick algebra (`Physlib/QFT/PerturbationTheory/WickAlgebra`) first.
 - B4 ⬜ Gibbs states, the KMS condition, the Gibbs variational principle, Peierls–Bogoliubov.
 
 ### Track C: Green's functions, exact in finite dimensions (`QM/Green`, `QM/Response`)
-Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
-- C1 🟡 Time-ordered, retarded and advanced one-body Green's functions; **Lehmann representation**; spectral function, positivity,
-  sum rules. **Proved 2026-11-26** for an eigenstate (`QM/Green/Lehmann`, `QM/Green/Spectral`): G^R from e^{-iHt}, the Lehmann
-  representation in time and frequency, positive weights summing to 1, A = -π⁻¹ Im G(ω+i0) = Σ W_k δ(ω-ω_k). Remaining: the
-  Gibbs-state version (with B4), time-ordered and advanced functions, the two-site Hubbard sanity theorem.
+Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
+- C1 🟡 Retarded Green's function, Lehmann representation, spectral function for an eigenstate (`QM/Green/Lehmann`,
+  `QM/Green/Spectral`, `ForMathlib/Analysis/PoissonKernel`). Remaining: Gibbs-state version (with B4), time-ordered and
+  advanced functions, the two-site Hubbard sanity theorem.
 - C2 ⬜ Self-energy defined by **Dyson's equation**; Herglotz property; the HF self-energy as the large-|z| limit.
 - C3 ⬜ Galitskii–Migdal formula; Koopmans; quasiparticle poles.
 - C4 ⬜ Matsubara formalism: KMS ⇒ (anti)periodicity, Matsubara sums as residues.
@@ -140,7 +126,8 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   missing in Physlib.
 - E4 ⬜ Min–max principle; HVZ (later).
 - E5 ⬜ Lieb–Thirring, Lieb–Oxford, Thomas–Fermi (Lieb–Simon). This connects to the Lieb–Oxford project.
-- E6 ⬜ Integration on spheres in ℝ³ (needed by the semiclassical-xc sphere-overlap lemma) → Mathlib.
+- E6 ⬜ Integration on spheres in ℝ³ (needed by the semiclassical-xc sphere-overlap lemma) → Mathlib. Mathlib's `toSphere` and
+  polar decomposition cover the general part; A4++ will add the S² specifics (total area, Gaussian moments).
 
 ### Track F: research frontier (always keep one running)
 - F1 🟡 Semiclassical expansion of exchange (`../semiclassical-xc/`): the coefficients 7/81 (screening), 8/81 (temperature) and
@@ -171,88 +158,25 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
 - **Build time and memory:** keep files small and imports minimal (imports must reflect real use); cap parallelism on the shared host.
 - **Continuity:** the blueprint plus `README`, `ARCHITECTURE`, `AGENTS` and this roadmap must be enough for a new person or agent to continue.
 
-## 5. Next steps (from 2026-11-26, after B1)
+## 5. Next steps (as of 2026-11-26)
 
-1. **Housekeeping done:** `MAIN_RESULTS.md` has every result in the blueprint, and the check is strict in CI.
-2. **Approved 2026-11-26:** the particle–hole statement and the C1–C3 statements (Lehmann, self-energy, Herglotz,
-   Galitskii–Migdal).
-3. **B2 follow-up done:** the spin bridge (`QM/ManyBody/Spin`, `DFT/Lattice/Spin/FockBridge`).
-4. **C1 (mostly done):** remaining are the time-ordered and advanced functions and the two-site Hubbard sanity theorem.
-5. **A2:** time evolution in finite dimensions (A1 done). `QM/Green/Lehmann` already has `e^{-iHt}` on the Fock space.
-6. In parallel: C2 + B4; semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
+Done: A1–A5 (with A4+), B1, B2, most of C1.
+1. **A4++ spherical harmonics** (approved): stages A → B → C → D in order.
+2. **C1 remainder:** time-ordered and advanced functions, two-site Hubbard sanity theorem.
+3. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
+4. **B3** Wick's theorem and quasi-free states (check Physlib's Wick algebra first).
+5. **A6** Kato cusp, Tiers 1–2.
+6. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
 ## Log
-- 2026-11-25: roadmap written (in the parent folder, as `FORMALIZATION_ROADMAP.md`).
-- 2026-11-25: Physlib inspected: ~437k lines, it covers basic QM and is building the continuum operator theory. Decision (Miguel):
-  depend on it; our work is meant to end up in it eventually.
-- 2026-11-25: decision (Miguel): QM lives inside lean_dft as a second library, not as a separate repository.
-- 2026-11-25: reorganization of lean_dft (tag `pre-reorg-2026-11-25` → release `v4.36.0`): Lean/Mathlib v4.36.0 via Physlib;
-  libraries ForMathlib ← QM ← DFT; layered folders with imports from true dependencies; CI checks; ARCHITECTURE, AGENTS,
-  MODULES, MAIN_RESULTS.
-- 2026-11-26: roadmap moved into the repository (`docs/ROADMAP.md`) and updated to the state after the reorganization.
-- 2026-11-26: heartbeat backlog closed (all overrides justified; check enforcing); generated certificates reproducible (CI).
-- 2026-11-26: B1 proposal written (concrete Fock space + bridge to the lattice code), awaiting approval.
-- 2026-11-26: Part III statements approved. Fock space, c_i†/c_i (Jordan–Wigner), c_i = (c_i†)† and the CAR proved
-  (`QM/ManyBody/Fock`), as matrix identities and as identities of bounded operators on the Fock Hilbert space.
-- 2026-11-26: number operator proved (`QM/ManyBody/Number`): n̂_i|s⟩ = [i∈s]|s⟩ (= occF on N-particle configurations),
-  N̂|s⟩ = |s||s⟩, both self-adjoint, n̂_i² = n̂_i; N̂ self-adjoint on the Fock Hilbert space.
-- 2026-11-26: bridge proved (`QM/ManyBody/OneBody`, `DFT/Lattice/Fermions/FockBridge`). On N-particle configurations the
-  matrix of Σ h_ij c_i† c_j is the lattice Γ h, the operator conserves the particle number, and H0F and hamN (H0F …)
-  are restrictions of second-quantized Hamiltonians. Creation strings have the lattice determinants as coefficients.
-- 2026-11-26: the lattice RDM is the Fock-space one (`DFT/Lattice/RDMFT/FockRDM`): γ_ij = ⟨Ψ, c_i† c_j Ψ⟩.
-- 2026-11-26: particle–hole transformation proved (`QM/ManyBody/ParticleHole`): P|s⟩ = |sᶜ⟩ is a self-adjoint unitary
-  involution, P c_i† P = (-1)^i c_i, P n̂_i P = 1 - n̂_i, P N̂ P = M - N̂, and one-body operators go to tr h minus the
-  staggered transpose. B1 complete.
-- 2026-11-26: B2 statements written (pending approval): 1-RDM and density N-representability, 2-RDM with P, Q, G, mode
-  rotations, Coleman.
-- 2026-11-26: B2 statements approved. 1-RDM conditions γ = γ†, 0 ≤ γ ≤ 1, tr γ = N (states and ensembles) and
-  N-representability of the density (pure and ensemble, nonnegative coefficients) proved. Next: 2-RDM, then mode rotations and Coleman.
-- 2026-11-26: 2-RDM proved (`QM/ManyBody/RDM2`): antisymmetry, Hermiticity, Σ_k D_ik,jk = (N-1)γ_ij, trace N(N-1), and the
-  P, Q, G conditions with Q and G as explicit affine functions of D and γ, for states and ensembles.
-- 2026-11-26: mode rotations proved (`QM/ManyBody/ModeRotation`). Orbital operators c†(φ) obey {c(χ), c†(φ)} = ⟨χ, φ⟩,
-  an orbital annihilator acts on a creation string by Laplace expansion, and two strings overlap by the Gram determinant.
-  From this U(u) is unitary, fixes the vacuum, commutes with N̂, satisfies U c_i† U† = Σ_j u_ji c_j† and U(uv) = U(u)U(v),
-  and γ(UΨ) = ū γ uᵀ. Cauchy–Binet was not needed. The sorted-mode lemmas moved from `FockBridge` to `QM/ManyBody/Fock`.
-- 2026-11-26: Coleman's theorem proved (`DFT/Lattice/RDMFT/Coleman`). γ is the 1-RDM of an N-particle ensemble iff it is
-  Hermitian, 0 ≤ γ ≤ 1 and tr γ = N. B2 complete.
-- 2026-11-26: particle–hole and C1–C3 statements approved. Spin-bridge statement written and approved.
-- 2026-11-26: spin bridge proved (`QM/ManyBody/Spin`, `DFT/Lattice/Spin/FockBridge`). With the up modes first, the spin
-  one-body operator acts on product functions f ⊗ g factor by factor (the down parities cancel in each hopping term), so on
-  the (N↑, N↓) sector it is `kronSum (Γ h↑) (Γ h↓)`. The Hubbard operator restricts to `hubbard U`, and `H0S G t (hubbard U)`
-  and `hamN (H0S …) occS v` are restrictions of Fock Hamiltonians.
-- 2026-11-26: `DFT.generic_hk_hubbard` removed from the main results. The main-results blueprint check is now strict.
-- 2026-11-26: C1 Lehmann representation proved (`QM/Green/Lehmann`, `QM/Green/Spectral`, `ForMathlib/Analysis/PoissonKernel`).
-  For an eigenstate Ψ of a Hermitian H, G^R_ij(t) = -iθ(t)⟨Ψ, {c_i(t), c_j†} Ψ⟩ with e^{-iHt} the operator exponential. Its
-  Laplace transform is Σ_k W_k/(z - ω_k) for Im z > 0, the weights are rank-one positive semidefinite and sum to 1, and
-  -π⁻¹ Im G(ω+iη) → Σ_k W_k δ(ω - ω_k) against bounded continuous functions (Poisson kernel approximate identity).
-- 2026-11-26: A1 complete. `QM/Finite/States` connects Physlib and QuantumInfo: for a ket, QuantumInfo's `exp_val` of the pure
-  state is Physlib's `expectedValue`, Physlib's variance is ⟨T²⟩ - ⟨T⟩², the Born rule over an eigenbasis, and tr ρT as a
-  mixture over the spectral decomposition. `QM/Finite/Qubit`: Bloch decomposition, |r|² = 2 tr ρ² - 1 ≤ 1 with equality
-  iff pure, and Δσx Δσy ≥ |⟨σz⟩| from Physlib's Robertson inequality.
-- 2026-11-26: A4 and A5 complete. `QM/Spin/Ladder`: the su(2) ladder theorem (highest weight, 2m ∈ ℕ, the (2m+1)-dimensional
-  invariant subspace, every ladder stops in finite dimension), with `QM/Spin/SpinAlg` as an instance. `QM/Spin/ClebschGordan`:
-  S² = 1 + P₀₁ and S² = ¾ + ΣP_ij, triplet and singlet basis, (S² − 15/4)(S² − 3/4) = 0, quartet and two doublets.
-  `QM/ManyBody/Symmetrizer`: 𝒮 and 𝒜 are idempotent, absorb permutations, have the (anti)symmetric functions as ranges,
-  annihilate each other for N ≥ 2, are self-adjoint, and 𝒜 of a product is the Slater determinant over N!.
-- 2026-11-26: roadmap item A4+ added (L + S, L₁ + L₂, Clebsch–Gordan coefficients, 6j/9j recoupling).
-- 2026-11-26: A2 (without the adiabatic theorem) and A3 complete. `QM/Finite/Evolution`: unitarity, U(t+s) = U(t)U(s), the
-  Schrödinger equation with uniqueness, the Heisenberg equation A' = i[H, A(t)], Ehrenfest and conservation laws.
-  `QM/Finite/Schmidt`: ψ = Σ √λ_k u_k ⊗ v_k, tr ρ₁ⁿ = tr ρ₂ⁿ, product ⇔ ρ₁ pure ⇔ Schmidt rank one.
-  `QM/ManyBody/NaturalOrbitals`: a mode rotation diagonalizes γ, with occupations in [0, 1] summing to N.
-- 2026-11-26: A2 complete with the adiabatic theorem. Global existence for linear ODEs in Banach algebras (gluing local
-  Picard–Lindelöf solutions), the unitary propagator of iεU' = H(s)U, and Kato's estimate ‖(1 − P(1))U_ε(1)P(0)‖ ≤ Cε via
-  X = R P'P − P P'R with [H, X] = P'. The eigenprojection of a gapped eigenvalue is the Riesz projection and is C² when H is,
-  so the final theorem (`adiabatic_of_gap`) assumes only H ∈ C², E ∈ C¹ and the gap.
-- 2026-11-26: roadmap item A6 added (Kato cusp conditions, three tiers).
-- 2026-11-26: A4+ stages 1 and 2 done. Clebsch–Gordan coefficients with Racah's formula, proved by a telescoping
-  recursion for Racah's sum and a Vandermonde identity for the norm of the highest weight.
-- 2026-11-26: A4+ stage 3 done. 3j symbols and symmetries, 6j and 9j symbols from the recoupling of three and four
-  angular momenta, and the Biedenharn–Elliott identity from the two ways of expanding one four-spin overlap.
-- 2026-11-26: A4+ done. Orbital angular momentum `L = -i r × ∇` on complex polynomials: commutation relations, invariance of
-  the harmonic polynomials `H_l`, `dim H_l = 2l + 1`, `H_l ≅ V_l`, irreducibility and `L² = l(l + 1)`.
-- 2026-11-26: the general su(2) theory (ladder, spin-j representation, coupling, Clebsch–Gordan, 3j/6j/9j,
-  Biedenharn–Elliott) moved from `QM/Spin` to `QM/AngularMomentum`; `QM/Spin` keeps the spin-½ files (`SpinAlg`,
-  `ClebschGordan`, which now holds `isSU2_spin`). Declaration names unchanged.
-- 2026-11-26: bridge from the orbital `L` on polynomials to Physlib's angular momentum on `𝓢(ℝ³, ℂ)`
-  (`QM/AngularMomentum/Schwartz`): `p ↦ p e^{-|x|²/2}` is injective and intertwines `ℏ Lᵢ, ℏ L±` with `𝐋ᵢ, 𝐋±`; the image of
-  `H_l` is the spin-`l` representation, with `𝐋² = ℏ²l(l+1)`.
+- 2026-11-25: roadmap written; Physlib inspected (~437k lines). Decisions (Miguel): depend on Physlib, our work is meant to
+  end up in it; QM lives inside lean_dft as a second library. Reorganization (tag `pre-reorg-2026-11-25` → release
+  `v4.36.0`): libraries ForMathlib ← QM ← DFT, layered folders, CI checks, ARCHITECTURE, AGENTS, MODULES, MAIN_RESULTS.
+- 2026-11-26: roadmap moved into the repository; heartbeat backlog closed; generated certificates reproducible in CI.
+- 2026-11-26: B1 and B2 complete (Fock space, CAR, number operator, lattice bridge, particle–hole; RDMs, P/Q/G, mode
+  rotations, Coleman); spin bridge. `DFT.generic_hk_hubbard` removed from the main results; main-results check strict.
+- 2026-11-26: C1 Lehmann representation for an eigenstate.
+- 2026-11-26: A1–A5 complete, including the adiabatic theorem (A2).
+- 2026-11-26: A4+ complete: Clebsch–Gordan, Racah, 3j/6j/9j, Biedenharn–Elliott, orbital `L` on harmonic polynomials,
+  bridge to Physlib's `𝐋` (Schwartz space and L²(ℝ³)). General su(2) theory moved from `QM/Spin` to `QM/AngularMomentum`.
+- 2026-11-26: items A6 (Kato cusp) and A4++ (spherical harmonics, statements approved) added; roadmap cleaned up.
