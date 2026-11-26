@@ -19,6 +19,11 @@ explicit sum `recoup3` of products of four Clebsch–Gordan coefficients (`dotp_
 
 * `couple_couple_eq`, `couple_couple_assoc_eq`: the coupled states in the product basis.
 * `dotp_recouple`: the overlap of the two couplings.
+* `recoup3_const`, `dotp_stU_stV_eq_zero`: independence of `M`, orthogonality across `J` and `M`.
+* `recoup3_eq_sixJ`: the overlap is `(-1)^(j₁+j₂+j₃+J) √((2j₁₂+1)(2j₂₃+1)) {j₁ j₂ j₁₂; j₃ J j₂₃}`.
+* `cU_complete`, `cV_ortho`: completeness and orthonormality of the coupled states.
+* `sixJ_swap12`, `sixJ_swap23`, `sixJ_flip`: the tetrahedral symmetries of the 6j symbol.
+* `sixJ_orthogonal`: the orthogonality relation of the 6j symbols.
 -/
 
 namespace QM
@@ -105,15 +110,14 @@ lemma mem_idx3 {n₁ n₂ n₃ : ℕ} {i : ℕ × ℕ × ℕ} :
     i ∈ idx3 n₁ n₂ n₃ ↔ i.1 ≤ n₁ ∧ i.2.1 ≤ n₂ ∧ i.2.2 ≤ n₃ := by
   simp only [idx3, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff]
 
-/-- **The overlap of the two couplings** of three orthonormal ladders is `recoup3`. -/
-theorem dotp_recouple {n₁ n₂ n₃ : ℕ} {f : ℕ → X → ℝ} {g : ℕ → Y → ℝ} {h : ℕ → Z → ℝ}
-    (hf : OrthoUpTo n₁ f) (hg : OrthoUpTo n₂ g) (hh : OrthoUpTo n₃ h) (a b P Q K : ℕ) :
+/-- The overlap of the two couplings of three orthonormal ladders, for any `M` and `M'`. -/
+theorem dotp_recouple₂ {n₁ n₂ n₃ : ℕ} {f : ℕ → X → ℝ} {g : ℕ → Y → ℝ} {h : ℕ → Z → ℝ}
+    (hf : OrthoUpTo n₁ f) (hg : OrthoUpTo n₂ g) (hh : OrthoUpTo n₃ h) (a b P Q K K' : ℕ) :
     dotp (couple (n₁ + n₂ - 2 * a) n₃ P (couple n₁ n₂ a f g) h K)
       (fun q : (X × Y) × Z =>
-        couple n₁ (n₂ + n₃ - 2 * b) Q f (couple n₂ n₃ b g h) K (q.1.1, (q.1.2, q.2))) =
-      recoup3 n₁ n₂ n₃ a b P Q K := by
+        couple n₁ (n₂ + n₃ - 2 * b) Q f (couple n₂ n₃ b g h) K' (q.1.1, (q.1.2, q.2))) =
+      ∑ i ∈ idx3 n₁ n₂ n₃, cU n₁ n₂ n₃ a P K i * cV n₁ n₂ n₃ b Q K' i := by
   rw [couple_couple_eq, couple_couple_assoc_eq, dotp_sum_smul]
-  · rfl
   intro i hi j hj
   rw [mem_idx3] at hi hj
   rw [dotp_tensor3, hf _ hi.1 _ hj.1, hg _ hi.2.1 _ hj.2.1, hh _ hi.2.2 _ hj.2.2]
@@ -121,6 +125,15 @@ theorem dotp_recouple {n₁ n₂ n₃ : ℕ} {f : ℕ → X → ℝ} {g : ℕ �
   obtain ⟨j1, j2, j3⟩ := j
   simp only [Prod.mk.injEq]
   split_ifs <;> simp_all
+
+/-- **The overlap of the two couplings** of three orthonormal ladders is `recoup3`. -/
+theorem dotp_recouple {n₁ n₂ n₃ : ℕ} {f : ℕ → X → ℝ} {g : ℕ → Y → ℝ} {h : ℕ → Z → ℝ}
+    (hf : OrthoUpTo n₁ f) (hg : OrthoUpTo n₂ g) (hh : OrthoUpTo n₃ h) (a b P Q K : ℕ) :
+    dotp (couple (n₁ + n₂ - 2 * a) n₃ P (couple n₁ n₂ a f g) h K)
+      (fun q : (X × Y) × Z =>
+        couple n₁ (n₂ + n₃ - 2 * b) Q f (couple n₂ n₃ b g h) K (q.1.1, (q.1.2, q.2))) =
+      recoup3 n₁ n₂ n₃ a b P Q K :=
+  dotp_recouple₂ hf hg hh a b P Q K K
 
 lemma orthoUpTo_one (n : ℕ) : OrthoUpTo n (oneVec n) := by
   intro t ht t' ht'
@@ -414,5 +427,487 @@ theorem recoup3_eq_sixJ {n₁ n₂ n₃ a b P Q K : ℕ} (ha : a ≤ min n₁ n�
   push_cast at h hpos ⊢
   apply mul_left_cancel₀ hpos
   rw [h]; ring
+
+/-! ### Symmetries of the 6j symbol -/
+
+lemma threeJ_support {n₁ n₂ n₃ x₁ x₂ x₃ : ℕ} (h : threeJ n₁ n₂ n₃ x₁ x₂ x₃ ≠ 0) :
+    Triad n₁ n₂ n₃ ∧ x₁ ≤ n₁ ∧ x₂ ≤ n₂ ∧ x₃ ≤ n₃ ∧ 2 * (x₁ + x₂ + x₃) = n₁ + n₂ + n₃ := by
+  have h1 : Triad n₁ n₂ n₃ ∧ x₃ ≤ n₃ := by
+    by_contra h'; exact h (threeJ_of_not h')
+  have h2 : 2 * (x₁ + x₂ + x₃) = n₁ + n₂ + n₃ := by
+    by_contra h'; exact h (threeJ_eq_zero h')
+  have h3 : x₁ ≤ n₁ ∧ x₂ ≤ n₂ := by
+    by_contra h'; exact h (threeJ_eq_zero_of_gt (by omega))
+  exact ⟨h1.1, h3.1, h3.2, h1.2, h2⟩
+
+lemma prod4_signs (A B C D σ τ : ℝ) (h : A * B * C * D ≠ 0 → σ = τ) :
+    σ * (A * B * C * D) = τ * (A * B * C * D) := by
+  by_cases h0 : A * B * C * D = 0
+  · rw [h0, mul_zero, mul_zero]
+  · rw [h h0]
+
+lemma neg_one_pow_eq_of_even {a b : ℕ} (h : Even (a + b)) : (-1 : ℝ) ^ a = (-1) ^ b := by
+  have e : (-1 : ℝ) ^ (a + b) = 1 := h.neg_one_pow
+  rw [pow_add] at e
+  have hb : ((-1 : ℝ) ^ b) * (-1) ^ b = 1 := by
+    rw [← pow_add, ← two_mul, pow_mul, neg_one_sq, one_pow]
+  linear_combination (-1 : ℝ) ^ b * e - (-1 : ℝ) ^ a * hb
+
+lemma prod4_ne {A B C D : ℝ} (h : A * B * C * D ≠ 0) : A ≠ 0 ∧ B ≠ 0 ∧ C ≠ 0 ∧ D ≠ 0 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> intro h' <;> apply h <;> rw [h'] <;> ring
+
+lemma sixJTerm_swap12 {n₁ n₂ n₃ n₄ n₅ n₆ y₁ y₂ y₃ y₄ y₅ y₆ : ℕ} (h₄ : y₄ ≤ n₄) (h₅ : y₅ ≤ n₅)
+    (h₆ : y₆ ≤ n₆) :
+    sixJTerm n₂ n₁ n₃ n₅ n₄ n₆ y₂ y₁ y₃ (n₅ - y₅) (n₄ - y₄) (n₆ - y₆) =
+      sixJTerm n₁ n₂ n₃ n₄ n₅ n₆ y₁ y₂ y₃ y₄ y₅ y₆ := by
+  unfold sixJTerm
+  rw [Nat.sub_sub_self h₄, Nat.sub_sub_self h₅, Nat.sub_sub_self h₆,
+    threeJ_swap12 n₁ n₂ n₃, threeJ_swap12 n₄ n₂ n₆, threeJ_swap12 n₁ n₅ n₆,
+    threeJ_swap12 n₄ n₅ n₃]
+  set A := threeJ n₁ n₂ n₃ (n₁ - y₁) (n₂ - y₂) (n₃ - y₃)
+  set B := threeJ n₁ n₅ n₆ y₁ (n₅ - y₅) y₆
+  set C := threeJ n₄ n₂ n₆ y₄ y₂ (n₆ - y₆)
+  set D := threeJ n₄ n₅ n₃ (n₄ - y₄) y₅ y₃
+  have key := prod4_signs A B C D
+    ((-1) ^ (y₂ + y₁ + y₃ + (n₅ - y₅) + (n₄ - y₄) + (n₆ - y₆) + (n₁ + n₂ + n₃) / 2 +
+      (n₄ + n₂ + n₆) / 2 + (n₁ + n₅ + n₆) / 2 + (n₄ + n₅ + n₃) / 2))
+    ((-1) ^ (y₁ + y₂ + y₃ + y₄ + y₅ + y₆)) ?_
+  · simp only [pow_add] at key
+    linear_combination key
+  intro h0
+  obtain ⟨hA, hB, hC, hD⟩ := prod4_ne h0
+  obtain ⟨⟨_, _, _, ⟨r₁, hr₁⟩⟩, -, -, -, s₁⟩ := threeJ_support hA
+  obtain ⟨⟨_, _, _, ⟨r₂, hr₂⟩⟩, -, -, -, s₂⟩ := threeJ_support hB
+  obtain ⟨⟨_, _, _, ⟨r₃, hr₃⟩⟩, -, -, -, s₃⟩ := threeJ_support hC
+  obtain ⟨⟨_, _, _, ⟨r₄, hr₄⟩⟩, -, -, -, s₄⟩ := threeJ_support hD
+  apply neg_one_pow_eq_of_even
+  rw [show (n₁ + n₂ + n₃) / 2 = r₁ by omega, show (n₁ + n₅ + n₆) / 2 = r₂ by omega,
+    show (n₄ + n₂ + n₆) / 2 = r₃ by omega, show (n₄ + n₅ + n₃) / 2 = r₄ by omega]
+  exact Nat.even_iff.mpr (by omega)
+
+lemma sixJTerm_swap23 {n₁ n₂ n₃ n₄ n₅ n₆ y₁ y₂ y₃ y₄ y₅ y₆ : ℕ} (h₄ : y₄ ≤ n₄) (h₅ : y₅ ≤ n₅)
+    (h₆ : y₆ ≤ n₆) :
+    sixJTerm n₁ n₃ n₂ n₄ n₆ n₅ y₁ y₃ y₂ (n₄ - y₄) (n₆ - y₆) (n₅ - y₅) =
+      sixJTerm n₁ n₂ n₃ n₄ n₅ n₆ y₁ y₂ y₃ y₄ y₅ y₆ := by
+  unfold sixJTerm
+  rw [Nat.sub_sub_self h₄, Nat.sub_sub_self h₅, Nat.sub_sub_self h₆,
+    threeJ_swap23 n₁ n₂ n₃, threeJ_swap23 n₁ n₅ n₆, threeJ_swap23 n₄ n₅ n₃,
+    threeJ_swap23 n₄ n₂ n₆]
+  set A := threeJ n₁ n₂ n₃ (n₁ - y₁) (n₂ - y₂) (n₃ - y₃)
+  set B := threeJ n₁ n₅ n₆ y₁ (n₅ - y₅) y₆
+  set C := threeJ n₄ n₂ n₆ y₄ y₂ (n₆ - y₆)
+  set D := threeJ n₄ n₅ n₃ (n₄ - y₄) y₅ y₃
+  have key := prod4_signs A B C D
+    ((-1) ^ (y₁ + y₃ + y₂ + (n₄ - y₄) + (n₆ - y₆) + (n₅ - y₅) + (n₁ + n₂ + n₃) / 2 +
+      (n₁ + n₅ + n₆) / 2 + (n₄ + n₅ + n₃) / 2 + (n₄ + n₂ + n₆) / 2))
+    ((-1) ^ (y₁ + y₂ + y₃ + y₄ + y₅ + y₆)) ?_
+  · simp only [pow_add] at key
+    linear_combination key
+  intro h0
+  obtain ⟨hA, hB, hC, hD⟩ := prod4_ne h0
+  obtain ⟨⟨_, _, _, ⟨r₁, hr₁⟩⟩, -, -, -, s₁⟩ := threeJ_support hA
+  obtain ⟨⟨_, _, _, ⟨r₂, hr₂⟩⟩, -, -, -, s₂⟩ := threeJ_support hB
+  obtain ⟨⟨_, _, _, ⟨r₃, hr₃⟩⟩, -, -, -, s₃⟩ := threeJ_support hC
+  obtain ⟨⟨_, _, _, ⟨r₄, hr₄⟩⟩, -, -, -, s₄⟩ := threeJ_support hD
+  apply neg_one_pow_eq_of_even
+  rw [show (n₁ + n₂ + n₃) / 2 = r₁ by omega, show (n₁ + n₅ + n₆) / 2 = r₂ by omega,
+    show (n₄ + n₂ + n₆) / 2 = r₃ by omega, show (n₄ + n₅ + n₃) / 2 = r₄ by omega]
+  exact Nat.even_iff.mpr (by omega)
+
+lemma sixJTerm_flip {n₁ n₂ n₃ n₄ n₅ n₆ y₁ y₂ y₃ y₄ y₅ y₆ : ℕ} (h₁ : y₁ ≤ n₁) (h₂ : y₂ ≤ n₂)
+    (h₃ : y₃ ≤ n₃) (h₄ : y₄ ≤ n₄) (h₅ : y₅ ≤ n₅) (h₆ : y₆ ≤ n₆) :
+    sixJTerm n₄ n₅ n₃ n₁ n₂ n₆ (n₄ - y₄) y₅ y₃ (n₁ - y₁) y₂ y₆ =
+      sixJTerm n₁ n₂ n₃ n₄ n₅ n₆ y₁ y₂ y₃ y₄ y₅ y₆ := by
+  have rA := threeJ_reverse (n₁ := n₁) (n₂ := n₂) (n₃ := n₃) (Nat.sub_le n₁ y₁) (Nat.sub_le n₂ y₂)
+    (Nat.sub_le n₃ y₃)
+  rw [Nat.sub_sub_self h₁, Nat.sub_sub_self h₂, Nat.sub_sub_self h₃] at rA
+  have rB := threeJ_reverse (n₁ := n₁) (n₂ := n₅) (n₃ := n₆) h₁ (Nat.sub_le n₅ y₅) h₆
+  rw [Nat.sub_sub_self h₅] at rB
+  have rC := threeJ_reverse (n₁ := n₄) (n₂ := n₂) (n₃ := n₆) h₄ h₂ (Nat.sub_le n₆ y₆)
+  rw [Nat.sub_sub_self h₆] at rC
+  have rD := threeJ_reverse (n₁ := n₄) (n₂ := n₅) (n₃ := n₃) (Nat.sub_le n₄ y₄) h₅ h₃
+  rw [Nat.sub_sub_self h₄] at rD
+  unfold sixJTerm
+  rw [Nat.sub_sub_self h₄, Nat.sub_sub_self h₁, rA, rB, rC, rD]
+  set A := threeJ n₁ n₂ n₃ (n₁ - y₁) (n₂ - y₂) (n₃ - y₃)
+  set B := threeJ n₁ n₅ n₆ y₁ (n₅ - y₅) y₆
+  set C := threeJ n₄ n₂ n₆ y₄ y₂ (n₆ - y₆)
+  set D := threeJ n₄ n₅ n₃ (n₄ - y₄) y₅ y₃
+  have key := prod4_signs A B C D
+    ((-1) ^ (n₄ - y₄ + y₅ + y₃ + (n₁ - y₁) + y₂ + y₆ + (n₁ + n₂ + n₃) / 2 +
+      (n₁ + n₅ + n₆) / 2 + (n₄ + n₅ + n₃) / 2 + (n₄ + n₂ + n₆) / 2))
+    ((-1) ^ (y₁ + y₂ + y₃ + y₄ + y₅ + y₆)) ?_
+  · simp only [pow_add] at key
+    linear_combination key
+  intro h0
+  obtain ⟨hA, hB, hC, hD⟩ := prod4_ne h0
+  obtain ⟨⟨_, _, _, ⟨r₁, hr₁⟩⟩, -, -, -, s₁⟩ := threeJ_support hA
+  obtain ⟨⟨_, _, _, ⟨r₂, hr₂⟩⟩, -, -, -, s₂⟩ := threeJ_support hB
+  obtain ⟨⟨_, _, _, ⟨r₃, hr₃⟩⟩, -, -, -, s₃⟩ := threeJ_support hC
+  obtain ⟨⟨_, _, _, ⟨r₄, hr₄⟩⟩, -, -, -, s₄⟩ := threeJ_support hD
+  apply neg_one_pow_eq_of_even
+  rw [show (n₁ + n₂ + n₃) / 2 = r₁ by omega, show (n₁ + n₅ + n₆) / 2 = r₂ by omega,
+    show (n₄ + n₂ + n₆) / 2 = r₃ by omega, show (n₄ + n₅ + n₃) / 2 = r₄ by omega]
+  exact Nat.even_iff.mpr (by omega)
+
+lemma sum5_perm (A B C D E : Finset ℕ) (F : ℕ → ℕ → ℕ → ℕ → ℕ → ℝ) :
+    ∑ a ∈ A, ∑ b ∈ B, ∑ c ∈ C, ∑ d ∈ D, ∑ e ∈ E, F a b c d e =
+      ∑ d ∈ D, ∑ e ∈ E, ∑ c ∈ C, ∑ a ∈ A, ∑ b ∈ B, F a b c d e := by
+  rw [Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => sum3_rotate C D E _]
+  rw [sum4_rotate, sum4_rotate]
+  exact Finset.sum_congr rfl fun d _ => Finset.sum_congr rfl fun e _ =>
+    (sum3_rotate C A B _).symm
+
+/-- **Exchange of the first two columns**: `{j₂ j₁ j₃; j₅ j₄ j₆} = {j₁ j₂ j₃; j₄ j₅ j₆}`. -/
+theorem sixJ_swap12 (n₁ n₂ n₃ n₄ n₅ n₆ : ℕ) :
+    sixJ n₂ n₁ n₃ n₅ n₄ n₆ = sixJ n₁ n₂ n₃ n₄ n₅ n₆ := by
+  unfold sixJ
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun y₁ _ => Finset.sum_congr rfl fun y₂ _ =>
+    Finset.sum_congr rfl fun y₃ _ => ?_
+  rw [Finset.sum_comm, sum_range_reflect' n₄]
+  refine Finset.sum_congr rfl fun y₄ h₄ => ?_
+  rw [sum_range_reflect' n₅]
+  refine Finset.sum_congr rfl fun y₅ h₅ => ?_
+  rw [sum_range_reflect' n₆]
+  refine Finset.sum_congr rfl fun y₆ h₆ => ?_
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at h₄ h₅ h₆
+  exact sixJTerm_swap12 h₄ h₅ h₆
+
+/-- **Exchange of the last two columns**: `{j₁ j₃ j₂; j₄ j₆ j₅} = {j₁ j₂ j₃; j₄ j₅ j₆}`. -/
+theorem sixJ_swap23 (n₁ n₂ n₃ n₄ n₅ n₆ : ℕ) :
+    sixJ n₁ n₃ n₂ n₄ n₆ n₅ = sixJ n₁ n₂ n₃ n₄ n₅ n₆ := by
+  unfold sixJ
+  refine Finset.sum_congr rfl fun y₁ _ => ?_
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun y₂ _ => Finset.sum_congr rfl fun y₃ _ => ?_
+  rw [sum_range_reflect' n₄]
+  refine Finset.sum_congr rfl fun y₄ h₄ => ?_
+  rw [Finset.sum_comm, sum_range_reflect' n₅]
+  refine Finset.sum_congr rfl fun y₅ h₅ => ?_
+  rw [sum_range_reflect' n₆]
+  refine Finset.sum_congr rfl fun y₆ h₆ => ?_
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at h₄ h₅ h₆
+  exact sixJTerm_swap23 h₄ h₅ h₆
+
+/-- **Exchange of upper and lower entries in the first two columns**:
+`{j₄ j₅ j₃; j₁ j₂ j₆} = {j₁ j₂ j₃; j₄ j₅ j₆}`. -/
+theorem sixJ_flip (n₁ n₂ n₃ n₄ n₅ n₆ : ℕ) :
+    sixJ n₄ n₅ n₃ n₁ n₂ n₆ = sixJ n₁ n₂ n₃ n₄ n₅ n₆ := by
+  unfold sixJ
+  rw [sum5_perm, sum_range_reflect' n₁]
+  refine Finset.sum_congr rfl fun y₁ h₁ => Finset.sum_congr rfl fun y₂ h₂ =>
+    Finset.sum_congr rfl fun y₃ h₃ => ?_
+  rw [sum_range_reflect' n₄]
+  refine Finset.sum_congr rfl fun y₄ h₄ => Finset.sum_congr rfl fun y₅ h₅ =>
+    Finset.sum_congr rfl fun y₆ h₆ => ?_
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at h₁ h₂ h₃ h₄ h₅ h₆
+  exact sixJTerm_flip h₁ h₂ h₃ h₄ h₅ h₆
+
+/-! ### Orthogonality of the 6j symbols -/
+
+/-- **Completeness of the couplings** `|(j₁ j₂) j₁₂, j₃; J M⟩`. -/
+theorem cU_complete (n₁ n₂ n₃ : ℕ) {i j : ℕ × ℕ × ℕ} (hi : i ∈ idx3 n₁ n₂ n₃)
+    (hj : j ∈ idx3 n₁ n₂ n₃) :
+    ∑ a ∈ range (min n₁ n₂ + 1), ∑ P ∈ range (min (n₁ + n₂ - 2 * a) n₃ + 1),
+      ∑ K ∈ range (n₁ + n₂ - 2 * a + n₃ - 2 * P + 1),
+        cU n₁ n₂ n₃ a P K i * cU n₁ n₂ n₃ a P K j = if i = j then 1 else 0 := by
+  rw [mem_idx3] at hi hj
+  obtain ⟨i1, i2, i3⟩ := i
+  obtain ⟨j1, j2, j3⟩ := j
+  simp only at hi hj
+  have inner : ∀ a, ∑ P ∈ range (min (n₁ + n₂ - 2 * a) n₃ + 1),
+      ∑ K ∈ range (n₁ + n₂ - 2 * a + n₃ - 2 * P + 1),
+        cU n₁ n₂ n₃ a P K (i1, i2, i3) * cU n₁ n₂ n₃ a P K (j1, j2, j3) =
+      if i3 = j3 then ∑ w ∈ range (n₁ + n₂ - 2 * a + 1),
+        cgCoeff n₁ n₂ a w i1 i2 * cgCoeff n₁ n₂ a w j1 j2 else 0 := by
+    intro a
+    simp only [cU, Finset.sum_mul_sum]
+    rw [Finset.sum_congr rfl fun P _ => Finset.sum_congr rfl fun K _ => Finset.sum_congr rfl
+      fun w _ => Finset.sum_congr rfl fun w' _ => (show
+        cgCoeff n₁ n₂ a w i1 i2 * cgCoeff (n₁ + n₂ - 2 * a) n₃ P K w i3 *
+          (cgCoeff n₁ n₂ a w' j1 j2 * cgCoeff (n₁ + n₂ - 2 * a) n₃ P K w' j3) =
+        cgCoeff n₁ n₂ a w i1 i2 * cgCoeff n₁ n₂ a w' j1 j2 *
+          (cgCoeff (n₁ + n₂ - 2 * a) n₃ P K w i3 * cgCoeff (n₁ + n₂ - 2 * a) n₃ P K w' j3)
+        by ring)]
+    rw [Finset.sum_congr rfl fun P _ => sum3_rotate _ _ _ _, sum3_rotate]
+    simp only [← Finset.mul_sum]
+    rw [Finset.sum_congr rfl fun w hw => Finset.sum_congr rfl fun w' hw' => by
+      rw [cg_orthogonal_right (Nat.lt_succ_iff.mp (Finset.mem_range.mp hw))
+        (Nat.lt_succ_iff.mp (Finset.mem_range.mp hw')) hi.2.2 hj.2.2]]
+    split_ifs with h3
+    · refine Finset.sum_congr rfl fun w hw => ?_
+      rw [Finset.sum_eq_single w]
+      · simp [h3]
+      · intro w' _ hne; simp [Ne.symm hne]
+      · intro h; exact absurd hw h
+    · simp [h3]
+  rw [Finset.sum_congr rfl fun a _ => inner a]
+  by_cases h3 : i3 = j3
+  · simp only [h3, ite_true]
+    rw [cg_orthogonal_right hi.1 hj.1 hi.2.1 hj.2.1]
+    simp only [Prod.mk.injEq]
+    split_ifs <;> simp_all
+  · simp only [h3, ite_false, Finset.sum_const_zero, Prod.mk.injEq]
+    split_ifs <;> simp_all
+
+/-- **Orthonormality of the couplings** `|j₁, (j₂ j₃) j₂₃; J M⟩`. -/
+theorem cV_ortho {n₁ n₂ n₃ b Q K b' Q' K' : ℕ} (hb : b ≤ min n₂ n₃)
+    (hQ : Q ≤ min n₁ (n₂ + n₃ - 2 * b)) (hK : K ≤ n₁ + (n₂ + n₃ - 2 * b) - 2 * Q)
+    (hb' : b' ≤ min n₂ n₃) (hQ' : Q' ≤ min n₁ (n₂ + n₃ - 2 * b')) :
+    ∑ i ∈ idx3 n₁ n₂ n₃, cV n₁ n₂ n₃ b Q K i * cV n₁ n₂ n₃ b' Q' K' i =
+      if b = b' ∧ Q = Q' ∧ K = K' then 1 else 0 := by
+  rw [show ∑ i ∈ idx3 n₁ n₂ n₃, cV n₁ n₂ n₃ b Q K i * cV n₁ n₂ n₃ b' Q' K' i =
+    ∑ i ∈ idx3 n₁ n₂ n₃, (fun t s r => cV n₁ n₂ n₃ b Q K (t, s, r) *
+      cV n₁ n₂ n₃ b' Q' K' (t, s, r)) i.1 i.2.1 i.2.2 from rfl,
+    sum_idx3 n₁ n₂ n₃ (fun t s r => cV n₁ n₂ n₃ b Q K (t, s, r) * cV n₁ n₂ n₃ b' Q' K' (t, s, r))]
+  have inner : ∀ t, ∑ s ∈ range (n₂ + 1), ∑ r ∈ range (n₃ + 1),
+      cV n₁ n₂ n₃ b Q K (t, s, r) * cV n₁ n₂ n₃ b' Q' K' (t, s, r) =
+      if b = b' then ∑ u ∈ range (n₂ + n₃ - 2 * b + 1),
+        cgCoeff n₁ (n₂ + n₃ - 2 * b) Q K t u * cgCoeff n₁ (n₂ + n₃ - 2 * b') Q' K' t u
+      else 0 := by
+    intro t
+    simp only [cV, Finset.sum_mul_sum]
+    rw [Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun r _ => Finset.sum_congr rfl
+      fun u _ => Finset.sum_congr rfl fun u' _ => (show
+        cgCoeff n₂ n₃ b u s r * cgCoeff n₁ (n₂ + n₃ - 2 * b) Q K t u *
+          (cgCoeff n₂ n₃ b' u' s r * cgCoeff n₁ (n₂ + n₃ - 2 * b') Q' K' t u') =
+        cgCoeff n₁ (n₂ + n₃ - 2 * b) Q K t u * cgCoeff n₁ (n₂ + n₃ - 2 * b') Q' K' t u' *
+          (cgCoeff n₂ n₃ b u s r * cgCoeff n₂ n₃ b' u' s r) by ring)]
+    rw [sum4_rotate, sum4_rotate]
+    simp only [← Finset.mul_sum]
+    rw [Finset.sum_congr rfl fun u hu => Finset.sum_congr rfl fun u' _ => by
+      rw [cg_orthogonal_left hb (Nat.lt_succ_iff.mp (Finset.mem_range.mp hu)) hb']]
+    split_ifs with hbb
+    · subst hbb
+      refine Finset.sum_congr rfl fun u hu => ?_
+      rw [Finset.sum_eq_single u]
+      · simp
+      · intro u' _ hne; simp [Ne.symm hne]
+      · intro h; exact absurd hu h
+    · simp [hbb]
+  rw [Finset.sum_congr rfl fun t _ => inner t]
+  by_cases hbb : b = b'
+  · subst hbb
+    simp only [ite_true, true_and]
+    exact cg_orthogonal_left hQ hK hQ'
+  · simp [hbb]
+
+lemma sum3_rotate' {α β γ : Type*} (A : Finset α) (B : Finset β) (C : Finset γ)
+    (F : α → β → γ → ℝ) :
+    ∑ a ∈ A, ∑ b ∈ B, ∑ c ∈ C, F a b c = ∑ b ∈ B, ∑ c ∈ C, ∑ a ∈ A, F a b c := by
+  rw [Finset.sum_comm]
+  exact Finset.sum_congr rfl fun _ _ => Finset.sum_comm
+
+lemma cU_cV_eq_zero {n₁ n₂ n₃ a b P Q K K' : ℕ} (ha : a ≤ min n₁ n₂) (hb : b ≤ min n₂ n₃)
+    (hP : P ≤ min (n₁ + n₂ - 2 * a) n₃) (hQ : Q ≤ min n₁ (n₂ + n₃ - 2 * b))
+    (hK : K ≤ n₁ + n₂ - 2 * a + n₃ - 2 * P) (hK' : K' ≤ n₁ + (n₂ + n₃ - 2 * b) - 2 * Q)
+    (hne : ¬(n₁ + n₂ - 2 * a + n₃ - 2 * P = n₁ + (n₂ + n₃ - 2 * b) - 2 * Q ∧ K = K')) :
+    ∑ i ∈ idx3 n₁ n₂ n₃, cU n₁ n₂ n₃ a P K i * cV n₁ n₂ n₃ b Q K' i = 0 := by
+  rw [← dotp_recouple₂ (orthoUpTo_one n₁) (orthoUpTo_one n₂) (orthoUpTo_one n₃)]
+  exact dotp_stU_stV_eq_zero ha hb hP hQ hK hK' hne
+
+/-- Expanding `⟨V_b, V_b'⟩` in the complete family `U`. -/
+lemma cV_parseval (n₁ n₂ n₃ b Q b' Q' : ℕ) :
+    ∑ i ∈ idx3 n₁ n₂ n₃, cV n₁ n₂ n₃ b Q 0 i * cV n₁ n₂ n₃ b' Q' 0 i =
+      ∑ a ∈ range (min n₁ n₂ + 1), ∑ P ∈ range (min (n₁ + n₂ - 2 * a) n₃ + 1),
+        ∑ K ∈ range (n₁ + n₂ - 2 * a + n₃ - 2 * P + 1),
+          (∑ i ∈ idx3 n₁ n₂ n₃, cU n₁ n₂ n₃ a P K i * cV n₁ n₂ n₃ b Q 0 i) *
+            ∑ j ∈ idx3 n₁ n₂ n₃, cU n₁ n₂ n₃ a P K j * cV n₁ n₂ n₃ b' Q' 0 j := by
+  simp only [Finset.sum_mul_sum]
+  rw [Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun P _ => sum3_rotate' _ _ _ _]
+  rw [Finset.sum_congr rfl fun a _ => sum3_rotate' _ _ _ _, sum3_rotate']
+  symm
+  calc _ = ∑ i ∈ idx3 n₁ n₂ n₃, ∑ j ∈ idx3 n₁ n₂ n₃,
+        cV n₁ n₂ n₃ b Q 0 i * cV n₁ n₂ n₃ b' Q' 0 j *
+          ∑ a ∈ range (min n₁ n₂ + 1), ∑ P ∈ range (min (n₁ + n₂ - 2 * a) n₃ + 1),
+            ∑ K ∈ range (n₁ + n₂ - 2 * a + n₃ - 2 * P + 1),
+              cU n₁ n₂ n₃ a P K i * cU n₁ n₂ n₃ a P K j := by
+        refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
+        simp only [Finset.mul_sum]
+        exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ =>
+          Finset.sum_congr rfl fun _ _ => by ring
+    _ = _ := by
+        refine Finset.sum_congr rfl fun i hi => ?_
+        rw [Finset.sum_congr rfl fun j hj => by rw [cU_complete n₁ n₂ n₃ hi hj]]
+        rw [Finset.sum_eq_single i]
+        · simp
+        · intro j _ hne; simp [Ne.symm hne]
+        · intro h; exact absurd hi h
+
+/-- Only `M = J` and the matching `J` survive in the expansion. -/
+lemma sum_K_cU_cV {n₁ n₂ n₃ a b P Q b' Q' : ℕ} (ha : a ≤ min n₁ n₂) (hb : b ≤ min n₂ n₃)
+    (hP : P ≤ min (n₁ + n₂ - 2 * a) n₃) (hQ : Q ≤ min n₁ (n₂ + n₃ - 2 * b)) :
+    ∑ K ∈ range (n₁ + n₂ - 2 * a + n₃ - 2 * P + 1),
+      (∑ i ∈ idx3 n₁ n₂ n₃, cU n₁ n₂ n₃ a P K i * cV n₁ n₂ n₃ b Q 0 i) *
+        ∑ j ∈ idx3 n₁ n₂ n₃, cU n₁ n₂ n₃ a P K j * cV n₁ n₂ n₃ b' Q' 0 j =
+      if n₁ + n₂ - 2 * a + n₃ - 2 * P = n₁ + (n₂ + n₃ - 2 * b) - 2 * Q then
+        recoup3 n₁ n₂ n₃ a b P Q 0 * recoup3 n₁ n₂ n₃ a b' P Q' 0 else 0 := by
+  split_ifs with hN
+  · rw [Finset.sum_eq_single 0]
+    · rfl
+    · intro K hK hK0
+      rw [cU_cV_eq_zero ha hb hP hQ (Nat.lt_succ_iff.mp (Finset.mem_range.mp hK)) (Nat.zero_le _)
+        (fun h => hK0 h.2), zero_mul]
+    · intro h; exact absurd (Finset.mem_range.mpr (Nat.succ_pos _)) h
+  · refine Finset.sum_eq_zero fun K hK => ?_
+    rw [cU_cV_eq_zero ha hb hP hQ (Nat.lt_succ_iff.mp (Finset.mem_range.mp hK)) (Nat.zero_le _)
+      (fun h => hN h.1), zero_mul]
+
+/-- **Orthogonality of the recoupling coefficients**. -/
+theorem recoup3_orthogonal {n₁ n₂ n₃ b Q b' Q' : ℕ} (hb : b ≤ min n₂ n₃)
+    (hQ : Q ≤ min n₁ (n₂ + n₃ - 2 * b)) (hb' : b' ≤ min n₂ n₃)
+    (hQ' : Q' ≤ min n₁ (n₂ + n₃ - 2 * b'))
+    (hN : n₁ + (n₂ + n₃ - 2 * b) - 2 * Q = n₁ + (n₂ + n₃ - 2 * b') - 2 * Q') :
+    ∑ a ∈ range (min n₁ n₂ + 1), ∑ P ∈ range (min (n₁ + n₂ - 2 * a) n₃ + 1),
+      (if n₁ + n₂ - 2 * a + n₃ - 2 * P = n₁ + (n₂ + n₃ - 2 * b) - 2 * Q then
+        recoup3 n₁ n₂ n₃ a b P Q 0 * recoup3 n₁ n₂ n₃ a b' P Q' 0 else 0) =
+      if b = b' then 1 else 0 := by
+  rw [← Finset.sum_congr rfl fun a ha => Finset.sum_congr rfl fun P hP =>
+    sum_K_cU_cV (b' := b') (Q' := Q') (Nat.lt_succ_iff.mp (Finset.mem_range.mp ha)) hb
+      (Nat.lt_succ_iff.mp (Finset.mem_range.mp hP)) hQ, ← cV_parseval,
+    cV_ortho hb hQ (Nat.zero_le _) hb' hQ']
+  by_cases hbb : b = b'
+  · subst hbb
+    have : Q = Q' := by
+      have := min_le_left n₁ (n₂ + n₃ - 2 * b)
+      have := min_le_right n₁ (n₂ + n₃ - 2 * b)
+      have := min_le_left n₁ (n₂ + n₃ - 2 * b)
+      have := le_trans hQ' (min_le_left _ _)
+      have := le_trans hQ' (min_le_right _ _)
+      omega
+    simp [this]
+  · simp [hbb]
+
+lemma sixJ_eq_zero_of_not_triad₁ {n₁ n₂ n₃ n₄ n₅ n₆ : ℕ} (h : ¬Triad n₁ n₂ n₃) :
+    sixJ n₁ n₂ n₃ n₄ n₅ n₆ = 0 := by
+  unfold sixJ sixJTerm
+  simp [threeJ_of_not (show ¬(Triad n₁ n₂ n₃ ∧ _) from fun h' => h h'.1)]
+
+lemma sixJ_eq_zero_of_not_triad₄ {n₁ n₂ n₃ n₄ n₅ n₆ : ℕ} (h : ¬Triad n₄ n₅ n₃) :
+    sixJ n₁ n₂ n₃ n₄ n₅ n₆ = 0 := by
+  unfold sixJ sixJTerm
+  simp [threeJ_of_not (show ¬(Triad n₄ n₅ n₃ ∧ _) from fun h' => h h'.1)]
+
+lemma sum_triad_reindex (n₁ n₂ : ℕ) (f : ℕ → ℝ) (hf : ∀ x, ¬Triad n₁ n₂ x → f x = 0) :
+    ∑ x ∈ range (n₁ + n₂ + 1), f x = ∑ a ∈ range (min n₁ n₂ + 1), f (n₁ + n₂ - 2 * a) := by
+  have hm1 := min_le_left n₁ n₂
+  have hm2 := min_le_right n₁ n₂
+  rw [← Finset.sum_image (f := f) (s := range (min n₁ n₂ + 1)) (g := fun a => n₁ + n₂ - 2 * a)]
+  · symm
+    refine Finset.sum_subset (fun x hx => ?_) (fun x hx hx' => hf x ?_)
+    · obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hx
+      simp only [Finset.mem_range] at ha ⊢
+      omega
+    · rintro ⟨h1, h2, h3, r, hr⟩
+      apply hx'
+      refine Finset.mem_image.mpr ⟨(n₁ + n₂ - x) / 2, ?_, ?_⟩
+      · simp only [Finset.mem_range]; omega
+      · show n₁ + n₂ - 2 * ((n₁ + n₂ - x) / 2) = x
+        omega
+  · intro a ha a' ha' h
+    simp only [Finset.coe_range, Set.mem_Iio] at ha ha'
+    simp only at h
+    omega
+
+lemma sum_P_single (n₁₂ n₃ N : ℕ) (G : ℕ → ℝ) :
+    ∑ P ∈ range (min n₁₂ n₃ + 1), (if n₁₂ + n₃ - 2 * P = N then G P else 0) =
+      if Triad n₁₂ n₃ N then G ((n₁₂ + n₃ - N) / 2) else 0 := by
+  have hm1 := min_le_left n₁₂ n₃
+  have hm2 := min_le_right n₁₂ n₃
+  split_ifs with ht
+  · obtain ⟨h1, h2, h3, r, hr⟩ := ht
+    rw [Finset.sum_eq_single ((n₁₂ + n₃ - N) / 2)]
+    · rw [ite_eq_left (by omega)]
+    · intro P hP hne
+      simp only [Finset.mem_range] at hP
+      rw [ite_eq_right]
+      intro h; apply hne; omega
+    · intro h; exact absurd (Finset.mem_range.mpr (by omega)) h
+  · refine Finset.sum_eq_zero fun P hP => ?_
+    rw [ite_eq_right]
+    intro h
+    apply ht
+    simp only [Finset.mem_range] at hP
+    exact ⟨by omega, by omega, by omega, ⟨n₁₂ + n₃ - P, by omega⟩⟩
+
+lemma recoup_term_eq {n₁ n₂ n₄ n₅ n₆ n₆' a b b' Q Q' : ℕ} (ha : a ≤ min n₁ n₂)
+    (hb : b ≤ min n₂ n₄) (hb' : b' ≤ min n₂ n₄) (hn₆ : n₂ + n₄ - 2 * b = n₆)
+    (hn₆' : n₂ + n₄ - 2 * b' = n₆') (hQ : Q ≤ min n₁ n₆) (hQ' : Q' ≤ min n₁ n₆')
+    (hn₅ : n₁ + n₆ - 2 * Q = n₅) (hn₅' : n₁ + n₆' - 2 * Q' = n₅) :
+    (if Triad (n₁ + n₂ - 2 * a) n₄ (n₁ + (n₂ + n₄ - 2 * b) - 2 * Q) then
+      recoup3 n₁ n₂ n₄ a b ((n₁ + n₂ - 2 * a + n₄ - (n₁ + (n₂ + n₄ - 2 * b) - 2 * Q)) / 2) Q 0 *
+        recoup3 n₁ n₂ n₄ a b' ((n₁ + n₂ - 2 * a + n₄ - (n₁ + (n₂ + n₄ - 2 * b) - 2 * Q)) / 2) Q' 0
+      else 0) =
+      (((n₁ + n₂ - 2 * a : ℕ) : ℝ) + 1) * √(((n₆ : ℝ) + 1) * ((n₆' : ℝ) + 1)) *
+        sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆ * sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆' := by
+  rw [hn₆, hn₅]
+  split_ifs with ht
+  · obtain ⟨h1, h2, h3, r, hr⟩ := ht
+    have hP : (n₁ + n₂ - 2 * a + n₄ - n₅) / 2 ≤ min (n₁ + n₂ - 2 * a) n₄ :=
+      le_min (by omega) (by omega)
+    have e1 := recoup3_eq_sixJ (K := 0) (Q := Q) ha hb hP (by rw [hn₆]; exact hQ)
+      (by rw [hn₆, hn₅]; omega) (Nat.zero_le _)
+    have e2 := recoup3_eq_sixJ (K := 0) (Q := Q') ha hb' hP (by rw [hn₆']; exact hQ')
+      (by rw [hn₆', hn₅']; omega) (Nat.zero_le _)
+    rw [e1, e2, hn₆, hn₆', show n₁ + n₂ - 2 * a + n₄ - 2 * ((n₁ + n₂ - 2 * a + n₄ - n₅) / 2) = n₅
+      by omega]
+    have hsq : ((-1 : ℝ) ^ ((n₁ + n₂ + n₄ + n₅) / 2)) * (-1) ^ ((n₁ + n₂ + n₄ + n₅) / 2) = 1 := by
+      rw [← pow_add, ← two_mul, pow_mul, neg_one_sq, one_pow]
+    have hA : (0 : ℝ) ≤ ((n₁ + n₂ - 2 * a : ℕ) : ℝ) + 1 := by positivity
+    rw [Real.sqrt_mul hA, Real.sqrt_mul hA, Real.sqrt_mul (by positivity : (0 : ℝ) ≤ (n₆ : ℝ) + 1)]
+    have hs := Real.mul_self_sqrt hA
+    linear_combination (√((n₆ : ℝ) + 1) * √((n₆' : ℝ) + 1) *
+      sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆ * sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆') *
+        (((n₁ + n₂ - 2 * a : ℕ) : ℝ) + 1) * hsq +
+      (√((n₆ : ℝ) + 1) * √((n₆' : ℝ) + 1) *
+        sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆ * sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆') *
+        ((-1 : ℝ) ^ ((n₁ + n₂ + n₄ + n₅) / 2)) * (-1) ^ ((n₁ + n₂ + n₄ + n₅) / 2) * hs
+  · rw [sixJ_eq_zero_of_not_triad₄ (n₁ := n₁) (n₂ := n₂) (n₆ := n₆)
+      (fun h => ht (triad_cyclic.mp h))]
+    ring
+
+/-- **Orthogonality of the 6j symbols**
+`Σ_x (2x + 1)(2j₆ + 1) {j₁ j₂ x; j₄ j₅ j₆} {j₁ j₂ x; j₄ j₅ j₆'} = δ_{j₆ j₆'}`
+when `(j₂ j₄ j₆)`, `(j₁ j₆ j₅)` and the same with `j₆'` satisfy the triangle conditions. -/
+theorem sixJ_orthogonal {n₁ n₂ n₄ n₅ n₆ n₆' : ℕ} (h₁ : Triad n₂ n₄ n₆) (h₂ : Triad n₁ n₆ n₅)
+    (h₁' : Triad n₂ n₄ n₆') (h₂' : Triad n₁ n₆' n₅) :
+    ∑ x ∈ range (n₁ + n₂ + 1), ((x : ℝ) + 1) * ((n₆ : ℝ) + 1) *
+      sixJ n₁ n₂ x n₄ n₅ n₆ * sixJ n₁ n₂ x n₄ n₅ n₆' = if n₆ = n₆' then 1 else 0 := by
+  obtain ⟨a1, a2, a3, r₁, hr₁⟩ := h₁
+  obtain ⟨c1, c2, c3, t₁, ht₁⟩ := h₂
+  obtain ⟨a1', a2', a3', r₁', hr₁'⟩ := h₁'
+  obtain ⟨c1', c2', c3', t₁', ht₁'⟩ := h₂'
+  have hb : (n₂ + n₄ - n₆) / 2 ≤ min n₂ n₄ := le_min (by omega) (by omega)
+  have hb' : (n₂ + n₄ - n₆') / 2 ≤ min n₂ n₄ := le_min (by omega) (by omega)
+  have hn₆ : n₂ + n₄ - 2 * ((n₂ + n₄ - n₆) / 2) = n₆ := by omega
+  have hn₆' : n₂ + n₄ - 2 * ((n₂ + n₄ - n₆') / 2) = n₆' := by omega
+  have hQ : (n₁ + n₆ - n₅) / 2 ≤ min n₁ n₆ := le_min (by omega) (by omega)
+  have hQ' : (n₁ + n₆' - n₅) / 2 ≤ min n₁ n₆' := le_min (by omega) (by omega)
+  have hn₅ : n₁ + n₆ - 2 * ((n₁ + n₆ - n₅) / 2) = n₅ := by omega
+  have hn₅' : n₁ + n₆' - 2 * ((n₁ + n₆' - n₅) / 2) = n₅ := by omega
+  have key := recoup3_orthogonal (n₃ := n₄) (Q := (n₁ + n₆ - n₅) / 2)
+    (Q' := (n₁ + n₆' - n₅) / 2) hb (by rw [hn₆]; exact hQ) hb'
+    (by rw [hn₆']; exact hQ') (by rw [hn₆, hn₆', hn₅, hn₅'])
+  rw [Finset.sum_congr rfl fun a _ => sum_P_single _ _ _ _] at key
+  rw [Finset.sum_congr rfl fun a ha => recoup_term_eq
+    (Nat.lt_succ_iff.mp (Finset.mem_range.mp ha)) hb hb' hn₆ hn₆' hQ hQ' hn₅ hn₅'] at key
+  have hbb : (n₂ + n₄ - n₆) / 2 = (n₂ + n₄ - n₆') / 2 ↔ n₆ = n₆' := by
+    constructor <;> intro h <;> omega
+  rw [sum_triad_reindex n₁ n₂ _ fun x hx => by rw [sixJ_eq_zero_of_not_triad₁ hx]; ring]
+  have hc : 0 < √(((n₆ : ℝ) + 1) * ((n₆' : ℝ) + 1)) := Real.sqrt_pos.mpr (by positivity)
+  have e : ∀ a, (((n₁ + n₂ - 2 * a : ℕ) : ℝ) + 1) * ((n₆ : ℝ) + 1) *
+      sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆ * sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆' =
+      ((n₆ : ℝ) + 1) / √(((n₆ : ℝ) + 1) * ((n₆' : ℝ) + 1)) *
+        ((((n₁ + n₂ - 2 * a : ℕ) : ℝ) + 1) * √(((n₆ : ℝ) + 1) * ((n₆' : ℝ) + 1)) *
+          sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆ * sixJ n₁ n₂ (n₁ + n₂ - 2 * a) n₄ n₅ n₆') := by
+    intro a; field_simp
+  rw [Finset.sum_congr rfl fun a _ => e a, ← Finset.mul_sum, key]
+  by_cases h : n₆ = n₆'
+  · subst h
+    rw [ite_eq_left (hbb.mpr rfl), ite_eq_left rfl, mul_one,
+      Real.sqrt_mul_self (by positivity)]
+    exact div_self (by positivity)
+  · rw [ite_eq_right (fun h' => h (hbb.mp h')), ite_eq_right h, mul_zero]
 
 end QM
