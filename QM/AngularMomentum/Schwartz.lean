@@ -32,7 +32,8 @@ spin-`l` representation of Physlib's `𝐋⁺, 𝐋⁻, 𝐋_z`, with `𝐋² = 
 * `angularMomentumSqr_gaussPoly`: `𝐋² = ℏ² l(l + 1)` on `schwartzHarmonic l`.
 * `finrank_schwartzHarmonic`, `schwartzHarmonic_spinRep_iso`: it is the spin-`l` representation.
 * `exists_L2_Lz_eigen`: for every `l ∈ ℕ` and integer `|m| ≤ l` there is a nonzero Schwartz
-  function with `𝐋² ψ = ℏ² l(l + 1) ψ` and `𝐋_z ψ = ℏ m ψ`.
+  function with `𝐋² ψ = ℏ² l(l + 1) ψ` and `𝐋_z ψ = ℏ m ψ`; `exists_L2_Lz_eigen_hilbert` is the
+  same for the operators on `L²(ℝ³)` with the Schwartz domain.
 -/
 
 namespace QM.AngularMomentum
@@ -286,5 +287,22 @@ theorem exists_L2_Lz_eigen (l : ℕ) (m : ℤ) (hm : |m| ≤ l) :
       have : ((k : ℕ) : ℤ) = l - m := by simp [k]; have := abs_le.mp hm; omega
       exact_mod_cast this
     rw [hkm]; push_cast; ring
+
+open SpaceDHilbertSpace in
+/-- **The same on the Hilbert space `L²(ℝ³)`**: Physlib's operators `𝓛²` and `𝓛_z`, with domain
+the Schwartz submodule, have a joint eigenvector with eigenvalues `ℏ² l(l + 1)` and `ℏ m` for
+every `l ∈ ℕ` and integer `|m| ≤ l`. -/
+theorem exists_L2_Lz_eigen_hilbert (l : ℕ) (m : ℤ) (hm : |m| ≤ l) :
+    ∃ ψ : SchwartzSubmodule 3, ψ ≠ 0 ∧
+      angularMomentumSqOperator ψ =
+        ((ℏ : ℂ) ^ 2 * ((l : ℂ) * (l + 1))) • (ψ : SpaceDHilbertSpace 3) ∧
+      angularMomentumDimThreeOperator 2 ψ = ((ℏ : ℂ) * m) • (ψ : SpaceDHilbertSpace 3) := by
+  obtain ⟨ψ, hne, h2, hz⟩ := exists_L2_Lz_eigen l m hm
+  refine ⟨schwartzEquiv MeasureTheory.volume ψ, ?_, ?_, ?_⟩
+  · simpa using hne
+  · rw [angularMomentumSqOperator_apply, LinearEquiv.symm_apply_apply, h2, map_smul,
+      Submodule.coe_smul]
+  · rw [angularMomentumDimThreeOperator_apply, LinearEquiv.symm_apply_apply, hz, map_smul,
+      Submodule.coe_smul]
 
 end QM.AngularMomentum
