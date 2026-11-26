@@ -94,8 +94,22 @@ this section keeps only pointers.
   (`QM/ManyBody/Spin`, `DFT/Lattice/Spin/FockBridge`).
 - B2 ✅ One-body operators (`OneBody`), 1-RDM conditions (`RDM`), density N-representability (`DFT/Lattice/RDMFT/DensityRep`),
   2-RDM with P, Q, G (`RDM2`), mode rotations (`ModeRotation`), Coleman's theorem (`DFT/Lattice/RDMFT/Coleman`).
-- B3 ⬜ Quasi-free states, **Wick's theorem** for finitely many modes, Hartree–Fock as the minimum over quasi-free states (Lieb's
-  variational principle). Check Physlib's Wick algebra (`Physlib/QFT/PerturbationTheory/WickAlgebra`) first.
+- B3 🟡 Quasi-free states, Wick's theorem, Hartree–Fock and Lieb's variational principle (**statements approved
+  2026-11-26**). Physlib's Wick algebra (abstract, time-ordered QFT operators) cannot express state expectation values, so
+  Wick's theorem is proved directly from `ModeRotation` (Laplace expansion, Gram determinants). Conventions as in `RDM`:
+  `γ_ij = ⟨c_i† c_j⟩`, `D_ij,kl = ⟨c_i† c_j† c_l c_k⟩`.
+  - Step 1, `QM/ManyBody/QuasiFree` (Slater states): `slaterState u s := U(u)|s⟩`; `slaterState_isNState`;
+    `rdm1_slater_proj` (γ Hermitian, γ² = γ, tr γ = N); `exists_slater_of_proj` (every rank-N projection is the γ of a
+    Slater state); `wick_slater`: `⟨Ψ, c_{i₀}† ⋯ c_{iₙ₋₁}† c_{jₙ₋₁} ⋯ c_{j₀} Ψ⟩ = det (γ_{i_a j_b})`; `rdm2_slater`:
+    `D_ij,kl = γ_ik γ_jl − γ_il γ_jk`.
+  - Step 2, `QM/ManyBody/QuasiFreeMixed` (gauge-invariant mixed quasi-free states, needed for B4): `quasiFree γ` for
+    `0 ≤ γ ≤ 1`, `= U(u)(⊗_k diag(1 − n_k, n_k))U(u)†`; `quasiFree_isDensityMatrix`; `rdm1_quasiFree : tr(ρ_γ c_i† c_j) = γ_ij`;
+    `wick_quasiFree : tr(ρ_γ c† ⋯ c) = det (γ_{i_a j_b})`.
+  - Step 3, `QM/ManyBody/HartreeFock`: `twoBody V = ½ Σ V_ij,kl c_i† c_j† c_l c_k`, `ham h V = oneBody h + twoBody V`,
+    `hfEnergy h V γ = Re(Σ h_ij γ_ij + ½ Σ V_ij,kl (γ_ik γ_jl − γ_il γ_jk))`; `energy_slater` (`⟨H⟩ = E_HF(γ)` on Slater
+    states); `lieb_variational` (V ⪰ 0 on the pair space: for `0 ≤ γ ≤ 1`, `tr γ = N` there is a rank-N projection P with
+    `E_HF(P) ≤ E_HF(γ)`; proof: shift between two fractional eigenvalues, E_HF is concave in the shift);
+    `exists_hf_minimizer` (a Slater minimizer over all admissible γ); `ground_le_hf` (`E₀(N) ≤ E_HF(γ)` for all admissible γ).
 - B4 ⬜ Gibbs states, the KMS condition, the Gibbs variational principle, Peierls–Bogoliubov.
 
 ### Track C: Green's functions, exact in finite dimensions (`QM/Green`, `QM/Response`)
@@ -161,10 +175,10 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
 ## 5. Next steps (as of 2026-11-26)
 
 Done: A1–A5 (with A4+), B1, B2, most of C1.
-1. **A4++ spherical harmonics** (approved): stages A → B → C → D in order.
-2. **C1 remainder:** time-ordered and advanced functions, two-site Hubbard sanity theorem.
-3. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
-4. **B3** Wick's theorem and quasi-free states (check Physlib's Wick algebra first).
+1. **B3** (approved, in progress): steps 1 → 2 → 3.
+2. **A4++ spherical harmonics** (approved): stages A → B → C → D in order.
+3. **C1 remainder:** time-ordered and advanced functions, two-site Hubbard sanity theorem.
+4. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
 5. **A6** Kato cusp, Tiers 1–2.
 6. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
@@ -180,3 +194,4 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 - 2026-11-26: A4+ complete: Clebsch–Gordan, Racah, 3j/6j/9j, Biedenharn–Elliott, orbital `L` on harmonic polynomials,
   bridge to Physlib's `𝐋` (Schwartz space and L²(ℝ³)). General su(2) theory moved from `QM/Spin` to `QM/AngularMomentum`.
 - 2026-11-26: items A6 (Kato cusp) and A4++ (spherical harmonics, statements approved) added; roadmap cleaned up.
+- 2026-11-26: B3 statements approved (Slater states and Wick, mixed quasi-free states, HF and Lieb's variational principle).
