@@ -59,7 +59,7 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   orbitals (`QM/ManyBody/NaturalOrbitals`) done 2026-11-26.
 - A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/Spin/Ladder`) and Clebsch–Gordan for
   two and three spins (`QM/Spin/ClebschGordan`) done 2026-11-26.
-- A4+ 🟡 Coupling of angular momenta (requested by Miguel 2026-11-26). (i) Orbital angular momentum and spin: `J = L + S` on
+- A4+ ✅ Coupling of angular momenta (requested by Miguel 2026-11-26). (i) Orbital angular momentum and spin: `J = L + S` on
   functions `SpinC n → V` satisfies the su(2) relations when `L` does on `V`; `l ⊗ ½ = (l + ½) ⊕ (l − ½)` with explicit
   highest weights and the spin–orbit values `L·S = l/2, −(l+1)/2`. (ii) The sum of two angular momenta `L₁ + L₂`:
   `j₁ ⊗ j₂ = |j₁ − j₂| ⊕ … ⊕ (j₁ + j₂)`, with highest weights and dimension count. (iii) Clebsch–Gordan coefficients: the
@@ -72,7 +72,8 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   selection rule, both orthogonality relations, the `J₋` recursion and Racah's formula. Stage 3 done 2026-11-26
   (`QM/Spin/ThreeJ`, `QM/Spin/Recoupling`, `QM/Spin/SixJ`, `QM/Spin/NineJ`, `QM/Spin/BiedenharnElliott`): 3j symbols and
   their symmetries, recoupling of three and four angular momenta (6j and 9j symbols, 6j symmetries and orthogonality)
-  and the Biedenharn–Elliott identity. Only the optional concrete orbital `L` remains.
+  and the Biedenharn–Elliott identity. Orbital `L = -i r × ∇` done 2026-11-26 (`QM/AngularMomentum/Orbital`,
+  `ForMathlib/Algebra/MvPolynomial/Harmonic`): the harmonic polynomials of degree `l` are the spin-`l` representation.
 - A5 ✅ Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
   Symmetrizer and antisymmetrizer as orthogonal projections (`QM/ManyBody/Symmetrizer`) done 2026-11-26.
 - A6 ⬜ Kato cusp conditions (requested by Miguel 2026-11-26), in three tiers.
@@ -245,3 +246,5 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   recursion for Racah's sum and a Vandermonde identity for the norm of the highest weight.
 - 2026-11-26: A4+ stage 3 done. 3j symbols and symmetries, 6j and 9j symbols from the recoupling of three and four
   angular momenta, and the Biedenharn–Elliott identity from the two ways of expanding one four-spin overlap.
+- 2026-11-26: A4+ done. Orbital angular momentum `L = -i r × ∇` on complex polynomials: commutation relations, invariance of
+  the harmonic polynomials `H_l`, `dim H_l = 2l + 1`, `H_l ≅ V_l`, irreducibility and `L² = l(l + 1)`.

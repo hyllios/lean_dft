@@ -1,3 +1,4 @@
+import ForMathlib.Algebra.MvPolynomial.Harmonic
 import ForMathlib.Algebra.MvPolynomial.RationalFunctions
 import ForMathlib.Analysis.Convex.Ekeland
 import ForMathlib.Analysis.Convex.Iteration

@@ -5,12 +5,13 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-9 modules, 1974 lines.
+10 modules, 2172 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
 | Module | Lines | Content |
 |---|---|---|
+| `ForMathlib.Algebra.MvPolynomial.Harmonic` | 198 | Harmonic polynomials |
 | `ForMathlib.Algebra.MvPolynomial.RationalFunctions` | 148 | Rational functions on generic points and simultaneous non-vanishing |
 
 ### `ForMathlib/Analysis/`
@@ -53,13 +54,19 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-35 modules, 10869 lines.
+36 modules, 11282 lines.
 
 ### `QM/`
 
 | Module | Lines | Content |
 |---|---|---|
 | `QM.Basic` | 21 | Basic quantum mechanics (from Physlib) |
+
+### `QM/AngularMomentum/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `QM.AngularMomentum.Orbital` | 413 | Orbital angular momentum on harmonic polynomials |
 
 ### `QM/Finite/`
 
@@ -488,4 +495,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 70639 lines of Lean.
+Total: 71250 lines of Lean.

@@ -290,6 +290,52 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
   sides vanish.
 \end{proof}
 
+% A4+ orbital angular momentum: statements written and approved by Miguel 2026-11-26.
+\begin{definition}[Orbital angular momentum on polynomials]\label{def:orbital-L}
+  \lean{QM.AngularMomentum.Lx, QM.AngularMomentum.Ly, QM.AngularMomentum.Lz, QM.AngularMomentum.Lp,
+    QM.AngularMomentum.Lm, MvPolynomial.laplacian, MvPolynomial.harmonicSubmodule,
+    QM.AngularMomentum.harmonic}\leanok
+  \uses{thm:su2-ladder}
+  On the complex polynomials $\mathbb C[x,y,z]$, with $\hbar=1$, $\mathbf L=-i\,\mathbf r\times\nabla$:
+  $L_x=-i(y\partial_z-z\partial_y)$, $L_y=-i(z\partial_x-x\partial_z)$, $L_z=-i(x\partial_y-y\partial_x)$, and
+  $L_\pm=L_x\pm iL_y$. The Laplacian is $\Delta=\partial_x^2+\partial_y^2+\partial_z^2$, and
+  $\mathcal H_l=\{p\in\mathbb C[x,y,z] : p\text{ homogeneous of degree }l,\ \Delta p=0\}$ is the space of harmonic
+  polynomials of degree $l$.
+\end{definition}
+
+\begin{theorem}[Harmonic polynomials carry spin $l$]\label{thm:orbital-L}
+  \lean{QM.AngularMomentum.Lx_comm_Ly, QM.AngularMomentum.Ly_comm_Lz, QM.AngularMomentum.Lz_comm_Lx,
+    QM.AngularMomentum.isSU2_L, QM.AngularMomentum.isSU2_L_S2, QM.AngularMomentum.laplacian_Lx,
+    QM.AngularMomentum.laplacian_Ly, QM.AngularMomentum.laplacian_Lz, QM.AngularMomentum.L_mem_harmonic,
+    QM.AngularMomentum.hw_mem_harmonic, QM.AngularMomentum.Lp_hw, QM.AngularMomentum.Lz_hw,
+    MvPolynomial.finrank_harmonicSubmodule_le, QM.AngularMomentum.finrank_harmonic,
+    QM.AngularMomentum.harmonic_spinRep_iso, QM.AngularMomentum.harmonic_irreducible,
+    QM.AngularMomentum.harmonic_L2}\leanok
+  \uses{def:orbital-L, thm:spin-rep}
+  \begin{enumerate}
+    \item $[L_x,L_y]=iL_z$ and cyclically; $(L_+,L_-,L_z)$ satisfy the su(2) relations, and
+      $L_-L_++L_z^2+L_z=L_x^2+L_y^2+L_z^2=\mathbf L^2$.
+    \item $L_x$, $L_y$, $L_z$ commute with $\Delta$ and preserve the degree, so $\mathcal H_l$ is invariant.
+    \item $(x+iy)^l\in\mathcal H_l$, $L_+(x+iy)^l=0$ and $L_z(x+iy)^l=l\,(x+iy)^l$.
+    \item $\dim\mathcal H_l=2l+1$.
+    \item There is a linear isomorphism $V_l\cong\mathcal H_l$ that maps $S_\pm$, $S_z$ to $L_\pm$, $L_z$. Hence
+      $\mathcal H_l$ is irreducible (an invariant subspace of $\mathcal H_l$ is $0$ or $\mathcal H_l$) and
+      $\mathbf L^2=l(l+1)$ on $\mathcal H_l$.
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}\leanok
+  The $L_k$ are derivations, so each commutator is a derivation and is fixed by its values on $x$, $y$, $z$. Since
+  $[\partial_i,x_a\partial_b]=\delta_{ia}\partial_b$, one has $\Delta(x_a\partial_bp)=x_a\partial_b\Delta p+2\partial_a\partial_bp$, and the
+  second term cancels in $x_a\partial_b-x_b\partial_a$. The derivation rule gives $L_\pm(x+iy)^l=l(x+iy)^{l-1}L_\pm(x+iy)$, with
+  $L_+(x+iy)=0$ and $L_z(x+iy)=x+iy$, and $\Delta(x+iy)^l=l(l-1)(x+iy)^{l-2}(1+i^2)=0$. In $\mathcal H_l$, which is finite
+  dimensional, the ladder of $(x+iy)^l$ stops, and the ladder theorem gives an injective intertwiner $V_l\to\mathcal H_l$.
+  Conversely the coefficient of $x^ay^bz^c$ in $\Delta p$ is $(a+2)(a+1)p_{a+2,b,c}+(b+2)(b+1)p_{a,b+2,c}+(c+2)(c+1)p_{a,b,c+2}$,
+  so a harmonic $p$ is determined by its coefficients with $c\le1$. For degree $l$ these are $l+1$ coefficients of
+  $x^{l-k}y^k$ and $l$ of $x^{l-1-k}y^kz$, so $\dim\mathcal H_l\le2l+1$ and the intertwiner is onto. Irreducibility and
+  $\mathbf L^2=l(l+1)$ follow from those of $V_l$.
+\end{proof}
+
 
 \begin{definition}[Symmetrizer and antisymmetrizer]\label{def:symmetrizer}
   \lean{QM.ManyBody.permL, QM.ManyBody.symm, QM.ManyBody.anti, QM.ManyBody.IsSymmFun,
