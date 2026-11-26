@@ -81,7 +81,7 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
 - B4 ⬜ Gibbs states, the KMS condition, the Gibbs variational principle, Peierls–Bogoliubov.
 
 ### Track C: Green's functions, exact in finite dimensions (`QM/Green`, `QM/Response`)
-Statements for C1–C3 are drafted in the blueprint (Part III), **pending approval**.
+Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
 - C1 ⬜ Time-ordered, retarded and advanced one-body Green's functions; **Lehmann representation**; spectral function, positivity,
   sum rules.
 - C2 ⬜ Self-energy defined by **Dyson's equation**; Herglotz property; the HF self-energy as the large-|z| limit.
@@ -141,9 +141,10 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
 ## 5. Next steps (from 2026-11-26, after B1)
 
 1. **Housekeeping:** curate `MAIN_RESULTS.md` (Miguel) and then make its blueprint check strict.
-2. **Review and approval (Miguel):** the particle–hole statement (written while finishing B1) and the C1–C3 statements
-   (Lehmann, self-energy, Herglotz, Galitskii–Migdal) in blueprint Part III.
-3. **B2 follow-up:** the spin bridge: the Fock space over `Fin M ⊕ Fin M` restricts to the lattice `H0S` plus the Hubbard term.
+2. **Approved 2026-11-26:** the particle–hole statement and the C1–C3 statements (Lehmann, self-energy, Herglotz,
+   Galitskii–Migdal).
+3. **B2 follow-up (in progress):** the spin bridge. The Fock space over `Fin (M + M)` (ups first) restricts to the lattice
+   `H0S` plus the Hubbard term.
 4. **C1:** the Lehmann representation, with the two-site Hubbard model as the sanity theorem.
 5. **A1/A2:** the bridge between Physlib's operators and QuantumInfo's density matrices; time evolution in finite dimensions.
 6. In parallel: C2 + B4; semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
@@ -182,3 +183,4 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
   and γ(UΨ) = ū γ uᵀ. Cauchy–Binet was not needed. The sorted-mode lemmas moved from `FockBridge` to `QM/ManyBody/Fock`.
 - 2026-11-26: Coleman's theorem proved (`DFT/Lattice/RDMFT/Coleman`). γ is the 1-RDM of an N-particle ensemble iff it is
   Hermitian, 0 ≤ γ ≤ 1 and tr γ = N. B2 complete.
+- 2026-11-26: particle–hole and C1–C3 statements approved. Spin-bridge statement written and approved.

@@ -50,7 +50,7 @@
   Both operators are self-adjoint, and $\hat n_i^2=\hat n_i$.
 \end{proof}
 
-% Particle-hole statements written 2026-11-26 while finishing B1, to be reviewed by Miguel.
+% Particle-hole statements written 2026-11-26 while finishing B1, approved by Miguel 2026-11-26.
 \begin{theorem}[Particle–hole transformation]\label{thm:particle-hole}
   \lean{QM.ManyBody.ph, QM.ManyBody.ph_mulVec_single, QM.ManyBody.card_compl_conf, QM.ManyBody.ph_mul_ph,
     QM.ManyBody.ph_isHermitian, QM.ManyBody.ph_mul_conjTranspose, QM.ManyBody.jwSign_compl,
@@ -105,6 +105,21 @@
   $\sum_{kl}(E_{ij})_{kl}c_k^\dagger c_l=c_i^\dagger c_j$. Both sums over configurations reduce to the $N$-particle sector,
   where Theorem~\ref{thm:fock-bridge} identifies the matrix elements of $c_i^\dagger c_j$ with those of $\Gamma(E_{ij})$.
 \end{proof}
+
+% Spin bridge (B2 follow-up), statement written and approved by Miguel 2026-11-26 (ups-first ordering).
+\begin{theorem}[Spin bridge]\label{thm:spin-bridge}
+  \uses{thm:fock-bridge, thm:number}
+  Take $2M$ modes ordered as $1{\uparrow},\dots,M{\uparrow},1{\downarrow},\dots,M{\downarrow}$, that is $\mathcal F_{M+M}$ with
+  $i{\uparrow}=i$ and $i{\downarrow}=M+i$. A pair $(x_\uparrow,x_\downarrow)$ of configurations with $N_\uparrow$ and
+  $N_\downarrow$ particles is the configuration $x_\uparrow\cup(M+x_\downarrow)$. For real $M\times M$ matrices $h_\uparrow$,
+  $h_\downarrow$ and any interaction $V$ that is diagonal in configurations, the operator
+  $\sum_{ij}\bigl(h_{\uparrow,ij}\,c_{i\uparrow}^\dagger c_{j\uparrow}+h_{\downarrow,ij}\,c_{i\downarrow}^\dagger c_{j\downarrow}\bigr)+V$
+  preserves the sector of $N_\uparrow$ up and $N_\downarrow$ down electrons. Its matrix there is the Kronecker sum
+  $\Gamma h_\uparrow\otimes1+1\otimes\Gamma h_\downarrow+\operatorname{diag}V$ of \texttt{DFT/Lattice/Spin}. In particular
+  $U\sum_i\hat n_{i\uparrow}\hat n_{i\downarrow}$ restricts to the Hubbard interaction, and the lattice Hamiltonians
+  \texttt{H0S G t (hubbard U)} and \texttt{hamN (H0S G t (hubbard U)) occS v} are restrictions of second-quantized
+  Hamiltonians on $\mathcal F_{M+M}$.
+\end{theorem}
 
 % B2 statements written and approved by Miguel 2026-11-26. Convention chosen by Miguel:
 % gamma_ij = <c_i^dag c_j>, as in the lattice code (Corollary cor:fock-rdm). Coleman's theorem belongs to B2.
