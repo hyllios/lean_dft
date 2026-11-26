@@ -54,7 +54,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-36 modules, 11283 lines.
+37 modules, 11573 lines.
 
 ### `QM/`
 
@@ -74,6 +74,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `QM.AngularMomentum.NineJ` | 655 | Recoupling of four angular momenta and the 9j symbols |
 | `QM.AngularMomentum.Orbital` | 413 | Orbital angular momentum on harmonic polynomials |
 | `QM.AngularMomentum.Recoupling` | 696 | Ladders and the coupling of angular momenta in orthonormal coordinates |
+| `QM.AngularMomentum.Schwartz` | 290 | Orbital angular momentum on Schwartz functions |
 | `QM.AngularMomentum.SixJ` | 913 | Recoupling of three angular momenta and the 6j symbols |
 | `QM.AngularMomentum.SpinRep` | 356 | The spin-`j` representation |
 | `QM.AngularMomentum.ThreeJ` | 364 | Wigner 3j symbols |
@@ -495,4 +496,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 71251 lines of Lean.
+Total: 71541 lines of Lean.

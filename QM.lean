@@ -6,6 +6,7 @@ import QM.AngularMomentum.Ladder
 import QM.AngularMomentum.NineJ
 import QM.AngularMomentum.Orbital
 import QM.AngularMomentum.Recoupling
+import QM.AngularMomentum.Schwartz
 import QM.AngularMomentum.SixJ
 import QM.AngularMomentum.SpinRep
 import QM.AngularMomentum.ThreeJ

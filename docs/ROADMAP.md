@@ -73,7 +73,9 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   (`QM/AngularMomentum/ThreeJ`, `QM/AngularMomentum/Recoupling`, `QM/AngularMomentum/SixJ`, `QM/AngularMomentum/NineJ`, `QM/AngularMomentum/BiedenharnElliott`): 3j symbols and
   their symmetries, recoupling of three and four angular momenta (6j and 9j symbols, 6j symmetries and orthogonality)
   and the Biedenharn–Elliott identity. Orbital `L = -i r × ∇` done 2026-11-26 (`QM/AngularMomentum/Orbital`,
-  `ForMathlib/Algebra/MvPolynomial/Harmonic`): the harmonic polynomials of degree `l` are the spin-`l` representation.
+  `ForMathlib/Algebra/MvPolynomial/Harmonic`): the harmonic polynomials of degree `l` are the spin-`l` representation. Physlib bridge done 2026-11-26
+  (`QM/AngularMomentum/Schwartz`): `p ↦ p e^{-|x|²/2}` intertwines `ℏL` with Physlib's `𝐋` on Schwartz functions, so
+  every `l ∈ ℕ`, `|m| ≤ l` occurs as a joint eigenvalue `ℏ²l(l+1)`, `ℏm` of `𝐋²`, `𝐋_z`.
 - A5 ✅ Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
   Symmetrizer and antisymmetrizer as orthogonal projections (`QM/ManyBody/Symmetrizer`) done 2026-11-26.
 - A6 ⬜ Kato cusp conditions (requested by Miguel 2026-11-26), in three tiers.
@@ -251,3 +253,6 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
 - 2026-11-26: the general su(2) theory (ladder, spin-j representation, coupling, Clebsch–Gordan, 3j/6j/9j,
   Biedenharn–Elliott) moved from `QM/Spin` to `QM/AngularMomentum`; `QM/Spin` keeps the spin-½ files (`SpinAlg`,
   `ClebschGordan`, which now holds `isSU2_spin`). Declaration names unchanged.
+- 2026-11-26: bridge from the orbital `L` on polynomials to Physlib's angular momentum on `𝓢(ℝ³, ℂ)`
+  (`QM/AngularMomentum/Schwartz`): `p ↦ p e^{-|x|²/2}` is injective and intertwines `ℏ Lᵢ, ℏ L±` with `𝐋ᵢ, 𝐋±`; the image of
+  `H_l` is the spin-`l` representation, with `𝐋² = ℏ²l(l+1)`.

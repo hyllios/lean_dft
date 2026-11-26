@@ -336,6 +336,31 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
   $\mathbf L^2=l(l+1)$ follow from those of $V_l$.
 \end{proof}
 
+\begin{theorem}[Orbital angular momentum on Schwartz functions]\label{thm:orbital-L-schwartz}
+  % Statements approved by Miguel 2026-11-26.
+  \lean{QM.AngularMomentum.gaussPoly, QM.AngularMomentum.gaussPoly_apply,
+    QM.AngularMomentum.gaussPoly_injective, QM.AngularMomentum.angularMomentum_gaussPoly_x,
+    QM.AngularMomentum.angularMomentum_gaussPoly_y, QM.AngularMomentum.angularMomentum_gaussPoly_z,
+    QM.AngularMomentum.raising_gaussPoly, QM.AngularMomentum.lowering_gaussPoly,
+    QM.AngularMomentum.angularMomentumSqr_gaussPoly, QM.AngularMomentum.schwartzHarmonic,
+    QM.AngularMomentum.finrank_schwartzHarmonic, QM.AngularMomentum.schwartzHarmonic_spinRep_iso,
+    QM.AngularMomentum.exists_L2_Lz_eigen}\leanok
+  \uses{thm:orbital-L}
+  Let $G(x)=e^{-|x|^2/2}$ and let $\mathbf L_{ij}=x_ip_j-x_jp_i$, $p_j=-i\hbar\partial_j$, act on the Schwartz space
+  $\mathcal S(\mathbb R^3,\mathbb C)$ (Physlib). The map $p\mapsto pG$ from complex polynomials to Schwartz functions is
+  injective, and $\mathbf L_x(pG)=\hbar(L_xp)G$, and likewise for $L_y$, $L_z$, $L_\pm$. Hence
+  $\{pG:p\in\mathcal H_l\}$ has dimension $2l+1$ and is isomorphic to $V_l$, with $\hbar S_\pm,\hbar S_z$ mapped to
+  $\mathbf L_\pm,\mathbf L_z$, and $\mathbf L^2=\hbar^2l(l+1)$ on it. In particular, for every $l\in\mathbb N$ and every integer
+  $|m|\le l$ there is a nonzero Schwartz function $\psi$ with $\mathbf L^2\psi=\hbar^2l(l+1)\psi$ and
+  $\mathbf L_z\psi=\hbar m\psi$.
+\end{theorem}
+
+\begin{proof}\leanok
+  $\partial_jG=-x_jG$, so $p_j(pG)=-i\hbar(\partial_jp)G+i\hbar(x_jp)G$ (by induction on $p$, using $[x_k,p_j]=i\hbar\delta_{kj}$). In
+  $x_ap_b-x_bp_a$ the terms $x_ax_bp-x_bx_ap$ cancel. A complex polynomial that vanishes on $\mathbb R^3$ is zero, and
+  $G\ne0$, so $p\mapsto pG$ is injective. The rest is transported from Theorem~\ref{thm:orbital-L}.
+\end{proof}
+
 
 \begin{definition}[Symmetrizer and antisymmetrizer]\label{def:symmetrizer}
   \lean{QM.ManyBody.permL, QM.ManyBody.symm, QM.ManyBody.anti, QM.ManyBody.IsSymmFun,
