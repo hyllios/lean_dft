@@ -207,13 +207,13 @@
   \label{thm:cauchy_binet}
   \lean{DFT.cauchy_binet}
   \leanok
-  \uses{lem:det_gram, thm:slater_expand}
+  \uses{lem:det_gram, lem:cauchy-binet}
   $\sum_s\Psi_\varphi(s)\Psi_\psi(s)=\det G$, summed over configurations.
 \end{theorem}
 \begin{proof}
   \leanok
-  Expand $\Psi_\varphi(\tau)$ in configurations (Theorem~\ref{thm:slater_expand}). The remaining sum is
-  Lemma~\ref{lem:det_gram} applied to the indicator orbitals of $s$.
+  $G=\Phi\Psi^T$ with $\Phi_{ix}=\varphi_i(x)$, $\Psi_{jx}=\psi_j(x)$; apply the general Cauchy--Binet formula
+  (Lemma~\ref{lem:cauchy-binet}), whose minors are the Slater determinants $\Psi_\varphi(s)$, $\Psi_\psi(s)$.
 \end{proof}
 
 \begin{theorem}[Orthonormality of Slater determinants]

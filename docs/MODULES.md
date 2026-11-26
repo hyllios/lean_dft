@@ -133,7 +133,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-214 modules, 57796 lines.
+214 modules, 57789 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -378,7 +378,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
-| `DFT.Lattice.Fermions.CauchyBinet` | 83 | Cauchy–Binet for Slater determinants |
+| `DFT.Lattice.Fermions.CauchyBinet` | 76 | Cauchy–Binet for Slater determinants |
 | `DFT.Lattice.Fermions.FirstQuantization` | 251 | Powers of the many-body Hamiltonian via first quantisation |
 | `DFT.Lattice.Fermions.FockBridge` | 170 | The lattice second quantization is the Fock-space one |
 | `DFT.Lattice.Fermions.SecondQuantization` | 340 | Second quantisation via determinants |
@@ -504,4 +504,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 72317 lines of Lean.
+Total: 72310 lines of Lean.

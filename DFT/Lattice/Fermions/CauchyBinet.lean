@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Lattice.Fermions.SecondQuantization
+import ForMathlib.LinearAlgebra.Matrix.CauchyBinet
 
 /-!
 # Cauchy–Binet for Slater determinants
 
 * `gram φ ψ`: the overlap matrix `G_{ij} = Σ_x φ_i(x) ψ_j(x)` of two families of `N` orbitals.
 * `det_gram`: `det G = Σ_τ Ψ_φ(τ) Π_j ψ_j(τ_j)` (sum over all position tuples).
-* `cauchy_binet`: `Σ_s Ψ_φ(s) Ψ_ψ(s) = det G` (sum over configurations).
+* `cauchy_binet`: `Σ_s Ψ_φ(s) Ψ_ψ(s) = det G` (sum over configurations), a special case of the
+  general Cauchy–Binet formula `Matrix.det_mul_eq_sum_det_mul_det`.
 * `slater_orthonormal`: Slater determinants of orthonormal orbitals, indexed by orbital subsets, are
   orthonormal.
 -/
@@ -44,25 +46,16 @@ lemma det_gram (φ ψ : Fin N → Fin M → ℝ) :
   rw [← Equiv.prod_comp σ (fun x => φ (σ⁻¹ x) (τ x))]
   apply Finset.prod_congr rfl; intro i _; simp
 
-/-- **Cauchy–Binet** for Slater determinants. -/
+/-- **Cauchy–Binet** for Slater determinants: the general Cauchy–Binet formula
+(`Matrix.det_mul_eq_sum_det_mul_det`) for `G = Φ Ψᵀ`. -/
 theorem cauchy_binet (φ ψ : Fin N → Fin M → ℝ) :
     ∑ s : Conf M N, slaterC φ s * slaterC ψ s = (gram φ ψ).det := by
-  rw [det_gram]
-  simp_rw [slater_expand φ, Finset.sum_mul]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl
-  intro s _
-  -- Σ_τ amp s τ Π ψ_j(τ_j) = Ψ_ψ(s), via `det_gram` for the indicator orbitals of `s`
-  have hind := det_gram (fun j x => if x = τs s j then (1 : ℝ) else 0) ψ
-  have hG : gram (fun j x => if x = τs s j then (1 : ℝ) else 0) ψ =
-      Matrix.of fun k j => ψ j (τs s k) := by
-    ext k j; simp [gram]
-  rw [hG] at hind
-  have hamp : ∑ τ : Fin N → Fin M, amp s τ * slaterC φ s * ∏ j, ψ j (τ j) =
-      slaterC φ s * ∑ τ : Fin N → Fin M, slater (fun j x => if x = τs s j then (1 : ℝ) else 0) τ *
-        ∏ j, ψ j (τ j) := by
-    rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intro τ _; simp only [amp]; ring
-  rw [hamp, ← hind]
+  have hG : gram φ ψ = (Matrix.of fun i x => φ i x) * (Matrix.of fun x j => ψ j x) := by
+    ext i j; simp [gram, Matrix.mul_apply]
+  rw [hG, Matrix.det_mul_eq_sum_det_mul_det]
+  refine Finset.sum_congr rfl fun s _ => ?_
+  congr 1
+  rw [slaterC, slater, ← det_transpose]
   rfl
 
 /-- Slater determinant of the orbitals selected by an orbital subset `S`. -/
