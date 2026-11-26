@@ -264,6 +264,33 @@
   $\gamma=\operatorname{diag}(\lambda)$. Applying $U(u)$ to each state gives $\gamma$.
 \end{proof}
 
+\begin{definition}[Slater states]\label{def:slater-state}
+  % Statements approved by Miguel 2026-11-26 (B3 step 1).
+  \lean{QM.ManyBody.slaterState, QM.ManyBody.creStr, QM.ManyBody.annStr}\leanok
+  \uses{def:mode-rotation}
+  A Slater state is $U(u)|s\rangle$ for a unitary $u$ and a configuration $s$. We write
+  $c^\dagger_{i_0}\cdots c^\dagger_{i_{n-1}}$ and $c_{j_{n-1}}\cdots c_{j_0}$ for strings of creation and annihilation operators.
+\end{definition}
+
+\begin{theorem}[Slater states and Wick's theorem]\label{thm:wick-slater}
+  \lean{QM.ManyBody.slaterState_isNState, QM.ManyBody.rdm1_slater_proj, QM.ManyBody.exists_slater_of_proj,
+    QM.ManyBody.wick_of_proj, QM.ManyBody.wick_slater, QM.ManyBody.rdm2_slater}\leanok
+  \uses{def:slater-state, thm:coleman}
+  A Slater state $\Psi=U(u)|s\rangle$ is an $|s|$-particle state whose one-body matrix $\gamma$ is a Hermitian projection with
+  $\operatorname{tr}\gamma=|s|$, and every Hermitian projection with trace $N$ arises this way. \textbf{Wick's theorem:}
+  \[\langle\Psi,c^\dagger_{i_0}\cdots c^\dagger_{i_{n-1}}c_{j_{n-1}}\cdots c_{j_0}\Psi\rangle=\det\big(\gamma_{i_aj_b}\big)_{a,b},\]
+  in particular $D_{ij,kl}=\gamma_{ik}\gamma_{jl}-\gamma_{il}\gamma_{jk}$.
+\end{theorem}
+\begin{proof}\leanok
+  $\Psi=c^\dagger(\varphi_0)\cdots c^\dagger(\varphi_{N-1})|\emptyset\rangle$ with orthonormal $\varphi_a$. Let $P=\sum_a\varphi_a\varphi_a^\dagger$.
+  Then $c^\dagger(P\phi)\Psi=0$ (the Gram determinant of a string with a repeated orbital vanishes) and $c_i\Psi=c(Pe_i)\Psi$
+  (Laplace expansion, $(1-P)e_i\perp\varphi_a$). Hence
+  $\langle\Psi,c^\dagger_{i_0}X\Psi\rangle=\langle\Psi,c^\dagger(Pe_{i_0})X\Psi\rangle$; anticommuting $c^\dagger(Pe_{i_0})$ to the right through
+  $X$ gives $\sum_l(-1)^lP_{j_li_0}\langle\Psi,X_l\Psi\rangle$ with $X_l$ the string without $c^\dagger_{i_0}$ and $c_{j_l}$, which is
+  the expansion of the determinant along its first row; $n=1$ gives $\gamma_{ij}=P_{ji}$. The one-body matrix is
+  $\bar u\,\mathrm{diag}(\mathrm{occ}(s))\,u^{T}$; conversely diagonalize a projection, whose eigenvalues are $0$ or $1$.
+\end{proof}
+
 \begin{definition}[Gibbs state]\label{def:gibbs}
   $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$.
 \end{definition}
