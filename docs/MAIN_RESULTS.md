@@ -3,13 +3,12 @@
 The declarations listed here are the main results of the repository. Rules (`AGENTS.md` §4):
 
 - every name listed here must exist (checked by `scripts/check_main_results.py`, enforcing);
-- every name listed here must be referenced in the blueprint with `\lean{...}` (same script; report-only until this list
-  has been curated, then `--strict`);
+- every name listed here must be referenced in the blueprint with `\lean{...}` (same script with `--strict`, enforcing);
 - changing the *statement* of a listed result needs explicit approval by Miguel.
 
 **Status (2026-11-25): seeded automatically** from the declarations named in the README section "Main results".
-This list still needs curation: some entries are supporting lemmas rather than main results, and should be removed
-or kept on purpose.
+2026-11-26: `DFT.generic_hk_hubbard` removed by Miguel (it is a corollary of `DFT.generic_hk_spin`). Every listed
+result is now in the blueprint, and CI runs the blueprint check with `--strict`.
 
 | Declaration | In blueprint |
 |---|---|
@@ -30,7 +29,6 @@ or kept on purpose.
 | `DFT.ft_theorem2_counterexample` | yes |
 | `DFT.generic_ground_mem_omega` | yes |
 | `DFT.generic_ground_mem_omega_spin` | yes |
-| `DFT.generic_hk_hubbard` | **no** |
 | `DFT.generic_hk_lattice_fermions_w` | yes |
 | `DFT.generic_hk_spin` | yes |
 | `DFT.generic_hk_spin_field` | yes |

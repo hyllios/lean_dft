@@ -40,7 +40,7 @@ Status of the gates (update when a report-only gate becomes enforcing):
 | Layering (library order, folder DAG) | `scripts/check_layers.py` | **enforcing** |
 | Blueprint references exist | `lake exe checkdecls blueprint/lean_decls` | **enforcing** |
 | Main results exist (`docs/MAIN_RESULTS.md`) | `scripts/check_main_results.py --list f` + `lake exe checkdecls f` | **enforcing** |
-| Main results are in the blueprint | `scripts/check_main_results.py --strict` | report-only until the list is curated |
+| Main results are in the blueprint | `scripts/check_main_results.py --strict` | **enforcing** |
 | Module index up to date | `scripts/gen_module_index.py --check` | **enforcing** |
 
 - No `sorry`, no `axiom`, no `native_decide`, no `implemented_by`/`unsafe`. `scripts/check_axioms.sh` allows only `propext`,

@@ -140,7 +140,7 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
 
 ## 5. Next steps (from 2026-11-26, after B1)
 
-1. **Housekeeping:** curate `MAIN_RESULTS.md` (Miguel) and then make its blueprint check strict.
+1. **Housekeeping done:** `MAIN_RESULTS.md` has every result in the blueprint, and the check is strict in CI.
 2. **Approved 2026-11-26:** the particle–hole statement and the C1–C3 statements (Lehmann, self-energy, Herglotz,
    Galitskii–Migdal).
 3. **B2 follow-up done:** the spin bridge (`QM/ManyBody/Spin`, `DFT/Lattice/Spin/FockBridge`).
@@ -187,3 +187,4 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   one-body operator acts on product functions f ⊗ g factor by factor (the down parities cancel in each hopping term), so on
   the (N↑, N↓) sector it is `kronSum (Γ h↑) (Γ h↓)`. The Hubbard operator restricts to `hubbard U`, and `H0S G t (hubbard U)`
   and `hamN (H0S …) occS v` are restrictions of Fock Hamiltonians.
+- 2026-11-26: `DFT.generic_hk_hubbard` removed from the main results. The main-results blueprint check is now strict.

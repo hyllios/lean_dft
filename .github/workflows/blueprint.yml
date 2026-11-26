@@ -68,9 +68,9 @@ jobs:
       - name: Module index is up to date
         run: python3 scripts/gen_module_index.py --check
 
-      - name: Main results exist (docs/MAIN_RESULTS.md); blueprint coverage reported
+      - name: Main results exist (docs/MAIN_RESULTS.md) and are in the blueprint
         run: |
-          python3 scripts/check_main_results.py --list main_results.txt
+          python3 scripts/check_main_results.py --strict --list main_results.txt
           ~/.elan/bin/lake exe checkdecls main_results.txt
 
       # The blueprint, checkdecls and the static home page are built explicitly (instead of with docgen-action),
