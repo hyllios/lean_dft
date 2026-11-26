@@ -38,32 +38,14 @@ variable {M : ℕ}
 
 /-! ### Sorted configurations -/
 
-/-- The `j`-th occupied mode of `s` has exactly `j` occupied modes below it. -/
-lemma card_filter_lt_τs {N : ℕ} (s : Conf M N) (j : Fin N) :
-    (s.1.filter (· < τs s j)).card = j := by
-  have : s.1.filter (· < τs s j) = (Finset.Iio j).map (s.1.orderEmbOfFin s.2).toEmbedding := by
-    ext x
-    simp only [Finset.mem_filter, Finset.mem_map, Finset.mem_Iio, RelEmbedding.coe_toEmbedding]
-    constructor
-    · rintro ⟨hx, hlt⟩
-      obtain ⟨k, rfl⟩ := τs_surj s hx
-      exact ⟨k, (s.1.orderEmbOfFin s.2).lt_iff_lt.mp hlt, rfl⟩
-    · rintro ⟨k, hk, rfl⟩
-      exact ⟨Finset.orderEmbOfFin_mem _ _ _, (s.1.orderEmbOfFin s.2).lt_iff_lt.mpr hk⟩
-  rw [this, Finset.card_map, Fin.card_Iio]
-
 /-- The configuration `s` with its `j`-th occupied mode removed. -/
 def confErase {N : ℕ} (s : Conf M (N + 1)) (j : Fin (N + 1)) : Conf M N :=
   ⟨s.1.erase (τs s j), by rw [Finset.card_erase_of_mem (τs_mem s j), s.2]; rfl⟩
 
 /-- Removing the `j`-th occupied mode shifts the sorted modes past `j`. -/
 lemma τs_confErase {N : ℕ} (s : Conf M (N + 1)) (j : Fin (N + 1)) :
-    τs (confErase s j) = τs s ∘ j.succAbove := by
-  have hmem : ∀ k, (τs s ∘ j.succAbove) k ∈ (confErase s j).1 := fun k =>
-    Finset.mem_erase.mpr ⟨(τs_injective s).ne (Fin.succAbove_ne j k), τs_mem s _⟩
-  have hmono : StrictMono (τs s ∘ j.succAbove) :=
-    (s.1.orderEmbOfFin s.2).strictMono.comp (Fin.strictMono_succAbove j)
-  exact (Finset.orderEmbOfFin_unique (confErase s j).2 hmem hmono).symm
+    τs (confErase s j) = τs s ∘ j.succAbove :=
+  funext fun k => congrFun (orderEmbOfFin_erase s.1 s.2 j (confErase s j).2) k
 
 /-- Laplace expansion of the amplitude along the first position. -/
 lemma amp_succ {N : ℕ} (s : Conf M (N + 1)) (τ : Fin (N + 1) → Fin M) (j : Fin (N + 1))
@@ -104,8 +86,8 @@ theorem slaterVec_apply {N : ℕ} (τ : Fin N → Fin M) (u : Finset (Fin M)) :
         have hs' : (⟨u.erase (τ 0), hu'⟩ : Conf M N) = confErase s j :=
           Subtype.ext (by simp [confErase, hj, s])
         have hb : below (τ 0) (u.erase (τ 0)) = j := by
-          rw [← card_filter_lt_τs s j, hj, below, Finset.filter_erase,
-            Finset.erase_eq_of_notMem (by simp)]
+          rw [← card_filter_lt_orderEmbOfFin s.1 s.2 j, show s.1.orderEmbOfFin s.2 j = τ 0 from hj,
+            below, Finset.filter_erase, Finset.erase_eq_of_notMem (by simp)]
         rw [hs', amp_succ s τ j hj, jwSign, hb]
         push_cast
         ring

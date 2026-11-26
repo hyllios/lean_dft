@@ -191,18 +191,38 @@
 \end{proof}
 
 \begin{definition}[Mode rotations]\label{def:mode-rotation}
-  \uses{def:cdag}
+  \lean{QM.ManyBody.creV, QM.ManyBody.annV, QM.ManyBody.annV_mul_creV_add, QM.ManyBody.strV,
+    QM.ManyBody.annV_mulVec_strV, QM.ManyBody.strV_overlap, QM.ManyBody.modeRot, QM.ManyBody.modeRotOp,
+    QM.ManyBody.modeRotOp_mem_unitary, QM.ManyBody.modeRotOp_creOp, QM.ManyBody.modeRotOp_vac,
+    QM.ManyBody.numTotOp_mul_modeRotOp, QM.ManyBody.modeRotOp_mul, QM.ManyBody.rdm1_modeRotOp,
+    QM.ManyBody.IsNState.modeRotOp}\leanok
+  \uses{def:cdag, thm:car, def:rdm12}
   For a unitary $u\in U(M)$ there is a unitary $U(u)$ on $\mathcal F_M$ with $U(u)\,c_i^\dagger\,U(u)^\dagger=\sum_ju_{ji}c_j^\dagger$
   for every $i$ and $U(u)|\emptyset\rangle=|\emptyset\rangle$. It commutes with $\hat N$, $U(uv)=U(u)U(v)$, and
   $\gamma(U(u)\Psi)=\bar u\,\gamma(\Psi)\,u^{T}$.
 \end{definition}
+\begin{proof}\leanok
+  Write $c^\dagger(\varphi)=\sum_j\varphi_jc_j^\dagger$ and $c(\chi)=c^\dagger(\chi)^\dagger$, so that
+  $\{c(\chi),c^\dagger(\varphi)\}=\langle\chi,\varphi\rangle$. For a creation string
+  $|\Phi\rangle=c^\dagger(\Phi_0)\cdots c^\dagger(\Phi_{N-1})|\emptyset\rangle$ induction on $N$ gives the Laplace expansion
+  $c(\chi)|\Phi\rangle=\sum_b(-1)^b\langle\chi,\Phi_b\rangle\,|\Phi\setminus\Phi_b\rangle$, and hence the overlap
+  $\langle\Phi|\Psi\rangle=\det\langle\Phi_a,\Psi_b\rangle$. Define $U(u)|s\rangle$ as the string of the rotated orbitals
+  $ue_{s_1},\dots,ue_{s_N}$ for the sorted modes $s_1<\dots<s_N$ of $s$. The Gram determinant of orthonormal orbitals
+  shows that $U(u)$ maps the configuration basis to an orthonormal basis, so $U(u)$ is unitary. The Laplace expansion
+  gives $c(ue_i)\,U(u)=U(u)\,c_i$, and the adjoint gives $c^\dagger(ue_i)\,U(u)=U(u)\,c_i^\dagger$. A string of $N$ orbitals
+  has $N$ particles, so $U(u)$ commutes with $\hat N$. By linearity $U(u)\,c^\dagger(\varphi)=c^\dagger(u\varphi)\,U(u)$,
+  so $U(u)$ rotates every orbital of a string, and $U(u)U(v)|s\rangle=U(uv)|s\rangle$. Finally
+  $U(u)^\dagger c_a^\dagger U(u)=\sum_i\bar u_{ai}c_i^\dagger$ and $U(u)^\dagger c_bU(u)=\sum_ku_{bk}c_k$ give the law for $\gamma$.
+  No Cauchy--Binet formula is needed, because the overlap comes from the anticommutation relations.
+\end{proof}
 
 \begin{theorem}[Coleman]\label{thm:coleman}
+  \lean{DFT.Lattice.RDMFT.coleman, QM.ManyBody.rdm1_single, QM.ManyBody.isNState_single}\leanok
   \uses{thm:rdm1-necessary, def:mode-rotation}
   A complex $M\times M$ matrix $\gamma$ is the one-body reduced density matrix of an $N$-particle ensemble if and only if
   $\gamma$ is Hermitian, $0\le\gamma\le1$ and $\operatorname{tr}\gamma=N$.
 \end{theorem}
-\begin{proof}
+\begin{proof}\leanok
   Necessity is Theorem~\ref{thm:rdm1-necessary}. Conversely, diagonalize $\gamma=\bar u\,\operatorname{diag}(\lambda)\,u^{T}$
   with $u$ unitary. The eigenvalues satisfy $0\le\lambda_i\le1$ and $\sum_i\lambda_i=N$, so
   $\lambda=\sum_s\mu_s\,\mathrm{occ}(s)$ by the hypersimplex. The ensemble of configurations $|s\rangle$ with weights $\mu_s$ has

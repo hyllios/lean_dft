@@ -68,10 +68,11 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   connects all of the existing lattice DFT. The lattice code (`DFT/Lattice/Fermions/SecondQuantization`) works only at fixed N with
   real matrices, so it cannot host `c_i` itself. Physlib's Wick algebra is abstract and QFT-oriented (no finite-mode Hilbert
   space); use it later for Wick's theorem (B3) via its universality property, if our operators satisfy its hypotheses.
-- B2 🟡 One- and two-body RDMs; Coleman's N-representability for the 1-RDM. One-body operators done (`QM/ManyBody/OneBody`).
+- B2 ✅ One- and two-body RDMs; Coleman's N-representability for the 1-RDM. One-body operators done (`QM/ManyBody/OneBody`).
   **Statements approved 2026-11-26** (blueprint Part III). **Proved:** the 1-RDM necessary conditions (`QM/ManyBody/RDM`) and
   the N-representability of the density (`DFT/Lattice/RDMFT/DensityRep`); the 2-RDM with antisymmetry, contraction, trace and
-  the P, Q, G conditions (`QM/ManyBody/RDM2`). Remaining: mode rotations and Coleman. Statements: γ_ij = ⟨c_i† c_j⟩ (Miguel's choice, as in the
+  the P, Q, G conditions (`QM/ManyBody/RDM2`); mode rotations U(u) (`QM/ManyBody/ModeRotation`) and Coleman's theorem
+  (`DFT/Lattice/RDMFT/Coleman`). B2 complete 2026-11-26. Statements: γ_ij = ⟨c_i† c_j⟩ (Miguel's choice, as in the
   lattice code), necessary conditions 0 ≤ γ ≤ 1 and tr γ = N, N-representability of the density (pure and ensemble),
   the 2-RDM with antisymmetry, contraction and trace, the P, Q, G conditions, mode rotations U(u), Coleman's theorem
   (kept in B2). Order: 1-RDM conditions, density, 2-RDM, mode rotations, Coleman. `DFT/Lattice/RDMFT` has pieces to reuse.
@@ -142,8 +143,7 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
 1. **Housekeeping:** curate `MAIN_RESULTS.md` (Miguel) and then make its blueprint check strict.
 2. **Review and approval (Miguel):** the particle–hole statement (written while finishing B1) and the C1–C3 statements
    (Lehmann, self-energy, Herglotz, Galitskii–Migdal) in blueprint Part III.
-3. **B2:** one- and two-body RDMs on the Fock space, Coleman's N-representability of the 1-RDM (reuse `DFT/Lattice/RDMFT`).
-   Also the spin bridge: the Fock space over `Fin M ⊕ Fin M` restricts to the lattice `H0S` plus the Hubbard term.
+3. **B2 follow-up:** the spin bridge: the Fock space over `Fin M ⊕ Fin M` restricts to the lattice `H0S` plus the Hubbard term.
 4. **C1:** the Lehmann representation, with the two-site Hubbard model as the sanity theorem.
 5. **A1/A2:** the bridge between Physlib's operators and QuantumInfo's density matrices; time evolution in finite dimensions.
 6. In parallel: C2 + B4; semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
@@ -176,3 +176,9 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
   N-representability of the density (pure and ensemble, nonnegative coefficients) proved. Next: 2-RDM, then mode rotations and Coleman.
 - 2026-11-26: 2-RDM proved (`QM/ManyBody/RDM2`): antisymmetry, Hermiticity, Σ_k D_ik,jk = (N-1)γ_ij, trace N(N-1), and the
   P, Q, G conditions with Q and G as explicit affine functions of D and γ, for states and ensembles.
+- 2026-11-26: mode rotations proved (`QM/ManyBody/ModeRotation`). Orbital operators c†(φ) obey {c(χ), c†(φ)} = ⟨χ, φ⟩,
+  an orbital annihilator acts on a creation string by Laplace expansion, and two strings overlap by the Gram determinant.
+  From this U(u) is unitary, fixes the vacuum, commutes with N̂, satisfies U c_i† U† = Σ_j u_ji c_j† and U(uv) = U(u)U(v),
+  and γ(UΨ) = ū γ uᵀ. Cauchy–Binet was not needed. The sorted-mode lemmas moved from `FockBridge` to `QM/ManyBody/Fock`.
+- 2026-11-26: Coleman's theorem proved (`DFT/Lattice/RDMFT/Coleman`). γ is the 1-RDM of an N-particle ensemble iff it is
+  Hermitian, 0 ≤ γ ≤ 1 and tr γ = N. B2 complete.

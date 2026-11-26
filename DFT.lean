@@ -176,6 +176,7 @@ import DFT.Lattice.PathSum.Resonance
 import DFT.Lattice.PathSum.ResonantPoint
 import DFT.Lattice.PathSum.RouteSums
 import DFT.Lattice.RDMFT.Basic
+import DFT.Lattice.RDMFT.Coleman
 import DFT.Lattice.RDMFT.Counting
 import DFT.Lattice.RDMFT.DensityRep
 import DFT.Lattice.RDMFT.FockRDM

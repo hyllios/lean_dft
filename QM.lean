@@ -2,6 +2,7 @@ import QM.Basic
 import QM.Finite.GroundState
 import QM.ManyBody.Configurations
 import QM.ManyBody.Fock
+import QM.ManyBody.ModeRotation
 import QM.ManyBody.Number
 import QM.ManyBody.OneBody
 import QM.ManyBody.ParticleHole

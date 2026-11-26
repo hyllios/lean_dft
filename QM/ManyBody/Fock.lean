@@ -6,6 +6,7 @@ Authors: Miguel A. L. Marques
 import Mathlib.Analysis.CStarAlgebra.Matrix
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.Data.Finset.Sort
 import Mathlib.Data.Fintype.Powerset
 
 /-!
@@ -30,6 +31,8 @@ The creation operator `cre i` (`c_i†`) adds mode `i` with the Jordan–Wigner 
 ## Main results
 
 * `finrank_fock`: `dim Fock M = 2 ^ M`.
+* `card_filter_lt_orderEmbOfFin`, `orderEmbOfFin_erase`: the `j`-th occupied mode has `j` occupied
+  modes below it, and removing it shifts the sorted modes.
 * `cre_mulVec`, `ann_mulVec`: the action on functions of configurations.
 * `cre_mulVec_single`, `ann_mulVec_single`: the action on basis vectors `|s⟩`.
 * `ann_eq_adjoint`: `c_i` is the Hilbert-space adjoint of `c_i†`.
@@ -91,6 +94,35 @@ lemma exch_mul_exch {i j : Fin M} (h : i ≠ j) : exch j i * exch i j = -1 := by
   rcases lt_or_gt_of_ne h with hij | hji
   · simp [hij, not_lt.mpr hij.le]
   · simp [hji, not_lt.mpr hji.le]
+
+/-! ### Sorted modes of a configuration -/
+
+/-- The `j`-th occupied mode of `s` has exactly `j` occupied modes below it. -/
+lemma card_filter_lt_orderEmbOfFin (s : Finset (Fin M)) {n : ℕ} (h : s.card = n) (j : Fin n) :
+    (s.filter (· < s.orderEmbOfFin h j)).card = j := by
+  have : s.filter (· < s.orderEmbOfFin h j) =
+      (Finset.Iio j).map (s.orderEmbOfFin h).toEmbedding := by
+    ext x
+    simp only [Finset.mem_filter, Finset.mem_map, Finset.mem_Iio, RelEmbedding.coe_toEmbedding]
+    constructor
+    · rintro ⟨hx, hlt⟩
+      have hx' : x ∈ Set.range (s.orderEmbOfFin h) := by rw [Finset.range_orderEmbOfFin]; exact hx
+      obtain ⟨k, rfl⟩ := hx'
+      exact ⟨k, (s.orderEmbOfFin h).lt_iff_lt.mp hlt, rfl⟩
+    · rintro ⟨k, hk, rfl⟩
+      exact ⟨Finset.orderEmbOfFin_mem _ _ _, (s.orderEmbOfFin h).lt_iff_lt.mpr hk⟩
+  rw [this, Finset.card_map, Fin.card_Iio]
+
+/-- Removing the `j`-th occupied mode shifts the sorted modes past `j`. -/
+lemma orderEmbOfFin_erase (s : Finset (Fin M)) {n : ℕ} (h : s.card = n + 1) (j : Fin (n + 1))
+    (h' : (s.erase (s.orderEmbOfFin h j)).card = n) :
+    ⇑((s.erase (s.orderEmbOfFin h j)).orderEmbOfFin h') = s.orderEmbOfFin h ∘ j.succAbove := by
+  have hmem : ∀ k, (s.orderEmbOfFin h ∘ j.succAbove) k ∈ s.erase (s.orderEmbOfFin h j) := fun k =>
+    Finset.mem_erase.mpr ⟨(s.orderEmbOfFin h).injective.ne (Fin.succAbove_ne j k),
+      Finset.orderEmbOfFin_mem _ _ _⟩
+  have hmono : StrictMono (s.orderEmbOfFin h ∘ j.succAbove) :=
+    (s.orderEmbOfFin h).strictMono.comp (Fin.strictMono_succAbove j)
+  exact (Finset.orderEmbOfFin_unique h' hmem hmono).symm
 
 /-! ### Creation and annihilation operators -/
 

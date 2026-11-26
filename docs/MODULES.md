@@ -41,7 +41,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-11 modules, 1934 lines.
+12 modules, 2471 lines.
 
 ### `QM/`
 
@@ -60,7 +60,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `QM.ManyBody.Configurations` | 30 | Spinless lattice fermions: configurations and occupations |
-| `QM.ManyBody.Fock` | 309 | The fermionic Fock space of `M` modes |
+| `QM.ManyBody.Fock` | 341 | The fermionic Fock space of `M` modes |
+| `QM.ManyBody.ModeRotation` | 505 | Mode rotations |
 | `QM.ManyBody.Number` | 109 | The number operator |
 | `QM.ManyBody.OneBody` | 125 | Second-quantized one-body operators |
 | `QM.ManyBody.ParticleHole` | 223 | The particle–hole transformation |
@@ -76,7 +77,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-212 modules, 57525 lines.
+213 modules, 57625 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -323,7 +324,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `DFT.Lattice.Fermions.CauchyBinet` | 83 | Cauchy–Binet for Slater determinants |
 | `DFT.Lattice.Fermions.FirstQuantization` | 251 | Powers of the many-body Hamiltonian via first quantisation |
-| `DFT.Lattice.Fermions.FockBridge` | 188 | The lattice second quantization is the Fock-space one |
+| `DFT.Lattice.Fermions.FockBridge` | 170 | The lattice second quantization is the Fock-space one |
 | `DFT.Lattice.Fermions.SecondQuantization` | 340 | Second quantisation via determinants |
 
 ### `DFT/Lattice/Generic/`
@@ -395,6 +396,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `DFT.Lattice.RDMFT.Basic` | 128 | Density-matrix functional theory on a lattice |
+| `DFT.Lattice.RDMFT.Coleman` | 118 | Coleman's theorem |
 | `DFT.Lattice.RDMFT.Counting` | 150 | Universal failure of the RDMFT Hohenberg–Kohn theorem by dimension counting |
 | `DFT.Lattice.RDMFT.DensityRep` | 131 | N-representability of the density |
 | `DFT.Lattice.RDMFT.FockRDM` | 77 | The lattice one-body reduced density matrix is `⟨Ψ, c_i† c_j Ψ⟩` |
@@ -445,4 +447,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 61127 lines of Lean.
+Total: 61764 lines of Lean.
