@@ -56,6 +56,13 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
 - A3 ⬜ Tensor products, Schmidt decomposition (→ natural orbitals, links to N-representability). Check QuantumInfo first.
 - A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/Spin/Ladder`) and Clebsch–Gordan for
   two and three spins (`QM/Spin/ClebschGordan`) done 2026-11-26.
+- A4+ ⬜ Coupling of angular momenta (requested by Miguel 2026-11-26). (i) Orbital angular momentum and spin: `J = L + S` on
+  functions `SpinC n → V` satisfies the su(2) relations when `L` does on `V`; `l ⊗ ½ = (l + ½) ⊕ (l − ½)` with explicit
+  highest weights and the spin–orbit values `L·S = l/2, −(l+1)/2`. (ii) The sum of two angular momenta `L₁ + L₂`:
+  `j₁ ⊗ j₂ = |j₁ − j₂| ⊕ … ⊕ (j₁ + j₂)`, with highest weights and dimension count. (iii) Clebsch–Gordan coefficients: the
+  recursion from `J₋`, orthogonality, Racah's closed formula, Wigner 3j symbols and their symmetries; then the recoupling
+  of three and four angular momenta (6j and 9j symbols, Biedenharn–Elliott). Optional: a concrete orbital `L = -i r × ∇`
+  on homogeneous harmonic polynomials of degree `l` (spin-`l` irreducible representation).
 - A5 ✅ Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
   Symmetrizer and antisymmetrizer as orthogonal projections (`QM/ManyBody/Symmetrizer`) done 2026-11-26.
 
@@ -204,3 +211,4 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   S² = 1 + P₀₁ and S² = ¾ + ΣP_ij, triplet and singlet basis, (S² − 15/4)(S² − 3/4) = 0, quartet and two doublets.
   `QM/ManyBody/Symmetrizer`: 𝒮 and 𝒜 are idempotent, absorb permutations, have the (anti)symmetric functions as ranges,
   annihilate each other for N ≥ 2, are self-adjoint, and 𝒜 of a product is the Slater determinant over N!.
+- 2026-11-26: roadmap item A4+ added (L + S, L₁ + L₂, Clebsch–Gordan coefficients, 6j/9j recoupling).
