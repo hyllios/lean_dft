@@ -9,4 +9,5 @@ import QM.ManyBody.ParticleHole
 import QM.ManyBody.RDM
 import QM.ManyBody.RDM2
 import QM.ManyBody.Slater
+import QM.ManyBody.Spin
 import QM.Spin.SpinAlg

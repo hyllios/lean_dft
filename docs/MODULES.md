@@ -41,7 +41,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-12 modules, 2471 lines.
+13 modules, 2786 lines.
 
 ### `QM/`
 
@@ -68,6 +68,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `QM.ManyBody.RDM` | 193 | Reduced density matrices on the Fock space |
 | `QM.ManyBody.RDM2` | 322 | The two-body reduced density matrix |
 | `QM.ManyBody.Slater` | 84 | Slater determinants in first quantisation |
+| `QM.ManyBody.Spin` | 315 | Spin-1/2 fermions on `M` sites |
 
 ### `QM/Spin/`
 
@@ -77,7 +78,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-213 modules, 57625 lines.
+214 modules, 57796 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -409,6 +410,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `DFT.Lattice.Spin.FockBridge` | 171 | The spin bridge |
 | `DFT.Lattice.Spin.HubbardCertificates` | 587 | Total-density Hohenberg–Kohn for small Hubbard models (exact certificates) |
 | `DFT.Lattice.Spin.KronSum` | 192 | Strong-potential coefficients of a Kronecker sum |
 | `DFT.Lattice.Spin.SpinField` | 141 | Spin-DFT language: scalar potential and magnetic field |
@@ -447,4 +449,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 61764 lines of Lean.
+Total: 62250 lines of Lean.
