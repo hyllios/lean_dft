@@ -59,13 +59,18 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   orbitals (`QM/ManyBody/NaturalOrbitals`) done 2026-11-26.
 - A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/Spin/Ladder`) and Clebsch–Gordan for
   two and three spins (`QM/Spin/ClebschGordan`) done 2026-11-26.
-- A4+ ⬜ Coupling of angular momenta (requested by Miguel 2026-11-26). (i) Orbital angular momentum and spin: `J = L + S` on
+- A4+ 🟡 Coupling of angular momenta (requested by Miguel 2026-11-26). (i) Orbital angular momentum and spin: `J = L + S` on
   functions `SpinC n → V` satisfies the su(2) relations when `L` does on `V`; `l ⊗ ½ = (l + ½) ⊕ (l − ½)` with explicit
   highest weights and the spin–orbit values `L·S = l/2, −(l+1)/2`. (ii) The sum of two angular momenta `L₁ + L₂`:
   `j₁ ⊗ j₂ = |j₁ − j₂| ⊕ … ⊕ (j₁ + j₂)`, with highest weights and dimension count. (iii) Clebsch–Gordan coefficients: the
   recursion from `J₋`, orthogonality, Racah's closed formula, Wigner 3j symbols and their symmetries; then the recoupling
   of three and four angular momenta (6j and 9j symbols, Biedenharn–Elliott). Optional: a concrete orbital `L = -i r × ∇`
   on homogeneous harmonic polynomials of degree `l` (spin-`l` irreducible representation).
+  Stage 1 done 2026-11-26 (`QM/Spin/SpinRep`, `QM/Spin/Coupling`, `QM/Spin/CGSeries`): the spin-j representation, its
+  irreducibility and uniqueness, coupling of commuting angular momenta, the Clebsch–Gordan series and spin–orbit coupling.
+  Stage 2 done 2026-11-26 (`QM/Spin/CGCoeff`): the Clebsch–Gordan coefficients with the Condon–Shortley phase, the
+  selection rule, both orthogonality relations, the `J₋` recursion and Racah's formula. Stage 3 (3j symmetries, 6j, 9j,
+  Biedenharn–Elliott) still needs statements.
 - A5 ✅ Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
   Symmetrizer and antisymmetrizer as orthogonal projections (`QM/ManyBody/Symmetrizer`) done 2026-11-26.
 - A6 ⬜ Kato cusp conditions (requested by Miguel 2026-11-26), in three tiers.
@@ -234,3 +239,5 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   X = R P'P − P P'R with [H, X] = P'. The eigenprojection of a gapped eigenvalue is the Riesz projection and is C² when H is,
   so the final theorem (`adiabatic_of_gap`) assumes only H ∈ C², E ∈ C¹ and the gap.
 - 2026-11-26: roadmap item A6 added (Kato cusp conditions, three tiers).
+- 2026-11-26: A4+ stages 1 and 2 done. Clebsch–Gordan coefficients with Racah's formula, proved by a telescoping
+  recursion for Racah's sum and a Vandermonde identity for the norm of the highest weight.
