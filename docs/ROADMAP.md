@@ -68,6 +68,16 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   on homogeneous harmonic polynomials of degree `l` (spin-`l` irreducible representation).
 - A5 ✅ Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
   Symmetrizer and antisymmetrizer as orthogonal projections (`QM/ManyBody/Symmetrizer`) done 2026-11-26.
+- A6 ⬜ Kato cusp conditions (requested by Miguel 2026-11-26), in three tiers.
+  Tier 1: the cusp from the radial equation. If `u ∈ C²[0, ∞)` solves `-(1/2μ)(u'' + 2u'/r) + (q/r) u = E u` for `r > 0`,
+  then `u'(0) = 2μ q u(0)`. With `μ = 1`, `q = -Z` this is the nuclear cusp `u'(0) = -Z u(0)`, and with `μ = ½`, `q = 1`
+  (relative coordinate) the electron–electron cusp `u'(0) = ½ u(0)`.
+  Tier 2: sanity checks. The hydrogen-like ground state `e^{-Zr}` satisfies the nuclear cusp, and the spherical-average form
+  reduces to Tier 1 for spherically symmetric states.
+  Tier 3: Kato's theorem (1957). Every eigenfunction of the N-electron Coulomb Hamiltonian is Lipschitz and its spherical
+  averages around each coalescence point satisfy the cusp conditions. Needs elliptic regularity for `-Δ + V` with Coulomb `V`,
+  integration on spheres in ℝ³ (E6) and the many-body Coulomb domain (E3): a research-scale item for Tracks E/F, possibly with
+  Physlib.
 
 ### Track B: many-body theory with finitely many modes (`QM/ManyBody`, `QM/Thermal`)
 - B1 ✅ Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. **Approved 2026-11-26; Fock space
@@ -223,3 +233,4 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   Picard–Lindelöf solutions), the unitary propagator of iεU' = H(s)U, and Kato's estimate ‖(1 − P(1))U_ε(1)P(0)‖ ≤ Cε via
   X = R P'P − P P'R with [H, X] = P'. The eigenprojection of a gapped eigenvalue is the Riesz projection and is C² when H is,
   so the final theorem (`adiabatic_of_gap`) assumes only H ∈ C², E ∈ C¹ and the gap.
+- 2026-11-26: roadmap item A6 added (Kato cusp conditions, three tiers).
