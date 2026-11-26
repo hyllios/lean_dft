@@ -29,6 +29,7 @@ import QM.ManyBody.Number
 import QM.ManyBody.OneBody
 import QM.ManyBody.ParticleHole
 import QM.ManyBody.QuasiFree
+import QM.ManyBody.QuasiFreeMixed
 import QM.ManyBody.RDM
 import QM.ManyBody.RDM2
 import QM.ManyBody.Slater

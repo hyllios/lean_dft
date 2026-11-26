@@ -291,6 +291,40 @@
   $\bar u\,\mathrm{diag}(\mathrm{occ}(s))\,u^{T}$; conversely diagonalize a projection, whose eigenvalues are $0$ or $1$.
 \end{proof}
 
+\begin{lemma}[Cauchy--Binet]\label{lem:cauchy-binet}
+  \lean{Matrix.det_mul_eq_sum_det_mul_det}\leanok
+  For $A\in R^{n\times m}$, $B\in R^{m\times n}$ over a commutative ring,
+  $\det(AB)=\sum_{|S|=n}\det A_{\cdot S}\det B_{S\cdot}$.
+\end{lemma}
+\begin{proof}\leanok
+  Expand $\det(AB)=\sum_{\tau:[n]\to[m]}\prod_aB_{\tau(a)a}\det A_{\cdot\tau}$; non-injective $\tau$ give a repeated column, and an
+  injective $\tau$ with image $S$ is the increasing enumeration of $S$ composed with a permutation.
+\end{proof}
+
+\begin{definition}[Mixed quasi-free states]\label{def:quasi-free}
+  % Statements approved by Miguel 2026-11-26 (B3 step 2).
+  \lean{QM.ManyBody.confWeight, QM.ManyBody.quasiFreeOf, QM.ManyBody.quasiFree}\leanok
+  \uses{def:slater-state}
+  For occupations $n_k$ and a unitary $v$, $\rho=U(v)\,\mathrm{diag}(w)\,U(v)^\dagger$ with
+  $w_s=\prod_k(n_k\text{ if }k\in s\text{ else }1-n_k)$. For a Hermitian $\gamma=\bar v\,\mathrm{diag}(n)\,v^T$ this defines $\rho_\gamma$.
+\end{definition}
+
+\begin{theorem}[Wick's theorem for quasi-free states]\label{thm:wick-quasi-free}
+  \lean{QM.ManyBody.sum_confWeight, QM.ManyBody.sum_confWeight_mul_prod, QM.ManyBody.det_mul_diagonal_mul,
+    QM.ManyBody.wick_quasiFreeOf, QM.ManyBody.quasiFree_isDensityMatrix, QM.ManyBody.wick_quasiFree,
+    QM.ManyBody.rdm1_quasiFree}\leanok
+  \uses{def:quasi-free, thm:wick-slater, lem:cauchy-binet}
+  If $0\le\gamma\le1$, $\rho_\gamma\succeq0$ and $\operatorname{tr}\rho_\gamma=1$. For every Hermitian $\gamma$,
+  $\operatorname{tr}(\rho_\gamma c^\dagger_{i_0}\cdots c^\dagger_{i_{n-1}}c_{j_{n-1}}\cdots c_{j_0})=\det(\gamma_{i_aj_b})$; in particular
+  $\operatorname{tr}(\rho_\gamma c_i^\dagger c_j)=\gamma_{ij}$.
+\end{theorem}
+\begin{proof}\leanok
+  $\operatorname{tr}(\rho X)=\sum_sw_s\langle U|s\rangle,XU|s\rangle\rangle$, and by Wick for Slater states each term is
+  $\det(AD_sB)$ with $D_s=\mathrm{diag}(\mathrm{occ}(s))$, $A_{ak}=\bar v_{i_ak}$, $B_{kb}=v_{j_bk}$. By Cauchy--Binet
+  $\det(ADB)=\sum_K\det A_{\cdot K}\det B_{K\cdot}\prod_{k\in K}d_k$, and $\sum_sw_s\prod_{k\in K}[k\in s]=\prod_{k\in K}n_k$
+  (the weights are a product measure). The weights are nonnegative for $0\le n\le1$ and sum to $\prod_k(n_k+1-n_k)=1$.
+\end{proof}
+
 \begin{definition}[Gibbs state]\label{def:gibbs}
   $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$.
 \end{definition}

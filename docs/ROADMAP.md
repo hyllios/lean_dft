@@ -102,7 +102,7 @@ this section keeps only pointers.
     `rdm1_slater_proj` (γ Hermitian, γ² = γ, tr γ = N); `exists_slater_of_proj` (every rank-N projection is the γ of a
     Slater state); `wick_slater`: `⟨Ψ, c_{i₀}† ⋯ c_{iₙ₋₁}† c_{jₙ₋₁} ⋯ c_{j₀} Ψ⟩ = det (γ_{i_a j_b})`; `rdm2_slater`:
     `D_ij,kl = γ_ik γ_jl − γ_il γ_jk`.
-  - Step 2, `QM/ManyBody/QuasiFreeMixed` (gauge-invariant mixed quasi-free states, needed for B4): `quasiFree γ` for
+  - Step 2 ✅ (2026-11-26, with general Cauchy–Binet in `ForMathlib/LinearAlgebra/Matrix/CauchyBinet`), `QM/ManyBody/QuasiFreeMixed` (gauge-invariant mixed quasi-free states, needed for B4): `quasiFree γ` for
     `0 ≤ γ ≤ 1`, `= U(u)(⊗_k diag(1 − n_k, n_k))U(u)†`; `quasiFree_isDensityMatrix`; `rdm1_quasiFree : tr(ρ_γ c_i† c_j) = γ_ij`;
     `wick_quasiFree : tr(ρ_γ c† ⋯ c) = det (γ_{i_a j_b})`.
   - Step 3, `QM/ManyBody/HartreeFock`: `twoBody V = ½ Σ V_ij,kl c_i† c_j† c_l c_k`, `ham h V = oneBody h + twoBody V`,

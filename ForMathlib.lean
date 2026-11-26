@@ -7,4 +7,5 @@ import ForMathlib.Analysis.InnerProductSpace.CompactEigenbasis
 import ForMathlib.Analysis.ODE.Linear
 import ForMathlib.Analysis.PoissonKernel
 import ForMathlib.Analysis.Sobolev.Weak
+import ForMathlib.LinearAlgebra.Matrix.CauchyBinet
 import ForMathlib.MeasureTheory.ZeroSetDim
