@@ -3,7 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import QM.Spin.SixJ
+import QM.AngularMomentum.SixJ
 
 /-!
 # Recoupling of four angular momenta and the 9j symbols

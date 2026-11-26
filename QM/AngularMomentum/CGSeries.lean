@@ -5,7 +5,7 @@ Authors: Miguel A. L. Marques
 -/
 import Mathlib.Algebra.CharZero.Infinite
 import Mathlib.Tactic.LinearCombination
-import QM.Spin.Coupling
+import QM.AngularMomentum.Coupling
 
 /-!
 # The Clebsch–Gordan series

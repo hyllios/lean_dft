@@ -7,7 +7,7 @@ import ForMathlib.Algebra.MvPolynomial.Harmonic
 import Mathlib.Algebra.MvPolynomial.Derivation
 import Mathlib.Basic.Complex.Basic
 import Mathlib.RingTheory.Derivation.Lie
-import QM.Spin.SpinRep
+import QM.AngularMomentum.SpinRep
 
 /-!
 # Orbital angular momentum on harmonic polynomials

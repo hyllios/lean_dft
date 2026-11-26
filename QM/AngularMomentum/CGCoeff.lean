@@ -5,7 +5,7 @@ Authors: Miguel A. L. Marques
 -/
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.RingTheory.PowerSeries.WellKnown
-import QM.Spin.CGSeries
+import QM.AngularMomentum.CGSeries
 
 /-!
 # Clebsch–Gordan coefficients

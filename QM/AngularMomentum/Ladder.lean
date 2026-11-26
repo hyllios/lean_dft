@@ -5,7 +5,6 @@ Authors: Miguel A. L. Marques
 -/
 import Mathlib.LinearAlgebra.Eigenspace.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
-import QM.Spin.SpinAlg
 
 /-!
 # The ladder theorem for su(2)
@@ -30,7 +29,6 @@ representation. In finite dimension every ladder stops.
 * `IsSU2.ladder_linearIndependent`, `IsSU2.finrank_span_ladder`: the ladder is a basis of a
   subspace of dimension `2m + 1`, invariant under `S₊, S₋, S_z` (`IsSU2.span_ladder_invariant`).
 * `IsSU2.exists_ladder_stop`: in finite dimension every ladder stops.
-* `isSU2_spin`: the spin operators of `N` spin-½ particles (`QM/Spin/SpinAlg`) satisfy `IsSU2`.
 -/
 
 namespace QM
@@ -209,20 +207,5 @@ theorem exists_ladder_stop [CharZero K] [FiniteDimensional K V] (hz : Sz v = m �
   omega
 
 end IsSU2
-
-/-! ### Spin-½ particles -/
-
-/-- **The spin operators of `N` spin-½ particles satisfy the su(2) relations.** -/
-theorem isSU2_spin {n : ℕ} {W : Type*} [AddCommGroup W] [Module ℝ W] :
-    IsSU2 (DFT.Continuum.Line.Sp : End ℝ (DFT.Continuum.Line.SpinC n → W))
-      DFT.Continuum.Line.Sm DFT.Continuum.Line.Sz where
-  comm_pm := DFT.Continuum.Line.comm_Sp_Sm'
-  comm_zp := DFT.Continuum.Line.comm_Sz_Sp'
-  comm_zm := LinearMap.ext DFT.Continuum.Line.comm_Sz_Sm
-
-/-- The total spin of `IsSU2` is the `S2` of `QM/Spin/SpinAlg`. -/
-theorem isSU2_spin_S2 {n : ℕ} {W : Type*} [AddCommGroup W] [Module ℝ W] :
-    (isSU2_spin (n := n) (W := W)).S2 = DFT.Continuum.Line.S2 :=
-  DFT.Continuum.Line.S2_eq.symm
 
 end QM

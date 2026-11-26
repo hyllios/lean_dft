@@ -54,7 +54,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-36 modules, 11282 lines.
+36 modules, 11283 lines.
 
 ### `QM/`
 
@@ -66,7 +66,17 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `QM.AngularMomentum.BiedenharnElliott` | 669 | The Biedenharn–Elliott identity |
+| `QM.AngularMomentum.CGCoeff` | 1046 | Clebsch–Gordan coefficients |
+| `QM.AngularMomentum.CGSeries` | 400 | The Clebsch–Gordan series |
+| `QM.AngularMomentum.Coupling` | 147 | Coupling of two angular momenta |
+| `QM.AngularMomentum.Ladder` | 211 | The ladder theorem for su(2) |
+| `QM.AngularMomentum.NineJ` | 655 | Recoupling of four angular momenta and the 9j symbols |
 | `QM.AngularMomentum.Orbital` | 413 | Orbital angular momentum on harmonic polynomials |
+| `QM.AngularMomentum.Recoupling` | 696 | Ladders and the coupling of angular momenta in orthonormal coordinates |
+| `QM.AngularMomentum.SixJ` | 913 | Recoupling of three angular momenta and the 6j symbols |
+| `QM.AngularMomentum.SpinRep` | 356 | The spin-`j` representation |
+| `QM.AngularMomentum.ThreeJ` | 364 | Wigner 3j symbols |
 
 ### `QM/Finite/`
 
@@ -109,18 +119,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
-| `QM.Spin.BiedenharnElliott` | 669 | The Biedenharn–Elliott identity |
-| `QM.Spin.CGCoeff` | 1046 | Clebsch–Gordan coefficients |
-| `QM.Spin.CGSeries` | 400 | The Clebsch–Gordan series |
-| `QM.Spin.ClebschGordan` | 205 | Clebsch–Gordan for two and three spins |
-| `QM.Spin.Coupling` | 147 | Coupling of two angular momenta |
-| `QM.Spin.Ladder` | 228 | The ladder theorem for su(2) |
-| `QM.Spin.NineJ` | 655 | Recoupling of four angular momenta and the 9j symbols |
-| `QM.Spin.Recoupling` | 696 | Ladders and the coupling of angular momenta in orthonormal coordinates |
-| `QM.Spin.SixJ` | 913 | Recoupling of three angular momenta and the 6j symbols |
+| `QM.Spin.ClebschGordan` | 223 | Clebsch–Gordan for two and three spins |
 | `QM.Spin.SpinAlg` | 399 | The spin algebra of `N` spin-½ particles |
-| `QM.Spin.SpinRep` | 356 | The spin-`j` representation |
-| `QM.Spin.ThreeJ` | 364 | Wigner 3j symbols |
 
 ## `DFT`: density-functional theory
 
@@ -495,4 +495,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 71250 lines of Lean.
+Total: 71251 lines of Lean.

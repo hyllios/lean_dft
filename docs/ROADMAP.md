@@ -48,7 +48,7 @@ theory). Each one is a research-grade result.
 
 Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume the current working mode (Miguel daily plus agents).
 
-### Track A: foundations of QM, finite-dimensional (`QM/Finite`, `QM/Spin`, `QM/ManyBody`)
+### Track A: foundations of QM, finite-dimensional (`QM/Finite`, `QM/Spin`, `QM/AngularMomentum`, `QM/ManyBody`)
 - A1 ✅ States, observables, Born rule, expectation values, uncertainty: **from Physlib** (`QM/Basic.lean`). Density matrices and
   partial trace: **from QuantumInfo**. Bridge (`QM/Finite/States`) and qubit sanity theorem (`QM/Finite/Qubit`) done 2026-11-26.
 - A2 ✅ Time evolution, the Heisenberg picture and Ehrenfest (`QM/Finite/Evolution`, on Physlib's
@@ -57,7 +57,7 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   (`QM/Finite/Riesz`) done 2026-11-26.
 - A3 ✅ Schmidt decomposition and product states (`QM/Finite/Schmidt`, on QuantumInfo's `Ket` and partial traces) and natural
   orbitals (`QM/ManyBody/NaturalOrbitals`) done 2026-11-26.
-- A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/Spin/Ladder`) and Clebsch–Gordan for
+- A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/AngularMomentum/Ladder`) and Clebsch–Gordan for
   two and three spins (`QM/Spin/ClebschGordan`) done 2026-11-26.
 - A4+ ✅ Coupling of angular momenta (requested by Miguel 2026-11-26). (i) Orbital angular momentum and spin: `J = L + S` on
   functions `SpinC n → V` satisfies the su(2) relations when `L` does on `V`; `l ⊗ ½ = (l + ½) ⊕ (l − ½)` with explicit
@@ -66,11 +66,11 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   recursion from `J₋`, orthogonality, Racah's closed formula, Wigner 3j symbols and their symmetries; then the recoupling
   of three and four angular momenta (6j and 9j symbols, Biedenharn–Elliott). Optional: a concrete orbital `L = -i r × ∇`
   on homogeneous harmonic polynomials of degree `l` (spin-`l` irreducible representation).
-  Stage 1 done 2026-11-26 (`QM/Spin/SpinRep`, `QM/Spin/Coupling`, `QM/Spin/CGSeries`): the spin-j representation, its
+  Stage 1 done 2026-11-26 (`QM/AngularMomentum/SpinRep`, `QM/AngularMomentum/Coupling`, `QM/AngularMomentum/CGSeries`): the spin-j representation, its
   irreducibility and uniqueness, coupling of commuting angular momenta, the Clebsch–Gordan series and spin–orbit coupling.
-  Stage 2 done 2026-11-26 (`QM/Spin/CGCoeff`): the Clebsch–Gordan coefficients with the Condon–Shortley phase, the
+  Stage 2 done 2026-11-26 (`QM/AngularMomentum/CGCoeff`): the Clebsch–Gordan coefficients with the Condon–Shortley phase, the
   selection rule, both orthogonality relations, the `J₋` recursion and Racah's formula. Stage 3 done 2026-11-26
-  (`QM/Spin/ThreeJ`, `QM/Spin/Recoupling`, `QM/Spin/SixJ`, `QM/Spin/NineJ`, `QM/Spin/BiedenharnElliott`): 3j symbols and
+  (`QM/AngularMomentum/ThreeJ`, `QM/AngularMomentum/Recoupling`, `QM/AngularMomentum/SixJ`, `QM/AngularMomentum/NineJ`, `QM/AngularMomentum/BiedenharnElliott`): 3j symbols and
   their symmetries, recoupling of three and four angular momenta (6j and 9j symbols, 6j symmetries and orthogonality)
   and the Biedenharn–Elliott identity. Orbital `L = -i r × ∇` done 2026-11-26 (`QM/AngularMomentum/Orbital`,
   `ForMathlib/Algebra/MvPolynomial/Harmonic`): the harmonic polynomials of degree `l` are the spin-`l` representation.
@@ -248,3 +248,6 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   angular momenta, and the Biedenharn–Elliott identity from the two ways of expanding one four-spin overlap.
 - 2026-11-26: A4+ done. Orbital angular momentum `L = -i r × ∇` on complex polynomials: commutation relations, invariance of
   the harmonic polynomials `H_l`, `dim H_l = 2l + 1`, `H_l ≅ V_l`, irreducibility and `L² = l(l + 1)`.
+- 2026-11-26: the general su(2) theory (ladder, spin-j representation, coupling, Clebsch–Gordan, 3j/6j/9j,
+  Biedenharn–Elliott) moved from `QM/Spin` to `QM/AngularMomentum`; `QM/Spin` keeps the spin-½ files (`SpinAlg`,
+  `ClebschGordan`, which now holds `isSU2_spin`). Declaration names unchanged.

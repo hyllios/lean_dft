@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import Mathlib.LinearAlgebra.TensorProduct.Map
-import QM.Spin.SpinRep
+import QM.AngularMomentum.SpinRep
 
 /-!
 # Coupling of two angular momenta
