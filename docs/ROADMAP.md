@@ -51,9 +51,11 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
 ### Track A: foundations of QM, finite-dimensional (`QM/Finite`, `QM/Spin`, `QM/ManyBody`)
 - A1 ✅ States, observables, Born rule, expectation values, uncertainty: **from Physlib** (`QM/Basic.lean`). Density matrices and
   partial trace: **from QuantumInfo**. Bridge (`QM/Finite/States`) and qubit sanity theorem (`QM/Finite/Qubit`) done 2026-11-26.
-- A2 ⬜ Time evolution as the matrix exponential, the Heisenberg picture, Ehrenfest-type identities, the adiabatic theorem (finite-dimensional,
-  gapped). Check Physlib's `UnitaryOneParameterGroup` (bounded generators) first.
-- A3 ⬜ Tensor products, Schmidt decomposition (→ natural orbitals, links to N-representability). Check QuantumInfo first.
+- A2 🟡 Time evolution, the Heisenberg picture and Ehrenfest done 2026-11-26 (`QM/Finite/Evolution`, on Physlib's
+  `UnitaryOneParameterGroup`, for bounded self-adjoint H on any complex Hilbert space). Remaining: the adiabatic theorem
+  (finite-dimensional, gapped; Kato's argument), deferred by Miguel as a separate project.
+- A3 ✅ Schmidt decomposition and product states (`QM/Finite/Schmidt`, on QuantumInfo's `Ket` and partial traces) and natural
+  orbitals (`QM/ManyBody/NaturalOrbitals`) done 2026-11-26.
 - A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/Spin/Ladder`) and Clebsch–Gordan for
   two and three spins (`QM/Spin/ClebschGordan`) done 2026-11-26.
 - A4+ ⬜ Coupling of angular momenta (requested by Miguel 2026-11-26). (i) Orbital angular momentum and spin: `J = L + S` on
@@ -212,3 +214,7 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   `QM/ManyBody/Symmetrizer`: 𝒮 and 𝒜 are idempotent, absorb permutations, have the (anti)symmetric functions as ranges,
   annihilate each other for N ≥ 2, are self-adjoint, and 𝒜 of a product is the Slater determinant over N!.
 - 2026-11-26: roadmap item A4+ added (L + S, L₁ + L₂, Clebsch–Gordan coefficients, 6j/9j recoupling).
+- 2026-11-26: A2 (without the adiabatic theorem) and A3 complete. `QM/Finite/Evolution`: unitarity, U(t+s) = U(t)U(s), the
+  Schrödinger equation with uniqueness, the Heisenberg equation A' = i[H, A(t)], Ehrenfest and conservation laws.
+  `QM/Finite/Schmidt`: ψ = Σ √λ_k u_k ⊗ v_k, tr ρ₁ⁿ = tr ρ₂ⁿ, product ⇔ ρ₁ pure ⇔ Schmidt rank one.
+  `QM/ManyBody/NaturalOrbitals`: a mode rotation diagonalizes γ, with occupations in [0, 1] summing to N.

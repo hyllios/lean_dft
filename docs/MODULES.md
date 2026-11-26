@@ -47,7 +47,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-20 modules, 4221 lines.
+23 modules, 4837 lines.
 
 ### `QM/`
 
@@ -59,8 +59,10 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `QM.Finite.Evolution` | 190 | Time evolution, the Heisenberg picture and the Ehrenfest theorem |
 | `QM.Finite.GroundState` | 119 | Ground states on finite-dimensional real Hilbert spaces |
 | `QM.Finite.Qubit` | 172 | A qubit |
+| `QM.Finite.Schmidt` | 307 | The Schmidt decomposition |
 | `QM.Finite.States` | 163 | States and observables: Physlib and QuantumInfo |
 
 ### `QM/Green/`
@@ -77,6 +79,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `QM.ManyBody.Configurations` | 30 | Spinless lattice fermions: configurations and occupations |
 | `QM.ManyBody.Fock` | 341 | The fermionic Fock space of `M` modes |
 | `QM.ManyBody.ModeRotation` | 505 | Mode rotations |
+| `QM.ManyBody.NaturalOrbitals` | 119 | Natural orbitals |
 | `QM.ManyBody.Number` | 109 | The number operator |
 | `QM.ManyBody.OneBody` | 125 | Second-quantized one-body operators |
 | `QM.ManyBody.ParticleHole` | 223 | The particle–hole transformation |
@@ -467,4 +470,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 63792 lines of Lean.
+Total: 64408 lines of Lean.

@@ -147,6 +147,82 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
 \end{proof}
 
 \begin{theorem}[Schrödinger evolution in finite dimensions]\label{thm:evolution}
+  \lean{QM.evolution, QM.evolution_eq_exp, QM.evolution_mem_unitary, QM.evolution_add,
+    QM.hasDerivAt_evolution_apply, QM.eq_evolution_of_hasDerivAt}\leanok
   For self-adjoint $H$ on a finite-dimensional space, $U(t)=e^{-itH}$ is unitary, $U(t+s)=U(t)U(s)$, and
   $\psi(t)=U(t)\psi_0$ is the unique solution of $i\dot\psi = H\psi$, $\psi(0)=\psi_0$.
 \end{theorem}
+\begin{proof}\leanok
+  Physlib constructs $U(t)=e^{-itH}$ as a unitary one-parameter group with generator $H$ and derivative
+  $U'(t)=-iU(t)H$ (\texttt{UnitaryOneParameterGroup.ofSelfAdjoint}). Since $H$ commutes with $U(t)$, $\psi(t)=U(t)\psi_0$
+  solves $i\dot\psi=H\psi$. For uniqueness, if $\varphi$ is a solution then $U(-t)\varphi(t)$ has derivative zero, so it is
+  constant and equal to $\varphi(0)$. The statement holds for bounded self-adjoint $H$ on any complex Hilbert space.
+\end{proof}
+
+% A2 and A3 statements written and approved by Miguel 2026-11-26 (adiabatic theorem deferred).
+\begin{theorem}[Heisenberg picture]\label{thm:heisenberg}
+  \lean{QM.heisenberg, QM.inner_evolution_heisenberg, QM.heisenberg_commutator,
+    QM.hasDerivAt_heisenberg}\leanok
+  \uses{thm:evolution}
+  For a bounded self-adjoint $H$ and a bounded operator $A$, the Heisenberg operator $A(t)=U(t)^\dagger AU(t)$ satisfies
+  $\tfrac{d}{dt}A(t)=i[H,A(t)]$, and $\langle\psi(t),A\psi(t)\rangle=\langle\psi_0,A(t)\psi_0\rangle$ for $\psi(t)=U(t)\psi_0$.
+\end{theorem}
+\begin{proof}\leanok
+  By the product rule $A'(t)=U^\dagger(iH)AU+U^\dagger A(-iUH)$, and $H$ commutes with $U(t)$ and $U(t)^\dagger=U(-t)$.
+  The expectation values agree because $U(t)^\dagger$ is the adjoint of $U(t)$.
+\end{proof}
+
+\begin{theorem}[Ehrenfest theorem and conservation laws]\label{thm:ehrenfest}
+  \lean{QM.hasDerivAt_expectation, QM.expectation_const, QM.norm_evolution_apply,
+    QM.energy_const}\leanok
+  \uses{thm:heisenberg}
+  Along $\psi(t)=U(t)\psi_0$, $\tfrac{d}{dt}\langle\psi(t),A\psi(t)\rangle=\langle\psi(t),i[H,A]\psi(t)\rangle$. If $[H,A]=0$ the
+  expectation value of $A$ is constant. In particular the norm and the energy $\langle\psi(t),H\psi(t)\rangle$ are conserved.
+\end{theorem}
+\begin{proof}\leanok
+  Differentiate $\langle\psi_0,A(t)\psi_0\rangle$ with the Heisenberg equation and use $U^\dagger[H,A]U=[H,A(t)]$. If the
+  derivative vanishes everywhere the function is constant. The norm is conserved because $U(t)$ is unitary.
+\end{proof}
+
+\begin{theorem}[Schmidt decomposition]\label{thm:schmidt}
+  \lean{QM.coefMat, QM.traceRight_pure_m, QM.traceLeft_pure_m, QM.schmidtPartner, QM.schmidt,
+    QM.trace_pow_traceRight_eq}\leanok
+  Let $\psi\in\mathbb C^{d_1}\otimes\mathbb C^{d_2}$ be a unit vector (QuantumInfo's \texttt{Ket}). There are an orthonormal basis
+  $u_k$ of $\mathbb C^{d_1}$, vectors $v_k\in\mathbb C^{d_2}$ and weights $\lambda_k\ge0$ with $\sum_k\lambda_k=1$, such that
+  $\psi=\sum_k\sqrt{\lambda_k}\,u_k\otimes v_k$, the $v_k$ with $\lambda_k>0$ are orthonormal and the others vanish. The $\lambda_k$ are
+  the eigenvalues of the reduced density matrix $\rho_1=\operatorname{tr}_2|\psi\rangle\langle\psi|$. The two reduced density
+  matrices have the same nonzero spectrum: $\operatorname{tr}\rho_1^n=\operatorname{tr}\rho_2^n$ for every $n\ge1$.
+\end{theorem}
+\begin{proof}\leanok
+  With the coefficient matrix $M_{ab}=\psi(a,b)$, $\rho_1=MM^\dagger$ and $\rho_2=(M^\dagger M)^T$. Let $u_k$ be an orthonormal
+  eigenbasis of $\rho_1$ with eigenvalues $\lambda_k$, and $c_k=\overline{M^\dagger u_k}$. Then
+  $\langle c_k,c_l\rangle=\overline{\langle u_k,MM^\dagger u_l\rangle}=\lambda_k\delta_{kl}$, and completeness of the $u_k$ gives
+  $\psi(a,b)=\sum_ku_k(a)c_k(b)$. Put $v_k=c_k/\sqrt{\lambda_k}$, which is $0$ when $\lambda_k=0$. Finally
+  $(M^\dagger M)^{n+1}=M^\dagger(MM^\dagger)^nM$, and the trace is cyclic and invariant under transposition.
+\end{proof}
+
+\begin{corollary}[Product states]\label{cor:product-state}
+  \lean{QM.isProd_iff_traceRight_pure, QM.traceRight_pure_iff_rank_one}\leanok
+  \uses{thm:schmidt}
+  A unit vector $\psi\in\mathbb C^{d_1}\otimes\mathbb C^{d_2}$ is a product $\xi\otimes\varphi$ if and only if its reduced density
+  matrix $\rho_1$ is pure, if and only if exactly one Schmidt weight is nonzero.
+\end{corollary}
+\begin{proof}\leanok
+  For a product, $\rho_1=|\xi\rangle\langle\xi|\,\|\varphi\|^2$. Conversely, if $MM^\dagger=P=|\xi\rangle\langle\xi|$ then
+  $((1-P)M)((1-P)M)^\dagger=(1-P)P(1-P)=0$, so $M=PM$ and $\psi(a,b)=\xi_a\varphi_b$. A density matrix is pure exactly when
+  its spectrum is $(1,0,\dots,0)$ (QuantumInfo).
+\end{proof}
+
+\begin{theorem}[Natural orbitals]\label{thm:natural-orbitals}
+  \lean{QM.ManyBody.transpose_mem_unitaryGroup, QM.ManyBody.exists_diag_conj,
+    QM.ManyBody.natural_orbitals, QM.ManyBody.rdm1Ens_modeRotOp, QM.ManyBody.natural_orbitals_ens}\leanok
+  \uses{thm:rdm1-necessary, def:mode-rotation}
+  For every $N$-particle state $\Psi$ on $\mathcal F_M$ there is a unitary $u$ such that the one-body matrix of
+  $U(u)\Psi$ is diagonal, $\gamma(U(u)\Psi)=\operatorname{diag}(n_1,\dots,n_M)$. The natural occupation numbers satisfy
+  $0\le n_k\le1$ and $\sum_kn_k=N$. The same holds for $N$-particle ensembles.
+\end{theorem}
+\begin{proof}\leanok
+  Diagonalize $\gamma=W\operatorname{diag}(n)W^\dagger$ and take $u=W^T$, so that $\gamma(U(u)\Psi)=\bar u\gamma u^T=W^\dagger\gamma W
+  =\operatorname{diag}(n)$. The rotated state is again an $N$-particle state, and the necessary conditions $0\le\gamma\le1$,
+  $\operatorname{tr}\gamma=N$ for it give the bounds on the diagonal.
+\end{proof}

@@ -1,12 +1,15 @@
 import QM.Basic
+import QM.Finite.Evolution
 import QM.Finite.GroundState
 import QM.Finite.Qubit
+import QM.Finite.Schmidt
 import QM.Finite.States
 import QM.Green.Lehmann
 import QM.Green.Spectral
 import QM.ManyBody.Configurations
 import QM.ManyBody.Fock
 import QM.ManyBody.ModeRotation
+import QM.ManyBody.NaturalOrbitals
 import QM.ManyBody.Number
 import QM.ManyBody.OneBody
 import QM.ManyBody.ParticleHole
