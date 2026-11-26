@@ -28,3 +28,4 @@ import QM.Spin.Coupling
 import QM.Spin.Ladder
 import QM.Spin.SpinAlg
 import QM.Spin.SpinRep
+import QM.Spin.ThreeJ

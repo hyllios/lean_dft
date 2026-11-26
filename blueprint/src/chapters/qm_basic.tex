@@ -207,18 +207,30 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
 \end{proof}
 % A4+ stage 3 statements written and approved by Miguel 2026-11-26.
 \begin{definition}[Wigner $3j$ symbols]\label{def:3j}
+  \lean{QM.Triad, QM.threeJ}\leanok
   \uses{def:cg-coeff}
   $\begin{pmatrix}j_1&j_2&j_3\\m_1&m_2&m_3\end{pmatrix}=\frac{(-1)^{j_1-j_2-m_3}}{\sqrt{2j_3+1}}\,
   \langle j_1m_1;j_2m_2|j_3,-m_3\rangle$, and $0$ when the triangle condition fails or $m_1+m_2+m_3\neq0$.
 \end{definition}
 
 \begin{theorem}[Symmetries of the $3j$ symbols]\label{thm:3j-symmetry}
+  \lean{QM.threeJ_eq_zero, QM.threeJ_closed, QM.threeJ_cyclic, QM.threeJ_swap12, QM.threeJ_swap23,
+    QM.threeJ_swap13, QM.threeJ_reverse, QM.threeJ_orthogonal}\leanok
   \uses{def:3j, thm:cg-coeff}
   The $3j$ symbol is invariant under cyclic permutations of its columns. An odd permutation of the columns, and the
   reversal $m_i\mapsto-m_i$ of all three projections, each multiply it by $(-1)^{j_1+j_2+j_3}$. It satisfies
   $\sum_{m_1m_2}(2j_3+1)\begin{pmatrix}j_1&j_2&j_3\\m_1&m_2&m_3\end{pmatrix}
   \begin{pmatrix}j_1&j_2&j_3'\\m_1&m_2&m_3'\end{pmatrix}=\delta_{j_3j_3'}\delta_{m_3m_3'}$.
 \end{theorem}
+\begin{proof}\leanok
+  Racah's formula writes the $3j$ symbol as $(-1)^{j_1-j_2-m_3}$ times the symmetric prefactor
+  $\Delta(j_1j_2j_3)\sqrt{\prod_i(j_i-m_i)!(j_i+m_i)!}$ times the sum
+  $\sum_z(-1)^z/[z!(j_1+j_2-j_3-z)!(j_1-m_1-z)!(j_2+m_2-z)!(j_3-j_2+m_1+z)!(j_3-j_1-m_2+z)!]$ over all integers. A cyclic
+  permutation of the columns permutes the six factorials after the shift $z\mapsto z+j_3-j_1-m_2$. The reversal
+  $m_i\mapsto-m_i$ does so after $z\mapsto j_1+j_2-j_3-z$. The transposition of the first two columns combined with the
+  reversal permutes them with $z$ fixed. The signs agree because $j_1+j_2+j_3$ is an integer. The orthogonality is the
+  first orthogonality relation of the Clebsch--Gordan coefficients.
+\end{proof}
 
 \begin{definition}[Wigner $6j$ symbols]\label{def:6j}
   \uses{def:3j}

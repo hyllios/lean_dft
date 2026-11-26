@@ -53,7 +53,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-30 modules, 7572 lines.
+31 modules, 7936 lines.
 
 ### `QM/`
 
@@ -109,6 +109,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `QM.Spin.Ladder` | 228 | The ladder theorem for su(2) |
 | `QM.Spin.SpinAlg` | 399 | The spin algebra of `N` spin-½ particles |
 | `QM.Spin.SpinRep` | 356 | The spin-`j` representation |
+| `QM.Spin.ThreeJ` | 364 | Wigner 3j symbols |
 
 ## `DFT`: density-functional theory
 
@@ -483,4 +484,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 67342 lines of Lean.
+Total: 67706 lines of Lean.
