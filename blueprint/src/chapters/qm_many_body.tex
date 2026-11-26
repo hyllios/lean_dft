@@ -153,18 +153,26 @@
 \end{proof}
 
 \begin{theorem}[Basic properties of the two-body matrix]\label{thm:rdm2-basic}
+  \lean{QM.ManyBody.num_mul_ann, QM.ManyBody.numTot_mul_ann, QM.ManyBody.numTotOp_annOp_of,
+    QM.ManyBody.rdm2_swap_left, QM.ManyBody.rdm2_swap_right, QM.ManyBody.rdm2_isHermitian,
+    QM.ManyBody.sum_rdm2_contract, QM.ManyBody.sum_rdm2_trace, QM.ManyBody.rdm2Ens_isHermitian,
+    QM.ManyBody.rdm2Ens_swap, QM.ManyBody.sum_rdm2Ens_contract, QM.ManyBody.sum_rdm2Ens_trace}\leanok
   \uses{def:rdm12, thm:car, thm:number}
   For every $N$-particle state or ensemble,
   $D_{ji,kl}=-D_{ij,kl}=D_{ij,lk}$ and $D_{kl,ij}=\overline{D_{ij,kl}}$. The contraction is
   $\sum_kD_{ik,jk}=(N-1)\,\gamma_{ij}$ and the trace is $\sum_{ij}D_{ij,ij}=N(N-1)$.
 \end{theorem}
-\begin{proof}
+\begin{proof}\leanok
   Antisymmetry follows from $\{c_i^\dagger,c_j^\dagger\}=0$ and $\{c_k,c_l\}=0$, Hermiticity from taking adjoints. For the
   contraction, $\sum_kc_k^\dagger c_kc_j=\hat Nc_j=c_j(\hat N-1)$, and $c_j$ lowers the particle number by one. The trace
   follows by contracting once more.
 \end{proof}
 
 \begin{theorem}[The P, Q and G conditions]\label{thm:pqg}
+  \lean{QM.ManyBody.quad_rdm2, QM.ManyBody.rdm2_posSemidef, QM.ManyBody.qMat, QM.ManyBody.qMat_eq_inner,
+    QM.ManyBody.quad_qMat, QM.ManyBody.qMat_posSemidef, QM.ManyBody.gMat, QM.ManyBody.gMat_eq_inner,
+    QM.ManyBody.quad_gMat, QM.ManyBody.gMat_posSemidef, QM.ManyBody.rdm2Ens_posSemidef,
+    QM.ManyBody.qMatEns_posSemidef, QM.ManyBody.gMatEns_posSemidef}\leanok
   \uses{thm:rdm2-basic}
   For every $N$-particle state or ensemble, the three Hermitian matrices indexed by pairs of modes
   \begin{align*}
@@ -175,7 +183,7 @@
   \end{align*}
   are positive semidefinite.
 \end{theorem}
-\begin{proof}
+\begin{proof}\leanok
   $P$, $Q$ and $G$ are the expectation values $\langle c_i^\dagger c_j^\dagger c_lc_k\rangle$, $\langle c_ic_jc_l^\dagger c_k^\dagger\rangle$
   and $\langle c_i^\dagger c_jc_l^\dagger c_k\rangle$. Their quadratic forms are $\|A\Psi\|^2$ with $A=\sum x_{kl}c_lc_k$,
   $\sum x_{kl}c_l^\dagger c_k^\dagger$ and $\sum x_{kl}c_l^\dagger c_k$ respectively. Normal ordering with the anticommutation

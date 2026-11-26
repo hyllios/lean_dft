@@ -70,7 +70,8 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   space); use it later for Wick's theorem (B3) via its universality property, if our operators satisfy its hypotheses.
 - B2 🟡 One- and two-body RDMs; Coleman's N-representability for the 1-RDM. One-body operators done (`QM/ManyBody/OneBody`).
   **Statements approved 2026-11-26** (blueprint Part III). **Proved:** the 1-RDM necessary conditions (`QM/ManyBody/RDM`) and
-  the N-representability of the density (`DFT/Lattice/RDMFT/DensityRep`). Statements: γ_ij = ⟨c_i† c_j⟩ (Miguel's choice, as in the
+  the N-representability of the density (`DFT/Lattice/RDMFT/DensityRep`); the 2-RDM with antisymmetry, contraction, trace and
+  the P, Q, G conditions (`QM/ManyBody/RDM2`). Remaining: mode rotations and Coleman. Statements: γ_ij = ⟨c_i† c_j⟩ (Miguel's choice, as in the
   lattice code), necessary conditions 0 ≤ γ ≤ 1 and tr γ = N, N-representability of the density (pure and ensemble),
   the 2-RDM with antisymmetry, contraction and trace, the P, Q, G conditions, mode rotations U(u), Coleman's theorem
   (kept in B2). Order: 1-RDM conditions, density, 2-RDM, mode rotations, Coleman. `DFT/Lattice/RDMFT` has pieces to reuse.
@@ -173,3 +174,5 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
   rotations, Coleman.
 - 2026-11-26: B2 statements approved. 1-RDM conditions γ = γ†, 0 ≤ γ ≤ 1, tr γ = N (states and ensembles) and
   N-representability of the density (pure and ensemble, nonnegative coefficients) proved. Next: 2-RDM, then mode rotations and Coleman.
+- 2026-11-26: 2-RDM proved (`QM/ManyBody/RDM2`): antisymmetry, Hermiticity, Σ_k D_ik,jk = (N-1)γ_ij, trace N(N-1), and the
+  P, Q, G conditions with Q and G as explicit affine functions of D and γ, for states and ensembles.
