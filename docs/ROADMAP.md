@@ -51,9 +51,10 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
 ### Track A: foundations of QM, finite-dimensional (`QM/Finite`, `QM/Spin`, `QM/ManyBody`)
 - A1 ✅ States, observables, Born rule, expectation values, uncertainty: **from Physlib** (`QM/Basic.lean`). Density matrices and
   partial trace: **from QuantumInfo**. Bridge (`QM/Finite/States`) and qubit sanity theorem (`QM/Finite/Qubit`) done 2026-11-26.
-- A2 🟡 Time evolution, the Heisenberg picture and Ehrenfest done 2026-11-26 (`QM/Finite/Evolution`, on Physlib's
-  `UnitaryOneParameterGroup`, for bounded self-adjoint H on any complex Hilbert space). Remaining: the adiabatic theorem
-  (finite-dimensional, gapped; Kato's argument), deferred by Miguel as a separate project.
+- A2 ✅ Time evolution, the Heisenberg picture and Ehrenfest (`QM/Finite/Evolution`, on Physlib's
+  `UnitaryOneParameterGroup`). The time-dependent propagator (`QM/Finite/Propagator`, with global linear ODE existence in
+  `ForMathlib/Analysis/ODE/Linear`), the adiabatic theorem (`QM/Finite/Adiabatic`) and smooth Riesz eigenprojections
+  (`QM/Finite/Riesz`) done 2026-11-26.
 - A3 ✅ Schmidt decomposition and product states (`QM/Finite/Schmidt`, on QuantumInfo's `Ket` and partial traces) and natural
   orbitals (`QM/ManyBody/NaturalOrbitals`) done 2026-11-26.
 - A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/Spin/Ladder`) and Clebsch–Gordan for
@@ -218,3 +219,7 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   Schrödinger equation with uniqueness, the Heisenberg equation A' = i[H, A(t)], Ehrenfest and conservation laws.
   `QM/Finite/Schmidt`: ψ = Σ √λ_k u_k ⊗ v_k, tr ρ₁ⁿ = tr ρ₂ⁿ, product ⇔ ρ₁ pure ⇔ Schmidt rank one.
   `QM/ManyBody/NaturalOrbitals`: a mode rotation diagonalizes γ, with occupations in [0, 1] summing to N.
+- 2026-11-26: A2 complete with the adiabatic theorem. Global existence for linear ODEs in Banach algebras (gluing local
+  Picard–Lindelöf solutions), the unitary propagator of iεU' = H(s)U, and Kato's estimate ‖(1 − P(1))U_ε(1)P(0)‖ ≤ Cε via
+  X = R P'P − P P'R with [H, X] = P'. The eigenprojection of a gapped eigenvalue is the Riesz projection and is C² when H is,
+  so the final theorem (`adiabatic_of_gap`) assumes only H ∈ C², E ∈ C¹ and the gap.

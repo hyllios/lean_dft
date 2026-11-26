@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-8 modules, 1775 lines.
+9 modules, 1974 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -33,6 +33,12 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `ForMathlib.Analysis.InnerProductSpace.CompactEigenbasis` | 148 | An eigenbasis for a compact symmetric injective operator |
 
+### `ForMathlib/Analysis/ODE/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `ForMathlib.Analysis.ODE.Linear` | 199 | Linear ODEs in a Banach algebra have global solutions |
+
 ### `ForMathlib/Analysis/Sobolev/`
 
 | Module | Lines | Content |
@@ -47,7 +53,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-23 modules, 4837 lines.
+26 modules, 5623 lines.
 
 ### `QM/`
 
@@ -59,9 +65,12 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `QM.Finite.Adiabatic` | 337 | The adiabatic theorem |
 | `QM.Finite.Evolution` | 190 | Time evolution, the Heisenberg picture and the Ehrenfest theorem |
 | `QM.Finite.GroundState` | 119 | Ground states on finite-dimensional real Hilbert spaces |
+| `QM.Finite.Propagator` | 84 | The time-dependent Schrödinger equation |
 | `QM.Finite.Qubit` | 172 | A qubit |
+| `QM.Finite.Riesz` | 365 | Smooth eigenprojections |
 | `QM.Finite.Schmidt` | 307 | The Schmidt decomposition |
 | `QM.Finite.States` | 163 | States and observables: Physlib and QuantumInfo |
 
@@ -470,4 +479,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 64408 lines of Lean.
+Total: 65393 lines of Lean.

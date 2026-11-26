@@ -184,6 +184,71 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
   derivative vanishes everywhere the function is constant. The norm is conserved because $U(t)$ is unitary.
 \end{proof}
 
+% Adiabatic theorem statements written and approved by Miguel 2026-11-26. At Miguel's request the smoothness of the
+% eigenprojection is derived from H (thm:riesz) instead of assumed.
+\begin{theorem}[Time-dependent Schrödinger equation]\label{thm:propagator}
+  \lean{ForMathlib.hasDerivWithinAt_glue, ForMathlib.exists_linear_ode, ForMathlib.linear_ode_unique,
+    QM.IsPropagator, QM.exists_propagator, QM.propagator_unique, QM.propagator_mem_unitary}\leanok
+  \uses{thm:evolution}
+    Let $H(s)$ be a continuous family of self-adjoint operators on a finite-dimensional complex Hilbert space and
+  $\varepsilon>0$. There is a unique $U_\varepsilon\colon[0,1]\to B(\mathcal H)$ with $i\varepsilon\,U_\varepsilon'(s)=H(s)U_\varepsilon(s)$ and
+  $U_\varepsilon(0)=1$, and every $U_\varepsilon(s)$ is unitary.
+\end{theorem}
+\begin{proof}\leanok
+  Mathlib's Picard--Lindel\"of theorem gives solutions of $U'=A(s)U$, $U(s_0)=1$ on intervals of a length $\delta$ that only
+  depends on a bound for $\|A\|$. Gluing $U(s)=V(s)U(s_0)$ on finitely many such intervals gives a solution on $[0,1]$, and
+  uniqueness follows from Gr\"onwall. With $A=-\tfrac i\varepsilon H$ and $H$ self-adjoint, $(U^\dagger U)'=U^\dagger(A^\dagger+A)U=0$,
+  so $U^\dagger U=1$, and in finite dimension also $UU^\dagger=1$.
+\end{proof}
+
+\begin{theorem}[Adiabatic theorem]\label{thm:adiabatic}
+  \lean{QM.commutator_eq, QM.deriv_algebra, QM.adiabatic_estimate, QM.adiabatic_leakage,
+    QM.isUnit_of_injective, QM.injective_shift, QM.adiabatic}\leanok
+  \uses{thm:propagator}
+    Let $H(s)$ be a $C^1$ family of self-adjoint operators on a finite-dimensional complex Hilbert space, $E(s)$ a real
+  $C^1$ function and $P(s)$ a $C^2$ family of orthogonal projections with $H(s)P(s)=E(s)P(s)$. Assume a gap $g>0$:
+  $\|(H(s)-E(s))v\|\ge g\|v\|$ whenever $P(s)v=0$, for $s\in[0,1]$. Then there is a constant $C$ such that for every
+  $\varepsilon>0$ the propagator of $i\varepsilon\psi'=H(s)\psi$ satisfies $\|(1-P(1))\,U_\varepsilon(1)\,P(0)\|\le C\varepsilon$. In
+  particular a state that starts in the eigenspace of $E(0)$ ends in the eigenspace of $E(1)$ up to $O(\varepsilon)$.
+\end{theorem}
+\begin{proof}\leanok
+  Since $HP=PH=EP$, the operator $K=(H-E+P)^{-1}$ exists on $[0,1]$ by the gap, commutes with $P$, and $R=K(1-P)$ satisfies
+  $HR=RH=(1-P)+ER$. Differentiating $P^2=P$ gives $P'P+PP'=P'$ and $PP'P=0$, and then $X=RP'P-PP'R$ solves
+  $[H,X]=P'$. Along the propagator, $G=U^\dagger PU+i\varepsilon\,U^\dagger XU$ has derivative $i\varepsilon\,U^\dagger X'U$, so by the
+  mean value inequality $\|U(1)^\dagger P(1)U(1)-P(0)\|\le\varepsilon(\sup\|X'\|+\|X(0)\|+\|X(1)\|)$. Finally
+  $(1-P(1))U(1)P(0)=U(1)\bigl(P(0)-U(1)^\dagger P(1)U(1)\bigr)P(0)$. The inverse is smooth on the open set of invertible
+  operators, so $X$ is $C^1$ near $[0,1]$ and $\sup\|X'\|$ is finite by compactness.
+\end{proof}
+
+\begin{theorem}[Smooth eigenprojections]\label{thm:riesz}
+  \lean{QM.ketbra, QM.ring_inverse_sub_eq_sum, QM.starProjection_ker_eq_sum, QM.integral_sub_inv_eq,
+    QM.circleIntegral_resolvent, QM.riesz_formula, QM.eigenprojection_gap, QM.eigenproj,
+    QM.contDiff_eigenproj, QM.mul_eigenproj}\leanok
+  Let $H(s)$ be a $C^2$ family of self-adjoint operators on a finite-dimensional complex Hilbert space and $E(s)$ a
+  continuous real function with a gap $g>0$: every eigenvalue $\lambda$ of $H(s)$ satisfies $\lambda=E(s)$ or
+  $|\lambda-E(s)|\ge g$. Then the orthogonal projection $P(s)$ onto $\ker(H(s)-E(s))$ is the Riesz projection
+  $\frac1{2\pi i}\oint_{|z-E(s_0)|=g/2}(z-H(s))^{-1}\,dz$ for $s$ near $s_0$, it is a $C^2$ function of $s$, and it satisfies
+  $H(s)P(s)=E(s)P(s)$ and the gap condition of Theorem~\ref{thm:adiabatic}.
+\end{theorem}
+\begin{proof}\leanok
+  In an orthonormal eigenbasis, $(z-H)^{-1}=\sum_k(z-\lambda_k)^{-1}|e_k\rangle\langle e_k|$ and the eigenprojection is
+  $\sum_{\lambda_k=E}|e_k\rangle\langle e_k|$. Since $\oint(z-\lambda)^{-1}dz$ is $2\pi i$ inside the circle and $0$ outside (Cauchy),
+  the Riesz formula follows. For $|E(s)-E(s_0)|<g/4$ the circle $|z-E(s_0)|=g/2$ encloses $E(s)$ and no other eigenvalue
+  of $H(s)$, so near $s_0$ the projection is a parametric integral of the $C^2$ function $(s,\theta)\mapsto
+  (z(\theta)-H(s))^{-1}z'(\theta)$, hence $C^2$. The gap estimate is Parseval in the eigenbasis.
+\end{proof}
+
+\begin{corollary}[Adiabatic theorem for a gapped eigenvalue]\label{cor:adiabatic}
+  \lean{QM.adiabatic_of_gap}\leanok
+  \uses{thm:adiabatic, thm:riesz}
+  If $H(s)$ is a $C^2$ family of self-adjoint operators and $E(s)$ a $C^1$ eigenvalue separated from the rest of the
+  spectrum by a gap $g>0$, then with $P(s)$ the eigenprojection there is $C$ with
+  $\|(1-P(1))\,U_\varepsilon(1)\,P(0)\|\le C\varepsilon$ for every $\varepsilon>0$.
+\end{corollary}
+\begin{proof}\leanok
+  Theorem~\ref{thm:riesz} gives the hypotheses of Theorem~\ref{thm:adiabatic}.
+\end{proof}
+
 \begin{theorem}[Schmidt decomposition]\label{thm:schmidt}
   \lean{QM.coefMat, QM.traceRight_pure_m, QM.traceLeft_pure_m, QM.schmidtPartner, QM.schmidt,
     QM.trace_pow_traceRight_eq}\leanok
