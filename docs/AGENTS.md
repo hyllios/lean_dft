@@ -70,6 +70,8 @@ Status of the gates (update when a report-only gate becomes enforcing):
 Mathlib comes from Physlib. To bump: change the Physlib tag in `lakefile.toml` (and `lean-toolchain` to Physlib's), run
 `lake update Physlib`, then rebuild and run all checks. Never bump Mathlib on its own (the old Mathlib auto-update workflow
 was removed for this reason).
+After a bump, create the release tag by hand (`gh release create v4.X.Y --target main`). The automatic release workflow
+was removed because the Actions token may not push tags whose history changes workflow files.
 
 ## 7. Commits
 
