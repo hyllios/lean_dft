@@ -68,8 +68,12 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   connects all of the existing lattice DFT. The lattice code (`DFT/Lattice/Fermions/SecondQuantization`) works only at fixed N with
   real matrices, so it cannot host `c_i` itself. Physlib's Wick algebra is abstract and QFT-oriented (no finite-mode Hilbert
   space); use it later for Wick's theorem (B3) via its universality property, if our operators satisfy its hypotheses.
-- B2 ⬜ One-body operators in second quantization; one- and two-body RDMs; Coleman's N-representability for the 1-RDM.
-  `DFT/Lattice/RDMFT` has pieces to reuse.
+- B2 🟡 One- and two-body RDMs; Coleman's N-representability for the 1-RDM. One-body operators done (`QM/ManyBody/OneBody`).
+  **Statements approved 2026-11-26** (blueprint Part III). **Proved:** the 1-RDM necessary conditions (`QM/ManyBody/RDM`) and
+  the N-representability of the density (`DFT/Lattice/RDMFT/DensityRep`). Statements: γ_ij = ⟨c_i† c_j⟩ (Miguel's choice, as in the
+  lattice code), necessary conditions 0 ≤ γ ≤ 1 and tr γ = N, N-representability of the density (pure and ensemble),
+  the 2-RDM with antisymmetry, contraction and trace, the P, Q, G conditions, mode rotations U(u), Coleman's theorem
+  (kept in B2). Order: 1-RDM conditions, density, 2-RDM, mode rotations, Coleman. `DFT/Lattice/RDMFT` has pieces to reuse.
 - B3 ⬜ Quasi-free states, **Wick's theorem** for finitely many modes, Hartree–Fock as the minimum over quasi-free states (Lieb's
   variational principle).
 - B4 ⬜ Gibbs states, the KMS condition, the Gibbs variational principle, Peierls–Bogoliubov.
@@ -165,3 +169,7 @@ Statements for C1–C3 are drafted in the blueprint (Part III), **pending approv
 - 2026-11-26: particle–hole transformation proved (`QM/ManyBody/ParticleHole`): P|s⟩ = |sᶜ⟩ is a self-adjoint unitary
   involution, P c_i† P = (-1)^i c_i, P n̂_i P = 1 - n̂_i, P N̂ P = M - N̂, and one-body operators go to tr h minus the
   staggered transpose. B1 complete.
+- 2026-11-26: B2 statements written (pending approval): 1-RDM and density N-representability, 2-RDM with P, Q, G, mode
+  rotations, Coleman.
+- 2026-11-26: B2 statements approved. 1-RDM conditions γ = γ†, 0 ≤ γ ≤ 1, tr γ = N (states and ensembles) and
+  N-representability of the density (pure and ensemble, nonnegative coefficients) proved. Next: 2-RDM, then mode rotations and Coleman.

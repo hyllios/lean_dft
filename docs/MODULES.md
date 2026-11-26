@@ -41,7 +41,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-9 modules, 1419 lines.
+10 modules, 1612 lines.
 
 ### `QM/`
 
@@ -64,6 +64,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `QM.ManyBody.Number` | 109 | The number operator |
 | `QM.ManyBody.OneBody` | 125 | Second-quantized one-body operators |
 | `QM.ManyBody.ParticleHole` | 223 | The particle–hole transformation |
+| `QM.ManyBody.RDM` | 193 | Reduced density matrices on the Fock space |
 | `QM.ManyBody.Slater` | 84 | Slater determinants in first quantisation |
 
 ### `QM/Spin/`
@@ -74,7 +75,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-211 modules, 57394 lines.
+212 modules, 57525 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -394,6 +395,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `DFT.Lattice.RDMFT.Basic` | 128 | Density-matrix functional theory on a lattice |
 | `DFT.Lattice.RDMFT.Counting` | 150 | Universal failure of the RDMFT Hohenberg–Kohn theorem by dimension counting |
+| `DFT.Lattice.RDMFT.DensityRep` | 131 | N-representability of the density |
 | `DFT.Lattice.RDMFT.FockRDM` | 77 | The lattice one-body reduced density matrix is `⟨Ψ, c_i† c_j Ψ⟩` |
 | `DFT.Lattice.RDMFT.Generic` | 121 | Interacting ground states are generically not Slater determinants (conditional) |
 | `DFT.Lattice.RDMFT.KohnSham` | 470 | No Kohn–Sham scheme for RDMFT |
@@ -442,4 +444,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 60481 lines of Lean.
+Total: 60805 lines of Lean.

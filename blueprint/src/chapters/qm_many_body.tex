@@ -106,6 +106,101 @@
   where Theorem~\ref{thm:fock-bridge} identifies the matrix elements of $c_i^\dagger c_j$ with those of $\Gamma(E_{ij})$.
 \end{proof}
 
+% B2 statements written and approved by Miguel 2026-11-26. Convention chosen by Miguel:
+% gamma_ij = <c_i^dag c_j>, as in the lattice code (Corollary cor:fock-rdm). Coleman's theorem belongs to B2.
+
+\begin{definition}[Reduced density matrices]\label{def:rdm12}
+  \lean{QM.ManyBody.rdm1, QM.ManyBody.rdm2, QM.ManyBody.IsNState, QM.ManyBody.IsNEnsemble,
+    QM.ManyBody.rdm1Ens, QM.ManyBody.rdm2Ens}\leanok
+  \uses{def:cdag}
+  For $\Psi\in\mathcal F_M$ the one-body reduced density matrix is $\gamma_{ij}(\Psi)=\langle\Psi,c_i^\dagger c_j\Psi\rangle$ and the
+  two-body reduced density matrix is $D_{ij,kl}(\Psi)=\langle\Psi,c_i^\dagger c_j^\dagger c_l c_k\Psi\rangle$. The density is
+  $\rho_i(\Psi)=\gamma_{ii}(\Psi)$. An $N$-particle state is a unit vector with $\hat N\Psi=N\Psi$. An $N$-particle ensemble is a
+  finite family of $N$-particle states $\Psi_k$ with weights $w_k\ge0$, $\sum_kw_k=1$. Its reduced density matrices are the
+  weighted sums $\sum_kw_k\gamma(\Psi_k)$ and $\sum_kw_kD(\Psi_k)$.
+\end{definition}
+
+\begin{theorem}[Necessary conditions on the one-body matrix]\label{thm:rdm1-necessary}
+  \lean{QM.ManyBody.quad_rdm1, QM.ManyBody.quad_one_sub_rdm1, QM.ManyBody.rdm1_isHermitian,
+    QM.ManyBody.rdm1_posSemidef, QM.ManyBody.one_sub_rdm1_posSemidef, QM.ManyBody.trace_rdm1,
+    QM.ManyBody.rdm1Ens_isHermitian, QM.ManyBody.rdm1Ens_posSemidef, QM.ManyBody.one_sub_rdm1Ens_posSemidef,
+    QM.ManyBody.trace_rdm1Ens}\leanok
+  \uses{def:rdm12, thm:car, thm:number}
+  For every $N$-particle state or ensemble, $\gamma$ is Hermitian, $0\le\gamma\le1$ as a matrix (both $\gamma$ and $1-\gamma$ are
+  positive semidefinite) and $\operatorname{tr}\gamma=N$.
+\end{theorem}
+\begin{proof}\leanok
+  With $c(x)=\sum_jx_jc_j$ one has $\sum_{ij}\overline{x_i}x_j\gamma_{ij}=\|c(x)\Psi\|^2\ge0$. By the anticommutation relations
+  $c(x)c(x)^\dagger+c(x)^\dagger c(x)=\|x\|^2$, so $\|x\|^2-\sum_{ij}\overline{x_i}x_j\gamma_{ij}=\|c(x)^\dagger\Psi\|^2\ge0$. The trace
+  is $\langle\Psi,\hat N\Psi\rangle=N$. All three properties are preserved by convex combinations.
+\end{proof}
+
+\begin{corollary}[N-representability of the density]\label{cor:density-rep}
+  \lean{DFT.Lattice.RDMFT.density_nrep, DFT.Lattice.RDMFT.density_nrep_nonneg, DFT.Lattice.RDMFT.rdm1_toFock,
+    DFT.Lattice.RDMFT.rdm_diag, DFT.Lattice.RDMFT.toFock_isNState}\leanok
+  \uses{thm:rdm1-necessary, cor:fock-rdm}
+  For $\rho\colon\{0,\dots,M-1\}\to\mathbb R$ the following are equivalent.
+  (a) $\rho$ is the density of an $N$-particle state.
+  (b) $\rho$ is the density of an $N$-particle ensemble.
+  (c) $0\le\rho_i\le1$ for every $i$ and $\sum_i\rho_i=N$.
+  The state in (a) can be chosen with nonnegative real coefficients on configurations.
+\end{corollary}
+\begin{proof}\leanok
+  (a)$\Rightarrow$(b) is trivial and (b)$\Rightarrow$(c) is the diagonal of Theorem~\ref{thm:rdm1-necessary}. For
+  (c)$\Rightarrow$(a), $\rho$ is a mixture $\sum_s\mu_s\,\mathrm{occ}(s)$ of configuration densities by the vertex description
+  of the hypersimplex (\texttt{DFT.hypersimplex\_mixture}). The state $\Psi=\sum_s\sqrt{\mu_s}\,|s\rangle$ has density $\rho$,
+  because $c_i^\dagger c_i$ is diagonal on configurations.
+\end{proof}
+
+\begin{theorem}[Basic properties of the two-body matrix]\label{thm:rdm2-basic}
+  \uses{def:rdm12, thm:car, thm:number}
+  For every $N$-particle state or ensemble,
+  $D_{ji,kl}=-D_{ij,kl}=D_{ij,lk}$ and $D_{kl,ij}=\overline{D_{ij,kl}}$. The contraction is
+  $\sum_kD_{ik,jk}=(N-1)\,\gamma_{ij}$ and the trace is $\sum_{ij}D_{ij,ij}=N(N-1)$.
+\end{theorem}
+\begin{proof}
+  Antisymmetry follows from $\{c_i^\dagger,c_j^\dagger\}=0$ and $\{c_k,c_l\}=0$, Hermiticity from taking adjoints. For the
+  contraction, $\sum_kc_k^\dagger c_kc_j=\hat Nc_j=c_j(\hat N-1)$, and $c_j$ lowers the particle number by one. The trace
+  follows by contracting once more.
+\end{proof}
+
+\begin{theorem}[The P, Q and G conditions]\label{thm:pqg}
+  \uses{thm:rdm2-basic}
+  For every $N$-particle state or ensemble, the three Hermitian matrices indexed by pairs of modes
+  \begin{align*}
+    P_{ij,kl}&=D_{ij,kl},\\
+    Q_{ij,kl}&=\delta_{ik}\delta_{jl}-\delta_{il}\delta_{jk}-\delta_{jl}\gamma_{ki}+\delta_{jk}\gamma_{li}+\delta_{il}\gamma_{kj}
+      -\delta_{ik}\gamma_{lj}+D_{kl,ij},\\
+    G_{ij,kl}&=\delta_{jl}\gamma_{ik}-D_{il,kj}
+  \end{align*}
+  are positive semidefinite.
+\end{theorem}
+\begin{proof}
+  $P$, $Q$ and $G$ are the expectation values $\langle c_i^\dagger c_j^\dagger c_lc_k\rangle$, $\langle c_ic_jc_l^\dagger c_k^\dagger\rangle$
+  and $\langle c_i^\dagger c_jc_l^\dagger c_k\rangle$. Their quadratic forms are $\|A\Psi\|^2$ with $A=\sum x_{kl}c_lc_k$,
+  $\sum x_{kl}c_l^\dagger c_k^\dagger$ and $\sum x_{kl}c_l^\dagger c_k$ respectively. Normal ordering with the anticommutation
+  relations expresses $Q$ and $G$ through $D$ and $\gamma$ as stated.
+\end{proof}
+
+\begin{definition}[Mode rotations]\label{def:mode-rotation}
+  \uses{def:cdag}
+  For a unitary $u\in U(M)$ there is a unitary $U(u)$ on $\mathcal F_M$ with $U(u)\,c_i^\dagger\,U(u)^\dagger=\sum_ju_{ji}c_j^\dagger$
+  for every $i$ and $U(u)|\emptyset\rangle=|\emptyset\rangle$. It commutes with $\hat N$, $U(uv)=U(u)U(v)$, and
+  $\gamma(U(u)\Psi)=\bar u\,\gamma(\Psi)\,u^{T}$.
+\end{definition}
+
+\begin{theorem}[Coleman]\label{thm:coleman}
+  \uses{thm:rdm1-necessary, def:mode-rotation}
+  A complex $M\times M$ matrix $\gamma$ is the one-body reduced density matrix of an $N$-particle ensemble if and only if
+  $\gamma$ is Hermitian, $0\le\gamma\le1$ and $\operatorname{tr}\gamma=N$.
+\end{theorem}
+\begin{proof}
+  Necessity is Theorem~\ref{thm:rdm1-necessary}. Conversely, diagonalize $\gamma=\bar u\,\operatorname{diag}(\lambda)\,u^{T}$
+  with $u$ unitary. The eigenvalues satisfy $0\le\lambda_i\le1$ and $\sum_i\lambda_i=N$, so
+  $\lambda=\sum_s\mu_s\,\mathrm{occ}(s)$ by the hypersimplex. The ensemble of configurations $|s\rangle$ with weights $\mu_s$ has
+  $\gamma=\operatorname{diag}(\lambda)$. Applying $U(u)$ to each state gives $\gamma$.
+\end{proof}
+
 \begin{definition}[Gibbs state]\label{def:gibbs}
   $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$.
 \end{definition}
