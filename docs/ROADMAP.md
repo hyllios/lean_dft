@@ -159,7 +159,7 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
 - D2 ⬜ Link to Track C: the Sham–Schlüter equation (lattice), Kohn–Sham versus interacting response (Dyson-like equation with f_xc).
 - D3 ⬜ RDMFT ↔ quasi-free states (B3).
 - D4 ⬜ Unified framework for finite-dimensional functional theories, after Wang, Liebert, Penz, Schilling,
-  arXiv:2606.06676 (proposed by Miguel 2026-11-26; **statements drafted 2026-11-26, pending approval**). Layout:
+  arXiv:2606.06676 (proposed by Miguel 2026-11-26; **statements approved 2026-11-26**, blueprint chapter `unified`). Layout:
   `DFT/Scope/` (abstract theory), instances in the existing folders; general convex analysis in `ForMathlib`.
   Goal: prove the structural results once and re-derive lattice DFT, RDMFT and spin-DFT as instances.
   Notation: `d`-dimensional Hilbert space `Fin d → ℂ`, states are unit vectors `ψ` or density matrices `Γ`
@@ -250,7 +250,7 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 3. **C1 remainder:** time-ordered and advanced functions, two-site Hubbard sanity theorem.
 4. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
 5. **A6** Kato cusp, Tiers 1–2.
-6. **D4** unified functional-theory framework: statements drafted, awaiting approval; then stages 1 → 2 → 3.
+6. **D4** unified functional-theory framework: statements approved; stages 1 → 2 → 3.
 7. Speculative (2026-11-26): **B3+** no unfilled shells (quick win); **F3** numerics first; **B5** Borland–Dennis
    after a literature check for an elementary proof of the inequality, then Schilling's pinning.
 8. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
@@ -272,3 +272,4 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 - 2026-11-26: items B3+ (no unfilled shells), B5 (Borland–Dennis, Schilling's pinning) and F3 (generic pure-state
   v-representability) added as proposals.
 - 2026-11-26: item C7 (N-representability of the Green's function) added as a proposal.
+- 2026-11-26: D4 statements approved; blueprint chapter `unified` added (no Lean yet).
