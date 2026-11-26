@@ -53,7 +53,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-34 modules, 10200 lines.
+35 modules, 10869 lines.
 
 ### `QM/`
 
@@ -102,6 +102,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `QM.Spin.BiedenharnElliott` | 669 | The Biedenharn–Elliott identity |
 | `QM.Spin.CGCoeff` | 1046 | Clebsch–Gordan coefficients |
 | `QM.Spin.CGSeries` | 400 | The Clebsch–Gordan series |
 | `QM.Spin.ClebschGordan` | 205 | Clebsch–Gordan for two and three spins |
@@ -487,4 +488,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 69970 lines of Lean.
+Total: 70639 lines of Lean.

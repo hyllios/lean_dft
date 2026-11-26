@@ -273,11 +273,22 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
 \end{theorem}
 
 \begin{theorem}[Biedenharn--Elliott identity]\label{thm:biedenharn-elliott}
-  \uses{thm:6j}
+  \lean{QM.path_D, QM.path_FG, QM.be_paths, QM.biedenharn_elliott}\leanok
+  \uses{thm:6j, thm:9j}
   $\sum_x(-1)^{S+x}(2x+1)\begin{Bmatrix}a&b&x\\c&d&p\end{Bmatrix}\begin{Bmatrix}c&d&x\\e&f&q\end{Bmatrix}
   \begin{Bmatrix}e&f&x\\b&a&r\end{Bmatrix}=\begin{Bmatrix}p&q&r\\e&a&d\end{Bmatrix}\begin{Bmatrix}p&q&r\\f&b&c\end{Bmatrix}$
   with $S=a+b+c+d+e+f+p+q+r$.
 \end{theorem}
+
+\begin{proof}\leanok
+  Couple $j_1=d$, $j_2=a$, $j_3=b$, $j_4=f$ and compute the overlap of $|((j_1j_2)p\,j_3)c,j_4;q\rangle$ with
+  $|j_1,(j_2(j_3j_4)r)e;q\rangle$ in two ways. Through $|(j_1j_2)p,(j_3j_4)r;q\rangle$ it is a product of two recoupling
+  coefficients. Through $|(j_1(j_2j_3)x)c,j_4;q\rangle$ and $|j_1,((j_2j_3)x\,j_4)e;q\rangle$ it is a sum over $x$ of three. Each
+  recoupling coefficient is a $6j$ symbol times a phase and square roots. The factor
+  $\sqrt{(2p+1)(2c+1)(2e+1)(2r+1)}$ is common to both sides and cancels, and the phases combine into $(-1)^{S+x}$. The $6j$ symmetries
+  bring the symbols to the stated form. If one of the triads $(dap)$, $(pbc)$, $(cfq)$, $(bfr)$, $(are)$, $(deq)$ fails, both
+  sides vanish.
+\end{proof}
 
 
 \begin{definition}[Symmetrizer and antisymmetrizer]\label{def:symmetrizer}

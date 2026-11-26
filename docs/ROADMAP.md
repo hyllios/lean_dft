@@ -69,8 +69,10 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
   Stage 1 done 2026-11-26 (`QM/Spin/SpinRep`, `QM/Spin/Coupling`, `QM/Spin/CGSeries`): the spin-j representation, its
   irreducibility and uniqueness, coupling of commuting angular momenta, the Clebsch–Gordan series and spin–orbit coupling.
   Stage 2 done 2026-11-26 (`QM/Spin/CGCoeff`): the Clebsch–Gordan coefficients with the Condon–Shortley phase, the
-  selection rule, both orthogonality relations, the `J₋` recursion and Racah's formula. Stage 3 (3j symmetries, 6j, 9j,
-  Biedenharn–Elliott) still needs statements.
+  selection rule, both orthogonality relations, the `J₋` recursion and Racah's formula. Stage 3 done 2026-11-26
+  (`QM/Spin/ThreeJ`, `QM/Spin/Recoupling`, `QM/Spin/SixJ`, `QM/Spin/NineJ`, `QM/Spin/BiedenharnElliott`): 3j symbols and
+  their symmetries, recoupling of three and four angular momenta (6j and 9j symbols, 6j symmetries and orthogonality)
+  and the Biedenharn–Elliott identity. Only the optional concrete orbital `L` remains.
 - A5 ✅ Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
   Symmetrizer and antisymmetrizer as orthogonal projections (`QM/ManyBody/Symmetrizer`) done 2026-11-26.
 - A6 ⬜ Kato cusp conditions (requested by Miguel 2026-11-26), in three tiers.
@@ -241,3 +243,5 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
 - 2026-11-26: roadmap item A6 added (Kato cusp conditions, three tiers).
 - 2026-11-26: A4+ stages 1 and 2 done. Clebsch–Gordan coefficients with Racah's formula, proved by a telescoping
   recursion for Racah's sum and a Vandermonde identity for the norm of the highest weight.
+- 2026-11-26: A4+ stage 3 done. 3j symbols and symmetries, 6j and 9j symbols from the recoupling of three and four
+  angular momenta, and the Biedenharn–Elliott identity from the two ways of expanding one four-spin overlap.
