@@ -28,6 +28,56 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
   $(\Delta A)_\psi(\Delta B)_\psi\ge |c|/2$.
 \end{theorem}
 
+% A1 statements written and approved by Miguel 2026-11-26.
+\begin{definition}[Observables and states of QuantumInfo]\label{def:qinfo-bridge}
+  \lean{QM.obs, QM.ketVec, QM.ketDom, QM.obs_isSymmetric, MState, MState.exp_val}\leanok
+  \uses{def:expectation}
+  On $\mathbb C^d$ a Hermitian matrix $T$ (QuantumInfo's \texttt{HermitianMat}) is the observable $\hat T$ of Physlib with
+  domain $\mathbb C^d$. A ket $\psi$ (a unit vector) is a vector of $\mathbb C^d$ of norm $1$, and a density matrix
+  $\rho$ (QuantumInfo's \texttt{MState}) has the expectation value $\langle T\rangle_\rho=\operatorname{tr}\rho T$.
+\end{definition}
+
+\begin{theorem}[Pure and mixed states, Born rule]\label{thm:qinfo-bridge}
+  \lean{QM.exp_val_pure, QM.variance_obs, QM.expectedValue_obs_eq_sum, QM.sum_born_prob,
+    QM.exp_val_eq_sum, QM.exists_exp_val_eq_sum}\leanok
+  \uses{def:qinfo-bridge, def:variance}
+  Let $T$ be a Hermitian $d\times d$ matrix.
+  \begin{enumerate}
+    \item For a ket $\psi$, the expectation value of $T$ in the pure state $|\psi\rangle\langle\psi|$ is Physlib's
+      $\langle\hat T\rangle_\psi$, and Physlib's variance is $(\Delta\hat T)^2_\psi=\langle T^2\rangle_\psi-\langle T\rangle_\psi^2$.
+    \item Born rule. If $T=\sum_n\lambda_n|e_n\rangle\langle e_n|$ with an orthonormal eigenbasis, then
+      $\langle\hat T\rangle_\psi=\sum_n\lambda_n|\langle e_n,\psi\rangle|^2$, and the probabilities $|\langle e_n,\psi\rangle|^2$
+      add up to $1$.
+    \item For a density matrix $\rho=\sum_kp_k|\varphi_k\rangle\langle\varphi_k|$ (its spectral decomposition),
+      $\operatorname{tr}\rho T=\sum_kp_k\langle\hat T\rangle_{\varphi_k}$, with $p_k\ge0$ and $\sum_kp_k=1$.
+  \end{enumerate}
+\end{theorem}
+\begin{proof}\leanok
+  Both expectation values are $\sum_{ij}\bar\psi_iT_{ij}\psi_j$, since
+  $\operatorname{tr}(|\psi\rangle\langle\psi|T)=\langle\psi,T\psi\rangle$. Physlib writes the variance of a unit vector as
+  $\|\hat T\psi\|^2-\langle\hat T\rangle_\psi^2$, and $\|T\psi\|^2=\langle\psi,T^2\psi\rangle$ because $T$ is Hermitian. For the
+  Born rule expand $\psi=\sum_n\langle e_n,\psi\rangle e_n$, so that $T\psi=\sum_n\lambda_n\langle e_n,\psi\rangle e_n$. The
+  probabilities add up to $\|\psi\|^2=1$ by Parseval. A density matrix is $\sum_kp_k|\varphi_k\rangle\langle\varphi_k|$ by its
+  spectral decomposition (QuantumInfo), and the trace is linear.
+\end{proof}
+
+\begin{theorem}[A qubit]\label{thm:qubit}
+  \lean{QM.pauliX, QM.pauliY, QM.pauliZ, QM.pauliX_mat, QM.bloch, QM.bloch_decomp, QM.bloch_sq_eq,
+    QM.bloch_sq_le_one, QM.bloch_sq_eq_one_iff, QM.pauli_comm, QM.pauli_uncertainty}\leanok
+  \uses{thm:qinfo-bridge, thm:robertson}
+  Let $\sigma_x,\sigma_y,\sigma_z$ be the Pauli matrices and $r=(\langle\sigma_x\rangle_\rho,\langle\sigma_y\rangle_\rho,\langle\sigma_z\rangle_\rho)$
+  the Bloch vector of a qubit density matrix $\rho$. Then $\rho=\tfrac12(1+r\cdot\sigma)$ and $|r|\le1$, with $|r|=1$ if and only if
+  $\rho$ is pure. For a pure state $\psi$, Physlib's uncertainty relation gives
+  $(\Delta\sigma_x)_\psi(\Delta\sigma_y)_\psi\ge|\langle\sigma_z\rangle_\psi|$.
+\end{theorem}
+\begin{proof}\leanok
+  Write $\rho=\begin{pmatrix}a&b\\\bar b&1-a\end{pmatrix}$ with $a$ real. Then $r=(2\operatorname{Re}b,-2\operatorname{Im}b,2a-1)$,
+  which gives the decomposition, and $|r|^2=2\operatorname{tr}\rho^2-1$. The purity $\operatorname{tr}\rho^2$ is at most $1$, with
+  equality exactly for pure states (QuantumInfo). For the uncertainty relation, $[\sigma_x,\sigma_y]=2i\sigma_z$, so
+  $\langle\psi,[\sigma_x,\sigma_y]\psi\rangle=i\cdot2\langle\sigma_z\rangle_\psi$, and Physlib's Robertson inequality gives
+  $(\Delta\sigma_x)(\Delta\sigma_y)\ge|2\langle\sigma_z\rangle|/2$.
+\end{proof}
+
 \begin{theorem}[Schrödinger evolution in finite dimensions]\label{thm:evolution}
   For self-adjoint $H$ on a finite-dimensional space, $U(t)=e^{-itH}$ is unitary, $U(t+s)=U(t)U(s)$, and
   $\psi(t)=U(t)\psi_0$ is the unique solution of $i\dot\psi = H\psi$, $\psi(0)=\psi_0$.

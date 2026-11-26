@@ -1,5 +1,7 @@
 import QM.Basic
 import QM.Finite.GroundState
+import QM.Finite.Qubit
+import QM.Finite.States
 import QM.Green.Lehmann
 import QM.Green.Spectral
 import QM.ManyBody.Configurations

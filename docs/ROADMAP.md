@@ -49,8 +49,8 @@ theory). Each one is a research-grade result.
 Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume the current working mode (Miguel daily plus agents).
 
 ### Track A: foundations of QM, finite-dimensional (`QM/Finite`, `QM/Spin`, `QM/ManyBody`)
-- A1 🟡 States, observables, Born rule, expectation values, uncertainty: **from Physlib** (`QM/Basic.lean`). Density matrices and
-  partial trace: **from QuantumInfo**; to do: a bridge lemma connecting the two and a sanity theorem (a qubit).
+- A1 ✅ States, observables, Born rule, expectation values, uncertainty: **from Physlib** (`QM/Basic.lean`). Density matrices and
+  partial trace: **from QuantumInfo**. Bridge (`QM/Finite/States`) and qubit sanity theorem (`QM/Finite/Qubit`) done 2026-11-26.
 - A2 ⬜ Time evolution as the matrix exponential, the Heisenberg picture, Ehrenfest-type identities, the adiabatic theorem (finite-dimensional,
   gapped). Check Physlib's `UnitaryOneParameterGroup` (bounded generators) first.
 - A3 ⬜ Tensor products, Schmidt decomposition (→ natural orbitals, links to N-representability). Check QuantumInfo first.
@@ -147,7 +147,7 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
    Galitskii–Migdal).
 3. **B2 follow-up done:** the spin bridge (`QM/ManyBody/Spin`, `DFT/Lattice/Spin/FockBridge`).
 4. **C1 (mostly done):** remaining are the time-ordered and advanced functions and the two-site Hubbard sanity theorem.
-5. **A1/A2:** the bridge between Physlib's operators and QuantumInfo's density matrices; time evolution in finite dimensions.
+5. **A2:** time evolution in finite dimensions (A1 done). `QM/Green/Lehmann` already has `e^{-iHt}` on the Fock space.
 6. In parallel: C2 + B4; semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
 ## Log
@@ -194,3 +194,7 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   For an eigenstate Ψ of a Hermitian H, G^R_ij(t) = -iθ(t)⟨Ψ, {c_i(t), c_j†} Ψ⟩ with e^{-iHt} the operator exponential. Its
   Laplace transform is Σ_k W_k/(z - ω_k) for Im z > 0, the weights are rank-one positive semidefinite and sum to 1, and
   -π⁻¹ Im G(ω+iη) → Σ_k W_k δ(ω - ω_k) against bounded continuous functions (Poisson kernel approximate identity).
+- 2026-11-26: A1 complete. `QM/Finite/States` connects Physlib and QuantumInfo: for a ket, QuantumInfo's `exp_val` of the pure
+  state is Physlib's `expectedValue`, Physlib's variance is ⟨T²⟩ - ⟨T⟩², the Born rule over an eigenbasis, and tr ρT as a
+  mixture over the spectral decomposition. `QM/Finite/Qubit`: Bloch decomposition, |r|² = 2 tr ρ² - 1 ≤ 1 with equality
+  iff pure, and Δσx Δσy ≥ |⟨σz⟩| from Physlib's Robertson inequality.

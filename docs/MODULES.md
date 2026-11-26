@@ -47,7 +47,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-15 modules, 3162 lines.
+17 modules, 3497 lines.
 
 ### `QM/`
 
@@ -60,6 +60,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `QM.Finite.GroundState` | 119 | Ground states on finite-dimensional real Hilbert spaces |
+| `QM.Finite.Qubit` | 172 | A qubit |
+| `QM.Finite.States` | 163 | States and observables: Physlib and QuantumInfo |
 
 ### `QM/Green/`
 
@@ -462,4 +464,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 62733 lines of Lean.
+Total: 63068 lines of Lean.
