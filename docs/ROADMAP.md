@@ -54,9 +54,10 @@ Status: ✅ done · 🟡 partly done · ⬜ not started. Effort estimates assume
 - A2 ⬜ Time evolution as the matrix exponential, the Heisenberg picture, Ehrenfest-type identities, the adiabatic theorem (finite-dimensional,
   gapped). Check Physlib's `UnitaryOneParameterGroup` (bounded generators) first.
 - A3 ⬜ Tensor products, Schmidt decomposition (→ natural orbitals, links to N-representability). Check QuantumInfo first.
-- A4 🟡 Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. To do: su(2) irreps, Clebsch–Gordan in small cases.
-- A5 🟡 Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
-  To do: symmetrizer and antisymmetrizer as projections.
+- A4 ✅ Spin algebra of N spin-½ particles: `QM/Spin/SpinAlg`. su(2) ladder theorem (`QM/Spin/Ladder`) and Clebsch–Gordan for
+  two and three spins (`QM/Spin/ClebschGordan`) done 2026-11-26.
+- A5 ✅ Ground states in finite dimensions (`QM/Finite/GroundState`), configurations and Slater determinants (`QM/ManyBody`).
+  Symmetrizer and antisymmetrizer as orthogonal projections (`QM/ManyBody/Symmetrizer`) done 2026-11-26.
 
 ### Track B: many-body theory with finitely many modes (`QM/ManyBody`, `QM/Thermal`)
 - B1 ✅ Fock space over `Fin M` modes, CAR, number operator, particle–hole transformation. **Approved 2026-11-26; Fock space
@@ -198,3 +199,8 @@ Statements for C1–C3 are in the blueprint (Part III), **approved 2026-11-26**.
   state is Physlib's `expectedValue`, Physlib's variance is ⟨T²⟩ - ⟨T⟩², the Born rule over an eigenbasis, and tr ρT as a
   mixture over the spectral decomposition. `QM/Finite/Qubit`: Bloch decomposition, |r|² = 2 tr ρ² - 1 ≤ 1 with equality
   iff pure, and Δσx Δσy ≥ |⟨σz⟩| from Physlib's Robertson inequality.
+- 2026-11-26: A4 and A5 complete. `QM/Spin/Ladder`: the su(2) ladder theorem (highest weight, 2m ∈ ℕ, the (2m+1)-dimensional
+  invariant subspace, every ladder stops in finite dimension), with `QM/Spin/SpinAlg` as an instance. `QM/Spin/ClebschGordan`:
+  S² = 1 + P₀₁ and S² = ¾ + ΣP_ij, triplet and singlet basis, (S² − 15/4)(S² − 3/4) = 0, quartet and two doublets.
+  `QM/ManyBody/Symmetrizer`: 𝒮 and 𝒜 are idempotent, absorb permutations, have the (anti)symmetric functions as ranges,
+  annihilate each other for N ≥ 2, are self-adjoint, and 𝒜 of a product is the Slater determinant over N!.

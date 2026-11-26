@@ -47,7 +47,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-17 modules, 3497 lines.
+20 modules, 4219 lines.
 
 ### `QM/`
 
@@ -84,11 +84,14 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `QM.ManyBody.RDM2` | 322 | The two-body reduced density matrix |
 | `QM.ManyBody.Slater` | 84 | Slater determinants in first quantisation |
 | `QM.ManyBody.Spin` | 315 | Spin-1/2 fermions on `M` sites |
+| `QM.ManyBody.Symmetrizer` | 288 | The symmetrizer and the antisymmetrizer |
 
 ### `QM/Spin/`
 
 | Module | Lines | Content |
 |---|---|---|
+| `QM.Spin.ClebschGordan` | 206 | Clebsch–Gordan for two and three spins |
+| `QM.Spin.Ladder` | 228 | The ladder theorem for su(2) |
 | `QM.Spin.SpinAlg` | 399 | The spin algebra of `N` spin-½ particles |
 
 ## `DFT`: density-functional theory
@@ -464,4 +467,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 63068 lines of Lean.
+Total: 63790 lines of Lean.

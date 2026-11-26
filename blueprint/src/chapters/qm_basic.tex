@@ -78,6 +78,74 @@ expectation values are defined for possibly unbounded operators $T\colon \mathca
   $(\Delta\sigma_x)(\Delta\sigma_y)\ge|2\langle\sigma_z\rangle|/2$.
 \end{proof}
 
+% A4 and A5 statements written and approved by Miguel 2026-11-26.
+\begin{theorem}[Ladder theorem for su(2)]\label{thm:su2-ladder}
+  \lean{QM.IsSU2, QM.IsSU2.S2, QM.IsSU2.ladder, QM.IsSU2.Sz_ladder, QM.IsSU2.Sp_ladder_succ,
+    QM.IsSU2.S2_ladder, QM.IsSU2.two_m_eq, QM.IsSU2.ladder_linearIndependent,
+    QM.IsSU2.finrank_span_ladder, QM.IsSU2.span_ladder_invariant, QM.IsSU2.exists_ladder_stop,
+    QM.isSU2_spin, QM.isSU2_spin_S2}\leanok
+  Let $S_+,S_-,S_z$ be linear operators on a vector space over a field of characteristic $0$ with $[S_+,S_-]=2S_z$,
+  $[S_z,S_+]=S_+$ and $[S_z,S_-]=-S_-$, as for $N$ spin-$\tfrac12$ particles (\texttt{QM/Spin/SpinAlg}), and let
+  $S^2=S_-S_++S_z^2+S_z$. Let $v$ be a highest-weight vector, $S_+v=0$ and $S_zv=mv$, and put $v_k=S_-^kv$. Then
+  $S_zv_k=(m-k)v_k$, $S^2v_k=m(m+1)v_k$ and $S_+v_k=k(2m-k+1)v_{k-1}$. If $v\ne0$ and $K$ is the least integer with
+  $v_{K+1}=0$ (it exists in finite dimension), then $2m=K$, so $m\in\tfrac12\mathbb N$, and $v_0,\dots,v_{2m}$ are linearly
+  independent and span an invariant subspace of dimension $2m+1$ (the spin-$m$ irreducible representation).
+\end{theorem}
+\begin{proof}\leanok
+  The relations give $S_zS_-=S_-S_z-S_-$ and $S_+S_-=S_-S_++2S_z$, so by induction on $k$, $S_zv_k=(m-k)v_k$ and
+  $S_+v_{k+1}=(k+1)(2m-k)v_k$. Then $S^2v_k=[k(2m-k+1)+(m-k)(m-k+1)]v_k=m(m+1)v_k$. If $v_K\ne0$ and $v_{K+1}=0$, applying
+  $S_+$ gives $(K+1)(2m-K)v_K=0$, so $2m=K$. The $v_k$ are eigenvectors of $S_z$ with distinct eigenvalues, hence linearly
+  independent, and in finite dimension there cannot be infinitely many of them, so the ladder stops.
+\end{proof}
+
+\begin{theorem}[Clebsch--Gordan for two and three spins]\label{thm:clebsch-gordan}
+  \lean{QM.S2_two, QM.twoSpin, QM.triplet_singlet, QM.triplet_singlet_basis, QM.S2_three,
+    QM.S2_three_poly, QM.quartet_highest, QM.doublet, QM.doublet_highest}\leanok
+  \uses{thm:su2-ladder}
+  For two spin-$\tfrac12$ particles the vectors $|{\uparrow\uparrow}\rangle$, $|{\uparrow\downarrow}\rangle+|{\downarrow\uparrow}\rangle$,
+  $|{\downarrow\downarrow}\rangle$ (triplet, $S^2=2$, $S_z=1,0,-1$) and $|{\uparrow\downarrow}\rangle-|{\downarrow\uparrow}\rangle$
+  (singlet, $S^2=0$, $S_z=0$) form a basis of eigenvectors. For three spin-$\tfrac12$ particles
+  $(S^2-\tfrac{15}4)(S^2-\tfrac34)=0$. The quartet has highest weight $|{\uparrow\uparrow\uparrow}\rangle$ ($S^2=\tfrac{15}4$), and
+  $|{\uparrow\uparrow\downarrow}\rangle-|{\uparrow\downarrow\uparrow}\rangle$ and $|{\uparrow\uparrow\downarrow}\rangle-|{\downarrow\uparrow\uparrow}\rangle$
+  are linearly independent highest weights of two doublets ($S^2=\tfrac34$, $S_z=\tfrac12$).
+\end{theorem}
+\begin{proof}\leanok
+  For two spins $S^2=1+P_{01}$, and for three spins $S^2=\tfrac34+P_{01}+P_{02}+P_{12}$, where $P_{ij}$ exchanges the spins of
+  particles $i$ and $j$ (checked on each configuration). The triplet is symmetric and the singlet antisymmetric. The four
+  states are eigenvectors of $S^2+3S_z$ with the distinct eigenvalues $5,2,-1,0$, hence a basis of the four-dimensional
+  space. For three spins the identity $(S^2-\tfrac{15}4)(S^2-\tfrac34)=0$ and the highest weights are checked on the eight
+  configurations.
+\end{proof}
+
+\begin{definition}[Symmetrizer and antisymmetrizer]\label{def:symmetrizer}
+  \lean{QM.ManyBody.permL, QM.ManyBody.symm, QM.ManyBody.anti, QM.ManyBody.IsSymmFun,
+    QM.ManyBody.IsAntiFun}\leanok
+  Permutations $\sigma\in S_N$ act on functions of $N$ variables by $(\sigma f)(x_1,\dots,x_N)=f(x_{\sigma(1)},\dots,x_{\sigma(N)})$.
+  The symmetrizer and the antisymmetrizer are $\mathcal S=\frac1{N!}\sum_\sigma\sigma$ and
+  $\mathcal A=\frac1{N!}\sum_\sigma\operatorname{sign}(\sigma)\,\sigma$.
+\end{definition}
+
+\begin{theorem}[Symmetrizer and antisymmetrizer are projections]\label{thm:symmetrizer}
+  \lean{QM.ManyBody.permL_comp_symm, QM.ManyBody.permL_comp_anti, QM.ManyBody.symm_comp_symm,
+    QM.ManyBody.anti_comp_anti, QM.ManyBody.symm_comp_anti, QM.ManyBody.anti_comp_symm,
+    QM.ManyBody.mem_range_symm_iff, QM.ManyBody.mem_range_anti_iff, QM.ManyBody.ip_symm_left,
+    QM.ManyBody.ip_anti_left, QM.ManyBody.anti_prod, QM.ManyBody.anti_prod_eq_slater}\leanok
+  \uses{def:symmetrizer}
+  $\mathcal S^2=\mathcal S$, $\mathcal A^2=\mathcal A$, $\sigma\mathcal S=\mathcal S$ and $\sigma\mathcal A=\operatorname{sign}(\sigma)\mathcal A$. The range of
+  $\mathcal S$ is the space of symmetric functions and the range of $\mathcal A$ is the space of antisymmetric functions, and
+  $\mathcal S\mathcal A=\mathcal A\mathcal S=0$ for $N\ge2$. For a finite set of positions both are self-adjoint for
+  $\langle f,g\rangle=\sum_x\overline{f(x)}g(x)$, hence orthogonal projections. The antisymmetrized product
+  $\mathcal A(\varphi_1\otimes\dots\otimes\varphi_N)$ is the Slater determinant $\det[\varphi_j(x_k)]/N!$.
+\end{theorem}
+\begin{proof}\leanok
+  Permutations act on the left, $\sigma(\tau f)=(\sigma\tau)f$. Reindexing the sum by $\tau\mapsto\sigma\tau$ gives
+  $\sigma\mathcal S=\mathcal S$ and $\sigma\mathcal A=\operatorname{sign}(\sigma)\mathcal A$. Averaging these over $\sigma$ gives the idempotence
+  and, since $\sum_\sigma\operatorname{sign}\sigma=0$ for $N\ge2$ (multiply by a transposition), $\mathcal S\mathcal A=\mathcal A\mathcal S=0$. A
+  symmetric function is its own average, which identifies the ranges. For self-adjointness, $x\mapsto x\circ\sigma$ is a
+  bijection, so the adjoint of $\sigma$ is $\sigma^{-1}$, and $\operatorname{sign}\sigma^{-1}=\operatorname{sign}\sigma$. The formula for
+  $\mathcal A$ of a product is the Leibniz expansion of the determinant.
+\end{proof}
+
 \begin{theorem}[Schrödinger evolution in finite dimensions]\label{thm:evolution}
   For self-adjoint $H$ on a finite-dimensional space, $U(t)=e^{-itH}$ is unitary, $U(t+s)=U(t)U(s)$, and
   $\psi(t)=U(t)\psi_0$ is the unique solution of $i\dot\psi = H\psi$, $\psi(0)=\psi_0$.
