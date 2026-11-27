@@ -2,16 +2,21 @@
 \label{chap:unified}
 
 % D4 statements written 2026-11-26 after C.-C. Wang, J. Liebert, M. Penz, C. Schilling, arXiv:2606.06676,
-% and approved by Miguel 2026-11-26. Not yet formalized (no \lean references until the declarations exist).
+% and approved by Miguel 2026-11-26. Formalization: DFT/Scope (stage 1, 2026-11-27). Approved 2026-11-27: the scalars are
+% generic (R or C, RCLike), so that the real lattice code is an instance directly.
 
 All functional theories on a finite-dimensional Hilbert space share one structure: a space of potentials coupled
 linearly to a fixed Hamiltonian. The results of this chapter are proved once for that structure; lattice DFT
-(Chapter~\ref{chap:ks}), RDMFT and spin DFT are instances. Throughout, $\mathcal H=\mathbb C^d$, states are unit vectors
-$\psi$ or density matrices $\Gamma\succeq0$ with $\operatorname{tr}\Gamma=1$.
+(Chapter~\ref{chap:ks}), RDMFT and spin DFT are instances. Throughout, $\mathcal H=\mathbb K^d$ with $\mathbb K=\mathbb R$ or $\mathbb C$, states are unit
+vectors $\psi$ or density matrices $\Gamma\succeq0$ with $\operatorname{tr}\Gamma=1$. In Lean the potential space is written in a
+basis, $V=\mathbb R^m$ and $\iota(v)=\sum_iv_iB_i$ with Hermitian $B_i$, so densities are vectors $\rho_i=\langle B_i\rangle$ and the
+pairing is the dot product.
 
 \section{Scopes, densities and functionals}
 
 \begin{definition}[Scope]\label{def:scope}
+  \lean{DFT.Scope, DFT.Scope.pot, DFT.Scope.ham, DFT.Scope.IsAbelian, DFT.Scope.NoRedundancy}
+  \leanok
   A scope is $S=(V,\iota,H_0)$: a finite-dimensional real vector space $V$, a linear map $\iota:V\to\mathbb C^{d\times d}$ with
   Hermitian values, and a Hermitian $H_0$. The Hamiltonians are $H(v)=H_0+\iota(v)$. The scope is \emph{abelian} if the
   $\iota(v)$ commute, and \emph{non-redundant} if $\iota$ is injective and $1\notin\iota(V)$.
@@ -19,6 +24,9 @@ $\psi$ or density matrices $\Gamma\succeq0$ with $\operatorname{tr}\Gamma=1$.
 
 \begin{definition}[Densities, ranges, functionals]\label{def:scope-functionals}
   \uses{def:scope}
+  \lean{DFT.Scope.densPure, DFT.Scope.dens, DFT.Scope.Bp, DFT.Scope.Be, DFT.Scope.E, DFT.Scope.Fp, DFT.Scope.Fe,
+    DFT.Scope.IsGS, DFT.Scope.IsEnsGS}
+  \leanok
   The density of $\Gamma$ is $\rho_\Gamma\in V^*$, $\rho_\Gamma(v)=\operatorname{Re}\operatorname{tr}(\Gamma\iota(v))$; for $\Gamma=|\psi\rangle\langle\psi|$ write
   $\rho_\psi$. The ranges are $B_p=\{\rho_\psi\}$ and $B_e=\{\rho_\Gamma\}$. The ground-state energy is
   $E(v)=\inf_\psi\langle\psi,H(v)\psi\rangle$. The constrained-search functionals are
@@ -28,6 +36,8 @@ $\psi$ or density matrices $\Gamma\succeq0$ with $\operatorname{tr}\Gamma=1$.
 
 \begin{definition}[Critical and regular values]\label{def:scope-critical}
   \uses{def:scope-functionals}
+  \lean{DFT.Scope.IsCritical, DFT.Scope.Bc, DFT.Scope.Br}
+  \leanok
   A unit vector $\psi$ is critical if it is an eigenvector of some $\iota(v)\notin\mathbb R\cdot1$. $B_c$ is the set of densities of
   critical states and $B_r=B_p\setminus B_c$ the set of regular values.
 \end{definition}
@@ -36,25 +46,50 @@ $\psi$ or density matrices $\Gamma\succeq0$ with $\operatorname{tr}\Gamma=1$.
 
 \begin{theorem}[Observable ranges]\label{thm:scope-ranges}
   \uses{def:scope-functionals}
-  $B_p$ and $B_e$ are compact and $B_e=\operatorname{conv}B_p$. If the scope is abelian, $B_p=B_e$ is the convex hull of the finitely
-  many joint-eigenvalue densities.
+  \lean{DFT.Scope.isCompact_Bp, DFT.Scope.isCompact_Be, DFT.Scope.convex_Be, DFT.Scope.Be_eq_convexHull_Bp,
+    DFT.Scope.exists_decomp}
+  \leanok
+  $B_p$ and $B_e$ are compact and $B_e=\operatorname{conv}B_p$.
+\end{theorem}
+
+\begin{theorem}[Abelian ranges]\label{thm:scope-ranges-abelian}
+  \uses{thm:scope-ranges}
+  If the scope is abelian, $B_p=B_e$ is the convex hull of the finitely many joint-eigenvalue densities.
 \end{theorem}
 
 \begin{theorem}[Constrained-search functionals]\label{thm:scope-functionals}
   \uses{def:scope-functionals, thm:scope-ranges}
+  \lean{DFT.Scope.Fp_attained, DFT.Scope.Fe_attained, DFT.Scope.Fp_eq_top, DFT.Scope.Fe_eq_top,
+    DFT.Scope.E_eq_iInf_Fp, DFT.Scope.E_eq_iInf_Fe, DFT.Scope.convexOn_Fe, DFT.Scope.lowerSemicontinuous_Fp,
+    DFT.Scope.lowerSemicontinuous_Fe, DFT.Scope.Fe_le_Fp, DFT.Scope.Fe_eq_iSup, DFT.Scope.le_Fe_of_convexOn}
+  \leanok
   The infima defining $F_p$, $F_e$ are attained on the ranges. $E(v)=\inf_\rho(F_p(\rho)+\rho(v))=\inf_\rho(F_e(\rho)+\rho(v))$.
   $F_e$ is convex, $F_p$ and $F_e$ are lower semicontinuous, $F_e\le F_p$, $F_e(\rho)=\sup_v(E(v)-\rho(v))$ on $B_e$, and $F_e$ is
   the greatest convex lower semicontinuous function below $F_p$.
 \end{theorem}
 
+\begin{proof}
+  \leanok
+  The infima are minima of continuous functions over compact fibres, and the sublevel sets are images of compact sets
+  (\texttt{ForMathlib/Topology/Semicontinuity/FiberInf}). Every density matrix is a convex combination of pure states (its
+  spectral decomposition), which gives $E=\inf(F_e+\rho\cdot v)$ and, by Jensen, the minorant property; lower semicontinuity is
+  not needed for the latter. The duality $F_e=\sup_v(E(v)-\rho\cdot v)$ separates $(\rho,c)$, $c<F_e(\rho)$, from the closed convex set
+  $\{(\rho_\Gamma,\operatorname{tr}H_0\Gamma)\}+\{0\}\times[0,\infty)$; the hyperplane is not vertical because $\rho\in B_e$.
+\end{proof}
+
 \begin{theorem}[Critical states]\label{thm:scope-critical}
   \uses{def:scope-critical}
+  \lean{DFT.Scope.isCritical_iff, DFT.Scope.isCritical_iff_det, Matrix.det_reGram_eq_zero_iff}
+  \leanok
   For a non-redundant scope with basis $B_i=\iota(e_i)$, $\psi$ is critical iff $\psi,B_1\psi,\dots,B_m\psi$ are linearly dependent
   over $\mathbb R$, iff their real Gram determinant vanishes.
 \end{theorem}
 
 \begin{theorem}[Hohenberg--Kohn]\label{thm:scope-hk}
   \uses{thm:scope-critical}
+  \lean{DFT.Scope.weak_hk, DFT.Scope.weak_hk_ens, DFT.Scope.strong_hk, DFT.Scope.strong_hk_eq,
+    DFT.Scope.IsGS.mulVec_eq}
+  \leanok
   (Weak.) If ground states of $H(v_1)$ and $H(v_2)$ have the same density, each is a ground state of the other Hamiltonian;
   likewise for ensembles. (Strong.) If $\rho\in B_r$ is the density of a pure ground state of $H(v)$ and of $H(v')$, then
   $\iota(v-v')\in\mathbb R\cdot1$; for a non-redundant scope, $v=v'$.
@@ -62,15 +97,36 @@ $\psi$ or density matrices $\Gamma\succeq0$ with $\operatorname{tr}\Gamma=1$.
 
 \begin{theorem}[Ensemble $v$-representability]\label{thm:scope-ens-vrep}
   \uses{thm:scope-functionals}
+  \lean{DFT.Scope.ensemble_vrep, DFT.Scope.Fp_eq_Fe_of_isGS, exists_add_smul_sub_mem_of_mem_intrinsicInterior,
+    IsCompact.exists_isMaxOn_sInf_affine}
+  \leanok
   Every $\rho$ in the intrinsic interior of $B_e$ is the density of an ensemble ground state of some $H(v)$, with $-v$ a
   subgradient of $F_e$ at $\rho$. If $\rho$ is the density of a pure ground state, $F_p(\rho)=F_e(\rho)$.
 \end{theorem}
 
-\begin{theorem}[Instances]\label{thm:scope-instances}
-  \uses{thm:scope-ranges, thm:scope-functionals, thm:lieb_duality, thm:coleman}
-  Lattice DFT ($\iota(v)=\sum_iv_in_i$ on $N$ fermions): $B_p=B_e$ is the $(M,N)$-hypersimplex. RDMFT ($\iota$ onto all one-body
-  operators): $B_e=\{0\le\gamma\le1,\operatorname{tr}\gamma=N\}$ (Coleman). Spin chains ($\iota(e_i)=Z_i$): $B_p=B_e=[-1,1]^m$. The lattice
-  Lieb duality is the instance of Theorem~\ref{thm:scope-functionals}.
+\begin{proof}
+  \leanok
+  The concave function $v\mapsto E(v)-\rho\cdot v=\min_\Gamma(\operatorname{tr}H_0\Gamma+(\rho_\Gamma-\rho)\cdot v)$ attains its supremum: it is
+  constant along $W=\{w:(\rho_\Gamma-\rho)\cdot w=0\ \forall\Gamma\}$, and on a complement $U$ of $W$ it is bounded by $\max\operatorname{tr}H_0\Gamma-\delta\|u\|$
+  with $\delta>0$, because $\rho$ in the relative interior makes $\min_\Gamma(\rho_\Gamma-\rho)\cdot u<0$ for $u\ne0$ (compactness of the unit sphere
+  of $U$). A maximiser $v$ gives $F_e(\rho)=E(v)-\rho\cdot v$ by duality, a minimiser of $F_e(\rho)$ is an ensemble ground state of $H(v)$, and
+  $F_e(\rho')\ge E(v)-\rho'\cdot v$ is the subgradient inequality.
+\end{proof}
+
+\begin{theorem}[Lattice DFT as a scope]\label{thm:scope-instance-lattice}
+  \uses{thm:scope-ranges, thm:scope-functionals, thm:lieb_duality}
+  \lean{DFT.latticeScope, DFT.latticeScope_ham, DFT.latticeScope_E, DFT.latticeScope_Bp, DFT.latticeScope_Be,
+    DFT.lieb_eq_Fe, DFT.lieb_convexOn}
+  \leanok
+  Lattice DFT ($\iota(v)=\sum_iv_in_i$ with diagonal occupations $n_i$): $B_p=B_e$ is the convex hull of the occupation vectors of the
+  configurations (for $N$ spinless fermions on $M$ sites, the $(M,N)$-hypersimplex), the ground-state energies agree, and Lieb's
+  functional is $F_e$; its convexity is the instance of Theorem~\ref{thm:scope-functionals}.
+\end{theorem}
+
+\begin{theorem}[Further instances]\label{thm:scope-instances}
+  \uses{thm:scope-ranges, thm:scope-functionals, thm:coleman}
+  RDMFT ($\iota$ onto all one-body operators): $B_e=\{0\le\gamma\le1,\operatorname{tr}\gamma=N\}$ (Coleman). Spin chains ($\iota(e_i)=Z_i$):
+  $B_p=B_e=[-1,1]^m$.
 \end{theorem}
 
 \section{Representability by eigenstates (stage 2)}
@@ -78,8 +134,14 @@ $\psi$ or density matrices $\Gamma\succeq0$ with $\operatorname{tr}\Gamma=1$.
 \begin{theorem}[Eigenstate $v$-representability]\label{thm:scope-eig-vrep}
   \uses{thm:scope-functionals, def:scope-critical}
   Every $\rho\in B_r$ is $\rho_\psi$ for a unit vector $\psi$ with $H(v)\psi=\lambda\psi$ for some $v\in V$, $\lambda\in\mathbb R$, and $\psi$ attains
-  $F_p(\rho)$. (To check during the proof: whether non-redundancy is needed.) $F_e$ is continuous on the intrinsic interior
-  of $B_e$.
+  $F_p(\rho)$. (To check during the proof: whether non-redundancy is needed.)
+\end{theorem}
+
+\begin{theorem}[Continuity of $F_e$]\label{thm:scope-Fe-continuous}
+  \uses{thm:scope-functionals}
+  \lean{DFT.Scope.continuousOn_Fe}
+  \leanok
+  $F_e$ is continuous on the intrinsic interior of $B_e$ (a convex function on a finite-dimensional convex set).
 \end{theorem}
 
 \section{Change of scope and examples (stage 3)}

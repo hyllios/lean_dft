@@ -174,8 +174,13 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
   linearity in N for ensembles).
 - D2 ⬜ Link to Track C: the Sham–Schlüter equation (lattice), Kohn–Sham versus interacting response (Dyson-like equation with f_xc).
 - D3 ⬜ RDMFT ↔ quasi-free states (B3).
-- D4 ⬜ Unified framework for finite-dimensional functional theories, after Wang, Liebert, Penz, Schilling,
-  arXiv:2606.06676 (proposed by Miguel 2026-11-26; **statements approved 2026-11-26**, blueprint chapter `unified`). Layout:
+- D4 🟡 Unified framework for finite-dimensional functional theories, after Wang, Liebert, Penz, Schilling,
+  arXiv:2606.06676 (proposed by Miguel 2026-11-26; **statements approved 2026-11-26**, blueprint chapter `unified`).
+  **Stage 1 done (2026-11-27) in `DFT/Scope`** except the abelian ranges and the RDMFT and spin-chain instances; scalars
+  generic (`RCLike`, approved 2026-11-27), potentials in a basis (`ι v = Σ v_i B_i`). Lattice instance in
+  `Lattice/KohnSham/Duality` (`latticeScope`, `lieb_eq_Fe`; `lieb_convexOn` now derived from the scope). Also done from
+  stage 2: `continuousOn_Fe`. Open: `Bp_eq_Be_of_abelian` (needs a joint eigenbasis of commuting Hermitian matrices),
+  RDMFT and spin-chain instances, stages 2–3. Layout:
   `DFT/Scope/` (abstract theory), instances in the existing folders; general convex analysis in `ForMathlib`.
   Goal: prove the structural results once and re-derive lattice DFT, RDMFT and spin-DFT as instances.
   Notation: `d`-dimensional Hilbert space `Fin d → ℂ`, states are unit vectors `ψ` or density matrices `Γ`
@@ -274,7 +279,8 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 3. **C1 remainder:** time-ordered and advanced functions, two-site Hubbard sanity theorem.
 4. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
 5. **A6** Kato cusp, Tiers 1–2.
-6. **D4** unified functional-theory framework: statements approved; stages 1 → 2 → 3.
+6. **D4** unified functional-theory framework: stage 1 done except abelian ranges and the RDMFT/spin instances; then
+   stages 2 → 3.
 7. **A7** Sturm oscillation: Tier 1 (Jacobi matrices) first, then Tier 2 (Prüfer angle); statements drafted, pending approval.
 8. Speculative (2026-11-26): **B3+** done (2026-11-27); **F3** numerics first; **B5** Borland–Dennis
    after a literature check for an elementary proof of the inequality, then Schilling's pinning.
@@ -300,3 +306,6 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 - 2026-11-26: D4 statements approved; blueprint chapter `unified` added (no Lean yet).
 - 2026-11-27: B3+ done (no unfilled shells, Hartree–Fock equations).
 - 2026-11-27: item A7 (Sturm oscillation theorem) added.
+- 2026-11-27: D5 done (Corso's Theorems 2.12, 2.15, Lemma 6.2). D4 stage 1 in `DFT/Scope` (scopes over ℝ or ℂ;
+  ranges, constrained-search functionals, Lieb duality, Hohenberg–Kohn, critical states, ensemble v-representability;
+  lattice DFT as an instance).

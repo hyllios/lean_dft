@@ -215,3 +215,9 @@ import DFT.Lattice.TDDFT.Prop9General
 import DFT.Lattice.TDDFT.SharedGround
 import DFT.Lattice.TDDFT.Spin
 import DFT.Lattice.TDDFT.TwoElectron
+import DFT.Scope.Basic
+import DFT.Scope.Duality
+import DFT.Scope.Functionals
+import DFT.Scope.HK
+import DFT.Scope.Ranges
+import DFT.Scope.Representability

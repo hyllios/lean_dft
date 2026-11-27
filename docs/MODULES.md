@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-25 modules, 4786 lines.
+29 modules, 5188 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -30,6 +30,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `ForMathlib.Analysis.Convex.DualAttained` | 146 | Attainment of a dual problem at relative-interior points |
 | `ForMathlib.Analysis.Convex.Ekeland` | 250 | Ekeland's variational principle and the Brøndsted–Rockafellar theorem |
 | `ForMathlib.Analysis.Convex.Iteration` | 379 | Convergence of the regularised Kohn–Sham iteration (MYKSODA), abstract form |
 | `ForMathlib.Analysis.Convex.MoreauYosida` | 188 | Moreau–Yosida envelopes of functionals on a compact convex domain |
@@ -40,6 +41,13 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `ForMathlib.Analysis.InnerProductSpace.CompactEigenbasis` | 148 | An eigenbasis for a compact symmetric injective operator |
 | `ForMathlib.Analysis.InnerProductSpace.FormEigenbasis` | 301 | The eigenbasis of a semibounded form with compact domain |
+
+### `ForMathlib/Analysis/Matrix/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `ForMathlib.Analysis.Matrix.RealGram` | 67 | The real Gram determinant of vectors in `𝕜ⁿ` |
+| `ForMathlib.Analysis.Matrix.Spectrum` | 119 | Rank-one spectral decompositions and Rayleigh minimisers of Hermitian matrices |
 
 ### `ForMathlib/Analysis/ODE/`
 
@@ -91,6 +99,12 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `ForMathlib.Topology.Instances.UnitaryGroup` | 58 | The unitary group of complex matrices is compact |
+
+### `ForMathlib/Topology/Semicontinuity/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `ForMathlib.Topology.Semicontinuity.FiberInf` | 70 | Infima over the fibres of a continuous map on a compact set |
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
@@ -169,7 +183,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-217 modules, 57966 lines.
+223 modules, 58954 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -472,7 +486,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `DFT.Lattice.KohnSham.Aufbau` | 189 | The aufbau principle for non-interacting lattice fermions |
-| `DFT.Lattice.KohnSham.Duality` | 115 | Lieb's functional and convex duality |
+| `DFT.Lattice.KohnSham.Duality` | 197 | Lieb's functional and convex duality |
 | `DFT.Lattice.KohnSham.Existence` | 44 | Existence of Kohn–Sham potentials for lattice fermions |
 | `DFT.Lattice.KohnSham.Hypersimplex` | 260 | Interior densities are strictly positive mixtures of configurations |
 | `DFT.Lattice.KohnSham.Maximizer` | 310 | A maximiser of `E(v) − v·ρ` |
@@ -548,4 +562,15 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 75856 lines of Lean.
+### `DFT/Scope/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `DFT.Scope.Basic` | 313 | Scopes: the common structure of finite-dimensional functional theories |
+| `DFT.Scope.Duality` | 118 | Lieb duality for a scope |
+| `DFT.Scope.Functionals` | 153 | The constrained-search functionals of a scope |
+| `DFT.Scope.HK` | 154 | Critical states and the Hohenberg–Kohn theorems for a scope |
+| `DFT.Scope.Ranges` | 72 | The pure and the ensemble ranges of a scope |
+| `DFT.Scope.Representability` | 96 | Ensemble `v`-representability for a scope |
+
+Total: 77246 lines of Lean.

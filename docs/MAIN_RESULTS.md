@@ -28,6 +28,13 @@ result is now in the blueprint, and CI runs the blueprint check with `--strict`.
 | `DFT.Continuum.Line.liebNH_bos_free` | yes |
 | `DFT.Continuum.Line.exists_neuOrbitals` | yes |
 | `DFT.Continuum.Spectral.exists_orbitals` | yes |
+| `DFT.Scope.Be_eq_convexHull_Bp` | yes |
+| `DFT.Scope.Fe_eq_iSup` | yes |
+| `DFT.Scope.le_Fe_of_convexOn` | yes |
+| `DFT.Scope.ensemble_vrep` | yes |
+| `DFT.Scope.strong_hk` | yes |
+| `DFT.Scope.isCritical_iff_det` | yes |
+| `DFT.lieb_eq_Fe` | yes |
 | `DFT.Continuum.subgrad_unique` | yes |
 | `DFT.dimH_image_le_of_pointwise_lipschitz` | yes |
 | `DFT.dimH_nonUVDens_lattice_fermions_w` | yes |

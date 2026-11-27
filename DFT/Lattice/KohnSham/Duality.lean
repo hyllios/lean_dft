@@ -6,6 +6,7 @@ Authors: Miguel A. L. Marques
 import Mathlib.Analysis.Convex.Function
 import DFT.Lattice.Basic.Spectral
 import DFT.Lattice.HK.Basic
+import DFT.Scope.Representability
 
 /-!
 # Lieb's functional and convex duality
@@ -18,6 +19,12 @@ energy of `H(v) = hamN H0 n v`.
 * `lieb_duality`: `E(v) = min_{ρ ∈ DensDomain} [F(ρ) + v·ρ]`, the minimum being attained at the
   density of any ground state of `H(v)`.
 * `lieb_convexOn`: `F` is convex on the density domain.
+
+Lattice DFT as a scope (`latticeScope`, the observables being the occupations `n_i`, after
+Wang–Liebert–Penz–Schilling): `latticeScope_E` (same ground-state energy),
+`latticeScope_Bp`, `latticeScope_Be` (both ranges are the density domain, the hypersimplex for
+spinless fermions), and `lieb_eq_Fe` (Lieb's functional is the scope's ensemble functional).
+`lieb_convexOn` is derived from the scope's `convexOn_Fe`.
 -/
 
 namespace DFT
@@ -92,24 +99,99 @@ theorem lieb_duality {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → �
   have hge := le_lieb hH0 n hdom v
   linarith
 
-/-- **Convexity of Lieb's functional.** -/
-theorem lieb_convexOn {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) :
-    ConvexOn ℝ (DensDomain n) (lieb H0 n) := by
-  refine ⟨?_, ?_⟩
-  · rintro ρ ⟨l1, h10, h11, rfl⟩ ρ' ⟨l2, h20, h21, rfl⟩ a b ha hb hab
-    refine ⟨fun c => a * l1 c + b * l2 c, fun c => by nlinarith [h10 c, h20 c], ?_, ?_⟩
-    · simp [Finset.sum_add_distrib, ← Finset.mul_sum, h11, h21, hab]
-    · funext i; simp [Finset.sum_add_distrib, Finset.mul_sum, add_mul, mul_assoc]
-  · intro ρ hρ ρ' hρ' a b ha hb hab
-    apply csSup_le (Set.range_nonempty _)
-    rintro _ ⟨v, rfl⟩
-    have h1 := le_lieb hH0 n hρ v
-    have h2 := le_lieb hH0 n hρ' v
-    simp only [smul_eq_mul]
-    have hd : v ⬝ᵥ (a • ρ + b • ρ') = a * (v ⬝ᵥ ρ) + b * (v ⬝ᵥ ρ') := by
-      rw [dotProduct_add, dotProduct_smul, dotProduct_smul, smul_eq_mul, smul_eq_mul]
-    rw [hd]
-    have : Egs H0 n v = a * Egs H0 n v + b * Egs H0 n v := by rw [← add_mul, hab, one_mul]
-    nlinarith
+/-! ### Lattice DFT as a scope -/
+
+/-- **Lattice DFT as a scope**: the observables are the occupations `n_i`. -/
+noncomputable def latticeScope (H0 : Matrix C C ℝ) (hH0 : H0.IsSymm) (n : V → C → ℝ) :
+    Scope ℝ C V where
+  H0 := H0
+  B i := diagonal (n i)
+  isHermitian_H0 := by rw [IsHermitian, conjTranspose_eq_transpose_of_trivial]; exact hH0
+  isHermitian_B i := isHermitian_diagonal _
+
+variable {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ)
+
+omit [DecidableEq C] [Fintype V] [Nonempty C] in
+lemma expv_eq_qf (A : Matrix C C ℝ) (ψ : C → ℝ) : Scope.expv A ψ = qf A ψ := by
+  simp [Scope.expv, qf]
+
+omit [DecidableEq C] [Fintype V] [Nonempty C] in
+lemma mem_unitVecs_iff {ψ : C → ℝ} : ψ ∈ Scope.unitVecs ↔ ψ ⬝ᵥ ψ = 1 := by
+  simp [Scope.unitVecs]
+
+omit [Fintype C] [Nonempty C] in
+lemma latticeScope_ham (v : V → ℝ) : (latticeScope H0 hH0 n).ham v = hamN H0 n v := by
+  simp only [Scope.ham, Scope.pot, latticeScope, hamN]
+  congr 1
+  ext a b
+  simp only [Matrix.sum_apply, Matrix.smul_apply, diagonal_apply, smul_eq_mul]
+  split_ifs <;> simp
+
+omit [Fintype V] [Nonempty C] in
+lemma latticeScope_densPure (ψ : C → ℝ) : (latticeScope H0 hH0 n).densPure ψ = dens n ψ := by
+  funext i
+  simp only [Scope.densPure, latticeScope, expv_eq_qf, qf, mulVec_diagonal, dotProduct, dens]
+  exact Finset.sum_congr rfl fun c _ => by ring
+
+lemma latticeScope_E (v : V → ℝ) : (latticeScope H0 hH0 n).E v = Egs H0 n v := by
+  have hS := hamN_isSymm hH0 n v
+  refine le_antisymm ?_ ?_
+  · obtain ⟨hg, hn⟩ := Classical.choose_spec (exists_groundState hS)
+    have h := (latticeScope H0 hH0 n).E_le v (mem_unitVecs_iff.2 hn)
+    rwa [latticeScope_ham, expv_eq_qf, qf_groundState_eq hS hg hn] at h
+  · obtain ⟨ψ, hψ, hE⟩ := (latticeScope H0 hH0 n).exists_isGS v
+    rw [← hE, latticeScope_ham, expv_eq_qf]
+    exact gsEnergy_le hS (mem_unitVecs_iff.1 hψ)
+
+omit [Fintype V] [Nonempty C] in
+/-- The pure range is the density domain. -/
+lemma latticeScope_Bp : (latticeScope H0 hH0 n).Bp = DensDomain n := by
+  ext ρ
+  constructor
+  · rintro ⟨ψ, hψ, rfl⟩
+    rw [latticeScope_densPure]
+    exact dens_mem_domain n (mem_unitVecs_iff.1 hψ)
+  · rintro ⟨lam, hl0, hl1, rfl⟩
+    refine ⟨fun c => Real.sqrt (lam c), mem_unitVecs_iff.2 ?_, ?_⟩
+    · simp only [dotProduct]
+      rw [← hl1]
+      exact Finset.sum_congr rfl fun c _ => Real.mul_self_sqrt (hl0 c)
+    · rw [latticeScope_densPure]
+      funext i
+      simp only [dens]
+      exact Finset.sum_congr rfl fun c _ => by rw [Real.sq_sqrt (hl0 c), mul_comm]
+
+omit [DecidableEq C] [Fintype V] [Nonempty C] in
+lemma convex_densDomain : Convex ℝ (DensDomain n) := by
+  rintro ρ ⟨l1, h10, h11, rfl⟩ ρ' ⟨l2, h20, h21, rfl⟩ a b ha hb hab
+  refine ⟨fun c => a * l1 c + b * l2 c, fun c => by nlinarith [h10 c, h20 c], ?_, ?_⟩
+  · simp [Finset.sum_add_distrib, ← Finset.mul_sum, h11, h21, hab]
+  · funext i; simp [Finset.sum_add_distrib, Finset.mul_sum, add_mul, mul_assoc]
+
+omit [Fintype V] [Nonempty C] in
+/-- The ensemble range is the density domain. -/
+lemma latticeScope_Be : (latticeScope H0 hH0 n).Be = DensDomain n := by
+  rw [Scope.Be_eq_convexHull_Bp, latticeScope_Bp, (convex_densDomain n).convexHull_eq]
+
+/-- **Lieb's functional is the ensemble functional of the lattice scope.** -/
+theorem lieb_eq_Fe {ρ : V → ℝ} (hρ : ρ ∈ DensDomain n) :
+    lieb H0 n ρ = ((latticeScope H0 hH0 n).Fe ρ).toReal := by
+  have hρB : ρ ∈ (latticeScope H0 hH0 n).Be := (latticeScope_Be hH0 n).symm ▸ hρ
+  refine le_antisymm (csSup_le (Set.range_nonempty _) ?_) ?_
+  · rintro _ ⟨v, rfl⟩
+    have := (latticeScope H0 hH0 n).E_sub_le_Fe hρB v
+    rwa [latticeScope_E, dotProduct_comm] at this
+  · have h := (latticeScope H0 hH0 n).Fe_eq_iSup hρB
+    rw [(latticeScope H0 hH0 n).Fe_eq_toReal hρB] at h
+    refine EReal.coe_le_coe_iff.1 (h ▸ iSup_le fun v => EReal.coe_le_coe_iff.2 ?_)
+    rw [latticeScope_E, dotProduct_comm]
+    exact le_lieb hH0 n hρ v
+
+include hH0 in
+/-- **Convexity of Lieb's functional**, from the convexity of the scope's ensemble functional. -/
+theorem lieb_convexOn : ConvexOn ℝ (DensDomain n) (lieb H0 n) := by
+  have h := (latticeScope H0 hH0 n).convexOn_Fe
+  rw [latticeScope_Be] at h
+  exact h.congr fun ρ hρ => (lieb_eq_Fe hH0 n hρ).symm
 
 end DFT

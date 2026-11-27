@@ -975,3 +975,19 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   hasDerivAt_tksNH; **liebNH_bos_free**: F₀ = ∫((√ρ)')² for bosons). P6 `NeumannKS/Lieb`
   (**exists_levy_min**). P7 `NeumannKS/Aufbau` (**ks_aufbau**). Also: modules renamed so that file
   names never repeat their folder (246811d).
+- D4 stage 1 DONE except abelian ranges and the RDMFT/spin instances (2026-11-27), UNIFIED FRAMEWORK
+  (Wang–Liebert–Penz–Schilling, arXiv:2606.06676) in `DFT/Scope`. Scalars `RCLike` (real lattice code is an
+  instance directly), potentials in a basis (`pot v = Σ v_i • B_i`). `Basic`: expv, trv, unitVecs, densMats,
+  densPure, dens, Bp, Be, E (min over unit vectors), Fp, Fe (EReal constrained searches), IsGS, IsEnsGS,
+  IsCritical, Bc, Br, IsAbelian, NoRedundancy; exists_decomp (spectral decomposition of a density matrix),
+  isCompact_unitVecs/densMats, E_le_trv. `Ranges`: **Be_eq_convexHull_Bp**, compactness, convexity.
+  `Functionals`: Fp/Fe_attained, lower semicontinuity (`ForMathlib/Topology/Semicontinuity/FiberInf`),
+  E_eq_iInf_Fp/Fe, convexOn_Fe, Fe_le_Fp, **le_Fe_of_convexOn** (greatest convex minorant, by Jensen).
+  `Duality`: **Fe_eq_iSup** (Hahn–Banach on {(ρ_Γ, tr H₀Γ)} + {0}×[0,∞)). `HK`: IsGS.mulVec_eq (Rayleigh
+  minimisers are eigenvectors, `ForMathlib/Analysis/Matrix/Spectrum`), isCritical_iff, **isCritical_iff_det**
+  (`ForMathlib/Analysis/Matrix/RealGram`), weak_hk, weak_hk_ens, **strong_hk**, strong_hk_eq.
+  `Representability`: **ensemble_vrep** (dual attainment at relative-interior points,
+  `ForMathlib/Analysis/Convex/DualAttained`; −v is a subgradient), continuousOn_Fe, Fp_eq_Fe_of_isGS.
+  Lattice instance in `Lattice/KohnSham/Duality`: latticeScope, latticeScope_E, latticeScope_Bp/Be (= DensDomain),
+  **lieb_eq_Fe**; lieb_convexOn re-derived from convexOn_Fe. Open: Bp_eq_Be_of_abelian, RDMFT and spin-chain
+  instances, stages 2–3.
