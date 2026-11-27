@@ -1845,7 +1845,7 @@ The Slater-determinant form of $F_0$ for fermions ($F_0=T_{\rm KS}$, Corso's Lem
 
 % Statements in this section approved by Miguel 2026-11-27 (ROADMAP D5 phase 2).
 % Planned Lean: ForMathlib/Analysis/InnerProductSpace/FormEigenbasis.lean (P1, abstract);
-%   DFT/Continuum/Line/Neumann/{NeuSpec,NeuFree}.lean (P2–P4); DFT/Continuum/Line/NeumannKS/{Slater,Aufbau}.lean (P5–P7).
+%   DFT/Continuum/Line/Neumann/{Spec,Free}.lean (P2–P4); DFT/Continuum/Line/NeumannKS/{Slater,Aufbau}.lean (P5–P7).
 
 For $v\in H^{-1}$ let $q_v(f)=\int_0^1f'^2+v(f^2)$ on $H^1(0,1)$, the form of the one-body Neumann operator $h_v=-d^2/dx^2+v$.
 By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-C_v\int f^2$.
@@ -1887,7 +1887,7 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Non-interacting ground states with Neumann walls]
   \label{thm:neu_free}
-  % Lean: NeuFree: gsEH_free_fer : gsEH .fer 0 v = Σ_{j ≤ n} λ_j, isGSNH_slater_free (the Slater determinant of
+  % Lean: Neumann/Free: gsEH_free_fer : gsEH .fer 0 v = Σ_{j ≤ n} λ_j, isGSNH_slater_free (the Slater determinant of
   %   φ_0..φ_n is a ground state), lam_lt_lam_succ (λ_n < λ_{n+1}); bosons: gsEH_free_bos = (n+1) λ_0, isGSNH_prod_free.
   \uses{thm:neu_orbitals, thm:neu_nondeg, thm:neu_gs_N}
   Let $w=0$. For $N$ fermions, $E_0(v)=\sum_{j<N}\lambda_j$, the Slater determinant $\varphi_0\wedge\dots\wedge\varphi_{N-1}$ is the
@@ -1897,7 +1897,7 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 \begin{proof}
   The energy splits into one-body slices: $\langle\Phi,\sum_k h_{v,k}\Phi\rangle=\sum_k\int q_v(\Phi(\dots,\cdot_k,\dots))$, using
   $v(e)=\alpha e(0)+\int\beta e'$ and Fubini for the potential term (derivative of a marginal,
-  \texttt{NeuDensD}). Apply the bound of Theorem~\ref{thm:neu_orbitals} slice by slice; for fermions the Pauli principle
+  \texttt{Neumann/DensD}). Apply the bound of Theorem~\ref{thm:neu_orbitals} slice by slice; for fermions the Pauli principle
   bounds each occupation $\sum_k\int\langle\varphi_j,\Phi\rangle_k^2$ by one, so the energy is at least $\sum_{j<N}\lambda_j$,
   attained by the Slater determinant. If $\lambda_{N-1}=\lambda_N$, replacing $\varphi_{N-1}$ by $\varphi_N$ gives a second ground
   state, contradicting nondegeneracy (Theorem~\ref{thm:neu_nondeg}).

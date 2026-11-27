@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import ForMathlib.Analysis.Convex.Ekeland
-import DFT.Continuum.Line.KohnSham.KohnSham
+import DFT.Continuum.Line.KohnSham.Basic
 
 /-!
 # `v`-representable densities are dense (`N` particles on `H¹₀`)

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import DFT.Lattice.Fermions.FockBridge
-import DFT.Lattice.Spin.SpinResolved
+import DFT.Lattice.Spin.Resolved
 import QM.ManyBody.Spin
 
 /-!

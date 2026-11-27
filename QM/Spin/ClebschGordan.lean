@@ -6,7 +6,7 @@ Authors: Miguel A. L. Marques
 import Mathlib.LinearAlgebra.Eigenspace.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import QM.AngularMomentum.Ladder
-import QM.Spin.SpinAlg
+import QM.Spin.Algebra
 
 /-!
 # Clebsch–Gordan for two and three spins
@@ -17,7 +17,7 @@ from the exchange symmetry of the states.
 
 ## Main results
 
-* `isSU2_spin`: the spin operators of `N` spin-½ particles (`QM/Spin/SpinAlg`) satisfy the su(2)
+* `isSU2_spin`: the spin operators of `N` spin-½ particles (`QM.Spin.Algebra`) satisfy the su(2)
   relations `IsSU2` of `QM/AngularMomentum/Ladder`.
 * `triplet_singlet`: for two spins, `|↑↑⟩`, `|↑↓⟩ + |↓↑⟩`, `|↓↓⟩` (triplet, `S² = 2`,
   `S_z = 1, 0, -1`) and `|↑↓⟩ - |↓↑⟩` (singlet, `S² = 0`, `S_z = 0`) form a basis of
@@ -42,7 +42,7 @@ theorem isSU2_spin {n : ℕ} {W : Type*} [AddCommGroup W] [Module ℝ W] :
   comm_zp := DFT.Continuum.Line.comm_Sz_Sp'
   comm_zm := LinearMap.ext DFT.Continuum.Line.comm_Sz_Sm
 
-/-- The total spin of `IsSU2` is the `S2` of `QM/Spin/SpinAlg`. -/
+/-- The total spin of `IsSU2` is the `S2` of `QM.Spin.Algebra`. -/
 theorem isSU2_spin_S2 {n : ℕ} {W : Type*} [AddCommGroup W] [Module ℝ W] :
     (isSU2_spin (n := n) (W := W)).S2 = DFT.Continuum.Line.S2 :=
   DFT.Continuum.Line.S2_eq.symm

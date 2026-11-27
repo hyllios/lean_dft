@@ -55,7 +55,7 @@ this section keeps only pointers.
 - A2 ✅ Time evolution, Heisenberg picture, Ehrenfest (`QM/Finite/Evolution`); propagator (`QM/Finite/Propagator`,
   `ForMathlib/Analysis/ODE/Linear`); adiabatic theorem (`QM/Finite/Adiabatic`, `QM/Finite/Riesz`).
 - A3 ✅ Schmidt decomposition (`QM/Finite/Schmidt`); natural orbitals (`QM/ManyBody/NaturalOrbitals`).
-- A4 ✅ N spin-½ particles (`QM/Spin/SpinAlg`, `QM/Spin/ClebschGordan`); su(2) ladder theorem (`QM/AngularMomentum/Ladder`).
+- A4 ✅ N spin-½ particles (`QM.Spin.Algebra`, `QM/Spin/ClebschGordan`); su(2) ladder theorem (`QM/AngularMomentum/Ladder`).
 - A4+ ✅ Angular momentum (`QM/AngularMomentum`): spin-j representation (`SpinRep`), coupling `J = L + S` and `L₁ + L₂`
   (`Coupling`, `CGSeries`), Clebsch–Gordan coefficients and Racah's formula (`CGCoeff`), 3j/6j/9j and Biedenharn–Elliott
   (`ThreeJ`, `Recoupling`, `SixJ`, `NineJ`, `BiedenharnElliott`), orbital `L = -i r × ∇` on harmonic polynomials (`Orbital`,

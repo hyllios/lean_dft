@@ -164,8 +164,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `QM.Spin.Algebra` | 399 | The spin algebra of `N` spin-½ particles |
 | `QM.Spin.ClebschGordan` | 223 | Clebsch–Gordan for two and three spins |
-| `QM.Spin.SpinAlg` | 399 | The spin algebra of `N` spin-½ particles |
 
 ## `DFT`: density-functional theory
 
@@ -217,8 +217,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
-| `DFT.Continuum.Line.Free.Free` | 212 | Free bosons on a line: ground states exist |
-| `DFT.Continuum.Line.Free.FreeFermions` | 409 | Free fermions on a line: ground states exist |
+| `DFT.Continuum.Line.Free.Bosons` | 212 | Free bosons on a line: ground states exist |
+| `DFT.Continuum.Line.Free.Fermions` | 409 | Free fermions on a line: ground states exist |
 
 ### `DFT/Continuum/Line/GroundState/`
 
@@ -259,8 +259,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `DFT.Continuum.Line.KohnSham.Basic` | 265 | Kohn–Sham theory on the line (`H¹₀`, continuous potentials) |
 | `DFT.Continuum.Line.KohnSham.Dense` | 407 | `v`-representable densities are dense (`N` particles on `H¹₀`) |
-| `DFT.Continuum.Line.KohnSham.KohnSham` | 265 | Kohn–Sham theory on the line (`H¹₀`, continuous potentials) |
 | `DFT.Continuum.Line.KohnSham.Meagre` | 508 | Kohn–Sham `v`-representable densities are meagre |
 | `DFT.Continuum.Line.KohnSham.MeagreC1` | 633 | Densities with a `C¹` profile are meagre |
 | `DFT.Continuum.Line.KohnSham.NotVRep` | 171 | `N`-representable densities that are not `v`-representable |
@@ -271,66 +271,66 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
-| `DFT.Continuum.Line.MeasurePotential.MeasureChar` | 118 | Measure-`v`-representable densities, explicitly (one particle) |
-| `DFT.Continuum.Line.MeasurePotential.MeasureGS` | 514 | Ground states for measure potentials |
-| `DFT.Continuum.Line.MeasurePotential.MeasureHK` | 306 | Hohenberg–Kohn for measure potentials (one particle) |
-| `DFT.Continuum.Line.MeasurePotential.MeasureHKend` | 1038 | Hohenberg–Kohn for interacting particles in measure potentials |
-| `DFT.Continuum.Line.MeasurePotential.MeasureHKgen` | 596 | Toward the general interacting Hohenberg–Kohn theorem: limits of truncations |
-| `DFT.Continuum.Line.MeasurePotential.MeasureHolder` | 274 | Ground-state densities in measure potentials are Hölder continuous of order `5/8` |
-| `DFT.Continuum.Line.MeasurePotential.MeasureMeagre` | 149 | Measure potentials do not help much: measure-`v`-representable densities are meagre |
-| `DFT.Continuum.Line.MeasurePotential.MeasureMeagreN` | 351 | Interacting `v`-representable densities in measure potentials are meagre |
-| `DFT.Continuum.Line.MeasurePotential.MeasureN` | 158 | `N` particles in a measure potential: the energy |
-| `DFT.Continuum.Line.MeasurePotential.MeasureNBos` | 208 | Non-interacting bosons in a measure potential |
-| `DFT.Continuum.Line.MeasurePotential.MeasureNEL` | 181 | The Euler–Lagrange equation for `N` particles in a measure potential |
-| `DFT.Continuum.Line.MeasurePotential.MeasureNFer` | 298 | Unique continuation for fermionic ground states of measure potentials |
-| `DFT.Continuum.Line.MeasurePotential.MeasureNGS` | 302 | `N`-particle ground states in a measure potential |
-| `DFT.Continuum.Line.MeasurePotential.MeasureNHK` | 79 | Hohenberg–Kohn for `N` particles in measure potentials: what holds in general |
-| `DFT.Continuum.Line.MeasurePotential.MeasureNHKc` | 143 | Hohenberg–Kohn for interacting particles in measure potentials, along continuous directions |
-| `DFT.Continuum.Line.MeasurePotential.MeasureNPos` | 202 | Bosonic ground-state densities of measure potentials are positive |
-| `DFT.Continuum.Line.MeasurePotential.MeasureNUcp` | 336 | Unique continuation for bosonic ground states of measure potentials |
-| `DFT.Continuum.Line.MeasurePotential.MeasurePair` | 426 | The pair-density operator for smooth states |
-| `DFT.Continuum.Line.MeasurePotential.MeasurePos` | 150 | Positive solutions are ground states (measure potentials, one particle) |
-| `DFT.Continuum.Line.MeasurePotential.MeasurePot` | 199 | One particle with measure potentials |
-| `DFT.Continuum.Line.MeasurePotential.MeasureReg` | 386 | Regularity of interacting ground states in measure potentials: finite sine sums |
-| `DFT.Continuum.Line.MeasurePotential.MeasureTrap` | 226 | A plateau density: two δ-functions |
-| `DFT.Continuum.Line.MeasurePotential.MeasureUCP` | 627 | Ground states of measure potentials have no interior zeros |
+| `DFT.Continuum.Line.MeasurePotential.Char` | 118 | Measure-`v`-representable densities, explicitly (one particle) |
+| `DFT.Continuum.Line.MeasurePotential.GS` | 514 | Ground states for measure potentials |
+| `DFT.Continuum.Line.MeasurePotential.HK` | 306 | Hohenberg–Kohn for measure potentials (one particle) |
+| `DFT.Continuum.Line.MeasurePotential.HKend` | 1038 | Hohenberg–Kohn for interacting particles in measure potentials |
+| `DFT.Continuum.Line.MeasurePotential.HKgen` | 596 | Toward the general interacting Hohenberg–Kohn theorem: limits of truncations |
+| `DFT.Continuum.Line.MeasurePotential.Holder` | 274 | Ground-state densities in measure potentials are Hölder continuous of order `5/8` |
+| `DFT.Continuum.Line.MeasurePotential.Meagre` | 149 | Measure potentials do not help much: measure-`v`-representable densities are meagre |
+| `DFT.Continuum.Line.MeasurePotential.MeagreN` | 351 | Interacting `v`-representable densities in measure potentials are meagre |
+| `DFT.Continuum.Line.MeasurePotential.NBos` | 208 | Non-interacting bosons in a measure potential |
+| `DFT.Continuum.Line.MeasurePotential.NEL` | 181 | The Euler–Lagrange equation for `N` particles in a measure potential |
+| `DFT.Continuum.Line.MeasurePotential.NEnergy` | 158 | `N` particles in a measure potential: the energy |
+| `DFT.Continuum.Line.MeasurePotential.NFer` | 298 | Unique continuation for fermionic ground states of measure potentials |
+| `DFT.Continuum.Line.MeasurePotential.NGS` | 302 | `N`-particle ground states in a measure potential |
+| `DFT.Continuum.Line.MeasurePotential.NHK` | 79 | Hohenberg–Kohn for `N` particles in measure potentials: what holds in general |
+| `DFT.Continuum.Line.MeasurePotential.NHKc` | 143 | Hohenberg–Kohn for interacting particles in measure potentials, along continuous directions |
+| `DFT.Continuum.Line.MeasurePotential.NPos` | 202 | Bosonic ground-state densities of measure potentials are positive |
+| `DFT.Continuum.Line.MeasurePotential.NUcp` | 336 | Unique continuation for bosonic ground states of measure potentials |
+| `DFT.Continuum.Line.MeasurePotential.Pair` | 426 | The pair-density operator for smooth states |
+| `DFT.Continuum.Line.MeasurePotential.Pos` | 150 | Positive solutions are ground states (measure potentials, one particle) |
+| `DFT.Continuum.Line.MeasurePotential.Pot` | 199 | One particle with measure potentials |
+| `DFT.Continuum.Line.MeasurePotential.Reg` | 386 | Regularity of interacting ground states in measure potentials: finite sine sums |
+| `DFT.Continuum.Line.MeasurePotential.Trap` | 226 | A plateau density: two δ-functions |
+| `DFT.Continuum.Line.MeasurePotential.UCP` | 627 | Ground states of measure potentials have no interior zeros |
 
 ### `DFT/Continuum/Line/Neumann/`
 
 | Module | Lines | Content |
 |---|---|---|
-| `DFT.Continuum.Line.Neumann.NeuBasis` | 355 | The cosine basis: Neumann walls |
-| `DFT.Continuum.Line.Neumann.NeuChain` | 366 | The chain rule with Neumann walls |
-| `DFT.Continuum.Line.Neumann.NeuCpt` | 304 | Compactness, the ground-state energy, and the converse of Hellmann–Feynman |
-| `DFT.Continuum.Line.Neumann.NeuDens` | 360 | `√ρ ∈ H¹` for Neumann states |
-| `DFT.Continuum.Line.Neumann.NeuDensD` | 270 | The derivative of a marginal |
-| `DFT.Continuum.Line.Neumann.NeuEL` | 290 | The Euler–Lagrange equation with Neumann walls and `H⁻¹` potentials |
-| `DFT.Continuum.Line.Neumann.NeuFer` | 291 | Unique continuation for fermionic Neumann ground states of `H⁻¹` potentials |
-| `DFT.Continuum.Line.Neumann.NeuGS` | 535 | Neumann walls and `H⁻¹` potentials: one-particle ground states |
-| `DFT.Continuum.Line.Neumann.NeuHKa` | 250 | Estimates for the Hohenberg–Kohn theorem with Neumann walls |
-| `DFT.Continuum.Line.Neumann.NeuHKb` | 831 | The pair-density term for smooth states |
-| `DFT.Continuum.Line.Neumann.NeuHKc` | 874 | Hohenberg–Kohn with Neumann walls and `H⁻¹` potentials: the pair-density identity |
-| `DFT.Continuum.Line.Neumann.NeuHalf` | 244 | Fermionic Neumann states restricted to the chamber |
-| `DFT.Continuum.Line.Neumann.NeuND` | 287 | Nondegeneracy of Neumann ground states of `H⁻¹` potentials |
-| `DFT.Continuum.Line.Neumann.NeuNGS` | 406 | `N` particles with Neumann walls in an `H⁻¹` potential |
-| `DFT.Continuum.Line.Neumann.NeuPos` | 858 | Ground-state densities with Neumann walls are positive on `[0, 1]` |
-| `DFT.Continuum.Line.Neumann.NeuPot` | 317 | Neumann walls and `H⁻¹` potentials: one particle, the form bound |
-| `DFT.Continuum.Line.Neumann.NeuRep` | 548 | Local `N`-representability with Neumann walls |
-| `DFT.Continuum.Line.Neumann.NeuSeries` | 415 | Cosine series and the kinetic energy with Neumann walls |
-| `DFT.Continuum.Line.Neumann.NeuSpec` | 225 | Neumann orbitals for `H⁻¹` potentials |
-| `DFT.Continuum.Line.Neumann.NeuSuff` | 257 | Sufficiency: `v`-representability from local `N`-representability |
-| `DFT.Continuum.Line.Neumann.NeuUcp` | 522 | Unique continuation for bosonic Neumann ground states of `H⁻¹` potentials |
-| `DFT.Continuum.Line.Neumann.NeuWeak` | 206 | The `N`-particle state space with Neumann walls |
-| `DFT.Continuum.Line.Neumann.NeuYoung` | 301 | The fermionic chamber state with Neumann walls |
+| `DFT.Continuum.Line.Neumann.Basis` | 355 | The cosine basis: Neumann walls |
+| `DFT.Continuum.Line.Neumann.Chain` | 366 | The chain rule with Neumann walls |
+| `DFT.Continuum.Line.Neumann.Cpt` | 304 | Compactness, the ground-state energy, and the converse of Hellmann–Feynman |
+| `DFT.Continuum.Line.Neumann.Dens` | 360 | `√ρ ∈ H¹` for Neumann states |
+| `DFT.Continuum.Line.Neumann.DensD` | 270 | The derivative of a marginal |
+| `DFT.Continuum.Line.Neumann.EL` | 290 | The Euler–Lagrange equation with Neumann walls and `H⁻¹` potentials |
+| `DFT.Continuum.Line.Neumann.Fer` | 291 | Unique continuation for fermionic Neumann ground states of `H⁻¹` potentials |
+| `DFT.Continuum.Line.Neumann.GS` | 535 | Neumann walls and `H⁻¹` potentials: one-particle ground states |
+| `DFT.Continuum.Line.Neumann.HKa` | 250 | Estimates for the Hohenberg–Kohn theorem with Neumann walls |
+| `DFT.Continuum.Line.Neumann.HKb` | 831 | The pair-density term for smooth states |
+| `DFT.Continuum.Line.Neumann.HKc` | 874 | Hohenberg–Kohn with Neumann walls and `H⁻¹` potentials: the pair-density identity |
+| `DFT.Continuum.Line.Neumann.Half` | 244 | Fermionic Neumann states restricted to the chamber |
+| `DFT.Continuum.Line.Neumann.ND` | 287 | Nondegeneracy of Neumann ground states of `H⁻¹` potentials |
+| `DFT.Continuum.Line.Neumann.NGS` | 406 | `N` particles with Neumann walls in an `H⁻¹` potential |
+| `DFT.Continuum.Line.Neumann.Pos` | 858 | Ground-state densities with Neumann walls are positive on `[0, 1]` |
+| `DFT.Continuum.Line.Neumann.Pot` | 317 | Neumann walls and `H⁻¹` potentials: one particle, the form bound |
+| `DFT.Continuum.Line.Neumann.Rep` | 548 | Local `N`-representability with Neumann walls |
+| `DFT.Continuum.Line.Neumann.Series` | 415 | Cosine series and the kinetic energy with Neumann walls |
+| `DFT.Continuum.Line.Neumann.Spec` | 225 | Neumann orbitals for `H⁻¹` potentials |
+| `DFT.Continuum.Line.Neumann.Suff` | 257 | Sufficiency: `v`-representability from local `N`-representability |
+| `DFT.Continuum.Line.Neumann.Ucp` | 522 | Unique continuation for bosonic Neumann ground states of `H⁻¹` potentials |
+| `DFT.Continuum.Line.Neumann.Weak` | 206 | The `N`-particle state space with Neumann walls |
+| `DFT.Continuum.Line.Neumann.Young` | 301 | The fermionic chamber state with Neumann walls |
 
 ### `DFT/Continuum/Line/NeumannKS/`
 
 | Module | Lines | Content |
 |---|---|---|
 | `DFT.Continuum.Line.NeumannKS.Diff` | 93 | Differentiability of the Lieb functional with Neumann walls (Corso's Lemma 6.1) |
+| `DFT.Continuum.Line.NeumannKS.Exact` | 60 | The exact Kohn–Sham potential with Neumann walls |
 | `DFT.Continuum.Line.NeumannKS.Hartree` | 144 | Hartree and exchange-correlation for pair interactions (Neumann walls) |
 | `DFT.Continuum.Line.NeumannKS.Inverse` | 133 | Continuity of the inverse map `ρ ↦ v_ρ` with Neumann walls |
-| `DFT.Continuum.Line.NeumannKS.KohnSham` | 60 | The exact Kohn–Sham potential with Neumann walls |
 | `DFT.Continuum.Line.NeumannKS.Lieb` | 105 | The Lieb and Levy–Lieb functionals with Neumann walls |
 
 ### `DFT/Continuum/Line/Regularity/`
@@ -504,11 +504,11 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `DFT.Lattice.Spin.Field` | 141 | Spin-DFT language: scalar potential and magnetic field |
 | `DFT.Lattice.Spin.FockBridge` | 171 | The spin bridge |
 | `DFT.Lattice.Spin.HubbardCertificates` | 587 | Total-density Hohenberg–Kohn for small Hubbard models (exact certificates) |
 | `DFT.Lattice.Spin.KronSum` | 192 | Strong-potential coefficients of a Kronecker sum |
-| `DFT.Lattice.Spin.SpinField` | 141 | Spin-DFT language: scalar potential and magnetic field |
-| `DFT.Lattice.Spin.SpinResolved` | 152 | The spin-resolved generic Hohenberg–Kohn theorem |
+| `DFT.Lattice.Spin.Resolved` | 152 | The spin-resolved generic Hohenberg–Kohn theorem |
 | `DFT.Lattice.Spin.Symmetric` | 188 | Generic Hohenberg–Kohn with a symmetry |
 
 ### `DFT/Lattice/StrongPotential/`

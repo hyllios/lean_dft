@@ -3,7 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques, Stefano Pittalis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques, Stefano Pittalis
 -/
-import DFT.Lattice.Spin.SpinResolved
+import DFT.Lattice.Spin.Resolved
 import DFT.Lattice.TDDFT.Frozen
 
 /-!

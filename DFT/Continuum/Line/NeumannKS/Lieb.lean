@@ -3,8 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Line.Neumann.NeuCpt
-import DFT.Continuum.Line.Neumann.NeuHKa
+import DFT.Continuum.Line.Neumann.Cpt
+import DFT.Continuum.Line.Neumann.HKa
 
 /-!
 # The Lieb and Levy–Lieb functionals with Neumann walls

@@ -37,5 +37,5 @@ import QM.ManyBody.RDM2
 import QM.ManyBody.Slater
 import QM.ManyBody.Spin
 import QM.ManyBody.Symmetrizer
+import QM.Spin.Algebra
 import QM.Spin.ClebschGordan
-import QM.Spin.SpinAlg

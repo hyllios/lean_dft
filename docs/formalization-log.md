@@ -737,7 +737,7 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   **`gs_profile_pos`** (K > 0 on (0,1): K(t₀)=0 ⇒ K'(t₀)=0 ⇒ cut along all planes, energy splits,
   UCP contradiction), **`not_vrep_of_zero`**, **`sin_nrep_not_vrep`** (2N sin²(2πt) not v-rep for
   any N). Standard axioms. Blueprint `thm:line_positive`. Next: distributional potentials (Corso).
-- P STARTED (user chose: Dirichlet walls, measure potentials). `Line/MeasurePot` (N = 1):
+- P STARTED (user chose: Dirichlet walls, measure potentials). `Line/MeasurePotential/Pot` (N = 1):
   potentials `PotM = StrongDual ℝ C([0,1])` (finite signed measures by Riesz, no measure API),
   `deltaM`, `sqP`, `kinM`, `QM ν ψ = ∫ψ'² + ν(ψ²)`, `IsGSM`, `VRepM`; `sq_le_interval`,
   **`four_sq_half_le`** (4φ(½)² ≤ ∫φ'², sharp), `kinM_tentG`, **`tent_isGSM`** (tent = GS of
@@ -746,7 +746,7 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   Next (proposal): GS existence and Euler–Lagrange for measure potentials (compactness of H¹₀ ⊂ C),
   then the N = 1 characterisation ρ = g², g > 0 inside, g'' a measure with ∫ d|g''|/g < ∞; interior
   zeros stay excluded; then N-body.
-- P step 2 DONE. `Line/MeasureGS` (N = 1, measure potentials): **`sq_le_H10`** (ψ(t)² ≤ a∫ψ² + ∫ψ'²/a),
+- P step 2 DONE. `Line/MeasurePotential/GS` (N = 1, measure potentials): **`sq_le_H10`** (ψ(t)² ≤ a∫ψ² + ∫ψ'²/a),
   `abs_nu_sq_le`/`QM_ge` (|ν(ψ²)| ≤ ½∫ψ'² + C_ν∫ψ², C_ν = ‖ν‖(2‖ν‖+1)); `dL`, `prim_dL`, `kinM_prim`
   (H¹₀ ↔ primitives of L²); `abs_prim_sub_le_sqrt` (½-Hölder); **`exists_weak_subseq`** (sequential
   Banach–Alaoglu via `toDual`; L²(0,1) separable from `Lp.SecondCountableTopology` + `Fact (2 ≠ ∞)`);
@@ -756,16 +756,16 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   axioms. Blueprint `thm:line_measure_gs`.
   Next: from the weak equation, ψ' has a BV representative with dψ' = (ν − E₀)ψ as measures; then the
   N = 1 characterisation of measure-v-representable densities (step 3).
-- P step 3 (sufficiency). `Line/MeasurePos`: `deriv_abs_sq_le` (at zeros |ψ| has a local min, so
+- P step 3 (sufficiency). `Line/MeasurePotential/Pos`: `deriv_abs_sq_le` (at zeros |ψ| has a local min, so
   deriv = 0), `H10.abs`, `kinM_abs_le`, `QM_abs_le`, `exists_min_nonneg`; **`isGSM_of_pos_weak`**
   (g ∈ H¹₀, g > 0 on (0,1), −g'' + νg = Eg weakly ⇒ E = E₀ and g is a GS: test with a nonnegative GS),
-  `vrepM_of_pos_weak`. `Line/MeasureTrap`: trapezoid min(3t, 1, 3(1−t)) is the GS of
+  `vrepM_of_pos_weak`. `Line/MeasurePotential/Trap`: trapezoid min(3t, 1, 3(1−t)) is the GS of
   −d² − 3δ_{1/3} − 3δ_{2/3} (`trap_isGSM`, energy 0), `trap_vrepM`, **`trap_nrep_not_vrep`** (any N, not
   v-rep with continuous potentials). Blueprint `thm:line_measure_pos`, `thm:line_measure_trap`.
   Open (necessity): a GS of a measure potential is positive on (0,1), and ν is determined by g. Both
   need ODE uniqueness for −ψ'' = (E − ν)ψ with measure coefficients (Riesz representation of ν as a
   signed measure + Grönwall), which the functional-only `PotM` setting does not yet have.
-- P step 3 (necessity, route (b) chosen by user: ν given as a measure). `Line/MeasureUCP`: `IsMeas01`
+- P step 3 (necessity, route (b) chosen by user: ν given as a measure). `Line/MeasurePotential/UCP`: `IsMeas01`
   (finite measure carried by [0,1]), `intCLM`, `nuOf μ₊ μ₋ : PotM`; **`integral_mul_eq_neg`** (Fubini:
   ∫ψφ dρ = −∫φ' G_ρ, G_ρ(t) = ∫_{x<t} ψ dρ); **`ae_eq_const_of_orth`** (du Bois-Reymond);
   **`deriv_ae_eq_R`** (ψ' = R = c + G₊ − G₋ − E G_L a.e.); `R_sub_le` (|R(t) − R(a)| ≤ Λ sup|ψ|),
@@ -777,44 +777,44 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
   Open: HK for measure potentials (ν determined by g up to atoms at the walls and a constant; needs
   measures on (0,1) determined by C_c^∞ test functions); explicit condition on g (g'' a measure,
   ∫ d|g''|/g < ∞); N-body.
-- P step 4 (HK). `Line/MeasureHK`: `h10_of_lipschitz`, `cutF` (Lipschitz cutoff); **`dense_mulP`**
+- P step 4 (HK). `Line/MeasurePotential/HK`: `h10_of_lipschitz`, `cutF` (Lipschitz cutoff); **`dense_mulP`**
   (g > 0 inside ⇒ g·H¹₀ uniformly dense in {h ∈ C[0,1] : h(0) = h(1) = 0}; φ = cutoff × Weierstrass
   polynomial for h/g — no measure theory needed); `eq_zero_of_dense`; **`hk_of_pos`** (any ν, ν' ∈
   C[0,1]* with a common positive weak solution: ν − ν' = (E − E')dx + aδ₀ + bδ₁); `isGSM_gauge`
   (converse); `exists_pos_gs`; **`hk_meas`**, **`isGSM_iff_gauge`** (measure potentials: common GS ⟺
   ν' − ν = C dx + aδ₀ + bδ₁). Blueprint `thm:line_measure_hk`.
   Open: explicit condition on g (g'' a measure, ∫ d|g''|/g < ∞); N-body.
-- P step 5. `Line/MeasureChar`: `Gρ_add`, `Gρ_smul`, `weak_of_deriv` (Fubini backwards);
+- P step 5. `Line/MeasurePotential/Char`: `Gρ_add`, `Gρ_smul`, `weak_of_deriv` (Fubini backwards);
   **`vrepMeas_iff_explicit`** (ρ measure-v-rep ⟺ ρ = g², g ∈ H¹₀ continuous normalised, g > 0
   inside, g'(t) = c + ∫_{x<t} g dμ₊ − ∫_{x<t} g dμ₋ a.e.: g'' = g(μ₊ − μ₋), i.e. g''/g a finite measure).
   Blueprint `thm:line_measure_char`. N = 1 measure-potential theory complete. Open: N-body.
-- P N-body (user: N1–N4). `Line/MeasureN` (N1, N2): `gN`, **`rhoHat`** (continuous density ρ̂ = g²,
+- P N-body (user: N1–N4). `Line/MeasurePotential/NEnergy` (N1, N2): `gN`, **`rhoHat`** (continuous density ρ̂ = g²,
   g ∈ H¹₀ from `sqrt_dens_H1W`), `rhoHat_spec`/`rhoHat_unique` (via `pot_eq_of_integral`), `QMN`,
   `IsGSN`, `VRepMeasN`, **`abs_nu_rhoHat_le`** (|ν(ρ̂)| ≤ ½T + C_ν N∫Φ²), `QMN_ge`.
-  `Line/MeasureNGS` (N3): **`exists_isGSN`** (GS for every measure ν, continuous w, bosons/fermions:
+  `Line/MeasurePotential/NGS` (N3): **`exists_isGSN`** (GS for every measure ν, continuous w, bosons/fermions:
   coefficient compactness + L² convergence + uniform convergence of √ρ̂ via 1D weak compactness).
-  `Line/MeasureNBos` (N4, w = 0): **`QMN_ge_EM`** (T + ν(ρ̂) ≥ N E₀, any statistics), `kinW_prodS`,
+  `Line/MeasurePotential/NBos` (N4, w = 0): **`QMN_ge_EM`** (T + ν(ρ̂) ≥ N E₀, any statistics), `kinW_prodS`,
   `rhoHat_prodS`, `isGSN_prodS`, `gs1_of_isGSN`, **`vrepMeasN_bos_iff`** (N-boson measure-v-rep ⟺ ρ/N
   one-particle measure-v-rep), **`trap_vrepMeasN`** (plateau density, N bosons, −3δ_{1/3} − 3δ_{2/3}).
   Blueprint `thm:line_measureN`, `thm:line_measureN_gs`, `thm:line_measureN_bos`.
   N5 (attacked 2026-11-25, partial):
-  `Line/MeasureNHK`: **`isGSN_of_same_dens`** (first half of HK, any statistics, any continuous w),
-  **`hk_bos0`** (full HK, non-interacting bosons). `Line/MeasureNEL`: `rhoHat2` (mixed density by
+  `Line/MeasurePotential/NHK`: **`isGSN_of_same_dens`** (first half of HK, any statistics, any continuous w),
+  **`hk_bos0`** (full HK, non-interacting bosons). `Line/MeasurePotential/NEL`: `rhoHat2` (mixed density by
   polarisation), `rhoHat_expand`, `QMN_expand`, `EN_mul_le`, **`euler_lagrangeN`**, **`isGSN_abs`**.
-  `Line/MeasureNUcp`: `log_estimate_core` (Moser from a lower bound), `pot_le_of_int`,
+  `Line/MeasurePotential/NUcp`: `log_estimate_core` (Moser from a lower bound), `pot_le_of_int`,
   `norm_rhoHat2_le` (0 ≤ uφ ≤ M ⇒ ‖ρ̂(u,φ)‖ ≤ NM), `logData_meas`, **`gsN_ne_zero_bos`** (UCP for
-  bosonic GS of measure potentials, any continuous w). `Line/MeasureNPos`: `sq_sub_le_H10`,
+  bosonic GS of measure potentials, any continuous w). `Line/MeasurePotential/NPos`: `sq_sub_le_H10`,
   **`rhoHat_pos_bos`** (ρ̂ > 0 on (0,1); slab bound from ρ̂ = g², g(t₀) = 0 — no C¹ needed).
   Remaining for interacting HK (bosons): from D(ρ̂(Φ, Φ Σ s(x_k))) = 0 for all s (D = ν − ν' − c dx)
   conclude D = aδ₀ + bδ₁. Paper argument: ρ̂(Φ,ΦΣs) = sρ̂ + (N−1)∫P(·,u)s(u)du (P pair density), so
   ρ̂·D is absolutely continuous, hence D = d dt (ρ̂ > 0), then Φ²Σ d(x_k) = 0 a.e. and UCP give d = 0.
   Needs a pair-density / Fubini argument with pointwise control where D is singular — new work.
-  Fermions DONE: `Line/MeasureNFer`: `isGSN_PhiY`, `eq_PhiBY_meas` (companion B = |Ψ| satisfies
+  Fermions DONE: `Line/MeasurePotential/NFer`: `isGSN_PhiY`, `eq_PhiBY_meas` (companion B = |Ψ| satisfies
   the weak equation, potential term ν(p) with p continuous having the integrals of Bφ),
   `logData_ballY_meas`, **`gsN_ne_zero_fer`**, **`rhoHat_pos_fer`**; `norm_pot_le_of_int` and
-  `rhoHat_pos_of_ucp` (MeasureNPos made generic in τ). **`vrepMeasN_pos`**: ground-state densities
+  `rhoHat_pos_of_ucp` (MeasurePotential/NPos made generic in τ). **`vrepMeasN_pos`**: ground-state densities
   of measure potentials are positive on (0,1), both statistics, any continuous w.
-  `Line/MeasureNHKc`: **`hk_cont_dir`**, **`hk_cont_pert`** (interacting HK within ν + C[0,1], both
+  `Line/MeasurePotential/NHKc`: **`hk_cont_dir`**, **`hk_cont_pert`** (interacting HK within ν + C[0,1], both
   statistics: sep_lineW + UCP + rigidL_line); `rhoHat2_sq_le` (pointwise Cauchy–Schwarz, via
   discriminant of ρ̂(A + sB) ≥ 0), `rhoHat_le` (ρ̂_X ≤ aN∫X² + T(X)/a), `abs_rhoHat2_le_H1`.
   PLAN for the general interacting HK (ν − ν' an arbitrary measure; D := ν − ν' − c dx annihilates
@@ -830,33 +830,33 @@ C²-density facts (`gs_density`, `contDiff_rhoN`, `rhoN_pos`, `not_pureDens_of_*
       ∫ Φ² χ (Σ_k d(x_k)) = 0 ⇒ Φ² Σ d(x_k) = 0 a.e. (fundamental lemma) ⇒ (UCP) Σ d(x_k) = 0 a.e.
       ⇒ d = 0 a.e. ⇒ D = 0 on C_0 ⇒ ν − ν' = C dx + aδ₀ + bδ₁ (as in hk_of_pos).
   (A), (B) done (rhoHat2_sq_le, rhoHat_le). Estimated 1000–1500 lines for (C)–(G).
-  (C), (D) DONE (2026-11-26): `Line/MeasurePair`: `FF`, `mem_FF_mul`, `TX`, **`rhoHat2_FF`**
+  (C), (D) DONE (2026-11-26): `Line/MeasurePotential/Pair`: `FF`, `mem_FF_mul`, `TX`, **`rhoHat2_FF`**
   (ρ̂(X, F_f X) = f ρ̂_X + T_X f for continuous symmetric X), `rhoHat_eq_marg` (ρ̂_X(t) = N∫X(t,y)²
   at every t), `hP`, `rX`, **`intCLM_TXP`** (∫ T_X f dρ = ∫ f r_X, Fubini), `integral_abs_rX_sub_le`.
-  `Line/MeasureHKgen`: `kinW_eq_tsum`, **`tendsto_kinW_sub_trunc`** (truncations converge in H¹),
+  `Line/MeasurePotential/HKgen`: `kinW_eq_tsum`, **`tendsto_kinW_sub_trunc`** (truncations converge in H¹),
   `kinW_mul_le`, bilinearity of ρ̂(·,·), `SH` (= N∫X² + T), `dk_FF`, `TG` (T_Y f = ρ̂(Y,F_f Y) − fρ̂_Y),
   **`norm_TG_sub_le`** (T continuous in H¹), `le_two_sqrt_of_forall`, `integral_abs_mul_le` (CS),
   `integral_abs_sq_sub_le_SH`, **`exists_pair_density`**: for every H¹₀ state Φ (N ≥ 2) and finite
   measure ρ on [0,1] there is R ∈ L¹ with ∫ T_Φ f dρ = ∫ f R for all bounded C¹ f with bounded f'
   (r_M of the truncations are L¹-Cauchy; limits on both sides).
-  (E)–(H) DONE (2026-11-26): `Line/MeasureHKend`: `D_rhoHat_ac`, `D_eq_integral`,
+  (E)–(H) DONE (2026-11-26): `Line/MeasurePotential/HKend`: `D_rhoHat_ac`, `D_eq_integral`,
   `integrable_x0_sq`, `int_rhoHat2_L1`, `rhoHat2_vanish`, `sum_ae_zero`, `product_identity`,
   `D_vanish`, `D_vanish_walls`, **`hk_meas_N`**, **`hk_meas_N_dens`**: FULL Hohenberg–Kohn for N
   interacting bosons/fermions (continuous w) in measure potentials on a line: same GS density ⇒
   ν − ν' = C dx + aδ₀ + bδ₁. N5 COMPLETE. Standard axioms.
   MEAGRENESS IN MEASURE POTENTIALS DONE (2026-11-25): `Line/MeagreC1` generalised: `BsetL L k`
   (|D²_h (prim f)²| ≤ L h), `Bset_eq`, `isClosed_BsetL`, **`exists_not_BsetL`** (tent beats L h).
-  `Line/MeasureMeagre`: **`lipschitz_of_vrepMeas`** (ρ = g², g bounded and Lipschitz, from
+  `Line/MeasurePotential/Meagre`: **`lipschitz_of_vrepMeas`** (ρ = g², g bounded and Lipschitz, from
   vrepMeas_iff_explicit + Gρ_bdd + FTC for AC g), `MeasDensN`, `mem_BsetL_of_MeasDensN`,
   `isNowhereDense_BsetLS`, **`vrepMeas_meagre`**, **`vrepMeas_nonrep_dense`**,
   **`vrepMeasN_bos_meagre`**: even with measure potentials, v-representable densities (one particle,
   N non-interacting bosons) are meagre in S_N. Standard axioms. Interacting case open (needs
   Lipschitz/regularity of ρ̂ for GS of measure potentials).
-  INTERACTING CASE DONE (2026-11-25): `Line/MeasureReg`: `trace_le` (trace inequality for finite
+  INTERACTING CASE DONE (2026-11-25): `Line/MeasurePotential/Reg`: `trace_le` (trace inequality for finite
   sine sums), `sumS` (finite sine sums as tests: `sumS_mem`, `h0W_sumS`), `rhoHat_sumS_le`,
   **`summable_lam54`** (GS of N interacting particles in a measure potential: Σ λ^{5/4} c² < ∞;
-  EL tested with Σ λ^{-3/4}(λ−E)c s_m, duality). `Line/MeasureHolder`: `rhoHat_sumS_holder`,
-  `tendsto_rhoHat_trunc`, **`rhoHat_holder`** (ρ̂ is 5/8-Hölder). `Line/MeasureMeagreN`: `BsetH`
+  EL tested with Σ λ^{-3/4}(λ−E)c s_m, duality). `Line/MeasurePotential/Holder`: `rhoHat_sumS_holder`,
+  `tendsto_rhoHat_trunc`, **`rhoHat_holder`** (ρ̂ is 5/8-Hölder). `Line/MeasurePotential/MeagreN`: `BsetH`
   (D² ≤ L h^{5/8}), **`exists_not_BsetH`** (tent width r¹⁶, height r⁹), **`vrepMeasN_meagre`**,
   **`vrepMeasN_nonrep_dense`**: interacting measure-v-rep densities are meagre (both statistics,
   continuous w). Standard axioms.
@@ -879,76 +879,76 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   orbitals ⇒ subgradient; converse Hellmann–Feynman + uniqueness as in `Line/Dense`).
 - Q6 HK: same GS density ⇒ v − v' = const (Corso's operator K / our pair-density argument).
 - Later: periodic/antiperiodic BCs, xc differentiability, exact KS (Thm 2.12, 2.15).
-- Q1 DONE (2026-11-25): `Line/NeuPot` (H1N, H1E, PotH, toE, sq_le_H1N, H1N.mul, **abs_v_sq_le**
-  form bound, evE, ofM (measures ⊂ H⁻¹), deltaH), `Line/NeuGS` (fnE, mulL, **tendsto_inner_mulL**,
+- Q1 DONE (2026-11-25): `Line/Neumann/Pot` (H1N, H1E, PotH, toE, sq_le_H1N, H1N.mul, **abs_v_sq_le**
+  form bound, evE, ofM (measures ⊂ H⁻¹), deltaH), `Line/Neumann/GS` (fnE, mulL, **tendsto_inner_mulL**,
   dE, **tendsto_v_dE**, QE, EH, exists_minE, dE2, euler_lagrangeE, QH, IsGSH, VRepH,
   **exists_isGSH**, **euler_lagrangeH**). Standard axioms. Next: Q2 N-body Neumann state space.
-- Q2 DONE (2026-11-25): `Line/NeuBasis` (cosines cn, cn_complete via primitive + sn_complete,
-  cb, parsevalC1, cube products cP, parsevalC, eC/bC, parsevalCW, parsevalCW_pair). `Line/NeuWeak`
+- Q2 DONE (2026-11-25): `Line/Neumann/Basis` (cosines cn, cn_complete via primitive + sn_complete,
+  cb, parsevalC1, cube products cP, parsevalC, eC/bC, parsevalCW, parsevalCW_pair). `Line/Neumann/Weak`
   (TestN = C¹ vanishing on faces x_k∈{0,1}, IsWDN, unique, isWDN_of_C1, dWN, H1NW, DomNS/DomN,
-  kinN, DomWS_le_DomNS, kinN_eq_kinW). `Line/NeuSeries` (bumpC, sP, dk_sP, bessel_dWN, lamC,
+  kinN, DomWS_le_DomNS, kinN_eq_kinW). `Line/Neumann/Series` (bumpC, sP, dk_sP, bessel_dWN, lamC,
   sum_lamC_le, lam_le_lamC, sL, serN, isWDN_serN, cC_pmNS, ae_eq_of_cC_eq, DirN, dirN_cC, serN_mem,
   kinN_serN). Refactor of `Line/Density` section dom onto `DomC τ n` (C², symmetric, no walls) with
-  domC_of_dom, diffC, cont_dkC, rho_propsC, and `Line/WeakNec` reg section on DomC. `Line/NeuDens`
+  domC_of_dom, diffC, cont_dkC, rho_propsC, and `Line/WeakNec` reg section on DomC. `Line/Neumann/Dens`
   (h1N_closure, tendsto_abs_sq_of_L2, truncC, truncC_mem, tendsto_truncC, kin_truncC_le,
-  **sqrt_dens_H1N**). `Line/NeuNGS` (toE_congr, sqE_congr, sqE_eq_of_ae, gNH, rhoE = ρ as an
+  **sqrt_dens_H1N**). `Line/Neumann/NGS` (toE_congr, sqE_congr, sqE_eq_of_ae, gNH, rhoE = ρ as an
   element of H1E, rhoE_eq_sqE, QNH, IsGSNH, **abs_v_rhoE_le** form bound, QNH_ge,
   tendsto_int_rhoN, tendsto_int_w, **exists_isGSNH**). The limit density is identified through
   pot_eq_of_integral on evE e₀², not via rhoHat. Standard axioms. Next: Q3 non-degeneracy + UCP.
-- Q3 bosons DONE (2026-11-25): `Line/NeuChain` (testN_smd, **tendsto_truncC_dk**: ∂ₖ truncC ⇀ ∂ₖΦ
+- Q3 bosons DONE (2026-11-25): `Line/Neumann/Chain` (testN_smd, **tendsto_truncC_dk**: ∂ₖ truncC ⇀ ∂ₖΦ
   tested on the sine basis, **isWDN_comp** chain rule, **isWDN_abs**, abs_mem_DomN, kinN_abs_le,
-  IsWDN.mul_C1, IsWDN.mul_cutoff: ζ C¹ vanishing on ∂ ⇒ ζΦ ∈ H¹₀). `Line/NeuEL` (evE_inj, eq_of_int,
+  IsWDN.mul_C1, IsWDN.mul_cutoff: ζ C¹ vanishing on ∂ ⇒ ζΦ ∈ H¹₀). `Line/Neumann/EL` (evE_inj, eq_of_int,
   int_rhoN_N, pfN, int_rhoE, rhoE2 mixed density in H1E, rhoE_expand, rhoE_smul, rhoE_null, kinN2,
   kinN_expand, kinN_smul, QNH_expand, QNH_smul, QNH_null, EN_mul_leH, **euler_lagrangeNH**, rhoE_abs,
-  **isGSNH_abs**). `Line/NeuDensD` (Test1, ae_eq_zero_of_test1, ae_eq_of_int_pot,
+  **isGSNH_abs**). `Line/Neumann/DensD` (Test1, ae_eq_zero_of_test1, ae_eq_of_int_pot,
   integral_fnE_mul_deriv, snd_ae_eq, mF, integral_sq_mF_le, **marg_wd**: the marginal of p has weak
   derivative the marginal of ∂₀p, snd_marg, **norm_sq_le_marg**: ‖e‖² ≤ 2N²(∫p² + ∫(∂₀p)²), int_mF).
-  `Line/NeuUcp` (prodB, bmp, etaA, zetaA cutoffs from ContDiffBump, log_estimate_coreN, logTest_memN,
+  `Line/Neumann/Ucp` (prodB, bmp, etaA, zetaA cutoffs from ContDiffBump, log_estimate_coreN, logTest_memN,
   **log_estimate_H**: the H⁻¹ term of Moser's estimate is ≤ ¼ of the log gradient + const via
   norm_sq_le_marg and Young, **logData_H**: ζ_a u ∈ H¹₀ feeds the Dirichlet LogData machinery,
   **gsNH_ne_zero_bos**). Standard axioms. Next: fermions (port HalfSpace/YoungChamber/YoungGS to
-  IsWDN, then the chamber companion as in MeasureNFer).
+  IsWDN, then the chamber companion as in MeasurePotential/NFer).
 - Q3 fermions DONE (2026-11-25): refactor `log_estimate_H` into **log_estimate_gen** (any
   symmetric u ≥ 0 in DomN .bos with an abstract weak equation whose potential term is v(e), e with
   the integrals of uφ); `kin_truncC_le`, `tendsto_truncC_dk`, `isWDN_comp`, `isWDN_abs` generalised
-  to DomNS s, with `symT1`/`mem_symT1` (every H1NW function). `Line/NeuHalf` (isWDN_half_of_bound,
-  IsWDN.congr_right, isWDN_pairs_of_bound, truncC_plane, **isWDN_RY**, IsWDN.comp_pm). `Line/NeuYoung`
+  to DomNS s, with `symT1`/`mem_symT1` (every H1NW function). `Line/Neumann/Half` (isWDN_half_of_bound,
+  IsWDN.congr_right, isWDN_pairs_of_bound, truncC_plane, **isWDN_RY**, IsWDN.comp_pm). `Line/Neumann/Young`
   (isWDN_sumY, DuYN/DPhiYN/DPhiBYN, sorted_YN, PhiY_memN, PhiBY_memN, abs_PhiYN, PhiBY_ae_eq_absN,
   abs_DPhiYN_le, kinN_PhiY_le, **isGSNH_PhiY**, phiY_memN, dWN_phiY_ae, PhiY_sgnYN, **eq_PhiBY_H**).
-  `Line/NeuFer` (DgY_diag, abs_DgY_le, etaF = η_a·Π(xᵢ - xⱼ), log_estimate_fer, logData_fer,
+  `Line/Neumann/Fer` (DgY_diag, abs_DgY_le, etaF = η_a·Π(xᵢ - xⱼ), log_estimate_fer, logData_fer,
   exists_Qa_ball, **gsNH_ne_zero_fer**, **gsNH_ne_zero** both statistics). Non-degeneracy not needed
-  for the pure-state route (positivity uses UCP only, as in MeasureNPos); deferred. Standard axioms.
+  for the pure-state route (positivity uses UCP only, as in MeasurePotential/NPos); deferred. Standard axioms.
   Next: Q4 necessity (ρ > 0 on [0,1], interior via rhoHat_pos_of_ucp pattern, walls new).
-- Q4 necessity DONE (2026-11-25): `Line/NeuPos` (tentR, nbump, chiAB 1D tests; dk0_eq_zero,
+- Q4 necessity DONE (2026-11-25): `Line/Neumann/Pos` (tentR, nbump, chiAB 1D tests; dk0_eq_zero,
   integral_coord0, **log_wall_ineq**: ∫ log(1+u/ε) α(x₀) Z ≤ (2ε³)⁻¹ ∫u²β(x₀) + ε/2 + √K/c from the
   Neumann weak derivative of log(1+u/ε) tested with χ(x₀)Z, χ' = α − β; exists_grid (windows for
   the other particles); sq_sub_le_H1N; **rho_pos_core** (β of width aε⁴ at t₀, ρ ≤ L|t − t₀|,
   windows keep Π(xᵢ − xⱼ) ≥ c, UCP makes the left side diverge; works at walls and inside alike);
   **rhoE_pos** both statistics; integral_fnE_rhoE; VRepNH; **vrepNH_nec**: v-rep ⇒ ρ ∈ H¹, ρ > 0 on
   [0,1], ∫ρ = N). `log_estimate_fer` generalised to `log_estimate_ferη`. The bosonic slab/cut
-  argument of MeasureNPos was not needed. Standard axioms. Next: Q5 sufficiency.
-- Q5 sufficiency DONE (2026-11-25), CORSO THM 2.3 COMPLETE. `Line/NeuND` (isGSNH_comb,
+  argument of MeasurePotential/NPos was not needed. Standard axioms. Next: Q5 sufficiency.
+- Q5 sufficiency DONE (2026-11-25), CORSO THM 2.3 COMPLETE. `Line/Neumann/ND` (isGSNH_comb,
   gsNH_sign_bos, gsNH_sign_fer on the chamber, **gsNH_unique**, **rhoE_gsNH_unique**: Neumann GS
-  nondegenerate, both statistics). `Line/NeuCpt` (**compact_states** extracted from exists_isGSNH,
+  nondegenerate, both statistics). `Line/Neumann/Cpt` (**compact_states** extracted from exists_isGSNH,
   gsEH, cH_le_cHr, kinN_le_of_QNH, **rhoE_eq_of_supergrad**: converse Hellmann–Feynman along
-  v + tu). `Line/NeuSuff` (intPot, ellE mass functional, gsEH_shift, exists_weak_subseq_PotH,
+  v + tu). `Line/Neumann/Suff` (intPot, ellE mass functional, gsEH_shift, exists_weak_subseq_PotH,
   **vrepNH_of_rep**: maximise G(v) = E(v) − v(ρ₀), coercive from local N-representability with
   bounded energy, weakly usc since E is an inf of weakly continuous affine maps; no Hahn–Banach,
-  no density matrices). `Line/NeuRep` (isWDN_tens, prodS_memN, kinN_prodS, sqrtProf with
+  no density matrices). `Line/Neumann/Rep` (isWDN_tens, prodS_memN, kinN_prodS, sqrtProf with
   h1N_sqrtProf via LipschitzOnWith.comp_absolutelyContinuousOnInterval, kinM_sqrtProf_le,
   isWDN_slater, slater_memN, kinN_slater_le, exists_eH_bound, harrimanN, rep_of_prof,
   **vrepNH_suff**, **vrepNH_iff**: ρ ∈ H¹ is v-rep iff ρ > 0 on [0,1] and ∫ρ = N). Standard
   axioms. Next: Q6 HK (v − v′ = const from equal densities).
-- Q6 HK DONE (2026-11-25), CORSO THM 2.9 COMPLETE. `Line/NeuHKa` (kinN_eq_tsum,
+- Q6 HK DONE (2026-11-25), CORSO THM 2.9 COMPLETE. `Line/Neumann/HKa` (kinN_eq_tsum,
   **tendsto_kinN_sub_truncC**, SHN = N∫X² + T(X), norm_rhoE_le, bilinearity of rhoE2,
-  **norm_rhoE2_le**: ‖ρ(A, B)‖ ≤ 8√(SHN A · SHN B)). `Line/NeuHKb` (hQ pair marginals, Riesz form
+  **norm_rhoE2_le**: ‖ρ(A, B)‖ ≤ 8√(SHN A · SHN B)). `Line/Neumann/HKb` (hQ pair marginals, Riesz form
   D_apply, LgD, RfD, **D_smooth**: D(ρ(X, X FF g)) = D(gρ_X) + ∫ g R_X for C² X, N ≥ 2,
-  **integral_abs_RfD_sub_le**). `Line/NeuHKc` (dE2 products in H1E with norm_dE2_le and LgD_eq,
+  **integral_abs_RfD_sub_le**). `Line/Neumann/HKc` (dE2 products in H1E with norm_dE2_le and LgD_eq,
   mul_memN, SHN_mul_le, rhoE_sub_eq, integrable_RfD, **exists_R_succ**: R_{X_M} Cauchy in L¹ along
   the cosine truncations, dE2_rhoE_one, **exists_R** all N, **D_dE2_eq**: Riesz on
   h ↦ D(hρ) + ∫ hR tested with bump01 and bump01·∫ext u, h1N_inv, **D_eq_integral_d**: D(e) = ∫ e d,
   d = −R/ρ, int_rhoE2_L1N, **D_eq_zero_of_gs**, ellE_rhoE2, **hkNH**: equal GS densities ⇒
-  v − v′ = c·ellE). `Line/MeasureHKend` refactored so that the Tonelli bound and the symmetrised
+  v − v′ = c·ellE). `Line/MeasurePotential/HKend` refactored so that the Tonelli bound and the symmetrised
   fundamental lemma take a marginal bound and a symmetry hypothesis (**integrable_x0_sq_of**,
   **sum_ae_zero_of**, sq_sym_ae_of) and serve both settings. Standard axioms.
 - D5 phase 1 DONE (2026-11-27), CORSO THM 2.12 (exact Kohn–Sham) in `DFT/Continuum/Line/NeumannKS`.
@@ -959,6 +959,6 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   `ForMathlib/Analysis/Calculus/Deriv/Sandwich`, no abstract convex analysis). `KohnSham`: hxcNH = F_w − F_0,
   **hasDerivAt_hxcNH**, **ks_exact** (v_KS exists, unique up to a constant, v_KS = v + dE_Hxc). `Hartree`:
   pairW, hartreeB/hartreeBE, **hasFDerivAt_hartreeE** (v_H = ½(B(ρ,·) + B(·,ρ)), u need not be symmetric),
-  **hasDerivAt_xcNH** (v_KS = v + v_H + v_xc). Refactor: `NeuSuff` exposes norm_le_of_lower,
-  le_gsEH_of_tendsto, LocRepNH, gsEH_sub_le_of_rep; `NeuRep` exposes locRepNH_of_pos. Phase 2 (later):
+  **hasDerivAt_xcNH** (v_KS = v + v_H + v_xc). Refactor: `Neumann/Suff` exposes norm_le_of_lower,
+  le_gsEH_of_tendsto, LocRepNH, gsEH_sub_le_of_rep; `Neumann/Rep` exposes locRepNH_of_pos. Phase 2 (later):
   F_0 = T_KS via Slater determinants, Aufbau (Corso Lemma 6.2, Thm 2.15) — needs the one-body Neumann eigenbasis.
