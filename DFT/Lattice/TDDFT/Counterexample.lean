@@ -21,8 +21,7 @@ and the dot product with `w` gives `|w|² = 0`.
 
 * `kfb_transpose`: `K(ψ)` is symmetric (for symmetric `H₀`).
 * `kfb_sq_w`: `K(ψ₀, 0) w = 0`.
-* `ft_theorem2_counterexample` (formerly `ft_theorem2_false`, kept as a deprecated alias): **the
-  counterexample.**
+* `ft_theorem2_counterexample`: **the counterexample.**
 * `square_not_mem_omega`: `(ψ₀, 0) ∉ Ω`.
 -/
 
@@ -168,9 +167,6 @@ theorem ft_theorem2_counterexample (t0 : ℝ) :
     simp [wsq, Fin.sum_univ_four]
     norm_num
   linarith
-
-@[deprecated ft_theorem2_counterexample (since := "2026-11-13")]
-alias ft_theorem2_false := ft_theorem2_counterexample
 
 /-- **The square ground state lies outside `Ω`.** `w` is a nonzero vector in the kernel of
 `K(ψ₀, 0) + 𝟙𝟙ᵀ`. -/

@@ -70,7 +70,7 @@ Theorem~2 for almost every static potential.
 \end{proof}
 
 \begin{theorem}[Counterexample to Theorem~2 of Farzanehpour--Tokatly: a consistent density no potential produces]
-  \label{thm:ft_theorem2_false}
+  \label{thm:ft_theorem2_counterexample}
   \lean{DFT.kfb_transpose, DFT.mulVec_eq_zero_of_psd, DFT.ψsq, DFT.vsq0, DFT.wsq, DFT.sum_occ4, DFT.ground_sq,
     DFT.kMat_sq_w, DFT.kfb_sq_w, DFT.ftAcc, DFT.ftDens, DFT.sum_ftAcc, DFT.hasDerivAt_ftDens,
     DFT.hasDerivAt_ftVel, DFT.ft_theorem2_counterexample, DFT.square_not_mem_omega}
@@ -683,8 +683,8 @@ The pair version of Theorem~\ref{thm:generic_ground_mem_omega} (not used elsewhe
     DFT.sum_ftAccU, DFT.prop9_general, DFT.prop9_paper,
     DFT.prop9_library_case, DFT.library_statement_from_general, DFT.orthogonal_u_in_range}
   \leanok
-  \uses{thm:ft_theorem2_false, thm:square_shared_dens, thm:force_balance, lem:gauge, lem:density_c2}
-  The counterexample of Theorem~\ref{thm:ft_theorem2_false} holds for any rescaled ground state $a\psi_{sq}$, $a\ne0$,
+  \uses{thm:ft_theorem2_counterexample, thm:square_shared_dens, thm:force_balance, lem:gauge, lem:density_c2}
+  The counterexample of Theorem~\ref{thm:ft_theorem2_counterexample} holds for any rescaled ground state $a\psi_{sq}$, $a\ne0$,
   and any change $u$ of the acceleration with $\langle w,u\rangle\ne0$ and $\sum u=0$; in particular for the
   normalized ground state $\psi_{sq}/5$ of the paper. For $\langle w,u\rangle=0$ the argument does not apply ($u$ can
   lie in the range of $K$).
