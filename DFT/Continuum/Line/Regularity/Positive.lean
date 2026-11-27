@@ -68,16 +68,16 @@ lemma bumpF_le_indicator {t0 δ : ℝ} (hδ : 0 < δ) (t : ℝ) :
   · rw [indicator_of_notMem ht, bumpF_eq_zero hδ fun h => ht (Ioo_subset_Icc_self h)]
 
 /-- The bump as a potential. -/
-noncomputable def bumpP (t0 δ : ℝ) : Pot :=
+noncomputable def bumpP (t0 δ : ℝ) : C01 :=
   ⟨fun t => bumpF t0 δ t, (continuous_bumpF t0 δ).comp continuous_subtype_val⟩
 
-lemma ext_bumpP {t0 δ t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : ext (bumpP t0 δ) t = bumpF t0 δ t := by
-  simp [SturmLiouville.ext, bumpP, projIcc_of_mem _ ht]
+lemma ext_bumpP {t0 δ t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : iccExt (bumpP t0 δ) t = bumpF t0 δ t := by
+  simp [SturmLiouville.iccExt, bumpP, projIcc_of_mem _ ht]
 
-lemma ext_bumpP_nonneg (t0 δ t : ℝ) : 0 ≤ ext (bumpP t0 δ) t := bumpF_nonneg _ _ _
+lemma ext_bumpP_nonneg (t0 δ t : ℝ) : 0 ≤ iccExt (bumpP t0 δ) t := bumpF_nonneg _ _ _
 
 lemma ext_bumpP_le_indicator {t0 δ : ℝ} (hδ : 0 < δ) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
-    ext (bumpP t0 δ) t ≤ (Icc (t0 - 2 * δ) (t0 + δ)).indicator 1 t := by
+    iccExt (bumpP t0 δ) t ≤ (Icc (t0 - 2 * δ) (t0 + δ)).indicator 1 t := by
   rw [ext_bumpP ht]; exact bumpF_le_indicator hδ t
 
 /-! ### Symmetric integrals -/
@@ -97,7 +97,7 @@ lemma integral_xi_eq_x0' (f : ℝ → ℝ) (i : Fin (n + 1)) :
   rw [← integral_pm (Equiv.swap 0 i) (fun x => f (x 0))]
   simp only [pm_apply, Equiv.swap_apply_left]
 
-lemma integral_x0 {f : ℝ → ℝ} (hf : Continuous f) : ∫ x, f (x 0) ∂μN n = ∫ t, f t ∂μ1 := by
+lemma integral_x0 {f : ℝ → ℝ} (hf : Continuous f) : ∫ x, f (x 0) ∂μN n = ∫ t, f t ∂vol01 := by
   have hF : Integrable (fun x : Cfg n => f (x 0)) (μN n) :=
     integrableN (hf.comp (continuous_apply 0))
   rw [integral_cube_cons' hF]
@@ -109,8 +109,8 @@ lemma integral_x0 {f : ℝ → ℝ} (hf : Continuous f) : ∫ x, f (x 0) ∂μN 
 
 /-- **`Ψ` is small near the plane `xᵢ = t₀`** when its density profile vanishes linearly at `t₀`. -/
 theorem slab_small {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) {K : ℝ → ℝ}
-    (hρ : ∀ v : Pot, dens (settingW τ n w hw) Ψ v = ∫ t, ext v t * K t ∂μ1)
-    (hKi : Integrable K μ1) {t0 L η : ℝ} (hη : 0 < η) (hL : 0 ≤ L)
+    (hρ : ∀ v : C01, dens (settingW τ n w hw) Ψ v = ∫ t, iccExt v t * K t ∂vol01)
+    (hKi : Integrable K vol01) {t0 L η : ℝ} (hη : 0 < η) (hL : 0 ≤ L)
     (hKle : ∀ t, |t - t0| ≤ η → K t ≤ L * |t - t0|) {F : Cfg n → ℝ}
     (hF : ∀ᵐ x ∂μN n, |F x| ≤ |Ψ x|) (i : Fin (n + 1)) :
     Tendsto (fun m : ℕ => ((m : ℝ) + 1) * ∫ x, slab i t0 (1 / ((m : ℝ) + 1)) x * |F x| ∂μN n)
@@ -141,23 +141,23 @@ theorem slab_small {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) {K : ℝ → �
   have haa := ha m
   have haa2 : aa ^ 2 = d := Real.sq_sqrt hd.le
   set vb := bumpP t0 d
-  have hvbc : Continuous (ext vb) := continuous_ext vb
+  have hvbc : Continuous (iccExt vb) := continuous_iccExt vb
   -- pointwise bound
-  have hvi : Integrable (fun x : Cfg n => ext vb (x i)) (μN n) :=
+  have hvi : Integrable (fun x : Cfg n => iccExt vb (x i)) (μN n) :=
     integrableN (hvbc.comp (continuous_apply i))
-  have hvΨ : Integrable (fun x : Cfg n => ext vb (x i) * (Ψ x * Ψ x)) (μN n) := by
+  have hvΨ : Integrable (fun x : Cfg n => iccExt vb (x i) * (Ψ x * Ψ x)) (μN n) := by
     obtain ⟨C, hC⟩ := ae_bound_cont (n := n) (hvbc.comp (continuous_apply i))
     exact hsq.bdd_mul (hvbc.comp (continuous_apply i)).aestronglyMeasurable hC
-  have hRi : Integrable (fun x : Cfg n => ext vb (x i) * (Ψ x * Ψ x) / (2 * aa) +
-      aa / 2 * ext vb (x i)) (μN n) := (hvΨ.div_const _).add (hvi.const_mul _)
+  have hRi : Integrable (fun x : Cfg n => iccExt vb (x i) * (Ψ x * Ψ x) / (2 * aa) +
+      aa / 2 * iccExt vb (x i)) (μN n) := (hvΨ.div_const _).add (hvi.const_mul _)
   have hpt : ∀ᵐ x ∂μN n, slab i t0 d x * |F x| ≤
-      ext vb (x i) * (Ψ x * Ψ x) / (2 * aa) + aa / 2 * ext vb (x i) := by
+      iccExt vb (x i) * (Ψ x * Ψ x) / (2 * aa) + aa / 2 * iccExt vb (x i) := by
     filter_upwards [hF, ae_restrict_mem measurableSet_cube] with x hx hcube
     have hxi : x i ∈ Icc (0 : ℝ) 1 := Ioo_subset_Icc_self (hcube i trivial)
     have hv0 := ext_bumpP_nonneg t0 d (x i)
     by_cases hs : x i ∈ Ioo (t0 - d) t0
     · have hsl : slab i t0 d x = 1 := by simp [slab, hs]
-      have hv1 : ext vb (x i) = 1 := by
+      have hv1 : iccExt vb (x i) = 1 := by
         rw [ext_bumpP hxi]; exact bumpF_eq_one hd hs.1.le hs.2.le
       rw [hsl, hv1, one_mul, one_mul, mul_one]
       have hamgm : |Ψ x| ≤ Ψ x * Ψ x / (2 * aa) + aa / 2 := by
@@ -169,16 +169,16 @@ theorem slab_small {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) {K : ℝ → �
       exact add_nonneg (div_nonneg (mul_nonneg hv0 (mul_self_nonneg _)) (by positivity))
         (mul_nonneg (by positivity) hv0)
   have hint : ∫ x, slab i t0 d x * |F x| ∂μN n ≤
-      ∫ x, (ext vb (x i) * (Ψ x * Ψ x) / (2 * aa) + aa / 2 * ext vb (x i)) ∂μN n := by
+      ∫ x, (iccExt vb (x i) * (Ψ x * Ψ x) / (2 * aa) + aa / 2 * iccExt vb (x i)) ∂μN n := by
     refine integral_mono_of_nonneg (Eventually.of_forall fun x =>
       mul_nonneg (slab_nonneg _ _ _ _) (abs_nonneg _)) hRi hpt
   -- the two integrals
-  have hI1 : ∫ x, ext vb (x i) * (Ψ x * Ψ x) ∂μN n ≤ 6 * L * d ^ 2 / N := by
-    rw [integral_xi_eq_x0 hΨ (ext vb) i]
+  have hI1 : ∫ x, iccExt vb (x i) * (Ψ x * Ψ x) ∂μN n ≤ 6 * L * d ^ 2 / N := by
+    rw [integral_xi_eq_x0 hΨ (iccExt vb) i]
     have h := hρ vb
     rw [dens_eq_x0 hΨ vb] at h
-    have hK : ∫ t, ext vb t * K t ∂μ1 ≤ 6 * L * d ^ 2 := by
-      have hb : ∀ t ∈ Ioo (0 : ℝ) 1, ext vb t * K t ≤
+    have hK : ∫ t, iccExt vb t * K t ∂vol01 ≤ 6 * L * d ^ 2 := by
+      have hb : ∀ t ∈ Ioo (0 : ℝ) 1, iccExt vb t * K t ≤
           2 * L * d * (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t := fun t ht => by
         have hti := Ioo_subset_Icc_self ht
         have hle := ext_bumpP_le_indicator (t0 := t0) hd hti
@@ -191,22 +191,22 @@ theorem slab_small {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) {K : ℝ → �
             have := hKle t (h1.trans hm)
             nlinarith
           simp only [Pi.one_apply, mul_one] at hle ⊢
-          calc ext vb t * K t ≤ ext vb t * (2 * L * d) := mul_le_mul_of_nonneg_left hKt hv0
+          calc iccExt vb t * K t ≤ iccExt vb t * (2 * L * d) := mul_le_mul_of_nonneg_left hKt hv0
             _ ≤ 1 * (2 * L * d) := mul_le_mul_of_nonneg_right hle (by positivity)
             _ = 2 * L * d := one_mul _
         · rw [indicator_of_notMem hin] at hle ⊢
-          have : ext vb t = 0 := le_antisymm hle hv0
+          have : iccExt vb t = 0 := le_antisymm hle hv0
           rw [this]; simp
-      have hi1 : Integrable (fun t => ext vb t * K t) μ1 := by
+      have hi1 : Integrable (fun t => iccExt vb t * K t) vol01 := by
         obtain ⟨C, hC⟩ := (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1)).exists_bound_of_continuousOn
           hvbc.continuousOn
         refine hKi.bdd_mul (c := C) hvbc.aestronglyMeasurable ?_
         filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
         exact hC t (Ioo_subset_Icc_self ht)
-      have hi2 : Integrable (fun t => 2 * L * d * (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t) μ1 :=
+      have hi2 : Integrable (fun t => 2 * L * d * (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t) vol01 :=
         ((integrable_const (1 : ℝ)).indicator measurableSet_Icc).const_mul _
-      calc ∫ t, ext vb t * K t ∂μ1
-          ≤ ∫ t, 2 * L * d * (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t ∂μ1 :=
+      calc ∫ t, iccExt vb t * K t ∂vol01
+          ≤ ∫ t, 2 * L * d * (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t ∂vol01 :=
             setIntegral_mono_on hi1 hi2 measurableSet_Ioo hb
         _ ≤ 2 * L * d * (t0 + d - (t0 - 2 * d)) := by
             rw [integral_const_mul]
@@ -214,14 +214,14 @@ theorem slab_small {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) {K : ℝ → �
               (by positivity)
         _ = 6 * L * d ^ 2 := by ring
     rw [le_div_iff₀ hN]
-    have : N * ∫ x, ext vb (x 0) * (Ψ x * Ψ x) ∂μN n = ∫ t, ext vb t * K t ∂μ1 := by
+    have : N * ∫ x, iccExt vb (x 0) * (Ψ x * Ψ x) ∂μN n = ∫ t, iccExt vb t * K t ∂vol01 := by
       rw [← h]
     linarith
-  have hI2 : ∫ x, ext vb (x i) ∂μN n ≤ 3 * d := by
-    rw [integral_xi_eq_x0' (ext vb) i, integral_x0 hvbc]
-    have hb : ∀ t ∈ Ioo (0 : ℝ) 1, ext vb t ≤ (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t :=
+  have hI2 : ∫ x, iccExt vb (x i) ∂μN n ≤ 3 * d := by
+    rw [integral_xi_eq_x0' (iccExt vb) i, integral_x0 hvbc]
+    have hb : ∀ t ∈ Ioo (0 : ℝ) 1, iccExt vb t ≤ (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t :=
       fun t ht => ext_bumpP_le_indicator hd (Ioo_subset_Icc_self ht)
-    calc ∫ t, ext vb t ∂μ1 ≤ ∫ t, (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t ∂μ1 :=
+    calc ∫ t, iccExt vb t ∂vol01 ≤ ∫ t, (Icc (t0 - 2 * d) (t0 + d)).indicator 1 t ∂vol01 :=
           setIntegral_mono_on (integrable_mu1_cont hvbc)
             ((integrable_const (1 : ℝ)).indicator measurableSet_Icc) measurableSet_Ioo hb
       _ ≤ t0 + d - (t0 - 2 * d) := integral_indicator_Icc_le (by linarith)
@@ -285,7 +285,7 @@ lemma not_ae_ne_of_zero_on {f : Cfg n → ℝ} {P : Set (Cfg n)} (hP : 0 < μN n
   exact hP.ne' (measure_mono_null (fun x hx => by simpa using hz x hx) this)
 
 /-- **The density profile of an interacting ground state is positive on `(0, 1)`.** -/
-theorem gs_profile_pos (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → ℝ}
+theorem gs_profile_pos (hws : ∀ σ x, w (pm σ x) = w x) {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW τ n w hw) v Ψ) :
     ∀ t0 ∈ Ioo (0 : ℝ) 1, 0 < KS (fun m => cN m Ψ) t0 := by
   intro t0 ht0
@@ -311,7 +311,7 @@ theorem gs_profile_pos (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n
     exact (le_abs_self _).trans h'
   -- the density is `∫ v K`
   have hρ := dens_eq_KS (w := w) (hw := hw) hΨ.1 hcl
-  have hKi : Integrable K μ1 := integrable_mu1_cont (continuous_KS hcl)
+  have hKi : Integrable K vol01 := integrable_mu1_cont (continuous_KS hcl)
   have hslab := fun (F : Cfg n → ℝ) (_ : AEStronglyMeasurable F (μN n)) hF i =>
     slab_small (w := w) (hw := hw) hΨ.1 (K := K) (fun v' => congrFun hρ v') hKi
       (by positivity : (0 : ℝ) < η / 2) zero_le_one hKle (F := F) hF i
@@ -426,7 +426,7 @@ theorem gs_profile_pos (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n
 fermions (continuous `v`, continuous relabelling-invariant `w`). -/
 theorem not_vrep_of_zero (hws : ∀ σ x, w (pm σ x) = w x) {f : ℝ → ℝ} (hf : Continuous f)
     {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) (hf0 : f t0 = 0) :
-    ¬ EnsVRep (settingW τ n w hw) fun u => ∫ t, ext u t * f t ∂μ1 := by
+    ¬ EnsVRep (settingW τ n w hw) fun u => ∫ t, iccExt u t * f t ∂vol01 := by
   intro h
   obtain ⟨v, ψ, hψ, -, hd⟩ := (ensVRep_iff_W_cont _).1 h
   have hcl := summable_lam_sq_stat hws hψ
@@ -443,8 +443,8 @@ theorem not_vrep_of_zero (hws : ∀ σ x, w (pm σ x) = w x) {f : ℝ → ℝ} (
 or fermions: it vanishes at `t = ½`. -/
 theorem sin_nrep_not_vrep (hws : ∀ σ x, w (pm σ x) = w x) :
     (∃ ψ ∈ Nst (settingW τ n w hw), dens (settingW τ n w hw) ψ =
-        fun u => ∫ t, ext u t * ((n + 1) * sinDens t) ∂μ1) ∧
-      ¬ EnsVRep (settingW τ n w hw) fun u => ∫ t, ext u t * ((n + 1) * sinDens t) ∂μ1 := by
+        fun u => ∫ t, iccExt u t * ((n + 1) * sinDens t) ∂vol01) ∧
+      ¬ EnsVRep (settingW τ n w hw) fun u => ∫ t, iccExt u t * ((n + 1) * sinDens t) ∂vol01 := by
   have hsC : ContDiff ℝ 2 sinG := sinG_mem.1
   have hH : H10 sinG := by
     have h1 : ContDiff ℝ 1 sinG := hsC.of_le (by norm_num)

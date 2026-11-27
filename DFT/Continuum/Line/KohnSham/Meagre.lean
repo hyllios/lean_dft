@@ -116,7 +116,7 @@ lemma isClosed_Cond (L : ℝ) : IsClosed (Cond L) := by
 
 lemma sq_prim_sub_le (f : L2I) {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hb : b ≤ 1) :
     (prim f b - prim f a) ^ 2 ≤ (b - a) * ∫ s in a..b, (f : ℝ → ℝ) s ^ 2 := by
-  have hii : ∀ {k : ℝ → ℝ}, Integrable k μ1 → IntervalIntegrable k volume a b := fun hk =>
+  have hii : ∀ {k : ℝ → ℝ}, Integrable k vol01 → IntervalIntegrable k volume a b := fun hk =>
     (intervalIntegrable_iff_integrableOn_Ioo_of_le hab).2
       ((show IntegrableOn _ (Ioo (0 : ℝ) 1) volume from hk).mono_set (Ioo_subset_Ioo ha hb))
   have e : prim f b - prim f a = ∫ s in a..b, (f : ℝ → ℝ) s :=
@@ -195,7 +195,7 @@ lemma exists_tent_L2 {t0 w : ℝ} (hw : 0 < w) (hw0 : w ≤ t0) (hw1 : w ≤ 1 -
     ∃ q : L2I, prim q 1 = 0 ∧ ∀ t ∈ Icc (0 : ℝ) 1, prim q t = tentF t0 w t := by
   have hl := lipschitz_tent (t0 := t0) hw
   have hb : ∀ t, ‖deriv (tentF t0 w) t‖ ≤ 1 / w := fun t => norm_deriv_le_of_lipschitz hl
-  have hm : MemLp (deriv (tentF t0 w)) 2 μ1 :=
+  have hm : MemLp (deriv (tentF t0 w)) 2 vol01 :=
     MemLp.of_bound (measurable_deriv _).aestronglyMeasurable (1 / w) (ae_of_all _ hb)
   set q : L2I := hm.toLp _
   have h0 : tentF t0 w 0 = 0 := by
@@ -219,13 +219,13 @@ limit of `y ∈ SN n` with `ρ_y ∉ Cond L`. -/
 theorem exists_not_Cond {L : ℝ} (hL : 0 ≤ L) {x : L2I} (hx : x ∈ SN n) (hxL : x ∈ Cond L)
     {ε : ℝ} (hε : 0 < ε) : ∃ y ∈ SN n, ‖y - x‖ < ε ∧ y ∉ Cond L := by
   set g := prim x with hgdef
-  have hN : ∫ t, g t ^ 2 ∂μ1 = n + 1 := hx.2
+  have hN : ∫ t, g t ^ 2 ∂vol01 = n + 1 := hx.2
   have hNp : (0 : ℝ) < n + 1 := by positivity
   -- a point where `g ≠ 0`
   obtain ⟨t0, ht0, hg0⟩ : ∃ t0 ∈ Ioo (0 : ℝ) 1, g t0 ≠ 0 := by
     by_contra hcon
     push Not at hcon
-    have : ∫ t, g t ^ 2 ∂μ1 = 0 :=
+    have : ∫ t, g t ^ 2 ∂vol01 = 0 :=
       setIntegral_eq_zero_of_forall_eq_zero fun t ht => by simp [hcon t ht]
     linarith
   set γ := g t0
@@ -240,7 +240,7 @@ theorem exists_not_Cond {L : ℝ} (hL : 0 ≤ L) {x : L2I} (hx : x ∈ SN n) (hx
   have hFc : Continuous F := continuous_const.add (continuous_id.smul continuous_const)
   have hFp : ∀ δ : ℝ, ∀ t ∈ Icc (0 : ℝ) 1, prim (F δ) t = g t + δ * tentF t0 w t :=
     fun δ t ht => by simp only [F]; rw [prim_add _ _ ht, prim_smul _ _ ht, hqp t ht]
-  set J : ℝ → ℝ := fun δ => ∫ t, prim (F δ) t ^ 2 ∂μ1
+  set J : ℝ → ℝ := fun δ => ∫ t, prim (F δ) t ^ 2 ∂vol01
   have hJc : Continuous J := continuous_int_prim_sq.comp hFc
   have hJ0 : J 0 = n + 1 := by simp only [J, F, zero_smul, add_zero]; exact hN
   set lam : ℝ → ℝ := fun δ => √((n + 1) / J δ)
@@ -289,7 +289,7 @@ theorem exists_not_Cond {L : ℝ} (hL : 0 ≤ L) {x : L2I} (hx : x ∈ SN n) (hx
       simp only [F]
       rw [prim_add _ _ ⟨zero_le_one, le_rfl⟩, prim_smul _ _ ⟨zero_le_one, le_rfl⟩, hx.1, hq1]
       ring
-    · have : ∫ t, prim (y δ) t ^ 2 ∂μ1 = lam δ ^ 2 * J δ := by
+    · have : ∫ t, prim (y δ) t ^ 2 ∂vol01 = lam δ ^ 2 * J δ := by
         rw [← integral_const_mul]
         refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
         simp only [y]
@@ -438,8 +438,8 @@ lemma isNowhereDense_CondS {L : ℝ} (hL : 0 ≤ L) : IsNowhereDense (CondS n L)
   rw [IsNowhereDense, (isClosed_CondS L).closure_eq, interior_CondS hL]
 
 /-- `ρ` has a `C²` profile vanishing at the walls. -/
-def C2Dens (ρ : Pot → ℝ) : Prop :=
-  ∃ K : ℝ → ℝ, ContDiff ℝ 2 K ∧ K 0 = 0 ∧ K 1 = 0 ∧ ρ = fun u => ∫ t, ext u t * K t ∂μ1
+def C2Dens (ρ : C01 → ℝ) : Prop :=
+  ∃ K : ℝ → ℝ, ContDiff ℝ 2 K ∧ K 0 = 0 ∧ K 1 = 0 ∧ ρ = fun u => ∫ t, iccExt u t * K t ∂vol01
 
 lemma mem_CondS_of_C2Dens (x : SN n) (h : C2Dens (rhoF x)) : ∃ L : ℕ, x ∈ CondS n L := by
   obtain ⟨K, hK, hK0, hK1, hρ⟩ := h
@@ -447,7 +447,7 @@ lemma mem_CondS_of_C2Dens (x : SN n) (h : C2Dens (rhoF x)) : ∃ L : ℕ, x ∈ 
   have hc := H10.continuous_clamp (h10_prim x.2.1)
   have he := eqOn_of_integral_pot (f := fun t => H10.clamp (prim (x : L2I)) t ^ 2) (g := K)
     (hc.pow 2) hK.continuous fun u => by
-      rw [← show ∫ t, ext u t * prim (x : L2I) t ^ 2 ∂μ1 = ∫ t, ext u t * K t ∂μ1 from
+      rw [← show ∫ t, iccExt u t * prim (x : L2I) t ^ 2 ∂vol01 = ∫ t, iccExt u t * K t ∂vol01 from
         congrFun hρ u]
       exact setIntegral_congr_fun measurableSet_Ioo fun t ht => by
         simp only [H10.clamp_eq (Ioo_subset_Icc_self ht)]
@@ -478,7 +478,7 @@ theorem meagre_C2Dens : IsMeagre {x : SN n | C2Dens (rhoF x)} :=
 
 variable {τ : Stat}
 
-lemma C2Dens_of_ksRep {ρ : Pot → ℝ} (h : KSRep τ n ρ) : C2Dens ρ := by
+lemma C2Dens_of_ksRep {ρ : C01 → ℝ} (h : KSRep τ n ρ) : C2Dens ρ := by
   obtain ⟨vs, hvs⟩ := h
   cases τ
   · obtain ⟨φ, hφ, h1, hiff⟩ := ksDens_bos (n := n) vs

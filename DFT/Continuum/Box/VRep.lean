@@ -44,25 +44,25 @@ namespace DFT.Continuum.Box
 open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The conditions on `g = √ρ` for `ρ` to be a ground-state density in the box. -/
-def BoxRep (g : ℝ → ℝ) (q : Pot) : Prop :=
-  g ∈ Dom ∧ (∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) ∧ ∫ t, g t ^ 2 ∂μ1 = 1 ∧
-    ∀ t ∈ Ioo (0 : ℝ) 1, deriv (deriv g) t = ext q t * g t
+def BoxRep (g : ℝ → ℝ) (q : C01) : Prop :=
+  g ∈ Dom ∧ (∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) ∧ ∫ t, g t ^ 2 ∂vol01 = 1 ∧
+    ∀ t ∈ Ioo (0 : ℝ) 1, deriv (deriv g) t = iccExt q t * g t
 
 section aux
 
 /-- A density functional `v ↦ ∫₀¹ v f` with continuous `f` determines `f` on `(0, 1)`. -/
 lemma eqOn_of_integral_pot {f g : ℝ → ℝ} (hf : Continuous f) (hg : Continuous g)
-    (h : ∀ u : Pot, ∫ t in Ioo (0 : ℝ) 1, ext u t * f t = ∫ t in Ioo (0 : ℝ) 1, ext u t * g t) :
+    (h : ∀ u : C01, ∫ t in Ioo (0 : ℝ) 1, iccExt u t * f t = ∫ t in Ioo (0 : ℝ) 1, iccExt u t * g t) :
     EqOn f g (Ioo 0 1) := by
-  set u : Pot := ⟨fun s => f s - g s, (hf.sub hg).comp continuous_subtype_val⟩
-  have hu : ∀ t, ext u t = f (projIcc 0 1 zero_le_one t) - g (projIcc 0 1 zero_le_one t) :=
+  set u : C01 := ⟨fun s => f s - g s, (hf.sub hg).comp continuous_subtype_val⟩
+  have hu : ∀ t, iccExt u t = f (projIcc 0 1 zero_le_one t) - g (projIcc 0 1 zero_le_one t) :=
     fun _ => rfl
-  have hint : ∀ k : ℝ → ℝ, Continuous k → IntegrableOn (fun t => ext u t * k t) (Ioo (0 : ℝ) 1) :=
-    fun k hk => (((continuous_ext u).mul hk).continuousOn.integrableOn_compact
+  have hint : ∀ k : ℝ → ℝ, Continuous k → IntegrableOn (fun t => iccExt u t * k t) (Ioo (0 : ℝ) 1) :=
+    fun k hk => (((continuous_iccExt u).mul hk).continuousOn.integrableOn_compact
       isCompact_Icc).mono_set Ioo_subset_Icc_self
   have hz : ∫ t in Ioo (0 : ℝ) 1, (f t - g t) * (f t - g t) = 0 := by
     have e : ∫ t in Ioo (0 : ℝ) 1, (f t - g t) * (f t - g t) =
-        ∫ t in Ioo (0 : ℝ) 1, (ext u t * f t - ext u t * g t) := by
+        ∫ t in Ioo (0 : ℝ) 1, (iccExt u t * f t - iccExt u t * g t) := by
       refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
       simp only [hu, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]; ring
     rw [e, integral_sub (hint f hf) (hint g hg), h u, sub_self]
@@ -85,21 +85,21 @@ lemma hasDerivAt_deriv_of_mem (hg : g ∈ Dom) (t : ℝ) :
 lemma continuous_dd_of_mem (hg : g ∈ Dom) : Continuous (deriv (deriv g)) :=
   (contDiff_deriv_of_mem hg).continuous_deriv le_rfl
 
-lemma ip_eq_sq (g : ℝ → ℝ) : ip (μ := μ1) g g = ∫ t, g t ^ 2 ∂μ1 := by
+lemma ip_eq_sq (g : ℝ → ℝ) : ip (μ := vol01) g g = ∫ t, g t ^ 2 ∂vol01 := by
   simp only [ip, sq]
 
-lemma dens_eq_sq (g : ℝ → ℝ) : dens setting g = fun u => ∫ t, ext u t * g t ^ 2 ∂μ1 := by
+lemma dens_eq_sq (g : ℝ → ℝ) : dens setting g = fun u => ∫ t, iccExt u t * g t ^ 2 ∂vol01 := by
   funext u; simp only [dens, pf, sq]; rfl
 
-lemma energy_eq_of_isGS {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) (E : ℝ)
-    (hQ : Q setting v ψ = E * ip (μ := μ1) ψ ψ) : energy v ψ = E := by
+lemma energy_eq_of_isGS {v : C01} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) (E : ℝ)
+    (hQ : Q setting v ψ = E * ip (μ := vol01) ψ ψ) : energy v ψ = E := by
   rw [energy, hQ, mul_div_assoc, div_self hψ.2.1.ne', mul_one]
 
 end aux
 
 /-- The shooting ground state of `v` as a ground state, with energy `E* = Estar v`. -/
-lemma gs_data' (v : Pot) : ∃ ψ, IsGS setting v ψ ∧ energy v ψ = Estar v ∧
-    (∀ t ∈ Ioo (0 : ℝ) 1, 0 < ψ t) ∧ ∀ φ ∈ Dom, Estar v * ip (μ := μ1) φ φ ≤ Q setting v φ := by
+lemma gs_data' (v : C01) : ∃ ψ, IsGS setting v ψ ∧ energy v ψ = Estar v ∧
+    (∀ t ∈ Ioo (0 : ℝ) 1, 0 < ψ t) ∧ ∀ φ ∈ Dom, Estar v * ip (μ := vol01) φ φ ≤ Q setting v φ := by
   obtain ⟨ψ, hD, heq, hQ, hpos, hlow⟩ := gs_data v
   have hGS : IsGS setting v ψ := ⟨hD, hpos, fun φ hφ => by
     rw [hQ]; nlinarith [mul_le_mul_of_nonneg_left (hlow φ hφ) hpos.le]⟩
@@ -109,8 +109,8 @@ lemma gs_data' (v : Pot) : ∃ ψ, IsGS setting v ψ ∧ energy v ψ = Estar v �
 
 /-- **The Wronskian argument**: if `g'' = q g` with `g > 0` inside and zero at the walls, the
 ground-state energy of `q` is `0`. -/
-theorem estar_eq_zero {g : ℝ → ℝ} {q : Pot} (hg : g ∈ Dom) (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t)
-    (hode : ∀ t ∈ Ioo (0 : ℝ) 1, deriv (deriv g) t = ext q t * g t) : Estar q = 0 := by
+theorem estar_eq_zero {g : ℝ → ℝ} {q : C01} (hg : g ∈ Dom) (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t)
+    (hode : ∀ t ∈ Ioo (0 : ℝ) 1, deriv (deriv g) t = iccExt q t * g t) : Estar q = 0 := by
   obtain ⟨ψ, hψ, hE, hψpos, -⟩ := gs_data' q
   set E := Estar q
   have hψD : ψ ∈ Dom := hψ.1
@@ -148,16 +148,16 @@ theorem estar_eq_zero {g : ℝ → ℝ} {q : Pot} (hg : g ∈ Dom) (hpos : ∀ t
   · linarith
 
 /-- **`g` is a ground state of `q`**, with energy `0`. -/
-theorem isGS_of_boxRep {g : ℝ → ℝ} {q : Pot} (h : BoxRep g q) :
+theorem isGS_of_boxRep {g : ℝ → ℝ} {q : C01} (h : BoxRep g q) :
     IsGS setting q g ∧ Q setting q g = 0 := by
   obtain ⟨hg, hpos, hn, hode⟩ := h
   obtain ⟨-, -, -, -, hlow⟩ := gs_data' q
   rw [estar_eq_zero hg hpos hode] at hlow
-  have hip : ip (μ := μ1) g g = 1 := by rw [ip_eq_sq, hn]
+  have hip : ip (μ := vol01) g g = 1 := by rw [ip_eq_sq, hn]
   -- `Q g = ∫ (g'² + q g²) = 0` by parts
   have hQ : Q setting q g = 0 := by
     have hs := Q_sub_eq q 0 hg
-    rw [zero_mul, sub_zero, integral_mu1] at hs
+    rw [zero_mul, sub_zero, integral_vol01] at hs
     rw [hs]
     have hd := hasDerivAt_deriv_of_mem hg
     have hibp := intervalIntegral.integral_mul_deriv_eq_deriv_mul (a := 0) (b := 1)
@@ -190,8 +190,8 @@ theorem isGS_of_boxRep {g : ℝ → ℝ} {q : Pot} (h : BoxRep g q) :
 density of a normalised ground state of some continuous potential iff it is `v ↦ ∫₀¹ v g²` with
 `g` `C²`, zero at the walls, positive inside, normalised, and `g'' = q g` on `(0, 1)` for a
 continuous `q` (`g''/g` extends continuously to `[0, 1]`). -/
-theorem pureVRep_box_iff (ρ : Pot → ℝ) :
-    PureVRep setting ρ ↔ ∃ g q, BoxRep g q ∧ ρ = fun u => ∫ t, ext u t * g t ^ 2 ∂μ1 := by
+theorem pureVRep_box_iff (ρ : C01 → ℝ) :
+    PureVRep setting ρ ↔ ∃ g q, BoxRep g q ∧ ρ = fun u => ∫ t, iccExt u t * g t ^ 2 ∂vol01 := by
   constructor
   · rintro ⟨v, φ, hφ, hφ1, rfl⟩
     obtain ⟨ψ, hψ, hE, hψpos, hlow⟩ := gs_data' v
@@ -201,13 +201,13 @@ theorem pureVRep_box_iff (ρ : Pot → ℝ) :
     have hQ : Q setting v φ = E := by
       have h1 := hlow φ hφD
       have h2 := hφ.2.2 ψ hψ.1
-      have hQψ : Q setting v ψ = E * ip (μ := μ1) ψ ψ := by
+      have hQψ : Q setting v ψ = E * ip (μ := vol01) ψ ψ := by
         rw [← hE, energy, div_mul_cancel₀ _ hψ.2.1.ne']
       rw [hφ1] at h1 h2
       rw [hQψ] at h2
       have := hψ.2.1
       nlinarith
-    have heq : ∫ x, (deriv φ x ^ 2 + Wof v E x * φ x ^ 2) ∂μ1 = 0 := by
+    have heq : ∫ x, (deriv φ x ^ 2 + Wof v E x * φ x ^ 2) ∂vol01 = 0 := by
       rw [← Q_sub_eq v E hφD, hQ, hφ1, mul_one, sub_self]
     obtain ⟨c, hc⟩ := picone_eq (continuous_Wof v E) (ψ := fun t => (sol v E t).1)
       (ψ' := fun t => (sol v E t).2)
@@ -217,7 +217,7 @@ theorem pureVRep_box_iff (ρ : Pot → ℝ) :
     -- `c ≠ 0`
     have hc0 : c ≠ 0 := by
       rintro rfl
-      have : ip (μ := μ1) φ φ = 0 := by
+      have : ip (μ := vol01) φ φ = 0 := by
         simp only [ip]
         rw [show (0 : ℝ) = ∫ x in Ioo (0 : ℝ) 1, (0 : ℝ) by simp]
         refine setIntegral_congr_fun measurableSet_Ioo fun x hx => ?_
@@ -238,8 +238,8 @@ theorem pureVRep_box_iff (ρ : Pot → ℝ) :
       rw [hdg]; exact funext fun t =>
         deriv_const_mul s ((contDiff_deriv_of_mem hφD).differentiable one_ne_zero t)
     have hφode := ode_of_isGS hφ
-    set q : Pot := v - ContinuousMap.const _ (energy v φ)
-    have hq : ∀ t, ext q t = ext v t - energy v φ := fun t => rfl
+    set q : C01 := v - ContinuousMap.const _ (energy v φ)
+    have hq : ∀ t, iccExt q t = iccExt v t - energy v φ := fun t => rfl
     refine ⟨g, q, ⟨hgD, fun t ht => ?_, ?_, fun t ht => ?_⟩, ?_⟩
     · simp only [g, hc t ht]
       rw [← mul_assoc]; exact mul_pos hsc (star_pos v t ht)
@@ -267,8 +267,8 @@ lemma quartG_mem : quartG ∈ Dom := ⟨by unfold quartG; fun_prop, by simp [qua
 lemma quartG_pos {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) : 0 < quartG t :=
   mul_pos (Real.sqrt_pos.2 (by norm_num)) (mul_pos ht.1 (by linarith [ht.2]))
 
-lemma quartG_norm : ∫ t, quartG t ^ 2 ∂μ1 = 1 := by
-  rw [integral_mu1]
+lemma quartG_norm : ∫ t, quartG t ^ 2 ∂vol01 = 1 := by
+  rw [integral_vol01]
   have e : ∀ t, quartG t ^ 2 = 30 * t ^ 2 - 60 * t ^ 3 + 30 * t ^ 4 := fun t => by
     simp only [quartG, mul_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 30)]; ring
   simp only [e]
@@ -297,8 +297,8 @@ lemma dd_quartG (t : ℝ) : deriv (deriv quartG) t = -2 * √30 := by
 normalised `C²` state `√30 t (1 - t)`, positive inside, but `g''/g = -2 / (t (1 - t))` is unbounded
 at the walls, so no continuous potential has it as a ground-state density. -/
 theorem quartDens_not_vrep :
-    (∃ ψ ∈ Nst setting, dens setting ψ = fun u => ∫ t, ext u t * quartDens t ∂μ1) ∧
-      ¬ PureVRep setting fun u => ∫ t, ext u t * quartDens t ∂μ1 := by
+    (∃ ψ ∈ Nst setting, dens setting ψ = fun u => ∫ t, iccExt u t * quartDens t ∂vol01) ∧
+      ¬ PureVRep setting fun u => ∫ t, iccExt u t * quartDens t ∂vol01 := by
   refine ⟨⟨quartG, ⟨quartG_mem, by rw [ip_eq_sq, quartG_norm]⟩, dens_eq_sq _⟩, fun h => ?_⟩
   obtain ⟨g, q, ⟨hg, hpos, -, hode⟩, hρ⟩ := (pureVRep_box_iff _).1 h
   -- `g = quartG` on `(0, 1)`
@@ -322,14 +322,14 @@ theorem quartDens_not_vrep :
   have key := hode t ht
   rw [hdd t ht, hgq ht, quartG] at key
   have h30 : 0 < √30 := Real.sqrt_pos.2 (by norm_num)
-  have hq : ext q t * (t * (1 - t)) = -2 := by
-    have : √30 * (ext q t * (t * (1 - t)) + 2) = 0 := by linear_combination -key
+  have hq : iccExt q t * (t * (1 - t)) = -2 := by
+    have : √30 * (iccExt q t * (t * (1 - t)) + 2) = 0 := by linear_combination -key
     rcases mul_eq_zero.1 this with h | h
     · linarith
     · linarith
   have hb := abs_ext_le q t
   have hp : 0 < t * (1 - t) := mul_pos ht0 (by linarith)
-  have : |ext q t| * (t * (1 - t)) = 2 := by
+  have : |iccExt q t| * (t * (1 - t)) = 2 := by
     rw [← abs_of_pos hp, ← abs_mul, hq]; norm_num
   nlinarith [mul_le_mul_of_nonneg_right hb hp.le, mul_le_mul_of_nonneg_left
     (show t * (1 - t) ≤ t by nlinarith) hM]

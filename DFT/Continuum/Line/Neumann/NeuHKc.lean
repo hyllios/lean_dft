@@ -42,7 +42,7 @@ lemma fnE_dE2 (e h : H1E) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
 
 lemma fnE_smul' (c : ℝ) (e : H1E) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     fnE (c • e) t = c * fnE e t := by
-  have := congrArg (fun P : Pot => P ⟨t, ht⟩) (map_smul evE c e)
+  have := congrArg (fun P : C01 => P ⟨t, ht⟩) (map_smul evE c e)
   simpa only [ContinuousMap.smul_apply, evE_apply, smul_eq_mul] using this
 
 lemma fnE_sub' (e e' : H1E) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
@@ -158,24 +158,24 @@ lemma rhoE_sub_eq {A B : Cfg n → ℝ} (hA : A ∈ DomN τ n) (hB : B ∈ DomN 
 
 /-! ### The pair densities converge in `L¹` -/
 
-lemma integrable_hQ_beta {β : ℝ → ℝ} (hβ : Integrable β μ1) {F : Cfg (m + 1) → ℝ}
+lemma integrable_hQ_beta {β : ℝ → ℝ} (hβ : Integrable β vol01) {F : Cfg (m + 1) → ℝ}
     (hF : Continuous F) (j : Fin (m + 1)) :
-    Integrable (fun u => ∫ t, β t * hQ F j t u ∂μ1) μ1 := by
+    Integrable (fun u => ∫ t, β t * hQ F j t u ∂vol01) vol01 := by
   obtain ⟨CF, -, hCF⟩ := exists_bound_cubeC hF
-  have hb : ∀ᵐ z ∂(μ1.prod μ1), ‖hQ F j z.1 z.2‖ ≤ CF := by
+  have hb : ∀ᵐ z ∂(vol01.prod vol01), ‖hQ F j z.1 z.2‖ ≤ CF := by
     rw [Measure.prod_restrict]
     filter_upwards [ae_restrict_mem (measurableSet_Ioo.prod measurableSet_Ioo)] with z hz
     rw [Real.norm_eq_abs]
     exact abs_hQ_le hCF j (Ioo_subset_Icc_self hz.1) (Ioo_subset_Icc_self hz.2)
-  have hint : Integrable (fun z : ℝ × ℝ => β z.1 * hQ F j z.1 z.2) (μ1.prod μ1) := by
-    have h1 := (hβ.mul_prod (integrable_const (1 : ℝ) (μ := μ1))).bdd_mul
+  have hint : Integrable (fun z : ℝ × ℝ => β z.1 * hQ F j z.1 z.2) (vol01.prod vol01) := by
+    have h1 := (hβ.mul_prod (integrable_const (1 : ℝ) (μ := vol01))).bdd_mul
       (continuous_hQ hF j).aestronglyMeasurable hb
     refine h1.congr (ae_of_all _ fun z => ?_)
     simp only [mul_one]; ring
   exact hint.integral_prod_right
 
 lemma integrable_RfD (D : PotH) {X : Cfg (m + 1) → ℝ} (hX1 : ContDiff ℝ 1 X) :
-    Integrable (RfD D X) μ1 := by
+    Integrable (RfD D X) vol01 := by
   unfold RfD
   apply Integrable.const_mul
   refine integrable_finsetSum Finset.univ fun j _ => ?_
@@ -209,8 +209,8 @@ lemma tendsto_sqrt_mul {a : ℕ → ℝ} (ha : Tendsto a atTop (𝓝 0)) (c : �
 /-- **The pair-density identity for `N ≥ 2`.** -/
 theorem exists_R_succ (D : PotH) {Φ : Cfg (m + 1) → ℝ} (hΦ : Φ ∈ DomN τ (m + 1))
     (hD : ∀ χ ∈ DomN τ (m + 1), D (rhoE2 τ Φ χ) = 0) :
-    ∃ R : ℝ → ℝ, Integrable R μ1 ∧ ∀ (g : ℝ → ℝ) (hg : ContDiff ℝ 1 g), HasCompactSupport g →
-      D (dE2 (toE (h1N_of_C1 hg)) (rhoE τ Φ)) + ∫ t, g t * R t ∂μ1 = 0 := by
+    ∃ R : ℝ → ℝ, Integrable R vol01 ∧ ∀ (g : ℝ → ℝ) (hg : ContDiff ℝ 1 g), HasCompactSupport g →
+      D (dE2 (toE (h1N_of_C1 hg)) (rhoE τ Φ)) + ∫ t, g t * R t ∂vol01 = 0 := by
   set X : ℕ → Cfg (m + 1) → ℝ := fun M => truncC M Φ
   have hXD : ∀ M, X M ∈ DomN τ (m + 1) := truncC_memN hΦ
   have hX2 : ∀ M, ContDiff ℝ 2 (X M) := fun M => contDiff_truncC M Φ
@@ -237,11 +237,11 @@ theorem exists_R_succ (D : PotH) {Φ : Cfg (m + 1) → ℝ} (hΦ : Φ ∈ DomN �
     rw [e, SHN_smul (h1NW_of_mem (sub_mem hΦ (hXD M)))]; norm_num; rfl
   -- the Cauchy sequence of pair densities
   set α := ((InnerProductSpace.toDual ℝ H1E).symm D).fst
-  set nb := √(∫ t, ((InnerProductSpace.toDual ℝ H1E).symm D).snd t ^ 2 ∂μ1)
+  set nb := √(∫ t, ((InnerProductSpace.toDual ℝ H1E).symm D).snd t ^ 2 ∂vol01)
   set CR : ℝ := ((↑(m + 1) : ℝ) + 1) * (m + 1) * (2 * |α| + 3 * nb)
   have hCR : 0 ≤ CR := by positivity
   set R : ℕ → ℝ → ℝ := fun M => RfD D (X M)
-  have hRi : ∀ M, Integrable (R M) μ1 := fun M => integrable_RfD D (hX1 M)
+  have hRi : ∀ M, Integrable (R M) vol01 := fun M => integrable_RfD D (hX1 M)
   set f : ℕ → ℝ := fun M => CR * (4 * √S0) * √(2 * a M)
   have hf : Tendsto f atTop (𝓝 0) := by
     have h1 : Tendsto (fun M => √(2 * a M)) atTop (𝓝 0) := by
@@ -249,7 +249,7 @@ theorem exists_R_succ (D : PotH) {Φ : Cfg (m + 1) → ℝ} (hΦ : Φ ∈ DomN �
       refine this.congr fun M => ?_
       rw [mul_comm]
     simpa [f] using h1.const_mul (CR * (4 * √S0))
-  have hdist : ∀ M K, ∫ u, |R M u - R K u| ∂μ1 ≤ f M + f K := fun M K => by
+  have hdist : ∀ M K, ∫ u, |R M u - R K u| ∂vol01 ≤ f M + f K := fun M K => by
     have h := integral_abs_RfD_sub_le D (hXD M) (hXD K) (hX1 M) (hX1 K)
     have e1 : X M - X K = (Φ - X K) - (Φ - X M) := by abel
     have hmk : SHN (X M - X K) ≤ 2 * a M + 2 * a K := by
@@ -278,7 +278,7 @@ theorem exists_R_succ (D : PotH) {Φ : Cfg (m + 1) → ℝ} (hΦ : Φ ∈ DomN �
       _ ≤ ((↑(m + 1) : ℝ) + 1) * (m + 1) * ((2 * |α| + 3 * nb) *
           ((√(2 * a M) + √(2 * a K)) * (4 * √S0))) := by gcongr
       _ = f M + f K := by simp only [f, CR]; ring
-  set r : ℕ → Lp ℝ 1 μ1 := fun M => (hRi M).toL1 (R M)
+  set r : ℕ → Lp ℝ 1 vol01 := fun M => (hRi M).toL1 (R M)
   have hrd : ∀ M K, dist (r M) (r K) ≤ f M + f K := fun M K => by
     rw [dist_eq_norm, ← Integrable.toL1_sub, L1.norm_eq_integral_norm]
     refine le_trans (le_of_eq ?_) (hdist M K)
@@ -291,14 +291,14 @@ theorem exists_R_succ (D : PotH) {Φ : Cfg (m + 1) → ℝ} (hΦ : Φ ∈ DomN �
   obtain ⟨Cg', hCg'⟩ := (hg.continuous_deriv le_rfl).bounded_above_of_compact_support hgc.deriv
   have hCg0 : 0 ≤ Cg := (norm_nonneg _).trans (hCg 0)
   -- `∫ g R_M → ∫ g R`
-  have hgR : Tendsto (fun M => ∫ t, g t * R M t ∂μ1) atTop (𝓝 (∫ t, g t * Rt t ∂μ1)) := by
+  have hgR : Tendsto (fun M => ∫ t, g t * R M t ∂vol01) atTop (𝓝 (∫ t, g t * Rt t ∂vol01)) := by
     have hn : Tendsto (fun M => ‖r M - Rt‖) atTop (𝓝 0) :=
       tendsto_iff_norm_sub_tendsto_zero.1 hRt
-    have hgi : ∀ {F : ℝ → ℝ}, Integrable F μ1 → Integrable (fun t => g t * F t) μ1 :=
+    have hgi : ∀ {F : ℝ → ℝ}, Integrable F vol01 → Integrable (fun t => g t * F t) vol01 :=
       fun hF => hF.bdd_mul hg.continuous.aestronglyMeasurable (ae_of_all _ fun t => hCg t)
-    have hb : ∀ M, ‖∫ t, g t * R M t ∂μ1 - ∫ t, g t * Rt t ∂μ1‖ ≤ Cg * ‖r M - Rt‖ := fun M => by
+    have hb : ∀ M, ‖∫ t, g t * R M t ∂vol01 - ∫ t, g t * Rt t ∂vol01‖ ≤ Cg * ‖r M - Rt‖ := fun M => by
       rw [← integral_sub (hgi (hRi M)) (hgi (L1.integrable_coeFn Rt))]
-      calc ‖∫ t, (g t * R M t - g t * Rt t) ∂μ1‖ ≤ ∫ t, Cg * |R M t - Rt t| ∂μ1 :=
+      calc ‖∫ t, (g t * R M t - g t * Rt t) ∂vol01‖ ≤ ∫ t, Cg * |R M t - Rt t| ∂vol01 :=
             norm_integral_le_of_norm_le
               ((((hRi M).sub (L1.integrable_coeFn Rt)).abs).const_mul Cg)
               (ae_of_all _ fun t => by
@@ -399,7 +399,7 @@ theorem exists_R_succ (D : PotH) {Φ : Cfg (m + 1) → ℝ} (hΦ : Φ ∈ DomN �
       ring_nf
     simpa using ((h1.const_mul 8).add (h2.const_mul 8)).const_mul ‖D‖
   have hlim2 : Tendsto (fun M => D (rhoE2 τ (X M) (fun x => ζ x * X M x))) atTop
-      (𝓝 (D (dE2 hE (rhoE τ Φ)) + ∫ t, g t * Rt t ∂μ1)) := by
+      (𝓝 (D (dE2 hE (rhoE τ Φ)) + ∫ t, g t * Rt t ∂vol01)) := by
     refine (hDρ.add hgR).congr fun M => ?_
     rw [D_smooth D (hXD M) (hX2 M) hg, LgD_eq D hg]
   exact tendsto_nhds_unique hlim2 hlim1
@@ -409,9 +409,9 @@ lemma dE2_rhoE_one {Φ : Cfg 0 → ℝ} (hΦ : Φ ∈ DomN τ 0) {g : ℝ → �
     dE2 (toE (h1N_of_C1 hg)) (rhoE τ Φ) = rhoE2 τ Φ (fun x => FF g x * Φ x) := by
   have hχ := mul_memN hΦ (contDiff_FF hg) (fun σ x => FF_pm g σ x)
   refine eq_of_int fun u => ?_
-  have hwc : Continuous fun t => ext u t * g t := (continuous_ext u).mul hg.continuous
-  have e1 : ∫ t, ext u t * ext (evE (dE2 (toE (h1N_of_C1 hg)) (rhoE τ Φ))) t ∂μ1 =
-      ∫ t, ext (potOf _ hwc) t * ext (evE (rhoE τ Φ)) t ∂μ1 := by
+  have hwc : Continuous fun t => iccExt u t * g t := (continuous_iccExt u).mul hg.continuous
+  have e1 : ∫ t, iccExt u t * iccExt (evE (dE2 (toE (h1N_of_C1 hg)) (rhoE τ Φ))) t ∂vol01 =
+      ∫ t, iccExt (potOf _ hwc) t * iccExt (evE (rhoE τ Φ)) t ∂vol01 := by
     refine integral_congr_ae ?_
     filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
     have htI := Ioo_subset_Icc_self ht
@@ -427,8 +427,8 @@ lemma dE2_rhoE_one {Φ : Cfg 0 → ℝ} (hΦ : Φ ∈ DomN τ 0) {g : ℝ → �
 `D(g ρ_Φ) + ∫ g R = 0` for all compactly supported `C¹` functions `g`, for some `R ∈ L¹`. -/
 theorem exists_R (D : PotH) {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
     (hD : ∀ χ ∈ DomN τ n, D (rhoE2 τ Φ χ) = 0) :
-    ∃ R : ℝ → ℝ, Integrable R μ1 ∧ ∀ (g : ℝ → ℝ) (hg : ContDiff ℝ 1 g), HasCompactSupport g →
-      D (dE2 (toE (h1N_of_C1 hg)) (rhoE τ Φ)) + ∫ t, g t * R t ∂μ1 = 0 := by
+    ∃ R : ℝ → ℝ, Integrable R vol01 ∧ ∀ (g : ℝ → ℝ) (hg : ContDiff ℝ 1 g), HasCompactSupport g →
+      D (dE2 (toE (h1N_of_C1 hg)) (rhoE τ Φ)) + ∫ t, g t * R t ∂vol01 = 0 := by
   cases n with
   | zero =>
     refine ⟨0, integrable_zero _ _ _, fun g hg _ => ?_⟩
@@ -438,8 +438,8 @@ theorem exists_R (D : PotH) {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
 
 /-! ### `D` against products with the density -/
 
-lemma integrable_fnE_mulR (e : H1E) {R : ℝ → ℝ} (hR : Integrable R μ1) :
-    Integrable (fun t => fnE e t * R t) μ1 :=
+lemma integrable_fnE_mulR (e : H1E) {R : ℝ → ℝ} (hR : Integrable R vol01) :
+    Integrable (fun t => fnE e t * R t) vol01 :=
   hR.bdd_mul (c := ‖evE‖ * ‖e‖)
     (((continuousOn_fnE e).mono Ioo_subset_Icc_self).aestronglyMeasurable measurableSet_Ioo)
     (by
@@ -463,11 +463,11 @@ lemma contDiff_prim {f : ℝ → ℝ} (hf : Continuous f) :
 
 /-- **`D` on products with `ρ`**: from the pair-density identity for compactly supported `C¹`
 functions to `D(h ρ) = -∫ h R` for all `h ∈ H¹`. -/
-theorem D_dE2_eq (D : PotH) (ρ : H1E) {R : ℝ → ℝ} (hR : Integrable R μ1)
+theorem D_dE2_eq (D : PotH) (ρ : H1E) {R : ℝ → ℝ} (hR : Integrable R vol01)
     (hK : ∀ (g : ℝ → ℝ) (hg : ContDiff ℝ 1 g), HasCompactSupport g →
-      D (dE2 (toE (h1N_of_C1 hg)) ρ) + ∫ t, g t * R t ∂μ1 = 0) (h : H1E) :
-    D (dE2 h ρ) = -∫ t, fnE h t * R t ∂μ1 := by
-  set I : H1E → ℝ := fun h => ∫ t, fnE h t * R t ∂μ1
+      D (dE2 (toE (h1N_of_C1 hg)) ρ) + ∫ t, g t * R t ∂vol01 = 0) (h : H1E) :
+    D (dE2 h ρ) = -∫ t, fnE h t * R t ∂vol01 := by
+  set I : H1E → ℝ := fun h => ∫ t, fnE h t * R t ∂vol01
   have hIadd : ∀ h h', I (h + h') = I h + I h' := fun h h' => by
     simp only [I]; rw [← integral_add (integrable_fnE_mulR h hR) (integrable_fnE_mulR h' hR)]
     refine integral_congr_ae ?_
@@ -478,7 +478,7 @@ theorem D_dE2_eq (D : PotH) (ρ : H1E) {R : ℝ → ℝ} (hR : Integrable R μ1)
     refine integral_congr_ae ?_
     filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
     rw [fnE_smul' _ _ (Ioo_subset_Icc_self ht)]; ring
-  have hIb : ∀ h, |I h| ≤ ‖evE‖ * (∫ t, |R t| ∂μ1) * ‖h‖ := fun h => by
+  have hIb : ∀ h, |I h| ≤ ‖evE‖ * (∫ t, |R t| ∂vol01) * ‖h‖ := fun h => by
     simp only [I]; rw [← Real.norm_eq_abs]
     refine (norm_integral_le_of_norm_le (hR.abs.const_mul (‖evE‖ * ‖h‖)) ?_).trans (le_of_eq ?_)
     · filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
@@ -490,7 +490,7 @@ theorem D_dE2_eq (D : PotH) (ρ : H1E) {R : ℝ → ℝ} (hR : Integrable R μ1)
       map_add' := fun h h' => by simp only [dE2_add_left, map_add, hIadd]; ring
       map_smul' := fun c h => by
         simp only [dE2_smul_left, map_smul, hIsmul, smul_eq_mul, RingHom.id_apply]; ring }
-  let Λ : PotH := Λl.mkContinuous (‖D‖ * ((1 + 2 * ‖evE‖) * ‖ρ‖) + ‖evE‖ * ∫ t, |R t| ∂μ1)
+  let Λ : PotH := Λl.mkContinuous (‖D‖ * ((1 + 2 * ‖evE‖) * ‖ρ‖) + ‖evE‖ * ∫ t, |R t| ∂vol01)
     (fun h => by
       rw [Real.norm_eq_abs]
       change |D (dE2 h ρ) + I h| ≤ _
@@ -506,7 +506,7 @@ theorem D_dE2_eq (D : PotH) (ρ : H1E) {R : ℝ → ℝ} (hR : Integrable R μ1)
   have hΛg : ∀ (g : ℝ → ℝ) (hg : ContDiff ℝ 1 g), HasCompactSupport g →
       Λ (toE (h1N_of_C1 hg)) = 0 := fun g hg hgc => by
     rw [hΛ]
-    have e : I (toE (h1N_of_C1 hg)) = ∫ t, g t * R t ∂μ1 :=
+    have e : I (toE (h1N_of_C1 hg)) = ∫ t, g t * R t ∂vol01 :=
       integral_congr_ae (by
         filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
         rw [fnE_toE _ (Ioo_subset_Icc_self ht)])
@@ -518,7 +518,7 @@ theorem D_dE2_eq (D : PotH) (ρ : H1E) {R : ℝ → ℝ} (hR : Integrable R μ1)
   have hfst : lam.fst = 0 := by
     have h0 := hΛg _ hb1 bump01.hasCompactSupport
     rw [D_apply, fnE_toE _ h01, bump01_eq_one h01, mul_one] at h0
-    have hz : ∫ t, lam.snd t * (toE (h1N_of_C1 hb1)).snd t ∂μ1 = 0 := by
+    have hz : ∫ t, lam.snd t * (toE (h1N_of_C1 hb1)).snd t ∂vol01 = 0 := by
       refine integral_eq_zero_of_ae ?_
       filter_upwards [dN_ae (h1N_of_C1 hb1), ae_restrict_mem measurableSet_Ioo] with t h1 ht
       change lam.snd t * (dN (h1N_of_C1 hb1) : ℝ → ℝ) t = 0
@@ -526,10 +526,10 @@ theorem D_dE2_eq (D : PotH) (ρ : H1E) {R : ℝ → ℝ} (hR : Integrable R μ1)
     rw [hz, add_zero] at h0
     exact h0
   -- primitives of continuous functions
-  have hsnd : (lam.snd : ℝ → ℝ) =ᵐ[μ1] 0 := by
+  have hsnd : (lam.snd : ℝ → ℝ) =ᵐ[vol01] 0 := by
     refine ae_eq_of_int_pot (integrable_L2I _) (integrable_zero _ _ _) fun u => ?_
-    have hu := continuous_ext u
-    set G : ℝ → ℝ := fun t => ∫ s in (0 : ℝ)..t, ext u s
+    have hu := continuous_iccExt u
+    set G : ℝ → ℝ := fun t => ∫ s in (0 : ℝ)..t, iccExt u s
     have hG := contDiff_prim hu
     have hgu : ContDiff ℝ 1 (fun t => bump01 t * G t) := hb1.mul hG
     have h0 := hΛg _ hgu bump01.hasCompactSupport.mul_right
@@ -538,7 +538,7 @@ theorem D_dE2_eq (D : PotH) (ρ : H1E) {R : ℝ → ℝ} (hR : Integrable R μ1)
     rw [← h0]
     refine integral_congr_ae ?_
     filter_upwards [dN_ae (h1N_of_C1 hgu), ae_restrict_mem measurableSet_Ioo] with t h1 ht
-    change ext u t * lam.snd t = lam.snd t * (dN (h1N_of_C1 hgu) : ℝ → ℝ) t
+    change iccExt u t * lam.snd t = lam.snd t * (dN (h1N_of_C1 hgu) : ℝ → ℝ) t
     have hev : (fun s => bump01 s * G s) =ᶠ[𝓝 t] G := by
       filter_upwards [bump01_eventually_one ht] with s hs
       rw [hs, one_mul]
@@ -583,10 +583,10 @@ lemma h1N_inv {f : ℝ → ℝ} (hf : H1N f) {c : ℝ} (hc : 0 < c)
     norm_num
     exact pow_le_pow_left₀ hc.le hft 4)
 
-lemma integrable_div_rho {R : ℝ → ℝ} (hR : Integrable R μ1) (ρ : H1E) {c : ℝ} (hc : 0 < c)
+lemma integrable_div_rho {R : ℝ → ℝ} (hR : Integrable R vol01) (ρ : H1E) {c : ℝ} (hc : 0 < c)
     (hρc : ∀ t ∈ Icc (0 : ℝ) 1, c ≤ fnE ρ t) :
-    Integrable (fun t => -(R t * (fnE ρ t)⁻¹)) μ1 := by
-  have hm : AEStronglyMeasurable (fun t => (fnE ρ t)⁻¹) μ1 :=
+    Integrable (fun t => -(R t * (fnE ρ t)⁻¹)) vol01 := by
+  have hm : AEStronglyMeasurable (fun t => (fnE ρ t)⁻¹) vol01 :=
     ((((continuousOn_fnE ρ).inv₀ fun t ht => (hc.trans_le (hρc t ht)).ne').mono
       Ioo_subset_Icc_self).aestronglyMeasurable measurableSet_Ioo)
   have h := hR.bdd_mul (c := c⁻¹) hm (by
@@ -598,10 +598,10 @@ lemma integrable_div_rho {R : ℝ → ℝ} (hR : Integrable R μ1) (ρ : H1E) {c
 
 /-- **`D` is an integral**: `D(e) = ∫ e d` with `d = -R/ρ`. -/
 theorem D_eq_integral_d (D : PotH) (ρ : H1E) {c : ℝ} (hc : 0 < c)
-    (hρc : ∀ t ∈ Icc (0 : ℝ) 1, c ≤ fnE ρ t) {R : ℝ → ℝ} (hR : Integrable R μ1)
+    (hρc : ∀ t ∈ Icc (0 : ℝ) 1, c ≤ fnE ρ t) {R : ℝ → ℝ} (hR : Integrable R vol01)
     (hK : ∀ (g : ℝ → ℝ) (hg : ContDiff ℝ 1 g), HasCompactSupport g →
-      D (dE2 (toE (h1N_of_C1 hg)) ρ) + ∫ t, g t * R t ∂μ1 = 0) (e : H1E) :
-    D e = ∫ t, fnE e t * -(R t * (fnE ρ t)⁻¹) ∂μ1 := by
+      D (dE2 (toE (h1N_of_C1 hg)) ρ) + ∫ t, g t * R t ∂vol01 = 0) (e : H1E) :
+    D e = ∫ t, fnE e t * -(R t * (fnE ρ t)⁻¹) ∂vol01 := by
   have hq : H1N fun t => fnE e t * (fnE ρ t)⁻¹ :=
     (h1N_fnE e).mul (h1N_inv (h1N_fnE ρ) hc hρc)
   have he : dE2 (toE hq) ρ = e := eq_of_fnE fun t ht => by
@@ -619,7 +619,7 @@ theorem D_eq_integral_d (D : PotH) (ρ : H1E) {c : ℝ} (hc : 0 < c)
 
 /-- The marginal of `Φ²` is at most `‖evE‖ ‖ρ_Φ‖ / N`. -/
 lemma marg_le_N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) :
-    ∀ᵐ t ∂μ1, ∫ y in Cube' n, Φ (Fin.cons t y) ^ 2 ≤ ‖evE‖ * ‖rhoE τ Φ‖ / (n + 1) := by
+    ∀ᵐ t ∂vol01, ∫ y in Cube' n, Φ (Fin.cons t y) ^ 2 ≤ ‖evE‖ * ‖rhoE τ Φ‖ / (n + 1) := by
   have hN : (0 : ℝ) < n + 1 := by positivity
   filter_upwards [(gNH_spec hΦ).2.1, ae_restrict_mem measurableSet_Ioo] with t h1 ht
   have htI := Ioo_subset_Icc_self ht
@@ -634,8 +634,8 @@ lemma marg_le_N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) :
 `∫ e ρ(Φ, χΦ) = N ∫ e(x₀) χ Φ²` for a bounded symmetric `C¹` function `χ`. -/
 theorem int_rhoE2_L1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
     {χ : Cfg n → ℝ} (hχ : ContDiff ℝ 1 χ) {Cχ : ℝ} (hχb : ∀ x, |χ x| ≤ Cχ)
-    (hχs : ∀ σ x, χ (pm σ x) = χ x) {e : ℝ → ℝ} (he : Integrable e μ1) :
-    ∫ t, e t * ext (evE (rhoE2 τ Φ (fun x => χ x * Φ x))) t ∂μ1 =
+    (hχs : ∀ σ x, χ (pm σ x) = χ x) {e : ℝ → ℝ} (he : Integrable e vol01) :
+    ∫ t, e t * iccExt (evE (rhoE2 τ Φ (fun x => χ x * Φ x))) t ∂vol01 =
       (n + 1) * ∫ x, e (x 0) * (χ x * Φ x ^ 2) ∂μN n := by
   have hN : (0 : ℝ) < n + 1 := by positivity
   have hCχ : 0 ≤ Cχ := (abs_nonneg _).trans (hχb 0)
@@ -643,17 +643,17 @@ theorem int_rhoE2_L1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
   set p := evE (rhoE2 τ Φ (fun x => χ x * Φ x))
   have hG := sq_sym_ae_of (fun σ => hΦ.2.2 σ trivial) hχs
   -- integrability of `u(x₀) χ Φ²` for `u ∈ L¹`
-  have hint : ∀ {u : ℝ → ℝ}, Integrable u μ1 → Integrable (fun x => u (x 0) * (χ x * Φ x ^ 2))
+  have hint : ∀ {u : ℝ → ℝ}, Integrable u vol01 → Integrable (fun x => u (x 0) * (χ x * Φ x ^ 2))
       (μN n) := fun {u} hu => by
     have := (integrable_x0_sq_of hΦ.1 (marg_le_N hΦ) hu).1.bdd_mul (c := Cχ) hχ.continuous.aestronglyMeasurable
       (ae_of_all _ fun x => by rw [Real.norm_eq_abs]; exact hχb x)
     exact this.congr (ae_of_all _ fun x => by ring)
   -- the identity for continuous compactly supported weights
   have hcont : ∀ (v : ℝ → ℝ), Continuous v → HasCompactSupport v →
-      ∫ t, v t * ext p t ∂μ1 = (n + 1) * ∫ x, v (x 0) * (χ x * Φ x ^ 2) ∂μN n := by
+      ∫ t, v t * iccExt p t ∂vol01 = (n + 1) * ∫ x, v (x 0) * (χ x * Φ x ^ 2) ∂μN n := by
     intro v hv hvs
     obtain ⟨Cv, hCv⟩ := hv.bounded_above_of_compact_support hvs
-    have h1 : ∫ t, v t * ext p t ∂μ1 = ∫ t, ext (potOf v hv) t * ext p t ∂μ1 :=
+    have h1 : ∫ t, v t * iccExt p t ∂vol01 = ∫ t, iccExt (potOf v hv) t * iccExt p t ∂vol01 :=
       integral_congr_ae (by
         filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
         rw [ext_potOf hv (Ioo_subset_Icc_self ht)])
@@ -663,18 +663,18 @@ theorem int_rhoE2_L1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
     have hGi : Integrable (fun x => χ x * Φ x ^ 2) (μN n) :=
       (int_sq hΦ.1).bdd_mul hχ.continuous.aestronglyMeasurable (ae_of_all _ fun x => by
         rw [Real.norm_eq_abs]; exact hχb x)
-    have hb : ∀ t, ‖ext (potOf v hv) t‖ ≤ ‖potOf v hv‖ := fun t => by
+    have hb : ∀ t, ‖iccExt (potOf v hv) t‖ ≤ ‖potOf v hv‖ := fun t => by
       rw [Real.norm_eq_abs]; exact ext_le_norm _ _
-    have hk : ∀ k : Fin (n + 1), Integrable (fun x => ext (potOf v hv) (x k) * (χ x * Φ x ^ 2))
+    have hk : ∀ k : Fin (n + 1), Integrable (fun x => iccExt (potOf v hv) (x k) * (χ x * Φ x ^ 2))
         (μN n) := fun k =>
-      hGi.bdd_mul ((continuous_ext _).comp (continuous_apply k)).aestronglyMeasurable
+      hGi.bdd_mul ((continuous_iccExt _).comp (continuous_apply k)).aestronglyMeasurable
         (ae_of_all _ fun x => hb _)
-    have e1 : (fun x => (∑ k, ext (potOf v hv) (x k)) * (Φ x * (χ x * Φ x))) =
-        fun x => ∑ k, ext (potOf v hv) (x k) * (χ x * Φ x ^ 2) := by
+    have e1 : (fun x => (∑ k, iccExt (potOf v hv) (x k)) * (Φ x * (χ x * Φ x))) =
+        fun x => ∑ k, iccExt (potOf v hv) (x k) * (χ x * Φ x ^ 2) := by
       funext x
       rw [Finset.sum_mul]; congr 1; funext k; ring
     rw [e1, integral_finsetSum _ fun k _ => hk k]
-    simp only [integral_xk_ae (G := fun x => χ x * Φ x ^ 2) hG (ext (potOf v hv)), Finset.sum_const,
+    simp only [integral_xk_ae (G := fun x => χ x * Φ x ^ 2) hG (iccExt (potOf v hv)), Finset.sum_const,
       Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
     push_cast
     congr 1
@@ -682,22 +682,22 @@ theorem int_rhoE2_L1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
     filter_upwards [ae_cube_x0] with x hx
     rw [ext_potOf hv hx]
   -- approximation of `L¹` weights
-  have hpb : ∀ t, |ext p t| ≤ ‖p‖ := fun t => ext_le_norm _ _
-  have hint1 : ∀ {u : ℝ → ℝ}, Integrable u μ1 → Integrable (fun t => u t * ext p t) μ1 :=
-    fun hu => (hu.bdd_mul (c := ‖p‖) (continuous_ext p).aestronglyMeasurable
+  have hpb : ∀ t, |iccExt p t| ≤ ‖p‖ := fun t => ext_le_norm _ _
+  have hint1 : ∀ {u : ℝ → ℝ}, Integrable u vol01 → Integrable (fun t => u t * iccExt p t) vol01 :=
+    fun hu => (hu.bdd_mul (c := ‖p‖) (continuous_iccExt p).aestronglyMeasurable
       (ae_of_all _ fun t => by rw [Real.norm_eq_abs]; exact hpb t)).congr
         (ae_of_all _ fun t => by ring)
   set K := ‖p‖ + Cχ * (‖evE‖ * ‖rhoE τ Φ‖)
   have hK0 : 0 ≤ K := by positivity
-  have hbound : ∀ j : ℕ, |∫ t, e t * ext p t ∂μ1 -
+  have hbound : ∀ j : ℕ, |∫ t, e t * iccExt p t ∂vol01 -
       (n + 1) * ∫ x, e (x 0) * (χ x * Φ x ^ 2) ∂μN n| ≤ K * (1 / ((j : ℝ) + 1)) := by
     intro j
     obtain ⟨v, hvs, hvl, hvc, hvi⟩ := Integrable.exists_hasCompactSupport_integral_sub_le he
       (by positivity : (0 : ℝ) < 1 / ((j : ℝ) + 1))
-    have hev : Integrable (fun t => e t - v t) μ1 := he.sub hvi
-    have hl : |∫ t, e t * ext p t ∂μ1 - ∫ t, v t * ext p t ∂μ1| ≤ ‖p‖ * (1 / ((j : ℝ) + 1)) := by
+    have hev : Integrable (fun t => e t - v t) vol01 := he.sub hvi
+    have hl : |∫ t, e t * iccExt p t ∂vol01 - ∫ t, v t * iccExt p t ∂vol01| ≤ ‖p‖ * (1 / ((j : ℝ) + 1)) := by
       rw [← integral_sub (hint1 he) (hint1 hvi)]
-      calc |∫ t, (e t * ext p t - v t * ext p t) ∂μ1| ≤ ∫ t, ‖p‖ * ‖e t - v t‖ ∂μ1 := by
+      calc |∫ t, (e t * iccExt p t - v t * iccExt p t) ∂vol01| ≤ ∫ t, ‖p‖ * ‖e t - v t‖ ∂vol01 := by
             rw [← Real.norm_eq_abs]
             refine norm_integral_le_of_norm_le (hev.norm.const_mul _) (ae_of_all _ fun t => ?_)
             rw [← sub_mul, Real.norm_eq_abs, abs_mul, Real.norm_eq_abs, mul_comm]
@@ -720,14 +720,14 @@ theorem int_rhoE2_L1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
         nlinarith [hχb x, abs_nonneg (e (x 0) - v (x 0)), sq_nonneg (Φ x), abs_nonneg (χ x),
           mul_nonneg (abs_nonneg (e (x 0) - v (x 0))) (sq_nonneg (Φ x))]
       calc (n + 1) * |∫ x, (e (x 0) * (χ x * Φ x ^ 2) - v (x 0) * (χ x * Φ x ^ 2)) ∂μN n|
-          ≤ (n + 1) * (Cχ * ((‖evE‖ * ‖rhoE τ Φ‖) / (n + 1) * ∫ t, |e t - v t| ∂μ1)) :=
+          ≤ (n + 1) * (Cχ * ((‖evE‖ * ‖rhoE τ Φ‖) / (n + 1) * ∫ t, |e t - v t| ∂vol01)) :=
             mul_le_mul_of_nonneg_left (hbd.trans (mul_le_mul_of_nonneg_left hT hCχ)) hN.le
-        _ = Cχ * (‖evE‖ * ‖rhoE τ Φ‖) * ∫ t, ‖e t - v t‖ ∂μ1 := by
+        _ = Cχ * (‖evE‖ * ‖rhoE τ Φ‖) * ∫ t, ‖e t - v t‖ ∂vol01 := by
             simp only [Real.norm_eq_abs]; field_simp
         _ ≤ Cχ * (‖evE‖ * ‖rhoE τ Φ‖) * (1 / ((j : ℝ) + 1)) :=
             mul_le_mul_of_nonneg_left hvl (by positivity)
     rw [hcont v hvc hvs] at hl
-    calc _ ≤ |∫ t, e t * ext p t ∂μ1 - (n + 1) * ∫ x, v (x 0) * (χ x * Φ x ^ 2) ∂μN n| +
+    calc _ ≤ |∫ t, e t * iccExt p t ∂vol01 - (n + 1) * ∫ x, v (x 0) * (χ x * Φ x ^ 2) ∂μN n| +
           |(n + 1) * ∫ x, v (x 0) * (χ x * Φ x ^ 2) ∂μN n -
             (n + 1) * ∫ x, e (x 0) * (χ x * Φ x ^ 2) ∂μN n| := abs_sub_le _ _ _
       _ ≤ ‖p‖ * (1 / ((j : ℝ) + 1)) + Cχ * (‖evE‖ * ‖rhoE τ Φ‖) * (1 / ((j : ℝ) + 1)) := by
@@ -736,7 +736,7 @@ theorem int_rhoE2_L1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n)
   have hlim : Tendsto (fun j : ℕ => K * (1 / ((j : ℝ) + 1))) atTop (𝓝 0) := by
     simpa using tendsto_one_div_add_atTop_nhds_zero_nat.const_mul K
   have h0 := ge_of_tendsto' hlim hbound
-  have := abs_nonneg (∫ t, e t * ext p t ∂μ1 - (n + 1) * ∫ x, e (x 0) * (χ x * Φ x ^ 2) ∂μN n)
+  have := abs_nonneg (∫ t, e t * iccExt p t ∂vol01 - (n + 1) * ∫ x, e (x 0) * (χ x * Φ x ^ 2) ∂μN n)
   linarith [abs_eq_zero.1 (le_antisymm h0 this), sub_eq_zero.1 (abs_eq_zero.1
     (le_antisymm h0 this))]
 
@@ -755,8 +755,8 @@ theorem D_eq_zero_of_gs {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Φ :
       (continuousOn_fnE ρ)
     exact ⟨fnE ρ t0, rhoE_pos hw hgs ht0, fun t ht => hmin ht⟩
   set d : ℝ → ℝ := fun t => -(R t * (fnE ρ t)⁻¹)
-  have hd : Integrable d μ1 := integrable_div_rho hR ρ hc hρc
-  have hrep : ∀ e, D e = ∫ t, fnE e t * d t ∂μ1 := D_eq_integral_d D ρ hc hρc hR hK
+  have hd : Integrable d vol01 := integrable_div_rho hR ρ hc hρc
+  have hrep : ∀ e, D e = ∫ t, fnE e t * d t ∂vol01 := D_eq_integral_d D ρ hc hρc hR hK
   -- the symmetric tests
   have htest : ∀ χ : Cfg n → ℝ, ContDiff ℝ (⊤ : ℕ∞) χ → HasCompactSupport χ →
       tsupport χ ⊆ boxU n 0 → (∀ σ x, χ (pm σ x) = χ x) →
@@ -768,8 +768,8 @@ theorem D_eq_zero_of_gs {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Φ :
     have h0 := hD _ (mul_memN hΦ hχ1 hχs)
     rw [hrep] at h0
     have hL1 := int_rhoE2_L1N hΦ hχ1 hCχ' hχs hd
-    have e1 : ∫ t, fnE (rhoE2 τ Φ (fun x => χ x * Φ x)) t * d t ∂μ1 =
-        ∫ t, d t * ext (evE (rhoE2 τ Φ (fun x => χ x * Φ x))) t ∂μ1 := by
+    have e1 : ∫ t, fnE (rhoE2 τ Φ (fun x => χ x * Φ x)) t * d t ∂vol01 =
+        ∫ t, d t * iccExt (evE (rhoE2 τ Φ (fun x => χ x * Φ x))) t ∂vol01 := by
       refine integral_congr_ae ?_
       filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
       rw [ext_evE (Ioo_subset_Icc_self ht), mul_comm]
@@ -793,21 +793,21 @@ theorem D_eq_zero_of_gs {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Φ :
     · rw [abs_of_neg (by linarith)]; linarith
     · rw [abs_of_nonneg (by linarith)]; linarith
   have hTnn : ∀ t, 0 ≤ T t := fun t => le_max_left _ _
-  have hTpos : 0 < ∫ t, T t ∂μ1 :=
+  have hTpos : 0 < ∫ t, T t ∂vol01 :=
     integral_pos_of_cont hTc hTnn (t0 := 1 / 2) ⟨by norm_num, by norm_num⟩
       (by simp only [T, tentF, sub_self, abs_zero, zero_div, sub_zero]; norm_num)
-  set η : ℝ → ℝ := fun t => T t / ∫ t, T t ∂μ1
+  set η : ℝ → ℝ := fun t => T t / ∫ t, T t ∂vol01
   have hηc : Continuous η := hTc.div_const _
   have hη0 : ∀ t, t ∉ Ioo 0 (1 - 0) → η t = 0 := fun t ht => by simp [η, hT0 t ht]
-  have hη1 : ∫ t, η t ∂μ1 = 1 := by
+  have hη1 : ∫ t, η t ∂vol01 = 1 := by
     simp only [η]; rw [integral_div]; exact div_self hTpos.ne'
-  have hκ : ∫ t, η t * d t ∂μ1 = 0 := by
+  have hκ : ∫ t, η t * d t ∂vol01 = 0 := by
     have := product_identity hd hsum hηc hηc hη0 hη0 hη1
     rw [hη1, one_mul] at this
-    have : ((n : ℝ) + 1) * ∫ t, η t * d t ∂μ1 = 0 := by linarith
+    have : ((n : ℝ) + 1) * ∫ t, η t * d t ∂vol01 = 0 := by linarith
     exact (mul_eq_zero.1 this).resolve_left hN.ne'
   -- `d = 0`
-  have hd0 : d =ᵐ[μ1] 0 := by
+  have hd0 : d =ᵐ[vol01] 0 := by
     refine ae_eq_zero_of_test1 hd fun χ hχ => ?_
     set φ : ℝ → ℝ := fun t => χ (max 0 (min 1 t))
     have hφc : Continuous φ :=
@@ -822,7 +822,7 @@ theorem D_eq_zero_of_gs {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Φ :
         simp only [φ, e, hχ.2.2]
     have h1 := product_identity hd hsum hφc hηc hφ0 hη0 hη1
     rw [hκ, mul_zero, mul_zero, add_zero] at h1
-    calc ∫ t, d t * χ t ∂μ1 = ∫ t, φ t * d t ∂μ1 := by
+    calc ∫ t, d t * χ t ∂vol01 = ∫ t, φ t * d t ∂vol01 := by
           refine integral_congr_ae ?_
           filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
           have e : max 0 (min 1 t) = t := by rw [min_eq_right ht.2.le, max_eq_right ht.1.le]
@@ -838,7 +838,7 @@ theorem D_eq_zero_of_gs {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Φ :
 lemma ellE_rhoE2 {A B : Cfg n → ℝ} (hA : A ∈ DomN τ n) (hB : B ∈ DomN τ n) :
     ellE (rhoE2 τ A B) = (n + 1) * ∫ x, A x * B x ∂μN n := by
   have h := int_rhoE2 hA hB 1
-  have e1 : ∀ t, ext (1 : Pot) t = 1 := fun t => by simp [SturmLiouville.ext]
+  have e1 : ∀ t, iccExt (1 : C01) t = 1 := fun t => by simp [SturmLiouville.iccExt]
   simp only [e1, one_mul, pfN, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
     nsmul_eq_mul, mul_one] at h
   rw [integral_const_mul] at h

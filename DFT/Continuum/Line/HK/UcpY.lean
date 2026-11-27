@@ -103,7 +103,7 @@ lemma etaY_ne_zero {x : Cfg n} (hx : x ∈ RY a n) : etaY a x ≠ 0 := by
 
 section ucp
 
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n → ℝ}
+variable {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {Ψ : Cfg n → ℝ}
 
 /-- The logarithmic data for the companion on a closed ball inside the Young chamber. -/
 theorem logData_ballY (hΨ : IsGS (settingWS (ymix a) w hw) v Ψ) {x0 : Cfg n} {R : ℝ}
@@ -218,14 +218,14 @@ lemma DomW_fer_eq : DomW .fer n = DomWS (ymix (n := n) (n + 1)) := by
   intro i
   exact ⟨fun _ => i.isLt, fun _ => (σ i).isLt⟩
 
-lemma isGS_fer_Y {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n → ℝ}
+lemma isGS_fer_Y {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW .fer n w hw) v Ψ) : IsGS (settingWS (ymix (n + 1)) w hw) v Ψ := by
   have hD : ∀ φ, φ ∈ DomWS (ymix (n := n) (n + 1)) ↔ φ ∈ DomW .fer n := fun φ => by
     rw [DomW_fer_eq]
   exact ⟨(hD Ψ).2 hΨ.1, hΨ.2.1, fun φ hφ => hΨ.2.2 φ ((hD φ).1 hφ)⟩
 
 /-- **Fermionic `H¹₀` ground states of continuous potentials are nonzero almost everywhere.** -/
-theorem gs_ne_zero_W_fer {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n → ℝ}
+theorem gs_ne_zero_W_fer {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW .fer n w hw) v Ψ) : ∀ᵐ x ∂μN n, Ψ x ≠ 0 :=
   gs_ne_zero_WY (isGS_fer_Y hΨ)
 

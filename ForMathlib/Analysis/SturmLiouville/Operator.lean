@@ -28,16 +28,16 @@ namespace SturmLiouville
 open MeasureTheory Set Filter Topology Metric BoundedContinuousFunction
 
 /-- The Hilbert space `L²(0, 1)`. -/
-noncomputable abbrev HL := Lp ℝ 2 μ1
+noncomputable abbrev HL := Lp ℝ 2 vol01
 
-instance : IsFiniteMeasure μ1 := isFiniteMeasure_restrict.2 (by simp)
+instance : IsFiniteMeasure vol01 := isFiniteMeasure_restrict.2 (by simp)
 
-lemma mu1_univ : μ1 univ = 1 := by simp [Measure.restrict_apply MeasurableSet.univ]
+lemma vol01_univ : vol01 univ = 1 := by simp [Measure.restrict_apply MeasurableSet.univ]
 
-lemma measureUnivNNReal_mu1 : measureUnivNNReal μ1 = 1 := by
+lemma measureUnivNNReal_vol01 : measureUnivNNReal vol01 = 1 := by
   simp [measureUnivNNReal]
 
-lemma integrable_HL (f : HL) : Integrable f μ1 := (Lp.memLp f).integrable one_le_two
+lemma integrable_HL (f : HL) : Integrable f vol01 := (Lp.memLp f).integrable one_le_two
 
 variable {W : ℝ → ℝ} (hWc : Continuous W)
 
@@ -50,7 +50,7 @@ noncomputable def Ksl (x : Icc (0 : ℝ) 1) : HL :=
       ((ae_mem_Icc).mono fun y hy => by
         rw [Real.norm_eq_abs]; exact (Classical.choose_spec (exists_Kg_bound hWc)).2 x x.2 y hy))
 
-lemma Ksl_ae (x : Icc (0 : ℝ) 1) : (Ksl hWc x : ℝ → ℝ) =ᵐ[μ1] fun y => Kg hWc x y :=
+lemma Ksl_ae (x : Icc (0 : ℝ) 1) : (Ksl hWc x : ℝ → ℝ) =ᵐ[vol01] fun y => Kg hWc x y :=
   MemLp.coeFn_toLp _
 
 /-- `‖K(x, ·) - K(x', ·)‖ ≤ ε` for `x` close to `x'`. -/
@@ -63,7 +63,7 @@ lemma norm_Ksl_sub_le (ε : ℝ) (hε : 0 < ε) : ∃ δ, 0 < δ ∧ ∀ x x' : 
       ae_mem_Icc] with y h1 h2 h3 hy
     rw [h1, Pi.sub_apply, h2, h3, Real.norm_eq_abs]
     exact (h x x.2 x' x'.2 hxx y hy).le)
-  simpa [measureUnivNNReal_mu1] using hb
+  simpa [measureUnivNNReal_vol01] using hb
 
 lemma continuous_Ksl : Continuous (Ksl hWc) := by
   rw [Metric.continuous_iff]
@@ -81,7 +81,7 @@ lemma norm_Ksl_le : ∃ C, 0 ≤ C ∧ ∀ x : Icc (0 : ℝ) 1, ‖Ksl hWc x‖ 
   have hb := Lp.norm_le_of_ae_bound (f := Ksl hWc x) (p := 2) hC0 (by
     filter_upwards [Ksl_ae hWc x, ae_mem_Icc] with y h1 hy
     rw [h1, Real.norm_eq_abs]; exact hCb x x.2 y hy)
-  simpa [measureUnivNNReal_mu1] using hb
+  simpa [measureUnivNNReal_vol01] using hb
 
 /-- The Green operator is the inner product with the kernel slice. -/
 lemma Gk_eq_inner (f : HL) (x : Icc (0 : ℝ) 1) : Gk hWc f x = inner ℝ (Ksl hWc x) f := by
@@ -111,7 +111,7 @@ noncomputable def Bop : HL →L[ℝ] (Icc (0 : ℝ) 1 →ᵇ ℝ) :=
 lemma Bop_apply (f : HL) (x : Icc (0 : ℝ) 1) : Bop hWc f x = inner ℝ (Ksl hWc x) f := rfl
 
 lemma memLp_comp_projIcc (g : Icc (0 : ℝ) 1 →ᵇ ℝ) :
-    MemLp (fun x => g (projIcc 0 1 zero_le_one x)) 2 μ1 :=
+    MemLp (fun x => g (projIcc 0 1 zero_le_one x)) 2 vol01 :=
   MemLp.of_bound ((g.continuous.comp continuous_projIcc).aestronglyMeasurable) ‖g‖
     (ae_of_all _ fun _ => g.norm_coe_le_norm _)
 
@@ -129,12 +129,12 @@ noncomputable def Jop : (Icc (0 : ℝ) 1 →ᵇ ℝ) →L[ℝ] HL :=
         (norm_nonneg g) (by
           filter_upwards [MemLp.coeFn_toLp (memLp_comp_projIcc g)] with x hx
           rw [hx]; exact g.norm_coe_le_norm _)
-      simpa [measureUnivNNReal_mu1] using hb
+      simpa [measureUnivNNReal_vol01] using hb
 
 /-- **The Green operator on `L²(0, 1)`.** -/
 noncomputable def Gop : HL →L[ℝ] HL := (Jop).comp (Bop hWc)
 
-lemma Gop_ae (f : HL) : (Gop hWc f : ℝ → ℝ) =ᵐ[μ1] Gk hWc f := by
+lemma Gop_ae (f : HL) : (Gop hWc f : ℝ → ℝ) =ᵐ[vol01] Gk hWc f := by
   filter_upwards [MemLp.coeFn_toLp (memLp_comp_projIcc (Bop hWc f)),
     ae_restrict_mem measurableSet_Ioo] with x hx hxI
   change (Jop (Bop hWc f) : ℝ → ℝ) x = _
@@ -187,26 +187,26 @@ theorem isCompactOperator_Gop : IsCompactOperator (Gop hWc) :=
 
 /-! ### Symmetry -/
 
-lemma prod_mu1 :
-    (μ1.prod μ1 : Measure (ℝ × ℝ)) = volume.restrict (Ioo (0 : ℝ) 1 ×ˢ Ioo (0 : ℝ) 1) := by
+lemma prod_vol01 :
+    (vol01.prod vol01 : Measure (ℝ × ℝ)) = volume.restrict (Ioo (0 : ℝ) 1 ×ˢ Ioo (0 : ℝ) 1) := by
   rw [Measure.prod_restrict, Measure.volume_eq_prod]
 
-lemma integrable_kernel_prod {f g : ℝ → ℝ} (hf : Integrable f μ1) (hg : Integrable g μ1) :
-    Integrable (fun z : ℝ × ℝ => Kg hWc z.1 z.2 * (g z.1 * f z.2)) (μ1.prod μ1) := by
+lemma integrable_kernel_prod {f g : ℝ → ℝ} (hf : Integrable f vol01) (hg : Integrable g vol01) :
+    Integrable (fun z : ℝ × ℝ => Kg hWc z.1 z.2 * (g z.1 * f z.2)) (vol01.prod vol01) := by
   obtain ⟨C, -, hC⟩ := exists_Kg_bound hWc
-  have hm : AEStronglyMeasurable (fun z : ℝ × ℝ => Kg hWc z.1 z.2) (μ1.prod μ1) := by
-    rw [prod_mu1]
+  have hm : AEStronglyMeasurable (fun z : ℝ × ℝ => Kg hWc z.1 z.2) (vol01.prod vol01) := by
+    rw [prod_vol01]
     exact ((continuousOn_Kg hWc).mono (prod_mono Ioo_subset_Icc_self Ioo_subset_Icc_self))
       |>.aestronglyMeasurable (measurableSet_Ioo.prod measurableSet_Ioo)
-  have hb : ∀ᵐ z ∂(μ1.prod μ1), ‖Kg hWc z.1 z.2‖ ≤ C := by
-    rw [prod_mu1]
+  have hb : ∀ᵐ z ∂(vol01.prod vol01), ‖Kg hWc z.1 z.2‖ ≤ C := by
+    rw [prod_vol01]
     filter_upwards [ae_restrict_mem (measurableSet_Ioo.prod measurableSet_Ioo)] with z hz
     rw [Real.norm_eq_abs]
     exact hC _ (Ioo_subset_Icc_self hz.1) _ (Ioo_subset_Icc_self hz.2)
   exact (hg.mul_prod hf).bdd_mul hm hb
 
 lemma inner_Gop (f g : HL) :
-    inner ℝ (Gop hWc f) g = ∫ x, (∫ y, Kg hWc x y * f y ∂μ1) * g x ∂μ1 := by
+    inner ℝ (Gop hWc f) g = ∫ x, (∫ y, Kg hWc x y * f y ∂vol01) * g x ∂vol01 := by
   rw [L2.inner_def]
   refine integral_congr_ae ?_
   filter_upwards [Gop_ae hWc f] with x hx
@@ -218,15 +218,15 @@ theorem Gop_symm (f g : HL) : inner ℝ (Gop hWc f) g = inner ℝ f (Gop hWc g) 
   rw [real_inner_comm (Gop hWc g) f, inner_Gop, inner_Gop]
   have hF := integrable_kernel_prod hWc (integrable_HL f) (integrable_HL g)
   have hG := integrable_kernel_prod hWc (integrable_HL g) (integrable_HL f)
-  have e1 : ∫ x, (∫ y, Kg hWc x y * f y ∂μ1) * g x ∂μ1 =
-      ∫ z, Kg hWc z.1 z.2 * (g z.1 * f z.2) ∂(μ1.prod μ1) := by
+  have e1 : ∫ x, (∫ y, Kg hWc x y * f y ∂vol01) * g x ∂vol01 =
+      ∫ z, Kg hWc z.1 z.2 * (g z.1 * f z.2) ∂(vol01.prod vol01) := by
     rw [integral_prod _ hF]
     refine integral_congr_ae (ae_of_all _ fun x => ?_)
     simp only
     rw [← integral_mul_const]
     congr 1; funext y; ring
-  have e2 : ∫ x, (∫ y, Kg hWc x y * g y ∂μ1) * f x ∂μ1 =
-      ∫ z, Kg hWc z.1 z.2 * (f z.1 * g z.2) ∂(μ1.prod μ1) := by
+  have e2 : ∫ x, (∫ y, Kg hWc x y * g y ∂vol01) * f x ∂vol01 =
+      ∫ z, Kg hWc z.1 z.2 * (f z.1 * g z.2) ∂(vol01.prod vol01) := by
     rw [integral_prod _ hG]
     refine integral_congr_ae (ae_of_all _ fun x => ?_)
     simp only

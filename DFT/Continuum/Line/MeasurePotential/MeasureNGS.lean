@@ -93,29 +93,29 @@ lemma tendsto_int_abs_sq_sub {P : ℕ → Cfg n → ℝ} {Φ : Cfg n → ℝ} (h
   linarith
 
 /-- Uniform convergence in `C([0, 1])` gives convergence of `∫ v p`. -/
-lemma tendsto_int_pot (v : Pot) {p : ℕ → Pot} {q : Pot} (h : Tendsto p atTop (𝓝 q)) :
-    Tendsto (fun j => ∫ t, ext v t * ext (p j) t ∂μ1) atTop (𝓝 (∫ t, ext v t * ext q t ∂μ1)) := by
+lemma tendsto_int_pot (v : C01) {p : ℕ → C01} {q : C01} (h : Tendsto p atTop (𝓝 q)) :
+    Tendsto (fun j => ∫ t, iccExt v t * iccExt (p j) t ∂vol01) atTop (𝓝 (∫ t, iccExt v t * iccExt q t ∂vol01)) := by
   rw [tendsto_iff_norm_sub_tendsto_zero] at h ⊢
-  have hb : ∀ (r : Pot) (x : ℝ), |ext r x| ≤ ‖r‖ := fun r x => by
-    simpa [SturmLiouville.ext] using r.norm_coe_le_norm _
+  have hb : ∀ (r : C01) (x : ℝ), |iccExt r x| ≤ ‖r‖ := fun r x => by
+    simpa [SturmLiouville.iccExt] using r.norm_coe_le_norm _
   refine squeeze_zero (fun _ => norm_nonneg _) (fun j => ?_) (by simpa using h.const_mul ‖v‖)
-  have i1 : Integrable (fun t => ext v t * ext (p j) t) μ1 :=
-    Integrable.of_bound ((continuous_ext v).mul (continuous_ext _)).aestronglyMeasurable
+  have i1 : Integrable (fun t => iccExt v t * iccExt (p j) t) vol01 :=
+    Integrable.of_bound ((continuous_iccExt v).mul (continuous_iccExt _)).aestronglyMeasurable
       (‖v‖ * ‖p j‖) (ae_of_all _ fun t => by
         rw [Real.norm_eq_abs, abs_mul]; exact mul_le_mul (hb v t) (hb _ t) (abs_nonneg _)
           (norm_nonneg _))
-  have i2 : Integrable (fun t => ext v t * ext q t) μ1 :=
-    Integrable.of_bound ((continuous_ext v).mul (continuous_ext _)).aestronglyMeasurable
+  have i2 : Integrable (fun t => iccExt v t * iccExt q t) vol01 :=
+    Integrable.of_bound ((continuous_iccExt v).mul (continuous_iccExt _)).aestronglyMeasurable
       (‖v‖ * ‖q‖) (ae_of_all _ fun t => by
         rw [Real.norm_eq_abs, abs_mul]; exact mul_le_mul (hb v t) (hb _ t) (abs_nonneg _)
           (norm_nonneg _))
   rw [← integral_sub i1 i2]
-  have hle : ∀ t, ‖ext v t * ext (p j) t - ext v t * ext q t‖ ≤ ‖v‖ * ‖p j - q‖ := fun t => by
+  have hle : ∀ t, ‖iccExt v t * iccExt (p j) t - iccExt v t * iccExt q t‖ ≤ ‖v‖ * ‖p j - q‖ := fun t => by
     rw [← mul_sub, Real.norm_eq_abs, abs_mul]
-    have : ext (p j) t - ext q t = ext (p j - q) t := rfl
+    have : iccExt (p j) t - iccExt q t = iccExt (p j - q) t := rfl
     rw [this]
     exact mul_le_mul (hb v t) (hb _ t) (abs_nonneg _) (norm_nonneg _)
-  calc ‖∫ t, ext v t * ext (p j) t - ext v t * ext q t ∂μ1‖ ≤ ‖v‖ * ‖p j - q‖ * μ1.real univ :=
+  calc ‖∫ t, iccExt v t * iccExt (p j) t - iccExt v t * iccExt q t ∂vol01‖ ≤ ‖v‖ * ‖p j - q‖ * vol01.real univ :=
         norm_integral_le_of_norm_le_const (ae_of_all _ hle)
     _ = ‖v‖ * ‖p j - q‖ := by simp
 
@@ -224,34 +224,34 @@ theorem exists_isGSN (τ : Stat) {w : Cfg n → ℝ} (hw : Continuous w) (ν : P
   have hid : rhoHat τ Ψ = primP F * primP F := by
     refine rhoHat_unique hΨ fun v => ?_
     have h1 := tendsto_int_pot v hRlim
-    have h2 : Tendsto (fun k => ∫ t, ext v t * rhoN (Φ (φ (ψ k))) t ∂μ1) atTop
-        (𝓝 (∫ t, ext v t * rhoN Ψ t ∂μ1)) := by
+    have h2 : Tendsto (fun k => ∫ t, iccExt v t * rhoN (Φ (φ (ψ k))) t ∂vol01) atTop
+        (𝓝 (∫ t, iccExt v t * rhoN Ψ t ∂vol01)) := by
       have hL1' := hL1.comp hψ.tendsto_atTop
       rw [tendsto_iff_norm_sub_tendsto_zero]
-      have hb : ∀ x, |ext v x| ≤ ‖v‖ := fun x => by simpa [SturmLiouville.ext] using v.norm_coe_le_norm _
+      have hb : ∀ x, |iccExt v x| ≤ ‖v‖ := fun x => by simpa [SturmLiouville.iccExt] using v.norm_coe_le_norm _
       refine squeeze_zero (fun _ => norm_nonneg _) (fun k => ?_)
         (by simpa using (hL1'.const_mul ((n + 1) * ‖v‖)))
       have hρi : ∀ (P : Cfg n → ℝ), MemLp P 2 (μN n) →
-          Integrable (fun t => ext v t * rhoN P t) μ1 := fun P hP' =>
-        ((integrable_marg hP').const_mul _).bdd_mul (continuous_ext v).aestronglyMeasurable
+          Integrable (fun t => iccExt v t * rhoN P t) vol01 := fun P hP' =>
+        ((integrable_marg hP').const_mul _).bdd_mul (continuous_iccExt v).aestronglyMeasurable
           (ae_of_all _ fun x => by simpa using hb x)
       rw [← integral_sub (hρi _ (hΦ _).1) (hρi _ hΨ.1)]
-      calc ‖∫ t, ext v t * rhoN (Φ (φ (ψ k))) t - ext v t * rhoN Ψ t ∂μ1‖
-          ≤ ∫ t, ‖v‖ * |rhoN (Φ (φ (ψ k))) t - rhoN Ψ t| ∂μ1 := by
-            have hint : Integrable (fun t => ‖v‖ * |rhoN (Φ (φ (ψ k))) t - rhoN Ψ t|) μ1 := by
-              have h1 : Integrable (rhoN (Φ (φ (ψ k)))) μ1 :=
+      calc ‖∫ t, iccExt v t * rhoN (Φ (φ (ψ k))) t - iccExt v t * rhoN Ψ t ∂vol01‖
+          ≤ ∫ t, ‖v‖ * |rhoN (Φ (φ (ψ k))) t - rhoN Ψ t| ∂vol01 := by
+            have hint : Integrable (fun t => ‖v‖ * |rhoN (Φ (φ (ψ k))) t - rhoN Ψ t|) vol01 := by
+              have h1 : Integrable (rhoN (Φ (φ (ψ k)))) vol01 :=
                 (integrable_marg (hΦ _).1).const_mul _
-              have h2 : Integrable (rhoN Ψ) μ1 := (integrable_marg hΨ.1).const_mul _
+              have h2 : Integrable (rhoN Ψ) vol01 := (integrable_marg hΨ.1).const_mul _
               exact (h1.sub h2).abs.const_mul _
             refine norm_integral_le_of_norm_le hint (ae_of_all _ fun t => ?_)
             rw [← mul_sub, Real.norm_eq_abs, abs_mul]
             exact mul_le_mul_of_nonneg_right (hb t) (abs_nonneg _)
-        _ = ‖v‖ * ∫ t, |rhoN (Φ (φ (ψ k))) t - rhoN Ψ t| ∂μ1 := integral_const_mul _ _
+        _ = ‖v‖ * ∫ t, |rhoN (Φ (φ (ψ k))) t - rhoN Ψ t| ∂vol01 := integral_const_mul _ _
         _ ≤ ‖v‖ * ((n + 1) * ∫ x, |Φ (φ (ψ k)) x ^ 2 - Ψ x ^ 2| ∂μN n) :=
             mul_le_mul_of_nonneg_left (integral_abs_rhoN_sub (hΦ _).1 hΨ.1) (norm_nonneg _)
         _ = (n + 1) * ‖v‖ * ∫ x, |Φ (φ (ψ k)) x ^ 2 - Ψ x ^ 2| ∂μN n := by ring
-    have h1' : Tendsto (fun k => ∫ t, ext v t * rhoN (Φ (φ (ψ k))) t ∂μ1) atTop
-        (𝓝 (∫ t, ext v t * ext (primP F * primP F) t ∂μ1)) :=
+    have h1' : Tendsto (fun k => ∫ t, iccExt v t * rhoN (Φ (φ (ψ k))) t ∂vol01) atTop
+        (𝓝 (∫ t, iccExt v t * iccExt (primP F * primP F) t ∂vol01)) :=
       h1.congr fun k => rhoHat_spec (hΦ _) v
     exact tendsto_nhds_unique h1' h2
   -- convergence of the interaction and potential terms

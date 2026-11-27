@@ -34,9 +34,9 @@ variable {n : ℕ} {τ : Stat}
 /-! ### The density through one particle -/
 
 lemma dens_eq_x0 {w : Cfg n → ℝ} {hw : Continuous w} {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n)
-    (v : Pot) : dens (settingW τ n w hw) Ψ v = (n + 1) * ∫ x, ext v (x 0) * (Ψ x * Ψ x) ∂μN n := by
-  have hv : Continuous fun x : Cfg n => ext v (x 0) := (continuous_ext v).comp (continuous_apply 0)
-  have hF : Integrable (fun x : Cfg n => ext v (x 0) * (Ψ x * Ψ x)) (μN n) := by
+    (v : C01) : dens (settingW τ n w hw) Ψ v = (n + 1) * ∫ x, iccExt v (x 0) * (Ψ x * Ψ x) ∂μN n := by
+  have hv : Continuous fun x : Cfg n => iccExt v (x 0) := (continuous_iccExt v).comp (continuous_apply 0)
+  have hF : Integrable (fun x : Cfg n => iccExt v (x 0) * (Ψ x * Ψ x)) (μN n) := by
     obtain ⟨C, hC⟩ := ae_bound_cont hv
     exact (int_mul_L2 hΨ.1 hΨ.1).bdd_mul hv.aestronglyMeasurable hC
   rw [dens_eq_rhoNW hΨ v, integral_cube_cons' hF, ← integral_const_mul]
@@ -48,13 +48,13 @@ lemma dens_eq_x0 {w : Cfg n → ℝ} {hw : Continuous w} {Ψ : Cfg n → ℝ} (h
 
 /-! ### The kernel of `v(x₀)` -/
 
-lemma Ker_x0 (v : Pot) (m' m : Fin (n + 1) → ℕ) :
-    Ker (fun x => ext v (x 0)) m' m =
+lemma Ker_x0 (v : C01) (m' m : Fin (n + 1) → ℕ) :
+    Ker (fun x => iccExt v (x 0)) m' m =
       if Fin.tail m' = Fin.tail m then aK v (m' 0) (m 0) else 0 := by
   set f : Fin (n + 1) → ℝ → ℝ := fun j t =>
-    if j = 0 then sn (m' 0 + 1) t * (ext v t * sn (m 0 + 1) t)
+    if j = 0 then sn (m' 0 + 1) t * (iccExt v t * sn (m 0 + 1) t)
     else sn (m' j + 1) t * sn (m j + 1) t
-  have e : (fun x : Cfg n => smd m' x * (ext v (x 0) * smd m x)) = fun x => ∏ j, f j (x j) := by
+  have e : (fun x : Cfg n => smd m' x * (iccExt v (x 0) * smd m x)) = fun x => ∏ j, f j (x j) := by
     funext x
     simp only [smd, f, Fin.prod_univ_succ, ↓reduceIte, Fin.succ_ne_zero, Finset.prod_mul_distrib]
     ring
@@ -72,12 +72,12 @@ lemma Ker_x0 (v : Pot) (m' m : Fin (n + 1) → ℕ) :
       fun h' => h (hiff.1 h')
     simp only [eq_false h2, eq_false h, ↓reduceIte, mul_zero]
 
-lemma Kc_x0 (v : Pot) (c : (Fin (n + 1) → ℕ) → ℝ) (m' : Fin (n + 1) → ℕ) :
-    Kc (fun x => ext v (x 0)) c m' = ∑' k, aK v (m' 0) k * c (Fin.cons k (Fin.tail m')) := by
+lemma Kc_x0 (v : C01) (c : (Fin (n + 1) → ℕ) → ℝ) (m' : Fin (n + 1) → ℕ) :
+    Kc (fun x => iccExt v (x 0)) c m' = ∑' k, aK v (m' 0) k * c (Fin.cons k (Fin.tail m')) := by
   rw [Kc]
   have hinj : Function.Injective fun k : ℕ => (Fin.cons k (Fin.tail m') : Fin (n + 1) → ℕ) :=
     Fin.cons_left_injective (α := fun _ => ℕ) (Fin.tail m')
-  have hsupp : Function.support (fun m => Ker (fun x => ext v (x 0)) m' m * c m) ⊆
+  have hsupp : Function.support (fun m => Ker (fun x => iccExt v (x 0)) m' m * c m) ⊆
       Set.range fun k : ℕ => (Fin.cons k (Fin.tail m') : Fin (n + 1) → ℕ) := by
     intro m hm
     refine ⟨m 0, ?_⟩
@@ -91,15 +91,15 @@ lemma Kc_x0 (v : Pot) (c : (Fin (n + 1) → ℕ) → ℝ) (m' : Fin (n + 1) → 
   refine tsum_congr fun k => ?_
   simp only [Ker_x0, Fin.tail_cons, ↓reduceIte, Fin.cons_zero]
 
-lemma Bf_x0 (v : Pot) {c : (Fin (n + 1) → ℕ) → ℝ} (hc2 : Summable fun m => c m ^ 2) :
-    Bf (fun x => ext v (x 0)) c c =
+lemma Bf_x0 (v : C01) {c : (Fin (n + 1) → ℕ) → ℝ} (hc2 : Summable fun m => c m ^ 2) :
+    Bf (fun x => iccExt v (x 0)) c c =
       ∑' μ, ∑' k', cc c k' μ * ∑' k, aK v k' k * cc c k μ := by
-  obtain ⟨C, hK⟩ := kBd_cont (n := n) ((continuous_ext v).comp (continuous_apply 0))
-  have hs : Summable fun m => c m * Kc (fun x => ext v (x 0)) c m :=
+  obtain ⟨C, hK⟩ := kBd_cont (n := n) ((continuous_iccExt v).comp (continuous_apply 0))
+  have hs : Summable fun m => c m * Kc (fun x => iccExt v (x 0)) c m :=
     summable_mul_of_sq hc2 (hK.sq hc2)
-  have hs' : Summable fun p => c (consE n p) * Kc (fun x => ext v (x 0)) c (consE n p) :=
+  have hs' : Summable fun p => c (consE n p) * Kc (fun x => iccExt v (x 0)) c (consE n p) :=
     (consE n).summable_iff.2 hs
-  rw [Bf, ← (consE n).tsum_eq (fun m => c m * Kc (fun x => ext v (x 0)) c m),
+  rw [Bf, ← (consE n).tsum_eq (fun m => c m * Kc (fun x => iccExt v (x 0)) c m),
     hs'.tsum_prod' fun μ => hs'.prod_factor μ]
   refine tsum_congr fun μ => tsum_congr fun k' => ?_
   simp only [consE_apply, Kc_x0, Fin.cons_zero, Fin.tail_cons, cc]
@@ -111,15 +111,15 @@ variable {w : Cfg n → ℝ} {hw : Continuous w}
 /-- **The density is the profile `K`**: `ρ_Ψ(v) = ∫ v K` for `Ψ ∈ H¹₀` with `Σ λ² c² < ∞`. -/
 theorem dens_eq_KS {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n)
     (hcl : Summable fun m => lam m ^ 2 * cN m Ψ ^ 2) :
-    dens (settingW τ n w hw) Ψ = fun v => ∫ t, ext v t * KS (fun m => cN m Ψ) t ∂μ1 := by
+    dens (settingW τ n w hw) Ψ = fun v => ∫ t, iccExt v t * KS (fun m => cN m Ψ) t ∂vol01 := by
   have hc2 : Summable fun m => cN m Ψ ^ 2 := (parsevalW hΨ.1).summable
   funext v
-  show _ = ∫ t, ext v t * KS (fun m => cN m Ψ) t ∂μ1
+  show _ = ∫ t, iccExt v t * KS (fun m => cN m Ψ) t ∂vol01
   rw [dens_eq_x0 hΨ v, integral_KS hcl v, ← Bf_x0 v hc2,
-    Bf_cNW (V := fun x : Cfg n => ext v (x 0)) ((continuous_ext v).comp (continuous_apply 0)) hΨ.1]
+    Bf_cNW (V := fun x : Cfg n => iccExt v (x 0)) ((continuous_iccExt v).comp (continuous_apply 0)) hΨ.1]
 
 /-- **The density of an interacting fermionic ground state has a `C¹` profile.** -/
-theorem gs_dens_C1 (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → ℝ}
+theorem gs_dens_C1 (hws : ∀ σ x, w (pm σ x) = w x) {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW .fer n w hw) v Ψ) : C1Dens (dens (settingW .fer n w hw) Ψ) := by
   have hcl := summable_lam_sq hws hΨ
   have hc2 : Summable fun m => cN m Ψ ^ 2 := (parsevalW hΨ.1.1).summable

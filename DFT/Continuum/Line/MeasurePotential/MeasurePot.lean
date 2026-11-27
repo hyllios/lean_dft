@@ -31,19 +31,19 @@ namespace DFT.Continuum.Line
 open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-- Measure potentials: continuous linear functionals on `C([0, 1])` (finite signed measures). -/
-abbrev PotM : Type := StrongDual ℝ Pot
+abbrev PotM : Type := StrongDual ℝ C01
 
 /-- The δ-function at `t ∈ [0, 1]`. -/
 noncomputable def deltaM (t : Icc (0 : ℝ) 1) : PotM := ContinuousMap.evalCLM ℝ t
 
 /-- `ψ²` as a continuous function on `[0, 1]`. -/
-noncomputable def sqP {ψ : ℝ → ℝ} (hψ : H10 ψ) : Pot :=
+noncomputable def sqP {ψ : ℝ → ℝ} (hψ : H10 ψ) : C01 :=
   ⟨fun t => ψ t ^ 2, (hψ.continuousOn.pow 2).domRestrict⟩
 
 @[simp] lemma sqP_apply {ψ : ℝ → ℝ} (hψ : H10 ψ) (t : Icc (0 : ℝ) 1) : sqP hψ t = ψ t ^ 2 := rfl
 
 /-- The kinetic energy `∫ ψ'²`. -/
-noncomputable def kinM (ψ : ℝ → ℝ) : ℝ := ∫ t, deriv ψ t ^ 2 ∂μ1
+noncomputable def kinM (ψ : ℝ → ℝ) : ℝ := ∫ t, deriv ψ t ^ 2 ∂vol01
 
 /-- The energy `∫ ψ'² + ν(ψ²)`. -/
 noncomputable def QM (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) : ℝ := kinM ψ + ν (sqP hψ)
@@ -51,12 +51,12 @@ noncomputable def QM (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) : ℝ := kinM
 /-- `ψ` is a ground state of `-d²/dt² + ν`: a nonzero minimiser of the Rayleigh quotient on
 `H¹₀(0, 1)`. -/
 def IsGSM (ν : PotM) (ψ : ℝ → ℝ) : Prop :=
-  ∃ hψ : H10 ψ, 0 < ∫ t, ψ t ^ 2 ∂μ1 ∧
-    ∀ φ (hφ : H10 φ), QM ν hψ * ∫ t, φ t ^ 2 ∂μ1 ≤ QM ν hφ * ∫ t, ψ t ^ 2 ∂μ1
+  ∃ hψ : H10 ψ, 0 < ∫ t, ψ t ^ 2 ∂vol01 ∧
+    ∀ φ (hφ : H10 φ), QM ν hψ * ∫ t, φ t ^ 2 ∂vol01 ≤ QM ν hφ * ∫ t, ψ t ^ 2 ∂vol01
 
 /-- `ρ ∈ C([0, 1])` is the density of a normalised ground state of a measure potential. -/
-def VRepM (ρ : Pot) : Prop :=
-  ∃ ν ψ, IsGSM ν ψ ∧ ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧ ∀ t : Icc (0 : ℝ) 1, ρ t = ψ t ^ 2
+def VRepM (ρ : C01) : Prop :=
+  ∃ ν ψ, IsGSM ν ψ ∧ ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧ ∀ t : Icc (0 : ℝ) 1, ρ t = ψ t ^ 2
 
 /-! ### Cauchy–Schwarz and the sharp inequality at `½` -/
 
@@ -116,7 +116,7 @@ theorem four_sq_half_le {φ : ℝ → ℝ} (hφ : H10 φ) : 4 * φ (1 / 2) ^ 2 �
   rw [show (∫ t in (1 / 2 : ℝ)..1, deriv φ t) = -φ (1 / 2) by rw [hR]; ring, neg_sq] at cR
   have hsplit : kinM φ = (∫ t in (0 : ℝ)..(1 / 2), deriv φ t ^ 2) +
       ∫ t in (1 / 2 : ℝ)..1, deriv φ t ^ 2 := by
-    rw [kinM, integral_mu1, intervalIntegral.integral_add_adjacent_intervals
+    rw [kinM, integral_vol01, intervalIntegral.integral_add_adjacent_intervals
       (hii le_rfl (by norm_num) (by norm_num)) (hii (by norm_num) (by norm_num) le_rfl)]
   rw [hsplit]
   linarith
@@ -147,7 +147,7 @@ lemma deriv_tentG_sq {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) (htm : t ≠ 1 / 2) 
 
 lemma kinM_tentG (c : ℝ) : kinM (fun s => c * tentG s) = 4 * c ^ 2 := by
   rw [kinM]
-  have hae : ∀ᵐ t ∂μ1, deriv (fun s => c * tentG s) t ^ 2 = 4 * c ^ 2 := by
+  have hae : ∀ᵐ t ∂vol01, deriv (fun s => c * tentG s) t ^ 2 = 4 * c ^ 2 := by
     have hne : ∀ᵐ t ∂(volume : Measure ℝ), t ≠ 1 / 2 := by rw [ae_iff]; simp
     filter_upwards [ae_restrict_mem measurableSet_Ioo, ae_restrict_of_ae hne] with t ht hne
     exact deriv_tentG_sq ht hne c
@@ -158,7 +158,7 @@ lemma kinM_tentG (c : ℝ) : kinM (fun s => c * tentG s) = 4 * c ^ 2 := by
 theorem tent_isGSM {c : ℝ} (hc : c ≠ 0) :
     IsGSM (-4 • deltaM ⟨1 / 2, by norm_num, by norm_num⟩) fun s => c * tentG s := by
   have hH : H10 fun s => c * tentG s := h10_tentG.const_mul c
-  have hpos : 0 < ∫ t, (c * tentG t) ^ 2 ∂μ1 := by
+  have hpos : 0 < ∫ t, (c * tentG t) ^ 2 ∂vol01 := by
     simp only [mul_pow]
     rw [integral_const_mul]
     exact mul_pos (by positivity) integral_tentG_sq_pos
@@ -177,7 +177,7 @@ theorem tent_isGSM {c : ℝ} (hc : c ≠ 0) :
 /-! ### Measure potentials represent the kinked density -/
 
 /-- The kinked density for one particle, as a continuous function. -/
-noncomputable def kinkP : Pot :=
+noncomputable def kinkP : C01 :=
   ⟨fun t => (cKink 0 * tentG t) ^ 2, ((continuous_const.mul continuous_tentG).pow 2).comp
     continuous_subtype_val⟩
 
@@ -186,7 +186,7 @@ any continuous potential (and continuous `w`): measure potentials are genuinely 
 theorem kink_vrepM_not_vrep {τ : Stat} {w : Cfg 0 → ℝ} {hw : Continuous w} :
     VRepM kinkP ∧ ¬ EnsVRep (settingW τ 0 w hw) (rhoKink 0) := by
   have hI := integral_tentG_sq_pos
-  have hc2 : cKink 0 ^ 2 = 1 / ∫ t, tentG t ^ 2 ∂μ1 := by
+  have hc2 : cKink 0 ^ 2 = 1 / ∫ t, tentG t ^ 2 ∂vol01 := by
     rw [cKink, Real.sq_sqrt (by positivity)]; norm_num
   have hc : cKink 0 ≠ 0 := by
     intro h; rw [h] at hc2; simp at hc2; exact hI.ne' hc2.symm

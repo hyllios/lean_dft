@@ -58,7 +58,7 @@ linearly on the diagonals, with a continuous `p` having the integrals of `B φ`.
 theorem eq_PhiBY_meas (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ : IsGSN .fer w ν Ψ)
     {φ : Cfg n → ℝ} (hφ : H1W φ) (hφs : ∀ σ, YG (n + 1) σ → ∀ x, φ (pm σ x) = φ x)
     (hL : ∀ p ∈ pY (n + 1) n, ∃ L, 0 ≤ L ∧ ∀ᵐ x ∂μN n, |φ x| ≤ L * |x p.2 - x p.1|) :
-    ∃ p : Pot, (∀ v : Pot, ∫ t, ext v t * ext p t ∂μ1 =
+    ∃ p : C01, (∀ v : C01, ∫ t, iccExt v t * iccExt p t ∂vol01 =
         ∫ x, LN n v x * (PhiBY (n + 1) Ψ x * φ x) ∂μN n) ∧
       h0W n w (PhiBY (n + 1) Ψ) φ + ν p =
         QMN .fer w ν (PhiY (n + 1) Ψ) * ∫ x, PhiBY (n + 1) Ψ x * φ x ∂μN n := by
@@ -282,14 +282,14 @@ theorem gsN_ne_zero_fer (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ}
 
 /-- **The density of a fermionic ground state of a measure potential is positive on `(0, 1)`.** -/
 theorem rhoHat_pos_fer (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ : IsGSN .fer w ν Ψ)
-    {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < ext (rhoHat .fer Ψ) t0 :=
+    {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < iccExt (rhoHat .fer Ψ) t0 :=
   rhoHat_pos_of_ucp hw (fun _ h => gsN_ne_zero_fer hw h) hΨ ht0
 
 /-- **Ground-state densities of measure potentials are positive on `(0, 1)`**, for bosons or
 fermions and any continuous interaction: a density with an interior zero is not `v`-representable
 even with measure potentials. -/
-theorem vrepMeasN_pos {τ : Stat} {ρ : Pot} (hw : Continuous w) (h : VRepMeasN τ n w ρ) {t : ℝ}
-    (ht : t ∈ Ioo (0 : ℝ) 1) : 0 < ext ρ t := by
+theorem vrepMeasN_pos {τ : Stat} {ρ : C01} (hw : Continuous w) (h : VRepMeasN τ n w ρ) {t : ℝ}
+    (ht : t ∈ Ioo (0 : ℝ) 1) : 0 < iccExt ρ t := by
   obtain ⟨μp, μm, _, _, Φ, hΦ, rfl⟩ := h
   cases τ with
   | bos => exact rhoHat_pos_bos hw hΦ ht

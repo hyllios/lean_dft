@@ -214,7 +214,7 @@ lemma Sa_segment {a h : ℝ} (k : Fin (n + 1)) :
 
 section zero
 
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {u : Cfg n → ℝ}
+variable {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {u : Cfg n → ℝ}
 
 /-- The points of `P` whose translate by `h eₖ` stays in `P`. -/
 def SP (P : Set (Cfg n)) (h : ℝ) (k : Fin (n + 1)) : Set (Cfg n) :=

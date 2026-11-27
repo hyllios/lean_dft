@@ -32,12 +32,12 @@ variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 
 /-- The density of an `H¹₀` ground state charges every continuous `u ≥ 0` that is positive at an
 interior point. -/
-theorem dens_pos_of_isGS {v : Pot} {ψ : Cfg n → ℝ} (hψ : IsGS (settingW τ n w hw) v ψ)
-    {u : Pot} (hu0 : ∀ t, 0 ≤ u t) {c : ℝ} (hc : c ∈ Ioo (0 : ℝ) 1) (hpos : 0 < ext u c) :
+theorem dens_pos_of_isGS {v : C01} {ψ : Cfg n → ℝ} (hψ : IsGS (settingW τ n w hw) v ψ)
+    {u : C01} (hu0 : ∀ t, 0 ≤ u t) {c : ℝ} (hc : c ∈ Ioo (0 : ℝ) 1) (hpos : 0 < iccExt u c) :
     0 < dens (settingW τ n w hw) ψ u := by
-  set F : Cfg n → ℝ := fun x => ∑ k, ext u (x k) with hFdef
+  set F : Cfg n → ℝ := fun x => ∑ k, iccExt u (x k) with hFdef
   have hF : Continuous F :=
-    continuous_finsetSum _ fun k _ => (continuous_ext u).comp (continuous_apply k)
+    continuous_finsetSum _ fun k _ => (continuous_iccExt u).comp (continuous_apply k)
   have hF0 : ∀ x, 0 ≤ F x := fun x => Finset.sum_nonneg fun k _ => hu0 _
   have hD : dens (settingW τ n w hw) ψ u = ∫ x, F x * (ψ x * ψ x) ∂μN n := rfl
   have hnn : ∀ x, 0 ≤ F x * (ψ x * ψ x) := fun x => mul_nonneg (hF0 x) (mul_self_nonneg _)
@@ -59,22 +59,22 @@ theorem dens_pos_of_isGS {v : Pot} {ψ : Cfg n → ℝ} (hψ : IsGS (settingW τ
     exact fun _ => hc
   have h := heq hmem
   simp only [hFdef, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at h
-  have : (0 : ℝ) < (n + 1 : ℕ) * ext u c := mul_pos (by positivity) hpos
+  have : (0 : ℝ) < (n + 1 : ℕ) * iccExt u c := mul_pos (by positivity) hpos
   push_cast at this h
   linarith
 
 /-- A density functional that vanishes on a continuous `u ≥ 0`, positive at an interior point, is
 not the density of any ground state. -/
-theorem not_pureVRep_of_dens_zero {ρ : Pot → ℝ} {u : Pot} (hu0 : ∀ t, 0 ≤ u t) {c : ℝ}
-    (hc : c ∈ Ioo (0 : ℝ) 1) (hpos : 0 < ext u c) (hρ : ρ u = 0) :
+theorem not_pureVRep_of_dens_zero {ρ : C01 → ℝ} {u : C01} (hu0 : ∀ t, 0 ≤ u t) {c : ℝ}
+    (hc : c ∈ Ioo (0 : ℝ) 1) (hpos : 0 < iccExt u c) (hρ : ρ u = 0) :
     ¬ PureVRep (settingW τ n w hw) ρ := by
   rintro ⟨v, ψ, hψ, -, rfl⟩
   have := dens_pos_of_isGS hψ hu0 hc hpos
   linarith
 
 /-- The same for ground-state ensembles. -/
-theorem not_ensVRep_of_dens_zero {ρ : Pot → ℝ} {u : Pot} (hu0 : ∀ t, 0 ≤ u t) {c : ℝ}
-    (hc : c ∈ Ioo (0 : ℝ) 1) (hpos : 0 < ext u c) (hρ : ρ u = 0) :
+theorem not_ensVRep_of_dens_zero {ρ : C01 → ℝ} {u : C01} (hu0 : ∀ t, 0 ≤ u t) {c : ℝ}
+    (hc : c ∈ Ioo (0 : ℝ) 1) (hpos : 0 < iccExt u c) (hρ : ρ u = 0) :
     ¬ EnsVRep (settingW τ n w hw) ρ := fun h =>
   not_pureVRep_of_dens_zero hu0 hc hpos hρ ((ensVRep_iff_W_cont ρ).1 h)
 
@@ -119,8 +119,8 @@ lemma h10_gHalf : H10 gHalf := by
     rw [Real.norm_eq_abs, abs_pow]
     exact pow_le_pow_left₀ (abs_nonneg _) hd 2
 
-lemma integral_gHalf_sq_pos : 0 < ∫ t, gHalf t ^ 2 ∂μ1 := by
-  have hint : Integrable (fun t => gHalf t ^ 2) μ1 :=
+lemma integral_gHalf_sq_pos : 0 < ∫ t, gHalf t ^ 2 ∂vol01 := by
+  have hint : Integrable (fun t => gHalf t ^ 2) vol01 :=
     ((continuous_gHalf.pow 2).integrableOn_Icc (a := 0) (b := 1)).mono_set Ioo_subset_Icc_self
   rw [integral_pos_iff_support_of_nonneg (fun t => sq_nonneg _) hint]
   have hsub : Ioo (0 : ℝ) (1 / 2) ⊆ Function.support fun t => gHalf t ^ 2 :=
@@ -130,10 +130,10 @@ lemma integral_gHalf_sq_pos : 0 < ∫ t, gHalf t ^ 2 ∂μ1 := by
   norm_num
 
 /-- The normalisation constant `c` with `∫ (c gHalf)² = N`. -/
-noncomputable def cHalf (n : ℕ) : ℝ := √((n + 1) / ∫ t, gHalf t ^ 2 ∂μ1)
+noncomputable def cHalf (n : ℕ) : ℝ := √((n + 1) / ∫ t, gHalf t ^ 2 ∂vol01)
 
 /-- The density functional `ρ(v) = ∫₀¹ v (c gHalf)²`, which vanishes on `[½, 1]`. -/
-noncomputable def rhoHalf (n : ℕ) (v : Pot) : ℝ := ∫ t, ext v t * (cHalf n * gHalf t) ^ 2 ∂μ1
+noncomputable def rhoHalf (n : ℕ) (v : C01) : ℝ := ∫ t, iccExt v t * (cHalf n * gHalf t) ^ 2 ∂vol01
 
 /-- **An `N`-representable density that is not `v`-representable** on `H¹₀`, bosons or fermions,
 for every continuous interaction `w`: `rhoHalf` is the density of a normalised `H¹₀` state, but
@@ -142,18 +142,18 @@ theorem nrep_not_vrep :
     (∃ ψ ∈ Nst (settingW τ n w hw), dens (settingW τ n w hw) ψ = rhoHalf n) ∧
       ¬ PureVRep (settingW τ n w hw) (rhoHalf n) ∧ ¬ EnsVRep (settingW τ n w hw) (rhoHalf n) := by
   -- the test potential `u(t) = max(t - ½, 0)`
-  set u : Pot := ⟨fun t => max ((t : ℝ) - 1 / 2) 0, by fun_prop⟩
+  set u : C01 := ⟨fun t => max ((t : ℝ) - 1 / 2) 0, by fun_prop⟩
   have hu0 : ∀ t, 0 ≤ u t := fun t => le_max_right _ _
   have hc : (3 / 4 : ℝ) ∈ Ioo (0 : ℝ) 1 := by norm_num
-  have hpos : 0 < ext u (3 / 4) := by
-    simp only [SturmLiouville.ext, u, ContinuousMap.coe_mk]
+  have hpos : 0 < iccExt u (3 / 4) := by
+    simp only [SturmLiouville.iccExt, u, ContinuousMap.coe_mk]
     rw [projIcc_of_mem _ (by norm_num : (3 / 4 : ℝ) ∈ Icc (0 : ℝ) 1)]
     norm_num
   have hρ : rhoHalf n u = 0 := by
     refine setIntegral_eq_zero_of_forall_eq_zero fun t ht => ?_
     rcases le_or_gt t (1 / 2) with h | h
-    · have : ext u t = 0 := by
-        simp only [SturmLiouville.ext, u, ContinuousMap.coe_mk]
+    · have : iccExt u t = 0 := by
+        simp only [SturmLiouville.iccExt, u, ContinuousMap.coe_mk]
         rw [projIcc_of_mem _ ⟨ht.1.le, ht.2.le⟩]
         exact max_eq_right (by linarith)
       rw [this, zero_mul]
@@ -162,7 +162,7 @@ theorem nrep_not_vrep :
   refine (lieb_characterisation (rhoHalf n)).2 ⟨fun t => cHalf n * gHalf t,
     h10_gHalf.const_mul _, ?_, rfl⟩
   have hI := integral_gHalf_sq_pos
-  have hN : (0 : ℝ) ≤ (n + 1) / ∫ t, gHalf t ^ 2 ∂μ1 := by positivity
+  have hN : (0 : ℝ) ≤ (n + 1) / ∫ t, gHalf t ^ 2 ∂vol01 := by positivity
   simp only [mul_pow, cHalf, Real.sq_sqrt hN]
   rw [integral_const_mul, div_mul_cancel₀ _ hI.ne']
 

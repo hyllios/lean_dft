@@ -29,26 +29,26 @@ open MeasureTheory Set Filter Topology
 
 variable {W : ℝ → ℝ} (hWc : Continuous W) (hW0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ W t)
 
-lemma continuous_Gk_proj {f : ℝ → ℝ} (hf : Integrable f μ1) :
+lemma continuous_Gk_proj {f : ℝ → ℝ} (hf : Integrable f vol01) :
     Continuous fun x : ℝ => Gk hWc f (projIcc (0 : ℝ) 1 zero_le_one x) :=
   (continuousOn_Gk hWc hf).comp_continuous (continuous_subtype_val.comp continuous_projIcc)
     fun x => (projIcc (0 : ℝ) 1 zero_le_one x).2
 
-lemma Gk_congr {f g : ℝ → ℝ} (h : f =ᵐ[μ1] g) (x : ℝ) : Gk hWc f x = Gk hWc g x :=
+lemma Gk_congr {f g : ℝ → ℝ} (h : f =ᵐ[vol01] g) (x : ℝ) : Gk hWc f x = Gk hWc g x :=
   integral_congr_ae (h.mono fun y hy => by simp only [hy])
 
 include hW0 in
 /-- **Eigenvectors are classical eigenfunctions.** -/
 theorem eigen_regular {f : HL} {μ : ℝ} (hμ : μ ≠ 0) (hf : Gop hWc f = μ • f) :
-    ∃ e : ℝ → ℝ, e ∈ Dom ∧ (f : ℝ → ℝ) =ᵐ[μ1] e ∧
+    ∃ e : ℝ → ℝ, e ∈ Dom ∧ (f : ℝ → ℝ) =ᵐ[vol01] e ∧
       ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv e) x = (W x - μ⁻¹) * e x := by
   set lam := μ⁻¹
   have hfi := integrable_HL f
   -- the continuous representative
   set φ : ℝ → ℝ := fun x => lam * Gk hWc f (projIcc 0 1 zero_le_one x) with hφd
   have hφc : Continuous φ := continuous_const.mul (continuous_Gk_proj hWc hfi)
-  have hfφ : (f : ℝ → ℝ) =ᵐ[μ1] φ := by
-    have h1 : (Gop hWc f : ℝ → ℝ) =ᵐ[μ1] fun x => μ * (f : ℝ → ℝ) x := by
+  have hfφ : (f : ℝ → ℝ) =ᵐ[vol01] φ := by
+    have h1 : (Gop hWc f : ℝ → ℝ) =ᵐ[vol01] fun x => μ * (f : ℝ → ℝ) x := by
       rw [hf]; exact (Lp.coeFn_smul μ f)
     filter_upwards [h1, Gop_ae hWc f, ae_restrict_mem measurableSet_Ioo] with x h1 h2 hx
     simp only [φ, projIcc_of_mem _ (Ioo_subset_Icc_self hx)]
@@ -126,7 +126,7 @@ theorem eigen_regular {f : HL} {μ : ℝ} (hμ : μ ≠ 0) (hf : Gop hWc f = μ 
       hev.eq_of_nhds]
     simp only [W']; ring
 
-lemma integral_unit_mu1 {F : ℝ → ℝ} : ∫ x in (0 : ℝ)..1, F x = ∫ x, F x ∂μ1 := by
+lemma integral_unit_vol01 {F : ℝ → ℝ} : ∫ x in (0 : ℝ)..1, F x = ∫ x, F x ∂vol01 := by
   rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
 
 include hW0 in
@@ -173,11 +173,11 @@ theorem eigenvalue_pos {f : HL} (hf0 : f ≠ 0) {μ : ℝ} (hμ : μ ≠ 0) (hf 
     rw [e1, intervalIntegral.integral_sub i1 i2, intervalIntegral.integral_const_mul]
   -- `∫ e² > 0`
   have hpos : 0 < ∫ x in (0 : ℝ)..1, e x * e x := by
-    rw [integral_unit_mu1]
+    rw [integral_unit_vol01]
     have hn : 0 < inner ℝ f f := real_inner_self_pos.2 hf0
     rw [L2.inner_def] at hn
-    calc (0 : ℝ) < ∫ x, inner ℝ ((f : ℝ → ℝ) x) ((f : ℝ → ℝ) x) ∂μ1 := hn
-      _ = ∫ x, e x * e x ∂μ1 := by
+    calc (0 : ℝ) < ∫ x, inner ℝ ((f : ℝ → ℝ) x) ((f : ℝ → ℝ) x) ∂vol01 := hn
+      _ = ∫ x, e x * e x ∂vol01 := by
         refine integral_congr_ae ?_
         filter_upwards [hfe] with x hx
         simp only [hx, RCLike.inner_apply, conj_trivial]

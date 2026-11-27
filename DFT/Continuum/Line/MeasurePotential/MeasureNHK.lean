@@ -47,13 +47,13 @@ theorem isGSN_of_same_dens {τ : Stat} {w : Cfg n → ℝ} {ν ν' : PotM} {Φ �
 one-particle ground state; the function depends only on `Φ`. -/
 lemma gs1_of_isGSN' {ν : PotM} {Φ : Cfg n → ℝ} (h : IsGSN .bos 0 ν Φ) :
     ∃ hg : H10 (fun t => 1 / √((n : ℝ) + 1) * gN .bos Φ t),
-      ∫ t, (1 / √((n : ℝ) + 1) * gN .bos Φ t) ^ 2 ∂μ1 = 1 ∧ QM ν hg = EM ν := by
+      ∫ t, (1 / √((n : ℝ) + 1) * gN .bos Φ t) ^ 2 ∂vol01 = 1 ∧ QM ν hg = EM ν := by
   have hG := h10_gN (τ := .bos) Φ
   have hN : (0 : ℝ) < n + 1 := by positivity
   set c := 1 / √((n : ℝ) + 1)
   have hc2 : c ^ 2 = 1 / ((n : ℝ) + 1) := by rw [div_pow, Real.sq_sqrt hN.le, one_pow]
-  have hgn : ∫ t, gN .bos Φ t ^ 2 ∂μ1 = n + 1 := by rw [integral_gN_sq h.1, h.2.1, mul_one]
-  have hn : ∫ t, (c * gN .bos Φ t) ^ 2 ∂μ1 = 1 := by
+  have hgn : ∫ t, gN .bos Φ t ^ 2 ∂vol01 = n + 1 := by rw [integral_gN_sq h.1, h.2.1, mul_one]
+  have hn : ∫ t, (c * gN .bos Φ t) ^ 2 ∂vol01 = 1 := by
     rw [norm2_smul, hc2, hgn, one_div_mul_cancel hN.ne']
   have hQ : QM ν hG ≤ (n + 1) * EM ν := by
     rw [← QMN_isGSN h, QMN_zero, QM]
@@ -69,7 +69,7 @@ lemma gs1_of_isGSN' {ν : PotM} {Φ : Cfg n → ℝ} (h : IsGSN .bos 0 ν Φ) :
 theorem hk_bos0 {μp μm μp' μm' : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] [IsMeas01 μp']
     [IsMeas01 μm'] {Φ Φ' : Cfg n → ℝ} (h : IsGSN .bos 0 (nuOf μp μm) Φ)
     (h' : IsGSN .bos 0 (nuOf μp' μm') Φ') (hρ : rhoHat .bos Φ = rhoHat .bos Φ') :
-    ∃ C a b : ℝ, nuOf μp μm - nuOf μp' μm' = C • intCLM μ1 +
+    ∃ C a b : ℝ, nuOf μp μm - nuOf μp' μm' = C • intCLM vol01 +
       a • deltaM ⟨0, le_rfl, zero_le_one⟩ + b • deltaM ⟨1, zero_le_one, le_rfl⟩ := by
   have h2 := (isGSN_of_same_dens h h' hρ).1
   obtain ⟨hg, hn, hmin⟩ := gs1_of_isGSN' h

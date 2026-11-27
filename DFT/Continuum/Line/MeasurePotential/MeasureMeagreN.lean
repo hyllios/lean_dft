@@ -63,13 +63,13 @@ set_option maxHeartbeats 1000000 in -- many local definitions; the final term is
 theorem exists_not_BsetH {L : ℝ} (hL : 0 ≤ L) {x : L2I} (hx : x ∈ SN n)
     (hxB : x ∈ BsetH L) {ε : ℝ} (hε : 0 < ε) : ∃ y ∈ SN n, ‖y - x‖ < ε ∧ y ∉ BsetH L := by
   set g := prim x
-  have hN : ∫ t, g t ^ 2 ∂μ1 = n + 1 := hx.2
+  have hN : ∫ t, g t ^ 2 ∂vol01 = n + 1 := hx.2
   set N : ℝ := n + 1
   have hNp : 0 < N := by positivity
   obtain ⟨t0, ht0, hg0⟩ : ∃ t0 ∈ Ioo (0 : ℝ) 1, g t0 ≠ 0 := by
     by_contra hcon
     push Not at hcon
-    have : ∫ t, g t ^ 2 ∂μ1 = 0 :=
+    have : ∫ t, g t ^ 2 ∂vol01 = 0 :=
       setIntegral_eq_zero_of_forall_eq_zero fun t ht => by simp [hcon t ht]
     linarith
   set γ := g t0
@@ -136,19 +136,19 @@ theorem exists_not_BsetH {L : ℝ} (hL : 0 ≤ L) {x : L2I} (hx : x ∈ SN n)
   set F : L2I := x + δ • q
   have hFp : ∀ t ∈ Icc (0 : ℝ) 1, prim F t = g t + δ * tentF t0 w t := fun t ht => by
     simp only [F]; rw [prim_add _ _ ht, prim_smul _ _ ht, hqp t ht]
-  set J := ∫ t, prim F t ^ 2 ∂μ1
+  set J := ∫ t, prim F t ^ 2 ∂vol01
   have hp_c : Continuous (tentF t0 w) := (lipschitz_tent (t0 := t0) hw).continuous
   have hJN : |J - N| ≤ (2 * M + 1) * (2 * r) := by
-    have hint1 : Integrable (fun t => prim F t ^ 2 - g t ^ 2) μ1 :=
+    have hint1 : Integrable (fun t => prim F t ^ 2 - g t ^ 2) vol01 :=
       (integrable_prim_sq F).sub (integrable_prim_sq x)
-    have hint2 : Integrable (fun t => (2 * |δ| * M + δ ^ 2) * tentF t0 w t) μ1 :=
+    have hint2 : Integrable (fun t => (2 * |δ| * M + δ ^ 2) * tentF t0 w t) vol01 :=
       (hp_c.continuousOn.integrableOn_compact (K := Icc (0 : ℝ) 1) isCompact_Icc
         |>.mono_set Ioo_subset_Icc_self).const_mul _
-    have e : J - N = ∫ t, (prim F t ^ 2 - g t ^ 2) ∂μ1 := by
+    have e : J - N = ∫ t, (prim F t ^ 2 - g t ^ 2) ∂vol01 := by
       rw [integral_sub (integrable_prim_sq F) (integrable_prim_sq x), hN]
     rw [e, ← Real.norm_eq_abs]
-    calc ‖∫ t, (prim F t ^ 2 - g t ^ 2) ∂μ1‖
-        ≤ ∫ t, (2 * |δ| * M + δ ^ 2) * tentF t0 w t ∂μ1 := by
+    calc ‖∫ t, (prim F t ^ 2 - g t ^ 2) ∂vol01‖
+        ≤ ∫ t, (2 * |δ| * M + δ ^ 2) * tentF t0 w t ∂vol01 := by
           refine norm_integral_le_of_norm_le hint2 ?_
           filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
           have hti := Ioo_subset_Icc_self ht
@@ -166,7 +166,7 @@ theorem exists_not_BsetH {L : ℝ} (hL : 0 ≤ L) {x : L2I} (hx : x ∈ SN n)
             rw [abs_mul, abs_of_nonneg (sq_nonneg δ), abs_of_nonneg p0]
             exact mul_le_of_le_one_right (sq_nonneg δ) p1
           exact (abs_add_le _ _).trans (by linarith)
-      _ = (2 * |δ| * M + δ ^ 2) * ∫ t, tentF t0 w t ∂μ1 := integral_const_mul _ _
+      _ = (2 * |δ| * M + δ ^ 2) * ∫ t, tentF t0 w t ∂vol01 := integral_const_mul _ _
       _ ≤ (2 * |δ| * M + δ ^ 2) * (2 * w) :=
           mul_le_mul_of_nonneg_left (integral_tent_le hw) (by positivity)
       _ ≤ (2 * M + 1) * (2 * r) := by
@@ -209,7 +209,7 @@ theorem exists_not_BsetH {L : ℝ} (hL : 0 ≤ L) {x : L2I} (hx : x ∈ SN n)
       rw [hyp 1 ⟨zero_le_one, le_rfl⟩, hFp 1 ⟨zero_le_one, le_rfl⟩, hx1,
         tent_far hw (by rw [abs_of_pos (by linarith [ht0.2])]; exact hw1)]
       ring
-    · have : ∫ t, prim y t ^ 2 ∂μ1 = lam ^ 2 * J := by
+    · have : ∫ t, prim y t ^ 2 ∂vol01 = lam ^ 2 * J := by
         rw [← integral_const_mul]
         refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
         rw [hyp t (Ioo_subset_Icc_self ht)]; ring
@@ -306,7 +306,7 @@ lemma isNowhereDense_BsetHS {L : ℝ} (hL : 0 ≤ L) : IsNowhereDense (BsetHS n 
   exact hyB (show (⟨y, hy⟩ : SN n) ∈ BsetHS n L from interior_subset (hball hyb))
 
 /-- A `5/8`-Hölder density has second differences `O(h^{5/8})`. -/
-lemma mem_BsetH_of_holder {x : L2I} {ρ : Pot} (hx : ∀ t : Icc (0 : ℝ) 1, prim x t ^ 2 = ρ t)
+lemma mem_BsetH_of_holder {x : L2I} {ρ : C01} (hx : ∀ t : Icc (0 : ℝ) 1, prim x t ^ 2 = ρ t)
     {C : ℝ} (hC : ∀ t t' : Icc (0 : ℝ) 1, |ρ t' - ρ t| ≤ C * |(t' : ℝ) - t| ^ (5 / 8 : ℝ)) :
     x ∈ BsetH (2 * C) := by
   intro t h h0 _ h1 h2
@@ -329,7 +329,7 @@ variable {τ : Stat} {w : Cfg n → ℝ}
 fermions (continuous `w`), the ground-state densities of measure potentials form a meagre subset of
 the `N`-representable densities. -/
 theorem vrepMeasN_meagre (hw : Continuous w) :
-    IsMeagre {x : SN n | ∃ ρ : Pot, VRepMeasN τ n w ρ ∧
+    IsMeagre {x : SN n | ∃ ρ : C01, VRepMeasN τ n w ρ ∧
       ∀ t : Icc (0 : ℝ) 1, prim (x : L2I) t ^ 2 = ρ t} :=
   (isMeagre_iUnion fun L : ℕ =>
     (isNowhereDense_BsetHS (n := n) (Nat.cast_nonneg L)).isMeagre).mono fun x hx => by
@@ -343,7 +343,7 @@ theorem vrepMeasN_meagre (hw : Continuous w) :
 /-- **Most densities are not ground-state densities of any measure potential**, for interacting
 bosons or fermions: the complement is residual, hence dense. -/
 theorem vrepMeasN_nonrep_dense (hw : Continuous w) :
-    Dense {x : SN n | ¬ ∃ ρ : Pot, VRepMeasN τ n w ρ ∧
+    Dense {x : SN n | ¬ ∃ ρ : C01, VRepMeasN τ n w ρ ∧
       ∀ t : Icc (0 : ℝ) 1, prim (x : L2I) t ^ 2 = ρ t} := by
   have : CompleteSpace (SN n) := (isClosed_SN n).completeSpace_coe
   exact dense_of_mem_residual (vrepMeasN_meagre (τ := τ) hw)

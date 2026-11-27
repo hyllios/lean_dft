@@ -156,7 +156,7 @@ end Gr
 
 section estimate
 
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {u : Cfg n → ℝ}
+variable {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {u : Cfg n → ℝ}
 
 /-- The test function of the logarithmic estimate, `η² (1/ε - Gr_ε(u))` (`= η²/(u+ε)` where
 `u ≥ 0`). -/

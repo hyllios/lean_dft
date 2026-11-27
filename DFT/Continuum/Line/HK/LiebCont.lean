@@ -33,7 +33,7 @@ theorem ucpW_cont (w : Cfg n → ℝ) (hw : Continuous w) : UcpW τ n w hw := by
   · exact ucpW_fer w hw
 
 /-- **Hohenberg–Kohn on `H¹₀` with continuous potentials**, bosons or fermions. -/
-theorem hk_line_W_cont_stat {w : Cfg n → ℝ} {hw : Continuous w} (v v' : Pot) :
+theorem hk_line_W_cont_stat {w : Cfg n → ℝ} {hw : Continuous w} (v v' : C01) :
     (∃ Φ, IsGS (settingW τ n w hw) v Φ) ∧ ∀ Ψ Ψ', IsGS (settingW τ n w hw) v Ψ →
       IsGS (settingW τ n w hw) v' Ψ' → ip (μ := μN n) Ψ Ψ = ip (μ := μN n) Ψ' Ψ' →
       dens (settingW τ n w hw) Ψ = dens (settingW τ n w hw) Ψ' →
@@ -43,13 +43,13 @@ theorem hk_line_W_cont_stat {w : Cfg n → ℝ} {hw : Continuous w} (v v' : Pot)
 /-- **The Lieb functional on `H¹₀` at a v-representable density.** For continuous `v` and `w`
 and any normalised ground state `ψ` of `v`: `F(ρ_ψ) = ⟨ψ, (T + W) ψ⟩`, `-v` is a subgradient of
 `F` at `ρ_ψ`, and every other subgradient `-v'` has `v - v'` constant. -/
-theorem lieb_line_W_cont_of {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {ψ : Cfg n → ℝ}
+theorem lieb_line_W_cont_of {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {ψ : Cfg n → ℝ}
     (hψ : IsNGS (settingW τ n w hw) v ψ) :
     liebF (settingW τ n w hw) (dens (settingW τ n w hw) ψ) =
         (((settingW τ n w hw).h0 ψ ψ : ℝ) : EReal) ∧
-      (∀ ρ : Pot → ℝ, (((settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v - ρ v : ℝ) :
+      (∀ ρ : C01 → ℝ, (((settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v - ρ v : ℝ) :
         EReal) ≤ liebF (settingW τ n w hw) ρ) ∧
-      ∀ v' : Pot, (∀ ρ : Pot → ℝ,
+      ∀ v' : C01, (∀ ρ : C01 → ℝ,
         (((settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v' - ρ v' : ℝ) : EReal) ≤
           liebF (settingW τ n w hw) ρ) → ∃ k : ℝ, v - v' = k • one := by
   have hnull : ∀ φ ∈ (settingW τ n w hw).D, ip (μ := μN n) φ φ = 0 →
@@ -62,13 +62,13 @@ theorem lieb_line_W_cont_of {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {�
 every continuous `v` and continuous `w` a normalised `H¹₀` ground state `ψ` exists; at its density
 the Lieb functional equals `⟨ψ, (T + W) ψ⟩`, `-v` is a subgradient, and every other subgradient
 `-v'` has `v - v'` constant. -/
-theorem lieb_line_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
+theorem lieb_line_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : C01) :
     ∃ ψ, IsNGS (settingW τ n w hw) v ψ ∧
       liebF (settingW τ n w hw) (dens (settingW τ n w hw) ψ) =
         (((settingW τ n w hw).h0 ψ ψ : ℝ) : EReal) ∧
-      (∀ ρ : Pot → ℝ, (((settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v - ρ v : ℝ) :
+      (∀ ρ : C01 → ℝ, (((settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v - ρ v : ℝ) :
         EReal) ≤ liebF (settingW τ n w hw) ρ) ∧
-      ∀ v' : Pot, (∀ ρ : Pot → ℝ,
+      ∀ v' : C01, (∀ ρ : C01 → ℝ,
         (((settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v' - ρ v' : ℝ) : EReal) ≤
           liebF (settingW τ n w hw) ρ) → ∃ k : ℝ, v - v' = k • one := by
   obtain ⟨ψ, hψ⟩ := exists_isNGS_W_cont (τ := τ) hw v

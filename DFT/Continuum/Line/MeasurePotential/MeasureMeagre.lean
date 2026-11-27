@@ -24,7 +24,7 @@ namespace DFT.Continuum.Line
 open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-- **A measure-`v`-representable one-particle density is the square of a Lipschitz function.** -/
-theorem lipschitz_of_vrepMeas {ρ : Pot} (h : VRepMeas ρ) :
+theorem lipschitz_of_vrepMeas {ρ : C01} (h : VRepMeas ρ) :
     ∃ g : ℝ → ℝ, ∃ G B : ℝ, 0 ≤ G ∧ 0 ≤ B ∧ (∀ t : Icc (0 : ℝ) 1, ρ t = g t ^ 2) ∧
       (∀ t ∈ Icc (0 : ℝ) 1, |g t| ≤ G) ∧
       ∀ a ∈ Icc (0 : ℝ) 1, ∀ b ∈ Icc (0 : ℝ) 1, |g b - g a| ≤ B * |b - a| := by
@@ -35,7 +35,7 @@ theorem lipschitz_of_vrepMeas {ρ : Pot} (h : VRepMeas ρ) :
   have hB : 0 ≤ B := by positivity
   obtain ⟨G, hG⟩ := (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1)).exists_bound_of_continuousOn
     hgc.continuousOn
-  have hdb : ∀ᵐ t ∂μ1, |deriv g t| ≤ B := by
+  have hdb : ∀ᵐ t ∂vol01, |deriv g t| ≤ B := by
     filter_upwards [hd] with t ht
     rw [ht]
     calc |c + Gρ μp g t - Gρ μm g t| ≤ |c| + |Gρ μp g t| + |Gρ μm g t| := by
@@ -70,7 +70,7 @@ variable {n : ℕ}
 
 /-- `N` times a measure-`v`-representable one-particle density. -/
 def MeasDensN (x : SN n) : Prop :=
-  ∃ ρ1 : Pot, VRepMeas ρ1 ∧ ∀ t : Icc (0 : ℝ) 1, prim (x : L2I) t ^ 2 = (n + 1) * ρ1 t
+  ∃ ρ1 : C01, VRepMeas ρ1 ∧ ∀ t : Icc (0 : ℝ) 1, prim (x : L2I) t ^ 2 = (n + 1) * ρ1 t
 
 lemma mem_BsetL_of_MeasDensN {x : SN n} (h : MeasDensN x) :
     ∃ L : ℕ, (x : L2I) ∈ BsetL L 0 := by
@@ -140,7 +140,7 @@ theorem vrepMeas_nonrep_dense : Dense {x : SN n | ¬ MeasDensN x} := by
 /-- **Non-interacting bosons**: the `N`-representable densities that are ground-state densities
 of `N` non-interacting bosons in some measure potential form a meagre set. -/
 theorem vrepMeasN_bos_meagre :
-    IsMeagre {x : SN n | ∃ ρ : Pot, VRepMeasN .bos n 0 ρ ∧
+    IsMeagre {x : SN n | ∃ ρ : C01, VRepMeasN .bos n 0 ρ ∧
       ∀ t : Icc (0 : ℝ) 1, prim (x : L2I) t ^ 2 = ρ t} :=
   (vrepMeas_meagre (n := n)).mono fun _ ⟨ρ, hρ, hx⟩ => by
     obtain ⟨ρ1, h1, rfl⟩ := (vrepMeasN_bos_iff ρ).1 hρ

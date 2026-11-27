@@ -100,27 +100,27 @@ lemma kBd_cont {V : Cfg n → ℝ} (hV : Continuous V) : ∃ C, KBd V C := by
 /-! ### The ground-state energy and the density functional -/
 
 /-- The ground-state energy, as a real number. -/
-noncomputable def gsErW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) (v : Pot) : ℝ :=
+noncomputable def gsErW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) (v : C01) : ℝ :=
   Q (settingW τ n w hw) v (Classical.choose (exists_isNGS_W_cont (n := n) (τ := τ) hw v))
 
-lemma gsErW_spec (v : Pot) : IsNGS (settingW τ n w hw) v
+lemma gsErW_spec (v : C01) : IsNGS (settingW τ n w hw) v
     (Classical.choose (exists_isNGS_W_cont (n := n) (τ := τ) hw v)) :=
   Classical.choose_spec (exists_isNGS_W_cont (n := n) (τ := τ) hw v)
 
-lemma gsErW_le (v : Pot) {ψ : Cfg n → ℝ} (hψ : ψ ∈ Nst (settingW τ n w hw)) :
+lemma gsErW_le (v : C01) {ψ : Cfg n → ℝ} (hψ : ψ ∈ Nst (settingW τ n w hw)) :
     gsErW τ n w hw v ≤ Q (settingW τ n w hw) v ψ :=
   (gsErW_spec v).2 ψ hψ
 
-lemma gsErW_eq_of_isNGS {v : Pot} {ψ : Cfg n → ℝ} (h : IsNGS (settingW τ n w hw) v ψ) :
+lemma gsErW_eq_of_isNGS {v : C01} {ψ : Cfg n → ℝ} (h : IsNGS (settingW τ n w hw) v ψ) :
     gsErW τ n w hw v = Q (settingW τ n w hw) v ψ :=
   le_antisymm (gsErW_le v h.1) (h.2 _ (gsErW_spec v).1)
 
-lemma gsE_eqW (v : Pot) : gsE (settingW τ n w hw) v = ((gsErW τ n w hw v : ℝ) : EReal) :=
+lemma gsE_eqW (v : C01) : gsE (settingW τ n w hw) v = ((gsErW τ n w hw v : ℝ) : EReal) :=
   gsE_of_isNGS (gsErW_spec v)
 
-lemma abs_LN_le (u : Pot) (x : Cfg n) : |LN n u x| ≤ ((n : ℝ) + 1) * ‖u‖ := by
-  change |∑ k, SturmLiouville.ext u (x k)| ≤ _
-  calc |∑ k, SturmLiouville.ext u (x k)| ≤ ∑ k : Fin (n + 1), |SturmLiouville.ext u (x k)| :=
+lemma abs_LN_le (u : C01) (x : Cfg n) : |LN n u x| ≤ ((n : ℝ) + 1) * ‖u‖ := by
+  change |∑ k, SturmLiouville.iccExt u (x k)| ≤ _
+  calc |∑ k, SturmLiouville.iccExt u (x k)| ≤ ∑ k : Fin (n + 1), |SturmLiouville.iccExt u (x k)| :=
         Finset.abs_sum_le_sum_abs _ _
     _ ≤ ∑ _k : Fin (n + 1), ‖u‖ := Finset.sum_le_sum fun k _ => abs_ext_le u _
     _ = _ := by simp
@@ -129,7 +129,7 @@ section densW
 
 variable {ψ : Cfg n → ℝ}
 
-lemma densW_add (hψ : ψ ∈ DomW τ n) (u u' : Pot) :
+lemma densW_add (hψ : ψ ∈ DomW τ n) (u u' : C01) :
     dens (settingW τ n w hw) ψ (u + u') =
       dens (settingW τ n w hw) ψ u + dens (settingW τ n w hw) ψ u' := by
   have i1 : Integrable (fun x => LN n u x * (ψ x * ψ x)) (μN n) :=
@@ -141,13 +141,13 @@ lemma densW_add (hψ : ψ ∈ DomW τ n) (u u' : Pot) :
   rw [← integral_add i1 i2]
   congr 1; funext x; rw [map_add, Pi.add_apply, add_mul]
 
-lemma densW_smul (a : ℝ) (u : Pot) :
+lemma densW_smul (a : ℝ) (u : C01) :
     dens (settingW τ n w hw) ψ (a • u) = a * dens (settingW τ n w hw) ψ u := by
   change ∫ x, LN n (a • u) x * (ψ x * ψ x) ∂μN n = a * ∫ x, LN n u x * (ψ x * ψ x) ∂μN n
   rw [← integral_const_mul]
   congr 1; funext x; rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_assoc]
 
-lemma abs_densW_le (hψ : ψ ∈ Nst (settingW τ n w hw)) (u : Pot) :
+lemma abs_densW_le (hψ : ψ ∈ Nst (settingW τ n w hw)) (u : C01) :
     |dens (settingW τ n w hw) ψ u| ≤ ((n : ℝ) + 1) * ‖u‖ := by
   have hsq : Integrable (fun x => ψ x * ψ x) (μN n) := int_mul_L2 hψ.1.1 hψ.1.1
   have h1 : ∫ x, ψ x * ψ x ∂μN n = 1 := hψ.2
@@ -161,17 +161,17 @@ lemma abs_densW_le (hψ : ψ ∈ Nst (settingW τ n w hw)) (u : Pot) :
     _ = ((n : ℝ) + 1) * ‖u‖ := by rw [integral_const_mul, h1, mul_one]
 
 /-- The density of a normalised state, as a continuous linear functional of norm `≤ N`. -/
-noncomputable def densLW (hψ : ψ ∈ Nst (settingW τ n w hw)) : StrongDual ℝ Pot :=
+noncomputable def densLW (hψ : ψ ∈ Nst (settingW τ n w hw)) : StrongDual ℝ C01 :=
   LinearMap.mkContinuous
     { toFun := dens (settingW τ n w hw) ψ
       map_add' := densW_add hψ.1
       map_smul' := fun a u => by rw [densW_smul]; rfl }
     ((n : ℝ) + 1) (fun u => by rw [Real.norm_eq_abs]; exact abs_densW_le hψ u)
 
-@[simp] lemma densLW_apply (hψ : ψ ∈ Nst (settingW τ n w hw)) (u : Pot) :
+@[simp] lemma densLW_apply (hψ : ψ ∈ Nst (settingW τ n w hw)) (u : C01) :
     densLW hψ u = dens (settingW τ n w hw) ψ u := rfl
 
-lemma QW_shift (hψ : ψ ∈ DomW τ n) (v v' : Pot) :
+lemma QW_shift (hψ : ψ ∈ DomW τ n) (v v' : C01) :
     Q (settingW τ n w hw) v' ψ =
       Q (settingW τ n w hw) v ψ + dens (settingW τ n w hw) ψ (v' - v) := by
   change (settingW τ n w hw).h0 ψ ψ + dens (settingW τ n w hw) ψ v' =
@@ -181,13 +181,13 @@ lemma QW_shift (hψ : ψ ∈ DomW τ n) (v v' : Pot) :
 end densW
 
 /-- **Hellmann–Feynman inequality.** -/
-theorem supergrad_of_isNGSW {v : Pot} {ψ : Cfg n → ℝ} (h : IsNGS (settingW τ n w hw) v ψ)
-    (v' : Pot) : gsErW τ n w hw v' ≤ gsErW τ n w hw v + densLW h.1 (v' - v) := by
+theorem supergrad_of_isNGSW {v : C01} {ψ : Cfg n → ℝ} (h : IsNGS (settingW τ n w hw) v ψ)
+    (v' : C01) : gsErW τ n w hw v' ≤ gsErW τ n w hw v + densLW h.1 (v' - v) := by
   rw [densLW_apply, gsErW_eq_of_isNGS h, ← QW_shift h.1.1]
   exact gsErW_le v' h.1
 
 /-- The ground-state energy is `N`-Lipschitz in the sup norm. -/
-theorem gsErW_lipschitz (v v' : Pot) :
+theorem gsErW_lipschitz (v v' : C01) :
     |gsErW τ n w hw v - gsErW τ n w hw v'| ≤ ((n : ℝ) + 1) * ‖v - v'‖ := by
   have h1 := supergrad_of_isNGSW (gsErW_spec (τ := τ) (w := w) (hw := hw) v') v
   have h2 := supergrad_of_isNGSW (gsErW_spec (τ := τ) (w := w) (hw := hw) v) v'
@@ -225,14 +225,14 @@ theorem gsErW_concave : ConcaveOn ℝ univ (gsErW τ n w hw) := by
   rw [hQ]
   exact add_le_add (mul_le_mul_of_nonneg_left h1 ha) (mul_le_mul_of_nonneg_left h2 hb)
 
-lemma gsErW_sub_le {ρ : Pot → ℝ} {c : ℝ} (hF : liebF (settingW τ n w hw) ρ ≤ (c : EReal))
-    (v : Pot) : gsErW τ n w hw v - ρ v ≤ c := by
+lemma gsErW_sub_le {ρ : C01 → ℝ} {c : ℝ} (hF : liebF (settingW τ n w hw) ρ ≤ (c : EReal))
+    (v : C01) : gsErW τ n w hw v - ρ v ≤ c := by
   have := gsE_le_liebF_add (v := v) hF
   rw [gsE_eqW, EReal.coe_le_coe_iff] at this
   linarith
 
 /-- At a supergradient `ρ'` of `E` at `v`, `F(ρ') = E(v) - ρ'(v)`. -/
-theorem liebF_of_supergradW {v : Pot} {ρ' : Pot → ℝ}
+theorem liebF_of_supergradW {v : C01} {ρ' : C01 → ℝ}
     (hρ' : ∀ v', gsErW τ n w hw v' - ρ' v' ≤ gsErW τ n w hw v - ρ' v) :
     liebF (settingW τ n w hw) ρ' = ((gsErW τ n w hw v - ρ' v : ℝ) : EReal) := by
   refine le_antisymm (iSup_le fun v' => ?_) ?_
@@ -241,9 +241,9 @@ theorem liebF_of_supergradW {v : Pot} {ρ' : Pot → ℝ}
     rwa [gsE_eqW, ← EReal.coe_sub] at this
 
 /-- **Supergradient densities are dense** (Brøndsted–Rockafellar). -/
-theorem dense_supergradW (ρ : StrongDual ℝ Pot) {c : ℝ}
+theorem dense_supergradW (ρ : StrongDual ℝ C01) {c : ℝ}
     (hF : liebF (settingW τ n w hw) ρ ≤ (c : EReal)) {η : ℝ} (hη : 0 < η) :
-    ∃ (v : Pot) (ρ' : StrongDual ℝ Pot), ‖ρ' - ρ‖ ≤ η ∧
+    ∃ (v : C01) (ρ' : StrongDual ℝ C01), ‖ρ' - ρ‖ ≤ η ∧
       (∀ v', gsErW τ n w hw v' ≤ gsErW τ n w hw v + ρ' (v' - v)) ∧
       liebF (settingW τ n w hw) ρ' = ((gsErW τ n w hw v - ρ' v : ℝ) : EReal) := by
   obtain ⟨v, ρ', hn, hs⟩ := exists_supergrad_near gsErW_concave
@@ -258,7 +258,7 @@ theorem dense_supergradW (ρ : StrongDual ℝ Pot) {c : ℝ}
 /-- **Ground-state densities are continuous along lines**, up to a subsequence: if `Ψ_k` are
 normalised ground states of `v + t_k u` with `t_k → 0`, then along a subsequence
 `ρ_{Ψ_k}(u) → ρ_{Ψ₀}(u)`, `Ψ₀` the normalised ground state of `v`. -/
-theorem tendsto_dens_line {v u : Pot} {t : ℕ → ℝ} (ht : Tendsto t atTop (𝓝 0))
+theorem tendsto_dens_line {v u : C01} {t : ℕ → ℝ} (ht : Tendsto t atTop (𝓝 0))
     (ht1 : ∀ k, |t k| ≤ 1) {Ψ : ℕ → Cfg n → ℝ}
     (hΨ : ∀ k, IsNGS (settingW τ n w hw) (v + t k • u) (Ψ k)) {Ψ0 : Cfg n → ℝ}
     (hΨ0 : IsNGS (settingW τ n w hw) v Ψ0) :
@@ -353,12 +353,12 @@ theorem tendsto_dens_line {v u : Pot} {t : ℕ → ℝ} (ht : Tendsto t atTop (�
 
 /-- **Converse of Hellmann–Feynman.** A supergradient of the ground-state energy at `v` is the
 density of a normalised ground state of `v`. -/
-theorem supergrad_eqW {v : Pot} {ρ' : StrongDual ℝ Pot}
+theorem supergrad_eqW {v : C01} {ρ' : StrongDual ℝ C01}
     (hρ' : ∀ v', gsErW τ n w hw v' ≤ gsErW τ n w hw v + ρ' (v' - v)) :
     ∃ ψ, ∃ hψ : IsNGS (settingW τ n w hw) v ψ, ρ' = densLW hψ.1 := by
   set ψ := Classical.choose (exists_isNGS_W_cont (n := n) (τ := τ) hw v)
   have hψ : IsNGS (settingW τ n w hw) v ψ := gsErW_spec v
-  have key : ∀ u : Pot, dens (settingW τ n w hw) ψ u ≤ ρ' u := by
+  have key : ∀ u : C01, dens (settingW τ n w hw) ψ u ≤ ρ' u := by
     intro u
     set t : ℕ → ℝ := fun k => 1 / ((k : ℝ) + 1)
     have ht : Tendsto t atTop (𝓝 0) := tendsto_one_div_add_atTop_nhds_zero_nat
@@ -384,16 +384,16 @@ theorem supergrad_eqW {v : Pot} {ρ' : StrongDual ℝ Pot}
 /-- **`v`-representable densities are dense.** Every density of finite Lieb functional is within
 any `η > 0`, in the dual norm of `C([0, 1])`, of the density of a normalised ground state of some
 continuous potential. -/
-theorem dense_pureVRepW (ρ : StrongDual ℝ Pot) {c : ℝ}
+theorem dense_pureVRepW (ρ : StrongDual ℝ C01) {c : ℝ}
     (hF : liebF (settingW τ n w hw) ρ ≤ (c : EReal)) {η : ℝ} (hη : 0 < η) :
-    ∃ (v : Pot) (ρ' : StrongDual ℝ Pot), ‖ρ' - ρ‖ ≤ η ∧ PureDens (settingW τ n w hw) v ρ' := by
+    ∃ (v : C01) (ρ' : StrongDual ℝ C01), ‖ρ' - ρ‖ ≤ η ∧ PureDens (settingW τ n w hw) v ρ' := by
   obtain ⟨v, ρ', hn, hs, -⟩ := dense_supergradW ρ hF hη
   obtain ⟨ψ, hψ, rfl⟩ := supergrad_eqW hs
   exact ⟨v, densLW hψ.1, hn, ψ, isGS_W_of_isNGS_W hψ, hψ.1.2, rfl⟩
 
 /-- Every `N`-representable density is a dual-norm limit of pure `v`-representable densities. -/
 theorem dense_pureVRepW_of_nst {φ : Cfg n → ℝ} (hφ : φ ∈ Nst (settingW τ n w hw)) {η : ℝ}
-    (hη : 0 < η) : ∃ (v : Pot) (ρ' : StrongDual ℝ Pot), ‖ρ' - densLW hφ‖ ≤ η ∧
+    (hη : 0 < η) : ∃ (v : C01) (ρ' : StrongDual ℝ C01), ‖ρ' - densLW hφ‖ ≤ η ∧
       PureDens (settingW τ n w hw) v ρ' :=
   dense_pureVRepW (densLW hφ) (liebF_le_h0 hφ) hη
 
@@ -401,7 +401,7 @@ theorem dense_pureVRepW_of_nst {φ : Cfg n → ℝ} (hφ : φ ∈ Nst (settingW 
 density of any normalised `H¹₀` state is, within any `η > 0` in the dual norm of `C([0, 1])`, the
 density of the ground state of `N` non-interacting particles in some continuous potential. -/
 theorem ks_dense {φ : Cfg n → ℝ} (hφ : φ ∈ Nst (ksS τ n)) {η : ℝ} (hη : 0 < η) :
-    ∃ (vs : Pot) (ρ' : StrongDual ℝ Pot), ‖ρ' - densLW hφ‖ ≤ η ∧ PureDens (ksS τ n) vs ρ' :=
+    ∃ (vs : C01) (ρ' : StrongDual ℝ C01), ‖ρ' - densLW hφ‖ ≤ η ∧ PureDens (ksS τ n) vs ρ' :=
   dense_pureVRepW_of_nst hφ hη
 
 end DFT.Continuum.Line

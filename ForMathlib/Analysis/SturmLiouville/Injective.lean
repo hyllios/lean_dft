@@ -82,7 +82,7 @@ lemma Gk_test {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) : Gk hWc (src (W := W) φ) 
 end test
 
 /-- Continuous functions are in `L²(0, 1)`. -/
-lemma memLp_of_continuous {g : ℝ → ℝ} (hg : Continuous g) : MemLp g 2 μ1 := by
+lemma memLp_of_continuous {g : ℝ → ℝ} (hg : Continuous g) : MemLp g 2 vol01 := by
   obtain ⟨C, hC⟩ := (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1)).exists_bound_of_continuousOn
     hg.continuousOn
   exact MemLp.of_bound hg.aestronglyMeasurable C (ae_mem_Icc.mono fun y hy => hC y hy)
@@ -111,7 +111,7 @@ theorem Gop_injective {f : HL} (hf : Gop hWc f = 0) : f = 0 := by
     have h0 : inner ℝ f φL = 0 := by
       rw [← hG, ← Gop_symm, hf, inner_zero_left]
     rw [L2.inner_def] at h0
-    have hμ : ∫ x, φ x * (f : ℝ → ℝ) x ∂μ1 = 0 := by
+    have hμ : ∫ x, φ x * (f : ℝ → ℝ) x ∂vol01 = 0 := by
       rw [← h0]
       refine integral_congr_ae ?_
       filter_upwards [MemLp.coeFn_toLp (memLp_of_continuous hc)] with y hy

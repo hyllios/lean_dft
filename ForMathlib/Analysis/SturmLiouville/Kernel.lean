@@ -70,52 +70,52 @@ lemma Kg_unif (ε : ℝ) (hε : 0 < ε) : ∃ δ, 0 < δ ∧ ∀ x ∈ Icc (0 : 
 /-! ### The integral operator -/
 
 /-- The Green operator as an integral operator over `(0, 1)`. -/
-noncomputable def Gk (f : ℝ → ℝ) (x : ℝ) : ℝ := ∫ y, Kg hWc x y * f y ∂μ1
+noncomputable def Gk (f : ℝ → ℝ) (x : ℝ) : ℝ := ∫ y, Kg hWc x y * f y ∂vol01
 
-lemma ae_mem_Icc : ∀ᵐ y ∂μ1, y ∈ Icc (0 : ℝ) 1 :=
+lemma ae_mem_Icc : ∀ᵐ y ∂vol01, y ∈ Icc (0 : ℝ) 1 :=
   (ae_restrict_mem measurableSet_Ioo).mono fun _ hy => Ioo_subset_Icc_self hy
 
 lemma aestronglyMeasurable_Kg {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
-    AEStronglyMeasurable (fun y => Kg hWc x y) μ1 := by
+    AEStronglyMeasurable (fun y => Kg hWc x y) vol01 := by
   have hc : ContinuousOn (fun y => Kg hWc x y) (Icc 0 1) := by
     refine (continuousOn_Kg hWc).comp (f := fun y : ℝ => (x, y)) ?_ ?_
     · exact (continuousOn_const (c := x)).prodMk continuousOn_id
     · exact fun y hy => Set.mk_mem_prod hx hy
   exact (hc.mono Ioo_subset_Icc_self).aestronglyMeasurable measurableSet_Ioo
 
-lemma integrable_Kg_mul {f : ℝ → ℝ} (hf : Integrable f μ1) {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
-    Integrable (fun y => Kg hWc x y * f y) μ1 := by
+lemma integrable_Kg_mul {f : ℝ → ℝ} (hf : Integrable f vol01) {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
+    Integrable (fun y => Kg hWc x y * f y) vol01 := by
   obtain ⟨C, -, hC⟩ := exists_Kg_bound hWc
   exact hf.bdd_mul (aestronglyMeasurable_Kg hWc hx)
     ((ae_mem_Icc).mono fun y hy => by rw [Real.norm_eq_abs]; exact hC x hx y hy)
 
 /-- **The uniform bound**: `|Gk f x| ≤ C ∫ |f|`. -/
-lemma exists_Gk_bound : ∃ C, 0 ≤ C ∧ ∀ f : ℝ → ℝ, Integrable f μ1 → ∀ x ∈ Icc (0 : ℝ) 1,
-    |Gk hWc f x| ≤ C * ∫ y, |f y| ∂μ1 := by
+lemma exists_Gk_bound : ∃ C, 0 ≤ C ∧ ∀ f : ℝ → ℝ, Integrable f vol01 → ∀ x ∈ Icc (0 : ℝ) 1,
+    |Gk hWc f x| ≤ C * ∫ y, |f y| ∂vol01 := by
   obtain ⟨C, hC0, hC⟩ := exists_Kg_bound hWc
   refine ⟨C, hC0, fun f hf x hx => ?_⟩
-  calc |Gk hWc f x| ≤ ∫ y, |Kg hWc x y * f y| ∂μ1 := abs_integral_le_integral_abs
-    _ ≤ ∫ y, C * |f y| ∂μ1 := by
+  calc |Gk hWc f x| ≤ ∫ y, |Kg hWc x y * f y| ∂vol01 := abs_integral_le_integral_abs
+    _ ≤ ∫ y, C * |f y| ∂vol01 := by
         refine integral_mono_ae (integrable_Kg_mul hWc hf hx).abs (hf.abs.const_mul C) ?_
         filter_upwards [ae_mem_Icc] with y hy
         rw [abs_mul]
         exact mul_le_mul_of_nonneg_right (hC x hx y hy) (abs_nonneg _)
-    _ = C * ∫ y, |f y| ∂μ1 := integral_const_mul _ _
+    _ = C * ∫ y, |f y| ∂vol01 := integral_const_mul _ _
 
 /-- **Equicontinuity**: `|Gk f x - Gk f x'| ≤ ε ∫ |f|` when `|x - x'| < δ`, uniformly in `f`. -/
-lemma Gk_equicont (ε : ℝ) (hε : 0 < ε) : ∃ δ, 0 < δ ∧ ∀ f : ℝ → ℝ, Integrable f μ1 →
+lemma Gk_equicont (ε : ℝ) (hε : 0 < ε) : ∃ δ, 0 < δ ∧ ∀ f : ℝ → ℝ, Integrable f vol01 →
     ∀ x ∈ Icc (0 : ℝ) 1, ∀ x' ∈ Icc (0 : ℝ) 1, |x - x'| < δ →
-      |Gk hWc f x - Gk hWc f x'| ≤ ε * ∫ y, |f y| ∂μ1 := by
+      |Gk hWc f x - Gk hWc f x'| ≤ ε * ∫ y, |f y| ∂vol01 := by
   obtain ⟨δ, hδ, h⟩ := Kg_unif hWc ε hε
   refine ⟨δ, hδ, fun f hf x hx x' hx' hxx => ?_⟩
-  have hsub : Gk hWc f x - Gk hWc f x' = ∫ y, (Kg hWc x y - Kg hWc x' y) * f y ∂μ1 := by
+  have hsub : Gk hWc f x - Gk hWc f x' = ∫ y, (Kg hWc x y - Kg hWc x' y) * f y ∂vol01 := by
     rw [Gk, Gk, ← integral_sub (integrable_Kg_mul hWc hf hx) (integrable_Kg_mul hWc hf hx')]
     congr 1; funext y; ring
   rw [hsub]
-  calc |∫ y, (Kg hWc x y - Kg hWc x' y) * f y ∂μ1|
-      ≤ ∫ y, |(Kg hWc x y - Kg hWc x' y) * f y| ∂μ1 := abs_integral_le_integral_abs
-    _ ≤ ∫ y, ε * |f y| ∂μ1 := by
-        have hi : Integrable (fun y => (Kg hWc x y - Kg hWc x' y) * f y) μ1 := by
+  calc |∫ y, (Kg hWc x y - Kg hWc x' y) * f y ∂vol01|
+      ≤ ∫ y, |(Kg hWc x y - Kg hWc x' y) * f y| ∂vol01 := abs_integral_le_integral_abs
+    _ ≤ ∫ y, ε * |f y| ∂vol01 := by
+        have hi : Integrable (fun y => (Kg hWc x y - Kg hWc x' y) * f y) vol01 := by
           have := (integrable_Kg_mul hWc hf hx).sub (integrable_Kg_mul hWc hf hx')
           refine this.congr (ae_of_all _ fun y => ?_)
           simp only [Pi.sub_apply]; ring
@@ -123,14 +123,14 @@ lemma Gk_equicont (ε : ℝ) (hε : 0 < ε) : ∃ δ, 0 < δ ∧ ∀ f : ℝ →
         filter_upwards [ae_mem_Icc] with y hy
         rw [abs_mul]
         exact mul_le_mul_of_nonneg_right (h x hx x' hx' hxx y hy).le (abs_nonneg _)
-    _ = ε * ∫ y, |f y| ∂μ1 := integral_const_mul _ _
+    _ = ε * ∫ y, |f y| ∂vol01 := integral_const_mul _ _
 
 /-- `Gk f` is continuous on `[0, 1]` for integrable `f`. -/
-lemma continuousOn_Gk {f : ℝ → ℝ} (hf : Integrable f μ1) : ContinuousOn (Gk hWc f) (Icc 0 1) := by
+lemma continuousOn_Gk {f : ℝ → ℝ} (hf : Integrable f vol01) : ContinuousOn (Gk hWc f) (Icc 0 1) := by
   intro x hx
   rw [Metric.continuousWithinAt_iff]
   intro ε hε
-  set I := ∫ y, |f y| ∂μ1
+  set I := ∫ y, |f y| ∂vol01
   have hI : 0 ≤ I := integral_nonneg fun y => abs_nonneg _
   obtain ⟨δ, hδ, h⟩ := Gk_equicont hWc (ε / (I + 1)) (by positivity)
   refine ⟨δ, hδ, fun x' hx' hd => ?_⟩

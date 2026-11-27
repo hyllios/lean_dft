@@ -23,7 +23,7 @@ open MeasureTheory Set Box SturmLiouville
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 
 /-- **A `C²` ground state is an `H¹₀` ground state.** -/
-theorem isGS_W_of_isGS {v : Pot} {Φ : Cfg n → ℝ} (h : IsGS (setting τ n w hw) v Φ) :
+theorem isGS_W_of_isGS {v : C01} {Φ : Cfg n → ℝ} (h : IsGS (setting τ n w hw) v Φ) :
     IsGS (settingW τ n w hw) v Φ := by
   have hp := h.2.1
   set c := (√(ip (μ := μN n) Φ Φ))⁻¹
@@ -51,17 +51,17 @@ orthonormal `C²` orbitals `φ_j` (the lowest eigenfunctions of `-d²/dx² + v`)
 `A · det φ_j(x_i)` is the ground state of `N` hard-core bosons with no further interaction. Its
 modulus is `|det φ_j(x_i)|`, its norm is `N!`, its density is `N!` times the free-fermion density
 `Σ_j φ_j²`, and every other ground state is a multiple of it. -/
-theorem tonks_girardeau_W (v : Pot) : ∃ φ : Fin (n + 1) → ℝ → ℝ, (∀ j, φ j ∈ SturmLiouville.Dom) ∧
-    (∀ a b, ∫ t, φ a t * φ b t ∂μ1 = if a = b then 1 else 0) ∧
+theorem tonks_girardeau_W (v : C01) : ∃ φ : Fin (n + 1) → ℝ → ℝ, (∀ j, φ j ∈ SturmLiouville.Dom) ∧
+    (∀ a b, ∫ t, φ a t * φ b t ∂vol01 = if a = b then 1 else 0) ∧
     IsGS (settingHCW n (fun _ => 0) continuous_const) v (mulA (slater φ)) ∧
     (∀ x, |mulA (slater φ) x| = |slater φ x|) ∧
     ip (μ := μN n) (mulA (slater φ)) (mulA (slater φ)) = (Nat.factorial (n + 1) : ℝ) ∧
     (∀ u, dens (settingHCW n (fun _ => 0) continuous_const) (mulA (slater φ)) u =
-      (Nat.factorial (n + 1) : ℝ) * ∫ t, ext u t * ∑ j, φ j t ^ 2 ∂μ1) ∧
+      (Nat.factorial (n + 1) : ℝ) * ∫ t, iccExt u t * ∑ j, φ j t ^ 2 ∂vol01) ∧
     ∀ Ψ, IsGS (settingHCW n (fun _ => 0) continuous_const) v Ψ →
       ∃ c : ℝ, Ψ =ᵐ[μN n] c • mulA (slater φ) := by
   obtain ⟨φ, lam, Λ, hφ, hode, hon, hle, hbound⟩ := Spectral.exists_orbitals v n
-  have hnorm : ∀ j, ∫ x, φ j x * φ j x ∂μ1 = 1 := fun j => by rw [hon]; simp
+  have hnorm : ∀ j, ∫ x, φ j x * φ j x ∂vol01 = 1 := fun j => by rw [hon]; simp
   have hD := slater_mem hφ
   have hQ := Q_slater hφ hode
   have hpos := ip_slater_pos hφ hon

@@ -173,19 +173,19 @@ theorem norm_rhoE_le {X : Cfg n → ℝ} (hX : X ∈ DomN τ n) : ‖rhoE τ X�
 
 /-! ### Bilinearity of the mixed density -/
 
-lemma pfN_add_left (u : Pot) {A A' B : Cfg n → ℝ} (hA : MemLp A 2 (μN n))
+lemma pfN_add_left (u : C01) {A A' B : Cfg n → ℝ} (hA : MemLp A 2 (μN n))
     (hA' : MemLp A' 2 (μN n)) (hB : MemLp B 2 (μN n)) :
     pfN u (A + A') B = pfN u A B + pfN u A' B := by
   unfold pfN
   rw [← integral_add (integrable_pfN u hA hB) (integrable_pfN u hA' hB)]
   congr 1; funext x; simp only [Pi.add_apply]; ring
 
-lemma pfN_smul_left (u : Pot) (c : ℝ) (A B : Cfg n → ℝ) :
+lemma pfN_smul_left (u : C01) (c : ℝ) (A B : Cfg n → ℝ) :
     pfN u (c • A) B = c * pfN u A B := by
   unfold pfN
   rw [← integral_const_mul]; congr 1; funext x; simp only [Pi.smul_apply, smul_eq_mul]; ring
 
-lemma pfN_comm (u : Pot) (A B : Cfg n → ℝ) : pfN u A B = pfN u B A := by
+lemma pfN_comm (u : C01) (A B : Cfg n → ℝ) : pfN u A B = pfN u B A := by
   unfold pfN; congr 1; funext x; ring
 
 lemma rhoE2_add_left {A A' B : Cfg n → ℝ} (hA : A ∈ DomN τ n) (hA' : A' ∈ DomN τ n)

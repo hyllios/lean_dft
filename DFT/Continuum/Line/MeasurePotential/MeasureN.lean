@@ -29,17 +29,17 @@ variable {n : ℕ}
 
 /-! ### Continuous functions on `[0, 1]` are determined by their integrals -/
 
-lemma pot_eq_of_integral {p q : Pot}
-    (h : ∀ v : Pot, ∫ t, SturmLiouville.ext v t * SturmLiouville.ext p t ∂μ1 = ∫ t, SturmLiouville.ext v t * SturmLiouville.ext q t ∂μ1) :
+lemma pot_eq_of_integral {p q : C01}
+    (h : ∀ v : C01, ∫ t, SturmLiouville.iccExt v t * SturmLiouville.iccExt p t ∂vol01 = ∫ t, SturmLiouville.iccExt v t * SturmLiouville.iccExt q t ∂vol01) :
     p = q := by
-  have hIoo : EqOn (SturmLiouville.ext p) (SturmLiouville.ext q) (Ioo 0 1) := eqOn_of_integral_pot (continuous_ext p)
-    (continuous_ext q) fun u => h u
-  have hIcc : EqOn (SturmLiouville.ext p) (SturmLiouville.ext q) (Icc 0 1) :=
-    hIoo.of_subset_closure (continuous_ext p).continuousOn (continuous_ext q).continuousOn
+  have hIoo : EqOn (SturmLiouville.iccExt p) (SturmLiouville.iccExt q) (Ioo 0 1) := eqOn_of_integral_pot (continuous_iccExt p)
+    (continuous_iccExt q) fun u => h u
+  have hIcc : EqOn (SturmLiouville.iccExt p) (SturmLiouville.iccExt q) (Icc 0 1) :=
+    hIoo.of_subset_closure (continuous_iccExt p).continuousOn (continuous_iccExt q).continuousOn
       Ioo_subset_Icc_self (by rw [closure_Ioo zero_ne_one])
   ext t
   have := hIcc t.2
-  simpa [SturmLiouville.ext, projIcc_of_mem _ t.2] using this
+  simpa [SturmLiouville.iccExt, projIcc_of_mem _ t.2] using this
 
 /-! ### The continuous density -/
 
@@ -54,7 +54,7 @@ noncomputable def gN (Φ : Cfg n → ℝ) : ℝ → ℝ :=
 variable {τ}
 
 lemma gN_spec {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) :
-    H10 (gN τ Φ) ∧ (∀ᵐ t ∂μ1, gN τ Φ t ^ 2 = rhoN Φ t) ∧ kinM (gN τ Φ) ≤ kinW Φ := by
+    H10 (gN τ Φ) ∧ (∀ᵐ t ∂vol01, gN τ Φ t ^ 2 = rhoN Φ t) ∧ kinM (gN τ Φ) ≤ kinW Φ := by
   simp only [gN, h, ↓reduceDIte]; exact (sqrt_dens_H1W h).choose_spec
 
 lemma h10_gN (Φ : Cfg n → ℝ) : H10 (gN τ Φ) := by
@@ -68,34 +68,34 @@ lemma h10_gN (Φ : Cfg n → ℝ) : H10 (gN τ Φ) := by
 variable (τ)
 
 /-- **The continuous density** `ρ̂_Φ = g²`. -/
-noncomputable def rhoHat (Φ : Cfg n → ℝ) : Pot := sqP (h10_gN (τ := τ) Φ)
+noncomputable def rhoHat (Φ : Cfg n → ℝ) : C01 := sqP (h10_gN (τ := τ) Φ)
 
 variable {τ}
 
 lemma rhoHat_apply (Φ : Cfg n → ℝ) (t : Icc (0 : ℝ) 1) : rhoHat τ Φ t = gN τ Φ t ^ 2 := rfl
 
 lemma ext_rhoHat {Φ : Cfg n → ℝ} {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
-    SturmLiouville.ext (rhoHat τ Φ) t = gN τ Φ t ^ 2 := by
-  simp [SturmLiouville.ext, projIcc_of_mem _ ht, rhoHat_apply]
+    SturmLiouville.iccExt (rhoHat τ Φ) t = gN τ Φ t ^ 2 := by
+  simp [SturmLiouville.iccExt, projIcc_of_mem _ ht, rhoHat_apply]
 
 lemma ae_ext_rhoHat {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) :
-    ∀ᵐ t ∂μ1, SturmLiouville.ext (rhoHat τ Φ) t = rhoN Φ t := by
+    ∀ᵐ t ∂vol01, SturmLiouville.iccExt (rhoHat τ Φ) t = rhoN Φ t := by
   filter_upwards [(gN_spec h).2.1, ae_restrict_mem measurableSet_Ioo] with t h1 ht
   rw [ext_rhoHat (Ioo_subset_Icc_self ht), h1]
 
 /-- `ρ̂_Φ` has the integrals of the density. -/
-lemma rhoHat_spec {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) (v : Pot) :
-    ∫ t, SturmLiouville.ext v t * SturmLiouville.ext (rhoHat τ Φ) t ∂μ1 = ∫ t, SturmLiouville.ext v t * rhoN Φ t ∂μ1 :=
+lemma rhoHat_spec {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) (v : C01) :
+    ∫ t, SturmLiouville.iccExt v t * SturmLiouville.iccExt (rhoHat τ Φ) t ∂vol01 = ∫ t, SturmLiouville.iccExt v t * rhoN Φ t ∂vol01 :=
   integral_congr_ae ((ae_ext_rhoHat h).mono fun t ht => by simp only [ht])
 
 /-- `ρ̂_Φ` is the only continuous function with the integrals of the density. -/
-lemma rhoHat_unique {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) {p : Pot}
-    (hp : ∀ v : Pot, ∫ t, SturmLiouville.ext v t * SturmLiouville.ext p t ∂μ1 = ∫ t, SturmLiouville.ext v t * rhoN Φ t ∂μ1) :
+lemma rhoHat_unique {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) {p : C01}
+    (hp : ∀ v : C01, ∫ t, SturmLiouville.iccExt v t * SturmLiouville.iccExt p t ∂vol01 = ∫ t, SturmLiouville.iccExt v t * rhoN Φ t ∂vol01) :
     rhoHat τ Φ = p :=
   pot_eq_of_integral fun v => by rw [rhoHat_spec h, hp]
 
 lemma integral_gN_sq {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) :
-    ∫ t, gN τ Φ t ^ 2 ∂μ1 = (n + 1) * ∫ x, Φ x ^ 2 ∂μN n := by
+    ∫ t, gN τ Φ t ^ 2 ∂vol01 = (n + 1) * ∫ x, Φ x ^ 2 ∂μN n := by
   rw [← integral_rhoN h.1]
   exact integral_congr_ae (gN_spec h).2.1
 
@@ -115,7 +115,7 @@ def IsGSN (w : Cfg n → ℝ) (ν : PotM) (Φ : Cfg n → ℝ) : Prop :=
     ∀ Ψ ∈ DomW τ n, ∫ x, Ψ x ^ 2 ∂μN n = 1 → QMN τ w ν Φ ≤ QMN τ w ν Ψ
 
 /-- `ρ` is the density of an `N`-particle ground state of a measure potential `μ₊ - μ₋`. -/
-def VRepMeasN (n : ℕ) (w : Cfg n → ℝ) (ρ : Pot) : Prop :=
+def VRepMeasN (n : ℕ) (w : Cfg n → ℝ) (ρ : C01) : Prop :=
   ∃ (μp μm : Measure ℝ) (_ : IsMeas01 μp) (_ : IsMeas01 μm) (Φ : Cfg n → ℝ),
     IsGSN τ w (nuOf μp μm) Φ ∧ rhoHat τ Φ = ρ
 

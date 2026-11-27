@@ -31,25 +31,25 @@ variable {n : ℕ} {τ : Stat}
 lemma sq_sub_le_two (a b c : ℝ) : (a - c) ^ 2 ≤ 2 * (a - b) ^ 2 + 2 * (b - c) ^ 2 := by
   nlinarith [sq_nonneg (a - 2 * b + c)]
 
-lemma H1N.memLp {g : ℝ → ℝ} (hg : H1N g) : MemLp g 2 μ1 :=
+lemma H1N.memLp {g : ℝ → ℝ} (hg : H1N g) : MemLp g 2 vol01 :=
   (memLp_two_iff_integrable_sq (H10.aesm_of_contOn hg.continuousOn)).2 hg.int_sq
 
 /-- **Closure**: `L²` limits of functions bounded in `H¹(0, 1)` are in `H¹(0, 1)`. -/
 theorem h1N_closure {u : ℕ → ℝ → ℝ} (hu : ∀ j, H1N (u j)) {C : ℝ} (hC : ∀ j, kinM (u j) ≤ C)
-    {f : ℝ → ℝ} (hf : MemLp f 2 μ1)
-    (hL2 : Tendsto (fun j => ∫ t, (u j t - f t) ^ 2 ∂μ1) atTop (𝓝 0)) :
-    ∃ g : ℝ → ℝ, H1N g ∧ g =ᵐ[μ1] f ∧ kinM g ≤ C := by
+    {f : ℝ → ℝ} (hf : MemLp f 2 vol01)
+    (hL2 : Tendsto (fun j => ∫ t, (u j t - f t) ^ 2 ∂vol01) atTop (𝓝 0)) :
+    ∃ g : ℝ → ℝ, H1N g ∧ g =ᵐ[vol01] f ∧ kinM g ≤ C := by
   have hC0 : 0 ≤ C := (integral_nonneg fun _ => sq_nonneg _).trans (hC 0)
   obtain ⟨B, hB⟩ := hL2.bddAbove_range
-  have hB' : ∀ j, ∫ t, (u j t - f t) ^ 2 ∂μ1 ≤ B := fun j => hB ⟨j, rfl⟩
-  have if2 : Integrable (fun t => f t ^ 2) μ1 := 
+  have hB' : ∀ j, ∫ t, (u j t - f t) ^ 2 ∂vol01 ≤ B := fun j => hB ⟨j, rfl⟩
+  have if2 : Integrable (fun t => f t ^ 2) vol01 := 
     (memLp_two_iff_integrable_sq hf.aestronglyMeasurable).1 hf
-  have iD : ∀ j, Integrable (fun t => (u j t - f t) ^ 2) μ1 := fun j =>
+  have iD : ∀ j, Integrable (fun t => (u j t - f t) ^ 2) vol01 := fun j =>
     (memLp_two_iff_integrable_sq ((hu j).memLp.sub hf).aestronglyMeasurable).1
       ((hu j).memLp.sub hf)
-  set F := ∫ t, f t ^ 2 ∂μ1
-  have hnorm : ∀ j, ∫ t, u j t ^ 2 ∂μ1 ≤ 2 * B + 2 * F := fun j => by
-    have h1 : ∫ t, u j t ^ 2 ∂μ1 ≤ ∫ t, (2 * (u j t - f t) ^ 2 + 2 * f t ^ 2) ∂μ1 :=
+  set F := ∫ t, f t ^ 2 ∂vol01
+  have hnorm : ∀ j, ∫ t, u j t ^ 2 ∂vol01 ≤ 2 * B + 2 * F := fun j => by
+    have h1 : ∫ t, u j t ^ 2 ∂vol01 ≤ ∫ t, (2 * (u j t - f t) ^ 2 + 2 * f t ^ 2) ∂vol01 :=
       integral_mono (hu j).int_sq (((iD j).const_mul 2).add (if2.const_mul 2)) fun t => by
         nlinarith [sq_nonneg (u j t - 2 * f t)]
     rw [integral_add ((iD j).const_mul 2) (if2.const_mul 2), integral_const_mul,
@@ -80,14 +80,14 @@ theorem h1N_closure {u : ℕ → ℝ → ℝ} (hu : ∀ j, H1N (u j)) {C : ℝ} 
     exact ((ContinuousMap.continuous_const').tendsto _ |>.comp hfst).add
       (tendsto_primP (fun k => hR _) hw)
   -- the limit is `f`
-  have hlim0 : ∫ t, (fnE e₀ t - f t) ^ 2 ∂μ1 ≤ 0 := by
-    have i0 : Integrable (fun t => (fnE e₀ t - f t) ^ 2) μ1 :=
+  have hlim0 : ∫ t, (fnE e₀ t - f t) ^ 2 ∂vol01 ≤ 0 := by
+    have i0 : Integrable (fun t => (fnE e₀ t - f t) ^ 2) vol01 :=
       (memLp_two_iff_integrable_sq ((h1N_fnE e₀).memLp.sub hf).aestronglyMeasurable).1
         ((h1N_fnE e₀).memLp.sub hf)
-    have hbd : ∀ k, ∫ t, (fnE e₀ t - f t) ^ 2 ∂μ1 ≤
-        2 * ‖evE e₀ - evE (e (φ k))‖ ^ 2 + 2 * ∫ t, (u (φ k) t - f t) ^ 2 ∂μ1 := fun k => by
-      have h1 : ∫ t, (fnE e₀ t - f t) ^ 2 ∂μ1 ≤
-          ∫ t, (2 * ‖evE e₀ - evE (e (φ k))‖ ^ 2 + 2 * (u (φ k) t - f t) ^ 2) ∂μ1 := by
+    have hbd : ∀ k, ∫ t, (fnE e₀ t - f t) ^ 2 ∂vol01 ≤
+        2 * ‖evE e₀ - evE (e (φ k))‖ ^ 2 + 2 * ∫ t, (u (φ k) t - f t) ^ 2 ∂vol01 := fun k => by
+      have h1 : ∫ t, (fnE e₀ t - f t) ^ 2 ∂vol01 ≤
+          ∫ t, (2 * ‖evE e₀ - evE (e (φ k))‖ ^ 2 + 2 * (u (φ k) t - f t) ^ 2) ∂vol01 := by
         refine integral_mono_ae i0 ((integrable_const _).add ((iD _).const_mul 2)) ?_
         filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
         have htI := Ioo_subset_Icc_self ht
@@ -103,18 +103,18 @@ theorem h1N_closure {u : ℕ → ℝ → ℝ} (hu : ∀ j, H1N (u j)) {C : ℝ} 
       rw [integral_add (integrable_const _) ((iD _).const_mul 2), integral_const_mul] at h1
       simpa [integral_const_mul] using h1
     have hz : Tendsto (fun k => 2 * ‖evE e₀ - evE (e (φ k))‖ ^ 2 +
-        2 * ∫ t, (u (φ k) t - f t) ^ 2 ∂μ1) atTop (𝓝 0) := by
+        2 * ∫ t, (u (φ k) t - f t) ^ 2 ∂vol01) atTop (𝓝 0) := by
       have h1 : Tendsto (fun k => ‖evE e₀ - evE (e (φ k))‖) atTop (𝓝 0) := by
         have := tendsto_iff_norm_sub_tendsto_zero.1 hP
         simpa [norm_sub_rev] using this
       have := ((h1.pow 2).const_mul 2).add ((hL2.comp hφ.tendsto_atTop).const_mul 2)
       simpa using this
     exact le_of_tendsto_of_tendsto' tendsto_const_nhds hz hbd
-  have hae : fnE e₀ =ᵐ[μ1] f := by
-    have i0 : Integrable (fun t => (fnE e₀ t - f t) ^ 2) μ1 :=
+  have hae : fnE e₀ =ᵐ[vol01] f := by
+    have i0 : Integrable (fun t => (fnE e₀ t - f t) ^ 2) vol01 :=
       (memLp_two_iff_integrable_sq ((h1N_fnE e₀).memLp.sub hf).aestronglyMeasurable).1
         ((h1N_fnE e₀).memLp.sub hf)
-    have h0 : ∫ t, (fnE e₀ t - f t) ^ 2 ∂μ1 = 0 :=
+    have h0 : ∫ t, (fnE e₀ t - f t) ^ 2 ∂vol01 = 0 :=
       le_antisymm hlim0 (integral_nonneg fun _ => sq_nonneg _)
     have := (integral_eq_zero_iff_of_nonneg (fun t => sq_nonneg _) i0).1 h0
     filter_upwards [this] with t ht
@@ -296,7 +296,7 @@ theorem kin_truncC_le {s : Sine.SymT n} {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomNS
 /-- **`√ρ ∈ H¹` with Neumann walls**: for every `H¹` state `Φ`, `√ρ_Φ` has a representative
 `g ∈ H¹(0, 1)` with `∫ g'² ≤ T(Φ)`. -/
 theorem sqrt_dens_H1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) :
-    ∃ g : ℝ → ℝ, H1N g ∧ (∀ᵐ t ∂μ1, g t ^ 2 = rhoN Φ t) ∧ kinM g ≤ kinN Φ := by
+    ∃ g : ℝ → ℝ, H1N g ∧ (∀ᵐ t ∂vol01, g t ^ 2 = rhoN Φ t) ∧ kinM g ≤ kinN Φ := by
   set ε : ℕ → ℝ := fun M => 1 / ((M : ℝ) + 1)
   have hε : ∀ M, 0 < ε M := fun M => by positivity
   have hP : ∀ M, truncC M Φ ∈ DomC τ n := truncC_mem hΦ
@@ -306,25 +306,25 @@ theorem sqrt_dens_H1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) :
     integrable_of_continuous (((hu M).continuous_deriv le_rfl).pow 2)⟩
   have hρm := integrable_marg hΦ.1
   have hρ0 : ∀ t, 0 ≤ rhoN Φ t := fun t => mul_nonneg (by positivity) (marg_nonneg t)
-  have hint : Integrable (rhoN Φ) μ1 := hρm.const_mul _
-  have hfm : MemLp (fun t => √(rhoN Φ t)) 2 μ1 := by
-    have hm : AEStronglyMeasurable (fun t => √(rhoN Φ t)) μ1 :=
+  have hint : Integrable (rhoN Φ) vol01 := hρm.const_mul _
+  have hfm : MemLp (fun t => √(rhoN Φ t)) 2 vol01 := by
+    have hm : AEStronglyMeasurable (fun t => √(rhoN Φ t)) vol01 :=
       (continuous_sqrt.comp_aestronglyMeasurable hint.1)
     refine (memLp_two_iff_integrable_sq hm).2 (hint.congr (ae_of_all _ fun t => ?_))
     simp [Real.sq_sqrt (hρ0 t)]
   have hC : ∀ M, kinM (u M) ≤ kinN Φ := fun M =>
     (integral_deriv_ureg_le (hP M) (hε M)).trans (kin_truncC_le hΦ M)
-  have hL1 : Tendsto (fun M => ∫ t, |rhoN (truncC M Φ) t - rhoN Φ t| ∂μ1) atTop (𝓝 0) := by
+  have hL1 : Tendsto (fun M => ∫ t, |rhoN (truncC M Φ) t - rhoN Φ t| ∂vol01) atTop (𝓝 0) := by
     have h := (tendsto_abs_sq_of_L2 (fun M => memLp_cont (continuous_truncC M Φ)) hΦ.1
       (tendsto_truncC hΦ.1)).const_mul ((n : ℝ) + 1)
     rw [mul_zero] at h
     exact squeeze_zero (fun M => integral_nonneg fun t => abs_nonneg _)
       (fun M => integral_abs_rhoN_sub (memLp_cont (continuous_truncC M Φ)) hΦ.1) h
-  have hbound : ∀ M, ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂μ1 ≤
-      2 * ∫ t, |rhoN (truncC M Φ) t - rhoN Φ t| ∂μ1 + 4 * ε M := by
+  have hbound : ∀ M, ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂vol01 ≤
+      2 * ∫ t, |rhoN (truncC M Φ) t - rhoN Φ t| ∂vol01 + 4 * ε M := by
     intro M
     have hρP : ∀ t, 0 ≤ rhoN (truncC M Φ) t := (rho_propsC (hP M)).1
-    have iL : Integrable (fun t => |rhoN (truncC M Φ) t - rhoN Φ t|) μ1 :=
+    have iL : Integrable (fun t => |rhoN (truncC M Φ) t - rhoN Φ t|) vol01 :=
       ((integrable_marg (memLp_cont (continuous_truncC M Φ))).const_mul _ |>.sub hint).abs
     have hpt : ∀ t, (u M t - √(rhoN Φ t)) ^ 2 ≤
         2 * |rhoN (truncC M Φ) t - rhoN Φ t| + 4 * ε M := by
@@ -339,15 +339,15 @@ theorem sqrt_dens_H1N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) :
       have hc := Real.sq_sqrt (hε M).le
       simp only [u]
       nlinarith [sq_nonneg (√(rhoN (truncC M Φ) t + ε M) - √(rhoN Φ t) + √(ε M))]
-    calc ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂μ1
-        ≤ ∫ t, (2 * |rhoN (truncC M Φ) t - rhoN Φ t| + 4 * ε M) ∂μ1 :=
+    calc ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂vol01
+        ≤ ∫ t, (2 * |rhoN (truncC M Φ) t - rhoN Φ t| + 4 * ε M) ∂vol01 :=
           integral_mono_of_nonneg (ae_of_all _ fun t => sq_nonneg _)
             ((iL.const_mul 2).add (integrable_const _)) (ae_of_all _ hpt)
       _ = _ := by
           rw [integral_add (iL.const_mul 2) (integrable_const _), integral_const_mul,
             integral_const]
           simp
-  have hsq : Tendsto (fun M => ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂μ1) atTop (𝓝 0) := by
+  have hsq : Tendsto (fun M => ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂vol01) atTop (𝓝 0) := by
     have hε0 : Tendsto ε atTop (𝓝 0) := tendsto_one_div_add_atTop_nhds_zero_nat
     have := (hL1.const_mul 2).add (hε0.const_mul 4)
     simp only [mul_zero, add_zero] at this

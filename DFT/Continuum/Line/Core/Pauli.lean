@@ -33,7 +33,7 @@ variable {n : ℕ}
 
 /-- The average of `H` over coordinate `k`: `∫₀¹ H(x with xₖ = t) dt`. -/
 noncomputable def avgK (k : Fin (n + 1)) (H : Cfg n → ℝ) (x : Cfg n) : ℝ :=
-  ∫ t, H (Function.update x k t) ∂μ1
+  ∫ t, H (Function.update x k t) ∂vol01
 
 lemma continuous_avgK (k : Fin (n + 1)) {H : Cfg n → ℝ} (hH : Continuous H) :
     Continuous (avgK k H) := by
@@ -47,7 +47,7 @@ lemma avgK_update (k : Fin (n + 1)) (H : Cfg n → ℝ) (x : Cfg n) (s : ℝ) :
     avgK k H (Function.update x k s) = avgK k H x := by
   simp only [avgK, Function.update_idem]
 
-lemma mu1_real_univ : μ1.real univ = 1 := by
+lemma mu1_real_univ : vol01.real univ = 1 := by
   simp [measureReal_def, Measure.restrict_apply MeasurableSet.univ]
 
 /-- **Averaging over a coordinate does not change the integral.** -/
@@ -55,16 +55,16 @@ lemma integral_avgK (k : Fin (n + 1)) {H : Cfg n → ℝ} (hH : Continuous H) :
     ∫ x, avgK k H x ∂μN n = ∫ x, H x ∂μN n := by
   rw [integral_cube_insertNth (continuous_avgK k hH) k, integral_cube_insertNth hH k]
   refine setIntegral_congr_fun (MeasurableSet.univ_pi fun _ => measurableSet_Ioo) fun y _ => ?_
-  have e : ∀ s, avgK k H (Fin.insertNth k s y) = ∫ t, H (Fin.insertNth k t y) ∂μ1 := fun s => by
+  have e : ∀ s, avgK k H (Fin.insertNth k s y) = ∫ t, H (Fin.insertNth k t y) ∂vol01 := fun s => by
     simp only [avgK, Fin.update_insertNth]
   simp only [e]
-  change ∫ _ , (∫ t, H (Fin.insertNth k t y) ∂μ1) ∂μ1 = _
+  change ∫ _ , (∫ t, H (Fin.insertNth k t y) ∂vol01) ∂vol01 = _
   rw [integral_const, mu1_real_univ, one_smul]
 
 /-! ### Integrability -/
 
 lemma integrable_prod_mu1 {F : ℝ → ℝ → ℝ} (hF : Continuous (Function.uncurry F)) :
-    Integrable (Function.uncurry F) (μ1.prod μ1) := by
+    Integrable (Function.uncurry F) (vol01.prod vol01) := by
   rw [Measure.prod_restrict, ← Measure.volume_eq_prod]
   exact ((hF.continuousOn.integrableOn_compact (isCompact_Icc.prod isCompact_Icc)).mono_set
     (prod_mono Ioo_subset_Icc_self Ioo_subset_Icc_self))
@@ -80,7 +80,7 @@ noncomputable def gK (Φ : Cfg n → ℝ) (f : ℝ → ℝ) (k : Fin (n + 1)) : 
   avgK k fun z => f (z k) * Φ z
 
 lemma gK_apply (k : Fin (n + 1)) (x : Cfg n) :
-    gK Φ f k x = ∫ t, f t * Φ (Function.update x k t) ∂μ1 := by
+    gK Φ f k x = ∫ t, f t * Φ (Function.update x k t) ∂vol01 := by
   simp only [gK, avgK, Function.update_self]
 
 include hΦ hf
@@ -109,7 +109,7 @@ lemma inner_pK (k : Fin (n + 1)) :
   rw [gK_apply k x, ← integral_mul_const]
   congr 1; funext t; ring
 
-lemma pK_pK_self (hf1 : ∫ t, f t * f t ∂μ1 = 1) (k : Fin (n + 1)) :
+lemma pK_pK_self (hf1 : ∫ t, f t * f t ∂vol01 = 1) (k : Fin (n + 1)) :
     ∫ x, pK Φ f k x * pK Φ f k x ∂μN n = ∫ x, gK Φ f k x * gK Φ f k x ∂μN n := by
   rw [← integral_avgK k (H := fun x => pK Φ f k x * pK Φ f k x)
     ((continuous_pK hΦ hf k).mul (continuous_pK hΦ hf k))]
@@ -121,7 +121,7 @@ lemma pK_pK_self (hf1 : ∫ t, f t * f t ∂μ1 = 1) (k : Fin (n + 1)) :
 
 /-- The double projection on particles `k ≠ l` vanishes (antisymmetry). -/
 lemma double_zero {k l : Fin (n + 1)} (hkl : k ≠ l) (x : Cfg n) :
-    ∫ t, f t * gK Φ f l (Function.update x k t) ∂μ1 = 0 := by
+    ∫ t, f t * gK Φ f l (Function.update x k t) ∂vol01 = 0 := by
   set u : ℝ → ℝ → Cfg n := fun t s => Function.update (Function.update x k t) l s
   set F : ℝ → ℝ → ℝ := fun t s => f t * f s * Φ (u t s)
   have hu : Continuous (Function.uncurry u) := by
@@ -147,12 +147,12 @@ lemma double_zero {k l : Fin (n + 1)} (hkl : k ≠ l) (x : Cfg n) :
     have h := anti hΦ (Equiv.swap k l) (u s t)
     rw [hpm, sgn_swap hkl] at h
     simp only [F, h]; ring
-  have hJ : ∫ t, f t * gK Φ f l (Function.update x k t) ∂μ1 = ∫ t, ∫ s, F t s ∂μ1 ∂μ1 := by
+  have hJ : ∫ t, f t * gK Φ f l (Function.update x k t) ∂vol01 = ∫ t, ∫ s, F t s ∂vol01 ∂vol01 := by
     refine integral_congr_ae (ae_of_all _ fun t => ?_)
     simp only [gK_apply, ← integral_const_mul, F, u]
     congr 1; funext s; ring
   have hsw := integral_integral_swap (integrable_prod_mu1 hFc)
-  have hneg : ∫ s, ∫ t, F t s ∂μ1 ∂μ1 = -∫ t, ∫ s, F t s ∂μ1 ∂μ1 := by
+  have hneg : ∫ s, ∫ t, F t s ∂vol01 ∂vol01 = -∫ t, ∫ s, F t s ∂vol01 ∂vol01 := by
     rw [← integral_neg]
     refine integral_congr_ae (ae_of_all _ fun s => ?_)
     simp only
@@ -177,7 +177,7 @@ lemma pK_pK_ne {k l : Fin (n + 1)} (hkl : k ≠ l) :
 
 /-- **The Pauli principle**: an orbital is occupied at most once,
 `Σₖ ⟨Φ, Pₖ Φ⟩ ≤ ⟨Φ, Φ⟩`. -/
-theorem pauli (hf1 : ∫ t, f t * f t ∂μ1 = 1) :
+theorem pauli (hf1 : ∫ t, f t * f t ∂vol01 = 1) :
     ∑ k, ∫ x, Φ x * pK Φ f k x ∂μN n ≤ ∫ x, Φ x * Φ x ∂μN n := by
   have hc := hΦ.1.continuous
   have hP := continuous_pK hΦ hf

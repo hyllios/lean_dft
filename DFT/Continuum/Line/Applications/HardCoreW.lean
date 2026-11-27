@@ -145,7 +145,7 @@ variable {w : Cfg n → ℝ} {hw : Continuous w}
 
 variable (n w hw) in
 /-- **Hard-core bosons on `H¹₀`**, with the weak kinetic energy plus interaction `w`. -/
-noncomputable def settingHCW : Setting (μN n) Pot where
+noncomputable def settingHCW : Setting (μN n) C01 where
   D := DomHCW n
   h0 := h0W n w
   h0_add a ha b hb c hc :=
@@ -161,7 +161,7 @@ variable {Ψ Φ : Cfg n → ℝ}
 lemma ip_mulA_W : ip (μ := μN n) (mulA Ψ) (mulA Φ) = ip (μ := μN n) Ψ Φ :=
   integral_congr_ae (mulA_mul_mulA_ae Ψ Φ)
 
-lemma pf_mulA_W (v : Pot) :
+lemma pf_mulA_W (v : C01) :
     pf (settingHCW n w hw) v (mulA Ψ) (mulA Φ) = pf (settingW .fer n w hw) v Ψ Φ :=
   integral_congr_ae (by filter_upwards [mulA_mul_mulA_ae Ψ Φ] with x hx; rw [hx]; rfl)
 
@@ -179,14 +179,14 @@ lemma h0W_mulA (hΨ : Ψ ∈ DomW .fer n) (hΦ : Φ ∈ DomW .fer n) :
     linear_combination (dW k Ψ x * dW k Φ x) * h3
   · exact integral_congr_ae (by filter_upwards [mulA_mul_mulA_ae Ψ Φ] with x hx; rw [hx])
 
-lemma Q_mulA_W (hΨ : Ψ ∈ DomW .fer n) (v : Pot) :
+lemma Q_mulA_W (hΨ : Ψ ∈ DomW .fer n) (v : C01) :
     Q (settingHCW n w hw) v (mulA Ψ) = Q (settingW .fer n w hw) v Ψ := by
   change h0W n w (mulA Ψ) (mulA Ψ) + pf (settingHCW n w hw) v (mulA Ψ) (mulA Ψ) =
     h0W n w Ψ Ψ + pf (settingW .fer n w hw) v Ψ Ψ
   rw [h0W_mulA hΨ hΨ, pf_mulA_W]
 
 /-- **Ground states correspond** under the Girardeau map. -/
-theorem isGS_mulA_W_iff (hΨ : Ψ ∈ DomW .fer n) (v : Pot) :
+theorem isGS_mulA_W_iff (hΨ : Ψ ∈ DomW .fer n) (v : C01) :
     IsGS (settingHCW n w hw) v (mulA Ψ) ↔ IsGS (settingW .fer n w hw) v Ψ := by
   constructor
   · rintro ⟨-, hpos, hmin⟩
@@ -201,7 +201,7 @@ theorem isGS_mulA_W_iff (hΨ : Ψ ∈ DomW .fer n) (v : Pot) :
     exact hmin χ hχ
 
 /-- The ground-state energies of hard-core bosons and fermions agree. -/
-theorem gsE_hcW (v : Pot) : gsE (settingHCW n w hw) v = gsE (settingW .fer n w hw) v := by
+theorem gsE_hcW (v : C01) : gsE (settingHCW n w hw) v = gsE (settingW .fer n w hw) v := by
   refine le_antisymm (le_iInf₂ fun ψ hψ => ?_) (le_iInf₂ fun Φ hΦ => ?_)
   · rw [← Q_mulA_W hψ.1]
     exact iInf₂_le _ ⟨⟨ψ, hψ.1, rfl⟩, by rw [ip_mulA_W]; exact hψ.2⟩
@@ -210,7 +210,7 @@ theorem gsE_hcW (v : Pot) : gsE (settingHCW n w hw) v = gsE (settingW .fer n w h
     exact iInf₂_le _ ⟨hχ, by rw [← ip_mulA_W]; exact hΦ.2⟩
 
 /-- **The Lieb functionals of hard-core bosons and of fermions coincide** on `H¹₀`. -/
-theorem liebF_hcW (ρ : Pot → ℝ) :
+theorem liebF_hcW (ρ : C01 → ℝ) :
     liebF (settingHCW n w hw) ρ = liebF (settingW .fer n w hw) ρ := by
   simp only [liebF, gsE_hcW]
 
@@ -220,7 +220,7 @@ end setting
 
 section theorems
 
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
+variable {w : Cfg n → ℝ} {hw : Continuous w} {v : C01}
 
 /-- **Hard-core ground states are nonzero almost everywhere.** -/
 theorem gs_ne_zero_hcW {Φ : Cfg n → ℝ} (hΦ : IsGS (settingHCW n w hw) v Φ) :
@@ -231,7 +231,7 @@ theorem gs_ne_zero_hcW {Φ : Cfg n → ℝ} (hΦ : IsGS (settingHCW n w hw) v Φ
   exact mul_ne_zero (fun h => by have := gA_mul_self h2; rw [h, zero_mul] at this; simp at this) h1
 
 /-- **Existence and uniqueness of the hard-core ground state on `H¹₀`**, continuous `v` and `w`. -/
-theorem exists_unique_gs_hcW (hw : Continuous w) (v : Pot) :
+theorem exists_unique_gs_hcW (hw : Continuous w) (v : C01) :
     ∃ Φ, IsGS (settingHCW n w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 ∧
       ∀ Ψ, IsGS (settingHCW n w hw) v Ψ → ∃ c : ℝ, Ψ =ᵐ[μN n] c • Φ := by
   obtain ⟨χ, hχ, h1, huniq⟩ := exists_unique_gs_W_cont (τ := .fer) hw v
@@ -243,7 +243,7 @@ theorem exists_unique_gs_hcW (hw : Continuous w) (v : Pot) :
   simp only [mulA_apply, hx, Pi.smul_apply, smul_eq_mul]; ring
 
 /-- **Hohenberg–Kohn for hard-core bosons on `H¹₀`**, continuous `v` and `w`. -/
-theorem hk_hardcore_W {v' : Pot} {Φ Φ' : Cfg n → ℝ} (hΦ : IsGS (settingHCW n w hw) v Φ)
+theorem hk_hardcore_W {v' : C01} {Φ Φ' : Cfg n → ℝ} (hΦ : IsGS (settingHCW n w hw) v Φ)
     (hΦ' : IsGS (settingHCW n w hw) v' Φ') (hn : ip (μ := μN n) Φ Φ = ip (μ := μN n) Φ' Φ')
     (hd : dens (settingHCW n w hw) Φ = dens (settingHCW n w hw) Φ') :
     ∃ k : ℝ, v - v' = k • one := by
@@ -259,9 +259,9 @@ state it equals `⟨ψ, (T + W) ψ⟩`, `-v` is a subgradient, and it is the onl
 theorem lieb_hardcore_W_of {ψ : Cfg n → ℝ} (hψ : IsNGS (settingHCW n w hw) v ψ) :
     liebF (settingHCW n w hw) (dens (settingHCW n w hw) ψ) =
         (((settingHCW n w hw).h0 ψ ψ : ℝ) : EReal) ∧
-      (∀ ρ : Pot → ℝ, (((settingHCW n w hw).h0 ψ ψ + dens (settingHCW n w hw) ψ v - ρ v : ℝ) :
+      (∀ ρ : C01 → ℝ, (((settingHCW n w hw).h0 ψ ψ + dens (settingHCW n w hw) ψ v - ρ v : ℝ) :
         EReal) ≤ liebF (settingHCW n w hw) ρ) ∧
-      ∀ v' : Pot, (∀ ρ : Pot → ℝ,
+      ∀ v' : C01, (∀ ρ : C01 → ℝ,
         (((settingHCW n w hw).h0 ψ ψ + dens (settingHCW n w hw) ψ v' - ρ v' : ℝ) : EReal) ≤
           liebF (settingHCW n w hw) ρ) → ∃ k : ℝ, v - v' = k • one := by
   refine ⟨liebF_of_isNGS hψ, subgrad_of_isNGS hψ, fun v' hsub => ?_⟩

@@ -29,10 +29,10 @@ def IsMixture (ρ : Fin M → ℝ) (μ : Conf M N → ℝ) : Prop :=
 /-- Number of fractional sites. -/
 noncomputable def nfrac (ρ : Fin M → ℝ) : ℕ := (Finset.univ.filter fun i => 0 < ρ i ∧ ρ i < 1).card
 
-lemma mixture_combo {ρ1 ρ2 : Fin M → ℝ} {μ1 μ2 : Conf M N → ℝ} (h1 : IsMixture ρ1 μ1)
+lemma mixture_combo {ρ1 ρ2 : Fin M → ℝ} {vol01 μ2 : Conf M N → ℝ} (h1 : IsMixture ρ1 vol01)
     (h2 : IsMixture ρ2 μ2)
     {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) :
-    IsMixture (fun i => θ * ρ1 i + (1 - θ) * ρ2 i) (fun s => θ * μ1 s + (1 - θ) * μ2 s) := by
+    IsMixture (fun i => θ * ρ1 i + (1 - θ) * ρ2 i) (fun s => θ * vol01 s + (1 - θ) * μ2 s) := by
   obtain ⟨p1, s1, e1⟩ := h1; obtain ⟨p2, s2, e2⟩ := h2
   refine ⟨fun s => by nlinarith [p1 s, p2 s], ?_, ?_⟩
   · rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, s1, s2]; ring

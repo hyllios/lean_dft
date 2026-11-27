@@ -219,7 +219,7 @@ noncomputable def h0W (n : ℕ) (w : Cfg n → ℝ) (ψ φ : Cfg n → ℝ) : �
 
 /-- `N` particles with exchange symmetry `s` on a line, with all finite-kinetic-energy states. -/
 noncomputable def settingWS (s : Sine.SymT n) (w : Cfg n → ℝ) (hw : Continuous w) :
-    Setting (μN n) Pot where
+    Setting (μN n) C01 where
   D := DomWS s
   h0 := h0W n w
   h0_add a ha b hb c hc := by
@@ -261,7 +261,7 @@ noncomputable def settingWS (s : Sine.SymT n) (w : Cfg n → ℝ) (hw : Continuo
 
 /-- `N` particles of statistics `τ` on a line, with all finite-kinetic-energy states. -/
 noncomputable abbrev settingW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) :
-    Setting (μN n) Pot :=
+    Setting (μN n) C01 :=
   settingWS (n := n) τ.toSym w hw
 
 /-! ### Fubini, splitting off particle `k` -/
@@ -354,7 +354,7 @@ theorem h0W_eq {w : Cfg n → ℝ} {Φ Ψ : Cfg n → ℝ} (hΦ : Φ ∈ Dom τ 
   rw [h1, h2]
 
 /-- The Lieb functional over all `H¹₀` states is at most the one over `C²` states. -/
-theorem liebF_W_le {w : Cfg n → ℝ} {hw : Continuous w} (ρ : Pot → ℝ) :
+theorem liebF_W_le {w : Cfg n → ℝ} {hw : Continuous w} (ρ : C01 → ℝ) :
     liebF (settingW τ n w hw) ρ ≤ liebF (setting τ n w hw) ρ := by
   refine iSup_mono fun v => EReal.sub_le_sub ?_ le_rfl
   refine le_iInf₂ fun ψ hψ => ?_

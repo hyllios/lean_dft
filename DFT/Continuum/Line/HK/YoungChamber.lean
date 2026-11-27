@@ -31,7 +31,7 @@ variable {n : ℕ} {a : ℕ}
 
 /-- **Ground states of mixed symmetry `(a, N - a)` exist in `H¹₀`** for every continuous `v` and
 continuous `w`. -/
-theorem exists_isNGS_WY_cont (a : ℕ) {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
+theorem exists_isNGS_WY_cont (a : ℕ) {w : Cfg n → ℝ} (hw : Continuous w) (v : C01) :
     ∃ Φ, IsNGS (settingWS (ymix a) w hw) v Φ :=
   exists_isNGS_WS_cont (exists_adm_ymix a) hw v
 

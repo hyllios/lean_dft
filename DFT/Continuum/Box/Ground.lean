@@ -36,33 +36,33 @@ namespace DFT.Continuum.Box
 open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The coefficient `v - E`. -/
-noncomputable def Wof (v : Pot) (E : ℝ) : ℝ → ℝ := fun x => ext v x - E
+noncomputable def Wof (v : C01) (E : ℝ) : ℝ → ℝ := fun x => iccExt v x - E
 
-lemma continuous_Wof (v : Pot) (E : ℝ) : Continuous (Wof v E) :=
-  (continuous_ext v).sub continuous_const
+lemma continuous_Wof (v : C01) (E : ℝ) : Continuous (Wof v E) :=
+  (continuous_iccExt v).sub continuous_const
 
 /-- The shooting solution `ψ_E` (with `ψ_E(0) = 0`, `ψ_E'(0) = 1`) as a pair `(ψ_E, ψ_E')`. -/
-noncomputable def sol (v : Pot) (E : ℝ) : ℝ → ℝ × ℝ :=
+noncomputable def sol (v : C01) (E : ℝ) : ℝ → ℝ × ℝ :=
   Classical.choose (exists_sol (continuous_Wof v E))
 
-lemma sol_zero (v : Pot) (E : ℝ) : sol v E 0 = (0, 1) :=
+lemma sol_zero (v : C01) (E : ℝ) : sol v E 0 = (0, 1) :=
   (Classical.choose_spec (exists_sol (continuous_Wof v E))).1
 
-lemma sol_deriv (v : Pot) (E : ℝ) :
+lemma sol_deriv (v : C01) (E : ℝ) :
     ∀ t ∈ Ioo (-1 : ℝ) 2, HasDerivAt (sol v E) (field (Wof v E) t (sol v E t)) t :=
   (Classical.choose_spec (exists_sol (continuous_Wof v E))).2
 
-lemma abs_ext_le (v : Pot) (x : ℝ) : |ext v x| ≤ ‖v‖ := by
+lemma abs_ext_le (v : C01) (x : ℝ) : |iccExt v x| ≤ ‖v‖ := by
   have := v.norm_coe_le_norm (projIcc 0 1 zero_le_one x)
-  simpa [SturmLiouville.ext, Real.norm_eq_abs] using this
+  simpa [SturmLiouville.iccExt, Real.norm_eq_abs] using this
 
 lemma Icc01_sub : Icc (0 : ℝ) 1 ⊆ Ioo (-1) 2 := fun t ht => ⟨by linarith [ht.1], by linarith [ht.2]⟩
 
-lemma continuousOn_sol (v : Pot) (E : ℝ) : ContinuousOn (sol v E) (Icc 0 1) :=
+lemma continuousOn_sol (v : C01) (E : ℝ) : ContinuousOn (sol v E) (Icc 0 1) :=
   fun t ht => (sol_deriv v E t (Icc01_sub ht)).continuousAt.continuousWithinAt
 
 /-- Uniform continuity of the shooting solution in `E`. -/
-lemma sol_close (v : Pot) (E : ℝ) : ∃ C : ℝ, 0 ≤ C ∧ ∀ E', |E' - E| ≤ 1 →
+lemma sol_close (v : C01) (E : ℝ) : ∃ C : ℝ, 0 ≤ C ∧ ∀ E', |E' - E| ≤ 1 →
     ∀ t ∈ Icc (0 : ℝ) 1, ‖sol v E' t - sol v E t‖ ≤ C * |E' - E| := by
   obtain ⟨M, hM⟩ := isCompact_Icc.exists_bound_of_continuousOn (continuousOn_sol v E)
   set K := 1 + (‖v‖ + |E| + 1)
@@ -75,11 +75,11 @@ lemma sol_close (v : Pot) (E : ℝ) : ∃ C : ℝ, 0 ≤ C ∧ ∀ E', |E' - E| 
     have h1 := abs_ext_le v s
     have h2 : |E'| ≤ |E| + 1 := by
       have := abs_sub_abs_le_abs_sub E' E; linarith
-    calc |Wof v E' s| = |ext v s - E'| := rfl
-      _ ≤ |ext v s| + |E'| := abs_sub _ _
+    calc |Wof v E' s| = |iccExt v s - E'| := rfl
+      _ ≤ |iccExt v s| + |E'| := abs_sub _ _
       _ ≤ _ := by linarith
   have hε : ∀ s ∈ Icc (0 : ℝ) 1, |Wof v E' s - Wof v E s| ≤ |E' - E| := by
-    intro s _; simp only [Wof]; rw [show ext v s - E' - (ext v s - E) = -(E' - E) by ring, abs_neg]
+    intro s _; simp only [Wof]; rw [show iccExt v s - E' - (iccExt v s - E) = -(E' - E) by ring, abs_neg]
   have hM' : ∀ s ∈ Icc (0 : ℝ) 1, ‖sol v E s‖ ≤ max M 0 := fun s hs =>
     (hM s hs).trans (le_max_left _ _)
   have h := sol_dist_le (by rw [sol_zero, sol_zero]) (sol_deriv v E') (sol_deriv v E) hB hM' hε t ht
@@ -99,24 +99,24 @@ lemma sol_close (v : Pot) (E : ℝ) : ∃ C : ℝ, 0 ≤ C ∧ ∀ E', |E' - E| 
     _ = max M 0 * ((Real.exp K - 1) / K) * |E' - E| := by ring
 
 /-- `E` keeps the shooting solution positive on `(0, 1]`. -/
-def Pos (v : Pot) (E : ℝ) : Prop := ∀ t ∈ Ioc (0 : ℝ) 1, 0 < (sol v E t).1
+def Pos (v : C01) (E : ℝ) : Prop := ∀ t ∈ Ioc (0 : ℝ) 1, 0 < (sol v E t).1
 
-lemma pos_low (v : Pot) : Pos v (-‖v‖) := by
+lemma pos_low (v : C01) : Pos v (-‖v‖) := by
   refine pos_of_nonneg (sol_zero v _) (sol_deriv v _) fun t _ => ?_
   have := abs_ext_le v t
-  simp only [Wof]; linarith [neg_abs_le (ext v t)]
+  simp only [Wof]; linarith [neg_abs_le (iccExt v t)]
 
-lemma not_pos_high (v : Pot) {E : ℝ} (hE : ‖v‖ + 16 ≤ E) : ¬ Pos v E := by
+lemma not_pos_high (v : C01) {E : ℝ} (hE : ‖v‖ + 16 ≤ E) : ¬ Pos v E := by
   intro hP
   obtain ⟨t, ht, h0⟩ := exists_zero_of_le (sol_zero v E) (sol_deriv v E)
-    (fun t _ => by have := abs_ext_le v t; simp only [Wof]; linarith [le_abs_self (ext v t)])
+    (fun t _ => by have := abs_ext_le v t; simp only [Wof]; linarith [le_abs_self (iccExt v t)])
   exact (hP t ⟨ht.1, ht.2.le⟩).ne' h0
 
-lemma bdd (v : Pot) : BddAbove {E | Pos v E} :=
+lemma bdd (v : C01) : BddAbove {E | Pos v E} :=
   ⟨‖v‖ + 16, fun E hE => by by_contra h; exact not_pos_high v (le_of_not_ge h) hE⟩
 
 /-- The ground-state energy found by shooting. -/
-noncomputable def Estar (v : Pot) : ℝ := sSup {E | Pos v E}
+noncomputable def Estar (v : C01) : ℝ := sSup {E | Pos v E}
 
 lemma fst_le_norm (a b : ℝ × ℝ) : |a.1 - b.1| ≤ ‖a - b‖ := by
   have := norm_fst_le (a - b); simpa [Real.norm_eq_abs] using this
@@ -124,7 +124,7 @@ lemma fst_le_norm (a b : ℝ × ℝ) : |a.1 - b.1| ≤ ‖a - b‖ := by
 lemma snd_le_norm (a b : ℝ × ℝ) : |a.2 - b.2| ≤ ‖a - b‖ := by
   have := norm_snd_le (a - b); simpa [Real.norm_eq_abs] using this
 
-lemma star_nonneg (v : Pot) : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ (sol v (Estar v) t).1 := by
+lemma star_nonneg (v : C01) : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ (sol v (Estar v) t).1 := by
   intro t ht
   obtain ⟨C, hC0, hC⟩ := sol_close v (Estar v)
   by_contra hneg
@@ -153,7 +153,7 @@ lemma star_nonneg (v : Pot) : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ (sol v (Estar v) 
 
 lemma Icc01_mem {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : t ∈ Ioo (-1 : ℝ) 2 := Icc01_sub ht
 
-lemma star_pos (v : Pot) : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < (sol v (Estar v) t).1 := by
+lemma star_pos (v : C01) : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < (sol v (Estar v) t).1 := by
   intro z hz
   rcases (star_nonneg v z ⟨hz.1.le, hz.2.le⟩).lt_or_eq with h | h
   · exact h
@@ -170,7 +170,7 @@ lemma star_pos (v : Pot) : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < (sol v (Estar v) t).1 
   rw [sol_zero] at this
   simp at this
 
-lemma star_one (v : Pot) : (sol v (Estar v) 1).1 = 0 := by
+lemma star_one (v : C01) : (sol v (Estar v) 1).1 = 0 := by
   set E := Estar v
   set α := sol v E
   rcases (star_nonneg v 1 ⟨zero_le_one, le_rfl⟩).lt_or_eq with h | h
@@ -259,7 +259,7 @@ lemma star_one (v : Pot) : (sol v (Estar v) 1).1 = 0 := by
   change E + η ≤ E at this
   linarith
 
-lemma star_d1 (v : Pot) : (sol v (Estar v) 1).2 < 0 := by
+lemma star_d1 (v : C01) : (sol v (Estar v) 1).2 < 0 := by
   set α := sol v (Estar v)
   have hder := hasDerivAt_fst_of (sol_deriv v (Estar v)) (Icc01_mem ⟨zero_le_one, le_rfl⟩)
   have hle : (α 1).2 ≤ 0 := by
@@ -280,26 +280,26 @@ lemma star_d1 (v : Pot) : (sol v (Estar v) 1).2 < 0 := by
   simp at this
 
 /-- The energy above `E`, as an integral. -/
-lemma Q_sub_eq (v : Pot) (E : ℝ) {φ : ℝ → ℝ} (hφ : φ ∈ Dom) :
-    Q setting v φ - E * ip (μ := μ1) φ φ = ∫ x, (deriv φ x ^ 2 + Wof v E x * φ x ^ 2) ∂μ1 := by
+lemma Q_sub_eq (v : C01) (E : ℝ) {φ : ℝ → ℝ} (hφ : φ ∈ Dom) :
+    Q setting v φ - E * ip (μ := vol01) φ φ = ∫ x, (deriv φ x ^ 2 + Wof v E x * φ x ^ 2) ∂vol01 := by
   have i1 := integrable_of_continuous ((cont_deriv_of_mem hφ).mul (cont_deriv_of_mem hφ))
-  have i2 := integrable_of_continuous ((continuous_ext v).mul (hφ.1.continuous.mul hφ.1.continuous))
+  have i2 := integrable_of_continuous ((continuous_iccExt v).mul (hφ.1.continuous.mul hφ.1.continuous))
   have i3 := integrable_of_continuous (hφ.1.continuous.mul hφ.1.continuous)
   have hpt : (fun x => deriv φ x ^ 2 + Wof v E x * φ x ^ 2) = fun x =>
-      (deriv φ x * deriv φ x + ext v x * (φ x * φ x)) - E * (φ x * φ x) := by
+      (deriv φ x * deriv φ x + iccExt v x * (φ x * φ x)) - E * (φ x * φ x) := by
     funext x; simp only [Wof]; ring
-  rw [hpt, integral_sub (f := fun x => deriv φ x * deriv φ x + ext v x * (φ x * φ x))
+  rw [hpt, integral_sub (f := fun x => deriv φ x * deriv φ x + iccExt v x * (φ x * φ x))
     (g := fun x => E * (φ x * φ x)) (i1.add i2) (i3.const_mul E),
-    integral_add (f := fun x => deriv φ x * deriv φ x) (g := fun x => ext v x * (φ x * φ x)) i1 i2,
+    integral_add (f := fun x => deriv φ x * deriv φ x) (g := fun x => iccExt v x * (φ x * φ x)) i1 i2,
     integral_const_mul]
   rfl
 
 /-- The ground state built by shooting, with its properties: it agrees with the shooting solution
 near `[0, 1]`, has energy `E*`, and no state has energy below `E*`. -/
-theorem gs_data (v : Pot) : ∃ ψ, ψ ∈ Dom ∧
+theorem gs_data (v : C01) : ∃ ψ, ψ ∈ Dom ∧
     (∀ x ∈ Ioo (-1 / 2 : ℝ) (3 / 2), ψ x = (sol v (Estar v) x).1) ∧
-    Q setting v ψ = Estar v * ip (μ := μ1) ψ ψ ∧ 0 < ip (μ := μ1) ψ ψ ∧
-    ∀ φ ∈ Dom, Estar v * ip (μ := μ1) φ φ ≤ Q setting v φ := by
+    Q setting v ψ = Estar v * ip (μ := vol01) ψ ψ ∧ 0 < ip (μ := vol01) ψ ψ ∧
+    ∀ φ ∈ Dom, Estar v * ip (μ := vol01) φ φ ≤ Q setting v φ := by
   set E := Estar v
   set α := sol v E
   obtain ⟨ψe, hψe, hψeq⟩ :=
@@ -315,7 +315,7 @@ theorem gs_data (v : Pot) : ∃ ψ, ψ ∈ Dom ∧
   have hψ1 : ψe 1 = 0 := by rw [hψeq 1 (hIcc 1 ⟨zero_le_one, le_rfl⟩)]; exact star_one v
   have hD : ψe ∈ Dom := ⟨hψe, hψ0, hψ1⟩
   -- no state has energy below `E`
-  have hlow : ∀ φ ∈ Dom, E * ip (μ := μ1) φ φ ≤ Q setting v φ := fun φ hφ => by
+  have hlow : ∀ φ ∈ Dom, E * ip (μ := vol01) φ φ ≤ Q setting v φ := fun φ hφ => by
     have hp := picone (continuous_Wof v E) (ψ := fun t => (α t).1) (ψ' := fun t => (α t).2)
       (fun t ht => hasDerivAt_fst_of (sol_deriv v E) ht)
       (fun t ht => hasDerivAt_snd_of (sol_deriv v E) ht)
@@ -324,9 +324,9 @@ theorem gs_data (v : Pot) : ∃ ψ, ψ ∈ Dom ∧
     linarith
   -- `ψe` has energy exactly `E`
   have hcIcc : ContinuousOn α (Icc 0 1) := continuousOn_sol v E
-  have hexact : Q setting v ψe - E * ip (μ := μ1) ψe ψe = 0 := by
+  have hexact : Q setting v ψe - E * ip (μ := vol01) ψe ψe = 0 := by
     rw [Q_sub_eq v E hD]
-    have hcongr : ∫ x, (deriv ψe x ^ 2 + Wof v E x * ψe x ^ 2) ∂μ1 =
+    have hcongr : ∫ x, (deriv ψe x ^ 2 + Wof v E x * ψe x ^ 2) ∂vol01 =
         ∫ x in (0 : ℝ)..1, ((α x).2 * (α x).2 + Wof v E x * (α x).1 * (α x).1) := by
       rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
       refine setIntegral_congr_fun measurableSet_Ioo fun x hx => ?_
@@ -356,7 +356,7 @@ theorem gs_data (v : Pot) : ∃ ψ, ψ ∈ Dom ∧
       (hu'.mul hv1).intervalIntegrable, hibp]
     simp only [zero_sub, neg_add_cancel]
   -- `ψe` is not zero
-  have hpos : 0 < ip (μ := μ1) ψe ψe := by
+  have hpos : 0 < ip (μ := vol01) ψe ψe := by
     have hint := integrable_of_continuous (hψe.continuous.mul hψe.continuous)
     refine (integral_pos_iff_support_of_nonneg (fun x => mul_self_nonneg (ψe x)) hint).2 ?_
     rw [Measure.restrict_apply' measurableSet_Ioo]
@@ -371,7 +371,7 @@ theorem gs_data (v : Pot) : ∃ ψ, ψ ∈ Dom ∧
   exact ⟨ψe, hD, hψeq, by linarith, hpos, hlow⟩
 
 /-- **Every continuous potential in the box has a ground state** (in the `C²` form domain). -/
-theorem exists_isGS (v : Pot) : ∃ ψ, IsGS setting v ψ := by
+theorem exists_isGS (v : C01) : ∃ ψ, IsGS setting v ψ := by
   obtain ⟨ψ, hD, -, hQ, hpos, hlow⟩ := gs_data v
   refine ⟨ψ, hD, hpos, fun φ hφ => ?_⟩
   rw [hQ]
@@ -380,7 +380,7 @@ theorem exists_isGS (v : Pot) : ∃ ψ, IsGS setting v ψ := by
 /-- **Hohenberg–Kohn for one particle in a box, unconditional.** Every continuous potential on
 `[0, 1]` has a ground state, and ground states of two continuous potentials with the same density
 `ψ²` force the potentials to differ by a constant. -/
-theorem hk_box_complete (v v' : Pot) :
+theorem hk_box_complete (v v' : C01) :
     (∃ ψ, IsGS setting v ψ) ∧ ∀ ψ ψ', IsGS setting v ψ → IsGS setting v' ψ' →
       (∀ x ∈ Ioo (0 : ℝ) 1, ψ x ^ 2 = ψ' x ^ 2) → ∃ k : ℝ, v - v' = k • one :=
   ⟨exists_isGS v, fun _ _ h h' hρ => hk_box h h' hρ⟩

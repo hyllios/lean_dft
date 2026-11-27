@@ -27,11 +27,11 @@ open MeasureTheory Set Filter Topology SturmLiouville CompactEigenbasis Box
 /-- **`N` orthonormal eigenfunctions and the one-particle bound.** For a box potential `v` and
 `N = n + 1` there are `C²` eigenfunctions `φⱼ` (`-φⱼ'' + v φⱼ = λⱼ φⱼ`), orthonormal in
 `L²(0, 1)`, and `Λ ≥ λⱼ` with `Λ ‖ψ‖² - Σⱼ (Λ - λⱼ) ⟪φⱼ, ψ⟫² ≤ ⟨ψ, h ψ⟩` for every state `ψ`. -/
-theorem exists_orbitals (v : Pot) (n : ℕ) : ∃ (φ : Fin (n + 1) → ℝ → ℝ) (lam : Fin (n + 1) → ℝ)
+theorem exists_orbitals (v : C01) (n : ℕ) : ∃ (φ : Fin (n + 1) → ℝ → ℝ) (lam : Fin (n + 1) → ℝ)
     (Λ : ℝ), (∀ j, φ j ∈ SturmLiouville.Dom) ∧
-    (∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (ext v x - lam j) * φ j x) ∧
-    (∀ j k, ∫ x, φ j x * φ k x ∂μ1 = if j = k then 1 else 0) ∧ (∀ j, lam j ≤ Λ) ∧
-    ∀ ψ ∈ SturmLiouville.Dom, Λ * ip (μ := μ1) ψ ψ - ∑ j, (Λ - lam j) * (∫ x, φ j x * ψ x ∂μ1) ^ 2 ≤
+    (∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (iccExt v x - lam j) * φ j x) ∧
+    (∀ j k, ∫ x, φ j x * φ k x ∂vol01 = if j = k then 1 else 0) ∧ (∀ j, lam j ≤ Λ) ∧
+    ∀ ψ ∈ SturmLiouville.Dom, Λ * ip (μ := vol01) ψ ψ - ∑ j, (Λ - lam j) * (∫ x, φ j x * ψ x ∂vol01) ^ 2 ≤
       Q Box.setting v ψ := by
   classical
   set E := -‖v‖
@@ -39,7 +39,7 @@ theorem exists_orbitals (v : Pot) (n : ℕ) : ∃ (φ : Fin (n + 1) → ℝ → 
   have hW0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ Wof v E t := fun t _ => by
     have := abs_ext_le v t
     simp only [Wof, E, sub_neg_eq_add]
-    linarith [neg_abs_le (ext v t)]
+    linarith [neg_abs_le (iccExt v t)]
   obtain ⟨f, hf⟩ := exists_injective_idx hWc hW0 (n + 1)
   obtain ⟨S, hS, hord⟩ := exists_top (mu hWc) (mu_pos hWc hW0)
     (fun δ hδ => finite_ge (isCompactOperator_Gop hWc) (isSymmetric_Gop hWc)
@@ -73,7 +73,7 @@ theorem exists_orbitals (v : Pot) (n : ℕ) : ∃ (φ : Fin (n + 1) → ℝ → 
       exact (e.sum_comp (fun i : S => (mu hWc i)⁻¹ * coef hWc hW0 i ψ ^ 2 -
         Λ' * coef hWc hW0 i ψ ^ 2)).symm
     have hneg : ∑ j, (Λ' + E - ((mu hWc (idx j))⁻¹ + E)) *
-        (∫ x, rep hWc hW0 (idx j) x * ψ x ∂μ1) ^ 2 =
+        (∫ x, rep hWc hW0 (idx j) x * ψ x ∂vol01) ^ 2 =
         -∑ j, ((mu hWc (idx j))⁻¹ * coef hWc hW0 (idx j) ψ ^ 2 -
           Λ' * coef hWc hW0 (idx j) ψ ^ 2) := by
       rw [← Finset.sum_neg_distrib]

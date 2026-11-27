@@ -24,34 +24,34 @@ open MeasureTheory Set Box SturmLiouville Real Filter Topology
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ}
 
 /-- `ρ̂_Φ` has the integrals `∫ Σ_k v(x_k) Φ²`. -/
-lemma int_rhoHat (hw : Continuous w) {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) (v : Pot) :
-    ∫ t, ext v t * ext (rhoHat τ Φ) t ∂μ1 = pf (settingW τ n w hw) v Φ Φ := by
+lemma int_rhoHat (hw : Continuous w) {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) (v : C01) :
+    ∫ t, iccExt v t * iccExt (rhoHat τ Φ) t ∂vol01 = pf (settingW τ n w hw) v Φ Φ := by
   rw [rhoHat_spec h, ← dens_eq_rhoNW (w := w) (hw := hw) h]; rfl
 
-lemma integrable_ext_mul (v p : Pot) : Integrable (fun t => ext v t * ext p t) μ1 := by
-  have hb : ∀ (r : Pot) (x : ℝ), |ext r x| ≤ ‖r‖ := fun r x => by
-    simpa [SturmLiouville.ext] using r.norm_coe_le_norm _
-  exact Integrable.of_bound ((continuous_ext v).mul (continuous_ext _)).aestronglyMeasurable
+lemma integrable_ext_mul (v p : C01) : Integrable (fun t => iccExt v t * iccExt p t) vol01 := by
+  have hb : ∀ (r : C01) (x : ℝ), |iccExt r x| ≤ ‖r‖ := fun r x => by
+    simpa [SturmLiouville.iccExt] using r.norm_coe_le_norm _
+  exact Integrable.of_bound ((continuous_iccExt v).mul (continuous_iccExt _)).aestronglyMeasurable
     (‖v‖ * ‖p‖) (ae_of_all _ fun t => by
       rw [Real.norm_eq_abs, abs_mul]; exact mul_le_mul (hb v t) (hb _ t) (abs_nonneg _)
         (norm_nonneg _))
 
 /-- Integrals against `v` are linear in the continuous function. -/
-lemma int_ext_add_smul (v p q : Pot) (a b : ℝ) :
-    ∫ t, ext v t * ext (a • p + b • q) t ∂μ1 =
-      a * ∫ t, ext v t * ext p t ∂μ1 + b * ∫ t, ext v t * ext q t ∂μ1 := by
+lemma int_ext_add_smul (v p q : C01) (a b : ℝ) :
+    ∫ t, iccExt v t * iccExt (a • p + b • q) t ∂vol01 =
+      a * ∫ t, iccExt v t * iccExt p t ∂vol01 + b * ∫ t, iccExt v t * iccExt q t ∂vol01 := by
   rw [← integral_const_mul, ← integral_const_mul, ← integral_add
     ((integrable_ext_mul v p).const_mul a) ((integrable_ext_mul v q).const_mul b)]
   congr 1; funext t
-  simp only [SturmLiouville.ext, ContinuousMap.add_apply, ContinuousMap.smul_apply, smul_eq_mul]; ring
+  simp only [SturmLiouville.iccExt, ContinuousMap.add_apply, ContinuousMap.smul_apply, smul_eq_mul]; ring
 
 variable (τ) in
 /-- The mixed continuous density `ρ̂(Φ, Ψ) = (ρ̂(Φ + Ψ) - ρ̂(Φ - Ψ)) / 4`. -/
-noncomputable def rhoHat2 (Φ Ψ : Cfg n → ℝ) : Pot :=
+noncomputable def rhoHat2 (Φ Ψ : Cfg n → ℝ) : C01 :=
   (1 / 4 : ℝ) • (rhoHat τ (Φ + Ψ) - rhoHat τ (Φ - Ψ))
 
 lemma int_rhoHat2 (hw : Continuous w) {Φ Ψ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) (hΨ : Ψ ∈ DomW τ n)
-    (v : Pot) : ∫ t, ext v t * ext (rhoHat2 τ Φ Ψ) t ∂μ1 = pf (settingW τ n w hw) v Φ Ψ := by
+    (v : C01) : ∫ t, iccExt v t * iccExt (rhoHat2 τ Φ Ψ) t ∂vol01 = pf (settingW τ n w hw) v Φ Ψ := by
   have e : rhoHat2 τ Φ Ψ = (1 / 4 : ℝ) • rhoHat τ (Φ + Ψ) + (-(1 / 4) : ℝ) • rhoHat τ (Φ - Ψ) := by
     rw [rhoHat2, smul_sub, sub_eq_add_neg, neg_smul]
   rw [e, int_ext_add_smul, int_rhoHat hw (add_mem hΦ hΨ), int_rhoHat hw (sub_mem hΦ hΨ)]
@@ -84,10 +84,10 @@ lemma QMN_expand (hw : Continuous w) (ν : PotM) {Φ Ψ : Cfg n → ℝ} (hΦ : 
   simp only [QMN, h, rhoHat_expand hw hΦ hΨ s, map_add, map_smul, smul_eq_mul]
   ring
 
-lemma int_ext_smul (v p : Pot) (a : ℝ) :
-    ∫ t, ext v t * ext (a • p) t ∂μ1 = a * ∫ t, ext v t * ext p t ∂μ1 := by
+lemma int_ext_smul (v p : C01) (a : ℝ) :
+    ∫ t, iccExt v t * iccExt (a • p) t ∂vol01 = a * ∫ t, iccExt v t * iccExt p t ∂vol01 := by
   rw [← integral_const_mul]; congr 1; funext t
-  simp only [SturmLiouville.ext, ContinuousMap.smul_apply, smul_eq_mul]; ring
+  simp only [SturmLiouville.iccExt, ContinuousMap.smul_apply, smul_eq_mul]; ring
 
 lemma rhoHat_smul (hw : Continuous w) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (c : ℝ) :
     rhoHat τ (c • Ψ) = c ^ 2 • rhoHat τ Ψ :=
@@ -119,7 +119,7 @@ lemma QMN_null (hw : Continuous w) (ν : PotM) {χ : Cfg n → ℝ} (hχ : χ �
     simp only [pf]
     rw [integral_congr_ae (hzz.mono fun x hx => by simp only [hx, Pi.zero_apply, mul_zero] :
       (fun x => (settingW τ n w hw).L v x * (χ x * χ x)) =ᵐ[μN n] fun _ => (0 : ℝ))]
-    simp [SturmLiouville.ext]
+    simp [SturmLiouville.iccExt]
   rw [QMN, hz, map_zero, add_zero]
   exact h0W_null (s := τ.toSym) hw hχ hip
 

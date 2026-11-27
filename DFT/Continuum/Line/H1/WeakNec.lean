@@ -60,40 +60,40 @@ lemma integral_cube_cons' {F : Cfg n → ℝ} (hF : Integrable F (μN n)) :
 lemma int_sq {f : Cfg n → ℝ} (h : MemLp f 2 (μN n)) : Integrable (fun x => f x ^ 2) (μN n) :=
   (memLp_two_iff_integrable_sq h.aestronglyMeasurable).1 h
 
-lemma integrable_marg {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) : Integrable (marg Φ) μ1 :=
+lemma integrable_marg {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) : Integrable (marg Φ) vol01 :=
   (integrable_cons_prod (F := fun x => Φ x ^ 2)
     (int_sq hΦ)).integral_prod_left
 
 lemma integral_rhoN {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) :
-    ∫ t, rhoN Φ t ∂μ1 = (n + 1) * ∫ x, Φ x ^ 2 ∂μN n := by
+    ∫ t, rhoN Φ t ∂vol01 = (n + 1) * ∫ x, Φ x ^ 2 ∂μN n := by
   rw [integral_cube_cons' (int_sq hΦ), ← integral_const_mul]
   rfl
 
 /-- `rhoN` is the density of an `H¹₀` state. -/
 theorem dens_eq_rhoNW {w : Cfg n → ℝ} {hw : Continuous w} {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n)
-    (v : Pot) : dens (settingW τ n w hw) Φ v = ∫ t, ext v t * rhoN Φ t ∂μ1 := by
-  have hv := continuous_ext v
+    (v : C01) : dens (settingW τ n w hw) Φ v = ∫ t, iccExt v t * rhoN Φ t ∂vol01 := by
+  have hv := continuous_iccExt v
   have hsq : Integrable (fun x => Φ x * Φ x) (μN n) := int_mul_L2 hΦ.1 hΦ.1
-  have hint : ∀ k : Fin (n + 1), Integrable (fun x => ext v (x k) * (Φ x * Φ x)) (μN n) := by
+  have hint : ∀ k : Fin (n + 1), Integrable (fun x => iccExt v (x k) * (Φ x * Φ x)) (μN n) := by
     intro k
     obtain ⟨C, hC⟩ := ae_bound_cont (n := n) (hv.comp (continuous_apply k))
     exact hsq.bdd_mul (hv.comp (continuous_apply k)).aestronglyMeasurable hC
-  have swapsq : ∀ k : Fin (n + 1), ∫ x, ext v (x k) * (Φ x * Φ x) ∂μN n =
-      ∫ x, ext v (x 0) * (Φ x * Φ x) ∂μN n := by
+  have swapsq : ∀ k : Fin (n + 1), ∫ x, iccExt v (x k) * (Φ x * Φ x) ∂μN n =
+      ∫ x, iccExt v (x 0) * (Φ x * Φ x) ∂μN n := by
     intro k
-    rw [← integral_pm (Equiv.swap 0 k) (fun x => ext v (x 0) * (Φ x * Φ x))]
+    rw [← integral_pm (Equiv.swap 0 k) (fun x => iccExt v (x 0) * (Φ x * Φ x))]
     refine integral_congr_ae ?_
     filter_upwards [hΦ.2.2 (Equiv.swap 0 k) trivial] with x hx
     simp only [pm, Equiv.swap_apply_left] at hx ⊢
     rw [hx]
     have := ch_mul_self τ (Equiv.swap 0 k)
-    linear_combination (-(ext v (x k) * (Φ x * Φ x))) * this
+    linear_combination (-(iccExt v (x k) * (Φ x * Φ x))) * this
   simp only [dens, pf]
-  change ∫ x, (∑ k, ext v (x k)) * (Φ x * Φ x) ∂μN n = _
-  have hpt : (fun x : Cfg n => (∑ k, ext v (x k)) * (Φ x * Φ x)) =
-      fun x => ∑ k, ext v (x k) * (Φ x * Φ x) := by
+  change ∫ x, (∑ k, iccExt v (x k)) * (Φ x * Φ x) ∂μN n = _
+  have hpt : (fun x : Cfg n => (∑ k, iccExt v (x k)) * (Φ x * Φ x)) =
+      fun x => ∑ k, iccExt v (x k) * (Φ x * Φ x) := by
     funext x; rw [Finset.sum_mul]
-  rw [hpt, integral_finsetSum (f := fun k x => ext v (x k) * (Φ x * Φ x)) _ fun k _ => hint k]
+  rw [hpt, integral_finsetSum (f := fun k x => iccExt v (x k) * (Φ x * Φ x)) _ fun k _ => hint k]
   simp only [swapsq, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   rw [integral_cube_cons' (hint 0), ← integral_const_mul]
   refine setIntegral_congr_fun measurableSet_Ioo fun t _ => ?_
@@ -108,7 +108,7 @@ lemma abs_sq_sub_sq_le (a b : ℝ) : |a ^ 2 - b ^ 2| = |a - b| * |a + b| := by
 
 /-- `∫ |ρ_P - ρ_Φ| ≤ N ∫ |P² - Φ²|`. -/
 lemma integral_abs_rhoN_sub {P Φ : Cfg n → ℝ} (hP : MemLp P 2 (μN n)) (hΦ : MemLp Φ 2 (μN n)) :
-    ∫ t, |rhoN P t - rhoN Φ t| ∂μ1 ≤ (n + 1) * ∫ x, |P x ^ 2 - Φ x ^ 2| ∂μN n := by
+    ∫ t, |rhoN P t - rhoN Φ t| ∂vol01 ≤ (n + 1) * ∫ x, |P x ^ 2 - Φ x ^ 2| ∂μN n := by
   have iP := int_sq hP
   have iΦ := int_sq hΦ
   have hD : Integrable (fun x => |P x ^ 2 - Φ x ^ 2|) (μN n) := (iP.sub iΦ).abs
@@ -168,7 +168,7 @@ lemma tendsto_abs_sq_trunc {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) :
 
 /-- **The densities of the truncations converge in `L¹`.** -/
 lemma tendsto_rhoN_trunc {Φ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) :
-    Tendsto (fun M => ∫ t, |rhoN (trunc M Φ) t - rhoN Φ t| ∂μ1) atTop (𝓝 0) := by
+    Tendsto (fun M => ∫ t, |rhoN (trunc M Φ) t - rhoN Φ t| ∂vol01) atTop (𝓝 0) := by
   have h := (tendsto_abs_sq_trunc hΦ).const_mul ((n : ℝ) + 1)
   rw [mul_zero] at h
   exact squeeze_zero (fun M => integral_nonneg fun t => abs_nonneg _)
@@ -210,11 +210,11 @@ lemma contDiff_ureg : ContDiff ℝ 1 fun s => √(rhoN P s + ε) - √ε := by
 
 /-- `∫ u'² ≤ T(P)` for the regularised square root. -/
 lemma integral_deriv_ureg_le :
-    ∫ t, deriv (fun s => √(rhoN P s + ε) - √ε) t ^ 2 ∂μ1 ≤
+    ∫ t, deriv (fun s => √(rhoN P s + ε) - √ε) t ^ 2 ∂vol01 ≤
       ∫ x, ∑ k, dk k P x * dk k P x ∂μN n := by
   have hd : ∀ t, deriv (fun s => √(rhoN P s + ε) - √ε) t =
       rhoD P t / (2 * √(rhoN P t + ε)) := fun t => (hasDerivAt_ureg hP hε t).deriv
-  have hK : Integrable (fun t => (n + 1 : ℝ) * margK P t) μ1 :=
+  have hK : Integrable (fun t => (n + 1 : ℝ) * margK P t) vol01 :=
     integrable_of_continuous (continuous_const.mul (continuous_margK hP))
   have hpt : ∀ t, (rhoD P t / (2 * √(rhoN P t + ε))) ^ 2 ≤ (n + 1) * margK P t := by
     intro t
@@ -230,7 +230,7 @@ lemma integral_deriv_ureg_le :
     nlinarith [mul_le_mul_of_nonneg_left h (sq_nonneg ((n : ℝ) + 1)),
       mul_nonneg (mul_nonneg hN hK0) hε.le, mul_nonneg hN hK0]
   simp only [hd]
-  calc ∫ t, (rhoD P t / (2 * √(rhoN P t + ε))) ^ 2 ∂μ1 ≤ ∫ t, (n + 1 : ℝ) * margK P t ∂μ1 := by
+  calc ∫ t, (rhoD P t / (2 * √(rhoN P t + ε))) ^ 2 ∂vol01 ≤ ∫ t, (n + 1 : ℝ) * margK P t ∂vol01 := by
         refine integral_mono_of_nonneg (ae_of_all _ fun t => sq_nonneg _) hK
           (ae_of_all _ hpt)
     _ = ∫ x, ∑ k, dk k P x * dk k P x ∂μN n := by
@@ -245,8 +245,8 @@ end reg
 /-- **Necessity of `√ρ ∈ H¹₀`**: for every `H¹₀` state `Φ`, `√ρ` has an `H10` representative `g`
 with `∫ g'² ≤ Σ_k ∫ |∂ₖΦ|²`. -/
 theorem sqrt_dens_H1W {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
-    ∃ g : ℝ → ℝ, H10 g ∧ (∀ᵐ t ∂μ1, g t ^ 2 = rhoN Φ t) ∧
-      ∫ t, deriv g t ^ 2 ∂μ1 ≤ ∑ k, ∫ x, dW k Φ x * dW k Φ x ∂μN n := by
+    ∃ g : ℝ → ℝ, H10 g ∧ (∀ᵐ t ∂vol01, g t ^ 2 = rhoN Φ t) ∧
+      ∫ t, deriv g t ^ 2 ∂vol01 ≤ ∑ k, ∫ x, dW k Φ x * dW k Φ x ∂μN n := by
   set ε : ℕ → ℝ := fun M => 1 / ((M : ℝ) + 1)
   have hε : ∀ M, 0 < ε M := fun M => by positivity
   have hP : ∀ M, trunc M Φ ∈ Dom τ n := trunc_mem hΦ
@@ -254,9 +254,9 @@ theorem sqrt_dens_H1W {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
   have hu : ∀ M, ContDiff ℝ 1 (u M) := fun M => contDiff_ureg (domC_of_dom (hP M)) (hε M)
   have hρm := integrable_marg hΦ.1
   have hρ0 : ∀ t, 0 ≤ rhoN Φ t := fun t => mul_nonneg (by positivity) (marg_nonneg t)
-  have hint : Integrable (rhoN Φ) μ1 := hρm.const_mul _
-  have hfm : MemLp (fun t => √(rhoN Φ t)) 2 μ1 := by
-    have hm : AEStronglyMeasurable (fun t => √(rhoN Φ t)) μ1 :=
+  have hint : Integrable (rhoN Φ) vol01 := hρm.const_mul _
+  have hfm : MemLp (fun t => √(rhoN Φ t)) 2 vol01 := by
+    have hm : AEStronglyMeasurable (fun t => √(rhoN Φ t)) vol01 :=
       (continuous_sqrt.comp_aestronglyMeasurable hint.1)
     refine (memLp_two_iff_integrable_sq hm).2 (hint.congr (ae_of_all _ fun t => ?_))
     simp [Real.sq_sqrt (hρ0 t)]
@@ -265,24 +265,24 @@ theorem sqrt_dens_H1W {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
     simp [u, (sqrt_dens_H1 (hP M)).2.1]
   have hu1 : ∀ M, u M 1 = 0 := fun M => by
     simp [u, (sqrt_dens_H1 (hP M)).2.2.1]
-  have hC : ∀ M, ∫ t, deriv (u M) t ^ 2 ∂μ1 ≤ ∑ k, ∫ x, dW k Φ x * dW k Φ x ∂μN n :=
+  have hC : ∀ M, ∫ t, deriv (u M) t ^ 2 ∂vol01 ≤ ∑ k, ∫ x, dW k Φ x * dW k Φ x ∂μN n :=
     fun M => (integral_deriv_ureg_le (domC_of_dom (hP M)) (hε M)).trans (kin_trunc_le (h1W_of_mem hΦ) M)
   -- `u_M → √ρ` in `L²`
   have hlim : Tendsto (fun M => toHL (hu M).continuous) atTop (𝓝 f) := by
     rw [tendsto_iff_norm_sub_tendsto_zero]
     have hL1 := tendsto_rhoN_trunc hΦ.1
     have hnorm : ∀ M, ‖toHL (hu M).continuous - f‖ ^ 2 =
-        ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂μ1 := fun M => by
+        ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂vol01 := fun M => by
       rw [← real_inner_self_eq_norm_sq, L2.inner_def]
       refine integral_congr_ae ?_
       filter_upwards [Lp.coeFn_sub (toHL (hu M).continuous) f, toHL_ae (hu M).continuous,
         MemLp.coeFn_toLp hfm] with t h1 h2 h3
       rw [h1, Pi.sub_apply, h2, h3]; simp [sq]
-    have hbound : ∀ M, ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂μ1 ≤
-        2 * ∫ t, |rhoN (trunc M Φ) t - rhoN Φ t| ∂μ1 + 4 * ε M := by
+    have hbound : ∀ M, ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂vol01 ≤
+        2 * ∫ t, |rhoN (trunc M Φ) t - rhoN Φ t| ∂vol01 + 4 * ε M := by
       intro M
       have hρP : ∀ t, 0 ≤ rhoN (trunc M Φ) t := (sqrt_dens_H1 (hP M)).1
-      have iL : Integrable (fun t => |rhoN (trunc M Φ) t - rhoN Φ t|) μ1 :=
+      have iL : Integrable (fun t => |rhoN (trunc M Φ) t - rhoN Φ t|) vol01 :=
         ((integrable_marg (memLp_cont (continuous_trunc M Φ))).const_mul _ |>.sub hint).abs
       have hpt : ∀ t, (u M t - √(rhoN Φ t)) ^ 2 ≤
           2 * |rhoN (trunc M Φ) t - rhoN Φ t| + 4 * ε M := by
@@ -297,8 +297,8 @@ theorem sqrt_dens_H1W {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) :
         have hc := Real.sq_sqrt (hε M).le
         simp only [u]
         nlinarith [sq_nonneg (√(rhoN (trunc M Φ) t + ε M) - √(rhoN Φ t) + √(ε M))]
-      calc ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂μ1
-          ≤ ∫ t, (2 * |rhoN (trunc M Φ) t - rhoN Φ t| + 4 * ε M) ∂μ1 :=
+      calc ∫ t, (u M t - √(rhoN Φ t)) ^ 2 ∂vol01
+          ≤ ∫ t, (2 * |rhoN (trunc M Φ) t - rhoN Φ t| + 4 * ε M) ∂vol01 :=
             integral_mono_of_nonneg (ae_of_all _ fun t => sq_nonneg _)
               ((iL.const_mul 2).add (integrable_const _)) (ae_of_all _ hpt)
         _ = _ := by
@@ -329,10 +329,10 @@ lemma H10.const_mul {g : ℝ → ℝ} (hg : H10 g) (c : ℝ) : H10 fun t => c * 
 /-- **Lieb's characterisation of `N`-representable densities on a line**: a density functional
 `ρ` is the density of a normalised finite-kinetic-energy state of `N` bosons or fermions iff
 `ρ(v) = ∫₀¹ v g²` for some `g ∈ H¹₀(0, 1)` with `∫₀¹ g² = N`. -/
-theorem lieb_characterisation {w : Cfg n → ℝ} {hw : Continuous w} (ρ : Pot → ℝ) :
+theorem lieb_characterisation {w : Cfg n → ℝ} {hw : Continuous w} (ρ : C01 → ℝ) :
     (∃ ψ ∈ Nst (settingW τ n w hw), dens (settingW τ n w hw) ψ = ρ) ↔
-      ∃ g : ℝ → ℝ, H10 g ∧ ∫ t, g t ^ 2 ∂μ1 = n + 1 ∧
-        ρ = fun v => ∫ t, ext v t * g t ^ 2 ∂μ1 := by
+      ∃ g : ℝ → ℝ, H10 g ∧ ∫ t, g t ^ 2 ∂vol01 = n + 1 ∧
+        ρ = fun v => ∫ t, iccExt v t * g t ^ 2 ∂vol01 := by
   constructor
   · rintro ⟨ψ, hψ, rfl⟩
     obtain ⟨g, hg, hg2, -⟩ := sqrt_dens_H1W hψ.1
@@ -351,13 +351,13 @@ theorem lieb_characterisation {w : Cfg n → ℝ} {hw : Continuous w} (ρ : Pot 
     set c := (√((n : ℝ) + 1))⁻¹
     have hc2 : c ^ 2 * ((n : ℝ) + 1) = 1 := by
       simp only [c, inv_pow, Real.sq_sqrt hNp.le, inv_mul_cancel₀ hNp.ne']
-    have hnorm : ∫ t, (c * g t) ^ 2 ∂μ1 = 1 := by
+    have hnorm : ∫ t, (c * g t) ^ 2 ∂vol01 = 1 := by
       simp only [mul_pow]
       rw [integral_const_mul, hn, hc2]
     obtain ⟨ψ, hψ, hd⟩ := nrepW (τ := τ) (w := w) (hw := hw) (hg.const_mul c) hnorm
     refine ⟨ψ, hψ, funext fun v => ?_⟩
     rw [hd v]
     congr 1; funext t
-    linear_combination (SturmLiouville.ext v t * g t ^ 2) * hc2
+    linear_combination (SturmLiouville.iccExt v t * g t ^ 2) * hc2
 
 end DFT.Continuum.Line

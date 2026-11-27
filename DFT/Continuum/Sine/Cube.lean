@@ -25,7 +25,7 @@ namespace DFT.Continuum.Sine
 open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The product of `d` copies of Lebesgue measure on `(0, 1)`. -/
-noncomputable abbrev piM (d : ℕ) : Measure (Fin d → ℝ) := Measure.pi fun _ => μ1
+noncomputable abbrev piM (d : ℕ) : Measure (Fin d → ℝ) := Measure.pi fun _ => vol01
 
 /-- The product sine `Π_j √2 sin(π (m_j + 1) x_j)`. -/
 noncomputable def smd {d : ℕ} (m : Fin d → ℕ) (x : Fin d → ℝ) : ℝ := ∏ j, sn (m j + 1) (x j)
@@ -33,7 +33,7 @@ noncomputable def smd {d : ℕ} (m : Fin d → ℕ) (x : Fin d → ℝ) : ℝ :=
 lemma continuous_smd {d : ℕ} (m : Fin d → ℕ) : Continuous (smd m) :=
   continuous_finsetProd _ fun j _ => (continuous_sn _).comp (continuous_apply j)
 
-lemma mu1_eq_Icc : μ1 = volume.restrict (Icc (0 : ℝ) 1) := Measure.restrict_congr_set Ioo_ae_eq_Icc
+lemma mu1_eq_Icc : vol01 = volume.restrict (Icc (0 : ℝ) 1) := Measure.restrict_congr_set Ioo_ae_eq_Icc
 
 lemma piM_eq_Icc (d : ℕ) : piM d = volume.restrict (univ.pi fun _ : Fin d => Icc (0 : ℝ) 1) := by
   rw [volume_pi, Measure.restrict_pi_pi, piM, mu1_eq_Icc]
@@ -86,8 +86,8 @@ theorem parseval : ∀ (d : ℕ) {f : (Fin d → ℝ) → ℝ}, Continuous f →
   | succ d ih =>
     intro f hf
     set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (d + 1) => ℝ) 0
-    have hmp : MeasurePreserving e (piM (d + 1)) (μ1.prod (piM d)) :=
-      measurePreserving_piFinSuccAbove (fun _ => μ1) 0
+    have hmp : MeasurePreserving e (piM (d + 1)) (vol01.prod (piM d)) :=
+      measurePreserving_piFinSuccAbove (fun _ => vol01) 0
     have hsymm : ∀ p : ℝ × (Fin d → ℝ), e.symm p = Fin.cons p.1 p.2 := fun p => by
       simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]
     set F : ℝ → (Fin d → ℝ) → ℝ := fun t y => f (Fin.cons t y)
@@ -101,15 +101,15 @@ theorem parseval : ∀ (d : ℕ) {f : (Fin d → ℝ) → ℝ}, Continuous f →
         (((continuous_smd m).comp continuous_snd).mul hFc)
     -- integrals over the cube as iterated integrals
     have hint : ∀ G : (Fin (d + 1) → ℝ) → ℝ, Continuous G →
-        ∫ x, G x ∂piM (d + 1) = ∫ t, ∫ y, G (Fin.cons t y) ∂piM d ∂μ1 := by
+        ∫ x, G x ∂piM (d + 1) = ∫ t, ∫ y, G (Fin.cons t y) ∂piM d ∂vol01 := by
       intro G hG
       rw [← hmp.symm.integral_comp' (f := e.symm) (g := G)]
-      have hi : Integrable (fun p : ℝ × (Fin d → ℝ) => G (e.symm p)) (μ1.prod (piM d)) :=
+      have hi : Integrable (fun p : ℝ × (Fin d → ℝ) => G (e.symm p)) (vol01.prod (piM d)) :=
         (hmp.symm.integrable_comp_emb e.symm.measurableEmbedding).2 (integrable_piM hG)
       rw [integral_prod _ hi]
       simp only [hsymm]
     have hlint : ∫⁻ x, ENNReal.ofReal (f x ^ 2) ∂piM (d + 1) =
-        ∫⁻ t, ∫⁻ y, ENNReal.ofReal (F t y ^ 2) ∂piM d ∂μ1 := by
+        ∫⁻ t, ∫⁻ y, ENNReal.ofReal (F t y ^ 2) ∂piM d ∂vol01 := by
       rw [← hmp.symm.lintegral_comp_emb e.symm.measurableEmbedding, lintegral_prod]
       · simp only [hsymm, F]
       · exact ((hf.measurable.comp e.symm.measurable).pow_const 2).ennreal_ofReal.aemeasurable
@@ -119,12 +119,12 @@ theorem parseval : ∀ (d : ℕ) {f : (Fin d → ℝ) → ℝ}, Continuous f →
     simp only [hslice]
     rw [lintegral_tsum (f := fun m t => ENNReal.ofReal (a m t ^ 2))
       fun m => ((ha m).measurable.pow_const 2).ennreal_ofReal.aemeasurable]
-    have h1 : ∀ m, ∫⁻ t, ENNReal.ofReal ((a m t) ^ 2) ∂μ1 =
-        ∑' k, ENNReal.ofReal ((∫ t, sn (k + 1) t * a m t ∂μ1) ^ 2) := fun m =>
+    have h1 : ∀ m, ∫⁻ t, ENNReal.ofReal ((a m t) ^ 2) ∂vol01 =
+        ∑' k, ENNReal.ofReal ((∫ t, sn (k + 1) t * a m t ∂vol01) ^ 2) := fun m =>
       (parseval1 (ha m)).symm
     simp only [h1]
     -- reassemble the double sum
-    have hcoef : ∀ k m, ∫ t, sn (k + 1) t * a m t ∂μ1 =
+    have hcoef : ∀ k m, ∫ t, sn (k + 1) t * a m t ∂vol01 =
         ∫ x, smd (Fin.cons k m : Fin (d + 1) → ℕ) x * f x ∂piM (d + 1) := by
       intro k m
       rw [hint (fun x => smd (Fin.cons k m : Fin (d + 1) → ℕ) x * f x)

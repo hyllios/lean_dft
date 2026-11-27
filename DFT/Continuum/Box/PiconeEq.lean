@@ -90,7 +90,7 @@ lemma picone_tendsto {W : ℝ → ℝ} (hW : Continuous W) {ψ ψ' : ℝ → ℝ
     (hd0 : 0 < ψ' 0) (hd1 : ψ' 1 < 0) {φ : ℝ → ℝ} (hφ : φ ∈ Dom) :
     Tendsto (fun a => (∫ x in a..(1 - a), (deriv φ x ^ 2 + W x * φ x ^ 2)) -
       (φ (1 - a) ^ 2 * ψ' (1 - a) / ψ (1 - a) - φ a ^ 2 * ψ' a / ψ a)) (𝓝[>] 0)
-      (𝓝 (∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂μ1)) := by
+      (𝓝 (∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂vol01)) := by
   have hφd := diff_of_mem hφ
   have hφc := cont_deriv_of_mem hφ
   have hI : ∀ x ∈ Icc (0 : ℝ) 1, x ∈ Ioo (-1 : ℝ) 2 := fun x hx =>
@@ -214,7 +214,7 @@ lemma picone_tendsto {W : ℝ → ℝ} (hW : Continuous W) {ψ ψ' : ℝ → ℝ
   have hlim := (hPl.sub (hb1.sub hb0))
   simp only [sub_zero] at hlim
   have h0P : P 0 = 0 := by simp [P]
-  have hP1 : P 1 = ∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂μ1 := by
+  have hP1 : P 1 = ∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂vol01 := by
     simp only [P]
     rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
   rw [h0P, sub_zero, hP1] at hlim
@@ -228,7 +228,7 @@ theorem picone_eq {W : ℝ → ℝ} (hW : Continuous W) {ψ ψ' : ℝ → ℝ}
     (hψ'd : ∀ t ∈ Ioo (-1 : ℝ) 2, HasDerivAt ψ' (W t * ψ t) t)
     (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < ψ t) (h0 : ψ 0 = 0) (h1 : ψ 1 = 0)
     (hd0 : 0 < ψ' 0) (hd1 : ψ' 1 < 0) {φ : ℝ → ℝ} (hφ : φ ∈ Dom)
-    (heq : ∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂μ1 = 0) :
+    (heq : ∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂vol01 = 0) :
     ∃ c : ℝ, ∀ x ∈ Ioo (0 : ℝ) 1, φ x = c * ψ x := by
   have hφd := diff_of_mem hφ
   have hφc := cont_deriv_of_mem hφ

@@ -28,7 +28,7 @@ open MeasureTheory Set Box SturmLiouville Real Filter Topology
 theorem not_C1Dens_of_kink {f : ℝ → ℝ} (hf : Continuous f) {t0 δ : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1)
     (hδ : 0 < δ) (hδt : δ ≤ t0) (hδs : δ ≤ 1 - t0)
     (hkink : ∀ h, 0 < h → h ≤ δ → h < |D2 f t0 h|) :
-    ¬ C1Dens fun u => ∫ t, ext u t * f t ∂μ1 := by
+    ¬ C1Dens fun u => ∫ t, iccExt u t * f t ∂vol01 := by
   rintro ⟨K, K', hK', hK, -, -, hρ⟩
   obtain ⟨k, hk⟩ := D2_le_of_C1 hK' hK
   have hKc : ContinuousOn K (Icc 0 1) := fun t ht => (hK t ht).continuousWithinAt
@@ -38,8 +38,8 @@ theorem not_C1Dens_of_kink {f : ℝ → ℝ} (hf : Continuous f) {t0 δ : ℝ} (
       fun t => (projIcc _ _ _ t).2
   have he := eqOn_of_integral_pot (f := Kc) (g := f) hKcc hf fun u => by
     have h1 := congrFun hρ u
-    change ∫ t, ext u t * f t ∂μ1 = ∫ t, ext u t * K t ∂μ1 at h1
-    rw [show ∫ t in Ioo (0 : ℝ) 1, ext u t * Kc t = ∫ t, ext u t * K t ∂μ1 from
+    change ∫ t, iccExt u t * f t ∂vol01 = ∫ t, iccExt u t * K t ∂vol01 at h1
+    rw [show ∫ t in Ioo (0 : ℝ) 1, iccExt u t * Kc t = ∫ t, iccExt u t * K t ∂vol01 from
       setIntegral_congr_fun measurableSet_Ioo fun t ht => by
         simp only [Kc, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]]
     exact h1.symm
@@ -89,8 +89,8 @@ lemma tentG_side {h : ℝ} (h0 : 0 ≤ h) (h1 : h ≤ 1 / 2) :
   · simp only [tentG, a]; ring
   · simp only [tentG, b]; ring
 
-lemma integral_tentG_sq_pos : 0 < ∫ t, tentG t ^ 2 ∂μ1 := by
-  have hint : Integrable (fun t => tentG t ^ 2) μ1 :=
+lemma integral_tentG_sq_pos : 0 < ∫ t, tentG t ^ 2 ∂vol01 := by
+  have hint : Integrable (fun t => tentG t ^ 2) vol01 :=
     ((continuous_tentG.pow 2).integrableOn_Icc (a := 0) (b := 1)).mono_set Ioo_subset_Icc_self
   rw [integral_pos_iff_support_of_nonneg (fun t => sq_nonneg _) hint]
   have hsub : Ioo (1 / 4 : ℝ) (3 / 4) ⊆ Function.support fun t => tentG t ^ 2 := by
@@ -106,21 +106,21 @@ lemma integral_tentG_sq_pos : 0 < ∫ t, tentG t ^ 2 ∂μ1 := by
   rw [Measure.restrict_apply measurableSet_Ioo, Ioo_inter_Ioo]
   norm_num
 
-lemma integral_tentG_sq_le : ∫ t, tentG t ^ 2 ∂μ1 ≤ 1 := by
+lemma integral_tentG_sq_le : ∫ t, tentG t ^ 2 ∂vol01 ≤ 1 := by
   have h : ∀ t, tentG t ^ 2 ≤ 1 := fun t => by
     have h0 := tentF_nonneg (1 / 2) (1 / 2) t
     have h1 := tentF_le_one (t0 := 1 / 2) (t := t) (by norm_num : (0 : ℝ) < 1 / 2)
     simp only [tentG]; nlinarith
-  calc ∫ t, tentG t ^ 2 ∂μ1 ≤ ∫ _t, (1 : ℝ) ∂μ1 :=
+  calc ∫ t, tentG t ^ 2 ∂vol01 ≤ ∫ _t, (1 : ℝ) ∂vol01 :=
         integral_mono_of_nonneg (ae_of_all _ fun t => sq_nonneg _) (integrable_const _)
           (ae_of_all _ h)
     _ = 1 := by simp
 
 /-- `c` with `∫ (c tentG)² = N`. -/
-noncomputable def cKink (n : ℕ) : ℝ := √((n + 1) / ∫ t, tentG t ^ 2 ∂μ1)
+noncomputable def cKink (n : ℕ) : ℝ := √((n + 1) / ∫ t, tentG t ^ 2 ∂vol01)
 
 /-- The kinked density `ρ = (c tentG)²`. -/
-noncomputable def rhoKink (n : ℕ) (v : Pot) : ℝ := ∫ t, ext v t * (cKink n * tentG t) ^ 2 ∂μ1
+noncomputable def rhoKink (n : ℕ) (v : C01) : ℝ := ∫ t, iccExt v t * (cKink n * tentG t) ^ 2 ∂vol01
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 
@@ -131,8 +131,8 @@ theorem kink_nrep_not_vrep (hws : ∀ σ x, w (pm σ x) = w x) :
       ¬ EnsVRep (settingW τ n w hw) (rhoKink n) := by
   have hI := integral_tentG_sq_pos
   have hI1 := integral_tentG_sq_le
-  have hN : (0 : ℝ) ≤ (n + 1) / ∫ t, tentG t ^ 2 ∂μ1 := by positivity
-  have hc2 : cKink n ^ 2 = (n + 1) / ∫ t, tentG t ^ 2 ∂μ1 := Real.sq_sqrt hN
+  have hN : (0 : ℝ) ≤ (n + 1) / ∫ t, tentG t ^ 2 ∂vol01 := by positivity
+  have hc2 : cKink n ^ 2 = (n + 1) / ∫ t, tentG t ^ 2 ∂vol01 := Real.sq_sqrt hN
   have hc1 : 1 ≤ cKink n ^ 2 := by
     rw [hc2, le_div_iff₀ hI]; have : (0 : ℝ) ≤ n := Nat.cast_nonneg n; linarith
   refine ⟨(lieb_characterisation (rhoKink n)).2 ⟨fun t => cKink n * tentG t,

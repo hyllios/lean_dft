@@ -37,16 +37,16 @@ namespace Box
 open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The coupling of potentials: multiplication by the extended potential. -/
-noncomputable def Lbox : Pot →ₗ[ℝ] (ℝ → ℝ) where
-  toFun := ext
+noncomputable def Lbox : C01 →ₗ[ℝ] (ℝ → ℝ) where
+  toFun := iccExt
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
 /-- The kinetic energy form `∫ ψ' φ'`. -/
-noncomputable def kin (ψ φ : ℝ → ℝ) : ℝ := ∫ x, deriv ψ x * deriv φ x ∂μ1
+noncomputable def kin (ψ φ : ℝ → ℝ) : ℝ := ∫ x, deriv ψ x * deriv φ x ∂vol01
 
 /-- One particle in a box as a Hohenberg–Kohn setting. -/
-noncomputable def setting : Setting μ1 Pot where
+noncomputable def setting : Setting vol01 C01 where
   D := Dom
   h0 := kin
   h0_add a ha b hb c hc := by
@@ -60,53 +60,53 @@ noncomputable def setting : Setting μ1 Pot where
   h0_symm ψ _ φ _ := by simp only [kin, mul_comm]
   L := Lbox
   int_L w ψ φ hψ hφ := integrable_of_continuous
-    ((continuous_ext w).mul (hψ.1.continuous.mul hφ.1.continuous))
+    ((continuous_iccExt w).mul (hψ.1.continuous.mul hφ.1.continuous))
   int_sq ψ φ hψ hφ := integrable_of_continuous (hψ.1.continuous.mul hφ.1.continuous)
 
 /-- Separation holds in the box. -/
 theorem sep_box : Sep setting := by
   intro w c ψ hψ h
-  have hc : Continuous fun x => (ext w x - c) * ψ x :=
-    ((continuous_ext w).sub continuous_const).mul hψ.1.continuous
+  have hc : Continuous fun x => (iccExt w x - c) * ψ x :=
+    ((continuous_iccExt w).sub continuous_const).mul hψ.1.continuous
   have := eq_zero_of_integral hc h
   exact (ae_restrict_iff' measurableSet_Ioo).2 (ae_of_all _ this)
 
 /-- The constant potential `1`. -/
-def one : Pot := ContinuousMap.const _ 1
+def one : C01 := ContinuousMap.const _ 1
 
 /-- Rigidity in the box: a continuous potential that is a.e. constant on `(0, 1)` is constant. -/
 theorem rigidL_box : RigidL setting one := by
   intro w c h
-  have hO : EqOn (ext w) (fun _ => c) (Ioo 0 1) :=
-    Measure.eqOn_open_of_ae_eq h isOpen_Ioo (continuous_ext w).continuousOn continuousOn_const
-  have hC : EqOn (ext w) (fun _ => c) (Icc 0 1) :=
-    hO.of_subset_closure (continuous_ext w).continuousOn continuousOn_const Ioo_subset_Icc_self
+  have hO : EqOn (iccExt w) (fun _ => c) (Ioo 0 1) :=
+    Measure.eqOn_open_of_ae_eq h isOpen_Ioo (continuous_iccExt w).continuousOn continuousOn_const
+  have hC : EqOn (iccExt w) (fun _ => c) (Icc 0 1) :=
+    hO.of_subset_closure (continuous_iccExt w).continuousOn continuousOn_const Ioo_subset_Icc_self
       (by rw [closure_Ioo zero_ne_one])
   refine ⟨c, ?_⟩
   ext t
   have := hC t.2
-  simp only [SturmLiouville.ext, projIcc_val] at this
+  simp only [SturmLiouville.iccExt, projIcc_val] at this
   simp [one, this]
 
 /-- The ground-state energy. -/
-noncomputable def energy (v : Pot) (ψ : ℝ → ℝ) : ℝ := Q setting v ψ / ip (μ := μ1) ψ ψ
+noncomputable def energy (v : C01) (ψ : ℝ → ℝ) : ℝ := Q setting v ψ / ip (μ := vol01) ψ ψ
 
 /-- **A ground state solves the Schrödinger equation** `ψ'' = (v - E) ψ` on `(0, 1)`. -/
-theorem ode_of_isGS {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) :
-    ∀ x ∈ Ioo (0 : ℝ) 1, deriv (deriv ψ) x = (ext v x - energy v ψ) * ψ x := by
+theorem ode_of_isGS {v : C01} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) :
+    ∀ x ∈ Ioo (0 : ℝ) 1, deriv (deriv ψ) x = (iccExt v x - energy v ψ) * ψ x := by
   have hD : ψ ∈ Dom := hψ.1
   have hd1 : ContDiff ℝ 1 (deriv ψ) := (contDiff_succ_iff_deriv.mp hD.1).2.2
   have hdd : Continuous (deriv (deriv ψ)) := hd1.continuous_deriv le_rfl
   set E := energy v ψ
-  have hg : Continuous fun x => -deriv (deriv ψ) x + (ext v x - E) * ψ x :=
-    hdd.neg.add (((continuous_ext v).sub continuous_const).mul hD.1.continuous)
+  have hg : Continuous fun x => -deriv (deriv ψ) x + (iccExt v x - E) * ψ x :=
+    hdd.neg.add (((continuous_iccExt v).sub continuous_const).mul hD.1.continuous)
   have key := eq_zero_of_integral hg (fun φ hφ => ?_)
   · intro x hx
     have := key x hx
     linarith
   -- integration by parts: `∫ ψ' φ' = -∫ ψ'' φ`
   have hφd := diff_of_mem hφ
-  have hibp : kin ψ φ = -∫ x, deriv (deriv ψ) x * φ x ∂μ1 := by
+  have hibp : kin ψ φ = -∫ x, deriv (deriv ψ) x * φ x ∂vol01 := by
     have h := intervalIntegral.integral_mul_deriv_eq_deriv_mul (a := 0) (b := 1)
       (u := deriv ψ) (u' := deriv (deriv ψ)) (v := φ) (v' := deriv φ)
       (fun x _ => (hd1.differentiable one_ne_zero x).hasDerivAt) (fun x _ => (hφd x).hasDerivAt)
@@ -116,34 +116,34 @@ theorem ode_of_isGS {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) :
       integral_Ioc_eq_integral_Ioo, integral_Ioc_eq_integral_Ioo] at h
     exact h
   have hel := euler_lagrange hψ hφ
-  change kin ψ φ + ∫ x, ext v x * (ψ x * φ x) ∂μ1 = E * ∫ x, ψ x * φ x ∂μ1 at hel
+  change kin ψ φ + ∫ x, iccExt v x * (ψ x * φ x) ∂vol01 = E * ∫ x, ψ x * φ x ∂vol01 at hel
   rw [hibp] at hel
   have i1 := integrable_of_continuous (hdd.mul hφ.1.continuous)
-  have i2 := integrable_of_continuous ((continuous_ext v).mul (hD.1.continuous.mul hφ.1.continuous))
+  have i2 := integrable_of_continuous ((continuous_iccExt v).mul (hD.1.continuous.mul hφ.1.continuous))
   have i3 := integrable_of_continuous (hD.1.continuous.mul hφ.1.continuous)
-  have hsplit : ∫ x, (-deriv (deriv ψ) x + (ext v x - E) * ψ x) * φ x ∂μ1 =
-      -∫ x, deriv (deriv ψ) x * φ x ∂μ1 + ∫ x, ext v x * (ψ x * φ x) ∂μ1 -
-        E * ∫ x, ψ x * φ x ∂μ1 := by
-    have hpt : (fun x => (-deriv (deriv ψ) x + (ext v x - E) * ψ x) * φ x) = fun x =>
-        (-(deriv (deriv ψ) x * φ x) + ext v x * (ψ x * φ x)) - E * (ψ x * φ x) := by
+  have hsplit : ∫ x, (-deriv (deriv ψ) x + (iccExt v x - E) * ψ x) * φ x ∂vol01 =
+      -∫ x, deriv (deriv ψ) x * φ x ∂vol01 + ∫ x, iccExt v x * (ψ x * φ x) ∂vol01 -
+        E * ∫ x, ψ x * φ x ∂vol01 := by
+    have hpt : (fun x => (-deriv (deriv ψ) x + (iccExt v x - E) * ψ x) * φ x) = fun x =>
+        (-(deriv (deriv ψ) x * φ x) + iccExt v x * (ψ x * φ x)) - E * (ψ x * φ x) := by
       funext x; ring
-    rw [hpt, integral_sub (f := fun x => -(deriv (deriv ψ) x * φ x) + ext v x * (ψ x * φ x))
+    rw [hpt, integral_sub (f := fun x => -(deriv (deriv ψ) x * φ x) + iccExt v x * (ψ x * φ x))
       (g := fun x => E * (ψ x * φ x)) (i1.neg.add i2) (i3.const_mul E),
       integral_add (f := fun x => -(deriv (deriv ψ) x * φ x))
-        (g := fun x => ext v x * (ψ x * φ x)) i1.neg i2, integral_neg,
+        (g := fun x => iccExt v x * (ψ x * φ x)) i1.neg i2, integral_neg,
       integral_const_mul]
   rw [hsplit]
   linarith
 
 /-- **Isolated zeros.** If the zeros of a ground state accumulate at a point of `(0, 1)`, the
 ground state vanishes on all of `(0, 1)`. -/
-theorem eq_zero_of_accPt {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) {x0 : ℝ}
+theorem eq_zero_of_accPt {v : C01} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) {x0 : ℝ}
     (hx0 : x0 ∈ Ioo (0 : ℝ) 1) (hacc : AccPt x0 (𝓟 {x | ψ x = 0})) :
     ∀ t ∈ Ioo (0 : ℝ) 1, ψ t = 0 := by
   have hD : ψ ∈ Dom := hψ.1
   have hd1 : ContDiff ℝ 1 (deriv ψ) := (contDiff_succ_iff_deriv.mp hD.1).2.2
   have hode := ode_of_isGS hψ
-  set V : ℝ → ℝ := fun x => ext v x - energy v ψ
+  set V : ℝ → ℝ := fun x => iccExt v x - energy v ψ
   -- `ψ(x₀) = 0` and `ψ'(x₀) = 0`
   have hcl : IsClosed {x | ψ x = 0} := isClosed_eq hD.1.continuous continuous_const
   have hψ0 : ψ x0 = 0 := hcl.closure_subset (hacc.clusterPt.mem_closure)
@@ -152,7 +152,7 @@ theorem eq_zero_of_accPt {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) 
   -- a bound for `V` on `[0, 1]`
   obtain ⟨B, hB⟩ : ∃ B, ∀ t ∈ Icc (0 : ℝ) 1, |V t| ≤ B := by
     obtain ⟨B, hB⟩ := isCompact_Icc.exists_bound_of_continuousOn
-      ((continuous_ext v).sub continuous_const).continuousOn
+      ((continuous_iccExt v).sub continuous_const).continuousOn
     exact ⟨B, fun t ht => by simpa [Real.norm_eq_abs] using hB t ht⟩
   intro t ht
   set ε := min (min x0 t) (min (1 - x0) (1 - t)) / 2
@@ -191,13 +191,13 @@ theorem eq_zero_of_accPt {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) 
   simpa [Y] using congrArg Prod.fst this
 
 /-- **Unique continuation in the box.** A ground state vanishes only on a null set. -/
-theorem ucp_of_isGS {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) : ∀ᵐ x ∂μ1, ψ x ≠ 0 := by
+theorem ucp_of_isGS {v : C01} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) : ∀ᵐ x ∂vol01, ψ x ≠ 0 := by
   have hD : ψ ∈ Dom := hψ.1
   -- `ψ` does not vanish on all of `(0, 1)`
   have hne : ¬ ∀ t ∈ Ioo (0 : ℝ) 1, ψ t = 0 := by
     intro h
     have hpos := hψ.2.1
-    have : ip (μ := μ1) ψ ψ = 0 := by
+    have : ip (μ := vol01) ψ ψ = 0 := by
       simp only [ip]
       rw [setIntegral_congr_fun measurableSet_Ioo (g := fun _ => (0 : ℝ))
         (fun x hx => by simp [h x hx])]
@@ -238,11 +238,11 @@ theorem ucp_of_isGS {v : Pot} {ψ : ℝ → ℝ} (hψ : IsGS setting v ψ) : ∀
 /-- **Hohenberg–Kohn for one particle in a box.** Let `ψ` and `ψ'` be ground states (in the `C²`
 form domain with hard walls) of continuous potentials `v` and `v'` with the same density
 `ψ² = ψ'²` on `(0, 1)`. Then `v - v'` is constant. -/
-theorem hk_box {v v' : Pot} {ψ ψ' : ℝ → ℝ} (hψ : IsGS setting v ψ) (hψ' : IsGS setting v' ψ')
+theorem hk_box {v v' : C01} {ψ ψ' : ℝ → ℝ} (hψ : IsGS setting v ψ) (hψ' : IsGS setting v' ψ')
     (hρ : ∀ x ∈ Ioo (0 : ℝ) 1, ψ x ^ 2 = ψ' x ^ 2) : ∃ k : ℝ, v - v' = k • one := by
   have hρ' : ∀ x ∈ Ioo (0 : ℝ) 1, ψ x * ψ x = ψ' x * ψ' x := fun x hx => by
     simpa [sq] using hρ x hx
-  have hn : ip (μ := μ1) ψ ψ = ip (μ := μ1) ψ' ψ' :=
+  have hn : ip (μ := vol01) ψ ψ = ip (μ := vol01) ψ' ψ' :=
     setIntegral_congr_fun measurableSet_Ioo hρ'
   have hd : dens setting ψ = dens setting ψ' := by
     funext w

@@ -34,8 +34,8 @@ lemma two_cos_mul_cos (a b : ℝ) :
     2 * (Real.cos a * Real.cos b) = Real.cos (a - b) + Real.cos (a + b) := by
   rw [Real.cos_sub, Real.cos_add]; ring
 
-lemma cs_orthonormal (k l : ℕ) : ∫ x, cs k x * cs l x ∂μ1 = if k = l then 1 else 0 := by
-  rw [integral_mu1]
+lemma cs_orthonormal (k l : ℕ) : ∫ x, cs k x * cs l x ∂vol01 = if k = l then 1 else 0 := by
+  rw [integral_vol01]
   have e : ∀ x, cs k x * cs l x =
       Real.cos (π * ((k : ℤ) - l : ℤ) * x) + Real.cos (π * ((k : ℤ) + l + 2 : ℤ) * x) := by
     intro x
@@ -55,8 +55,8 @@ lemma cs_orthonormal (k l : ℕ) : ∫ x, cs k x * cs l x ∂μ1 = if k = l then
   · have : ((k : ℤ) - l) ≠ 0 := by omega
     simp [h, this, hkl]
 
-lemma integral_cs (k : ℕ) : ∫ x, cs k x ∂μ1 = 0 := by
-  rw [integral_mu1]
+lemma integral_cs (k : ℕ) : ∫ x, cs k x ∂vol01 = 0 := by
+  rw [integral_vol01]
   have e : (fun x => cs k x) = fun x => √2 * Real.cos (π * ((k + 1 : ℕ) : ℤ) * x) := by
     funext x; simp [cs]
   rw [e, intervalIntegral.integral_const_mul, integral_cos_int]
@@ -67,7 +67,7 @@ lemma cs_orthonormal_HL : Orthonormal ℝ fun k : ℕ => toHL (continuous_cs k) 
   intro k l
   rw [inner_toHL_toHL, cs_orthonormal]
 
-lemma norm_sq_toHL {w : ℝ → ℝ} (hw : Continuous w) : ‖toHL hw‖ ^ 2 = ∫ x, w x ^ 2 ∂μ1 := by
+lemma norm_sq_toHL {w : ℝ → ℝ} (hw : Continuous w) : ‖toHL hw‖ ^ 2 = ∫ x, w x ^ 2 ∂vol01 := by
   rw [← real_inner_self_eq_norm_sq, inner_toHL_toHL]
   simp only [sq]
 
@@ -76,7 +76,7 @@ lemma norm_sq_toHL {w : ℝ → ℝ} (hw : Continuous w) : ‖toHL hw‖ ^ 2 = �
 /-- `∫ sin · u = (π(k+1))⁻¹ ∫ cos · u'` for absolutely continuous `u` vanishing at `0` and `1`. -/
 lemma sn_ibp {u : ℝ → ℝ} (hu : AbsolutelyContinuousOnInterval u 0 1) (h0 : u 0 = 0)
     (h1 : u 1 = 0) (k : ℕ) :
-    ∫ x, sn (k + 1) x * u x ∂μ1 = (π * (k + 1))⁻¹ * ∫ x, cs k x * deriv u x ∂μ1 := by
+    ∫ x, sn (k + 1) x * u x ∂vol01 = (π * (k + 1))⁻¹ * ∫ x, cs k x * deriv u x ∂vol01 := by
   have hω : π * ((k : ℝ) + 1) ≠ 0 := by positivity
   set v : ℝ → ℝ := fun x => -(cs k x) / (π * (k + 1))
   have hv : ∀ x, HasDerivAt v (sn (k + 1) x) x := by
@@ -91,7 +91,7 @@ lemma sn_ibp {u : ℝ → ℝ} (hu : AbsolutelyContinuousOnInterval u 0 1) (h0 :
   have ibp := hu.integral_mul_deriv_eq_deriv_mul hvAC
   rw [h0, h1, zero_mul, zero_mul, sub_zero, zero_sub] at ibp
   simp only [(hv _).deriv] at ibp
-  rw [integral_mu1, integral_mu1,
+  rw [integral_vol01, integral_vol01,
     show (fun x => sn (k + 1) x * u x) = fun x => u x * sn (k + 1) x from
       funext fun x => mul_comm _ _, ibp, ← intervalIntegral.integral_const_mul,
     ← intervalIntegral.integral_neg]
@@ -103,21 +103,21 @@ lemma sn_ibp {u : ℝ → ℝ} (hu : AbsolutelyContinuousOnInterval u 0 1) (h0 :
 `∫ u'² ≤ C` has an `H10` representative `g` with `∫ g'² ≤ C`. -/
 theorem h1_closure {u : ℕ → ℝ → ℝ} {f : HL} {C : ℝ} (hu : ∀ j, ContDiff ℝ 1 (u j))
     (h0 : ∀ j, u j 0 = 0) (h1 : ∀ j, u j 1 = 0)
-    (hC : ∀ j, ∫ t, deriv (u j) t ^ 2 ∂μ1 ≤ C)
+    (hC : ∀ j, ∫ t, deriv (u j) t ^ 2 ∂vol01 ≤ C)
     (hlim : Tendsto (fun j => toHL (hu j).continuous) atTop (𝓝 f)) :
-    ∃ g : ℝ → ℝ, H10 g ∧ g =ᵐ[μ1] f ∧ ∫ t, deriv g t ^ 2 ∂μ1 ≤ C := by
+    ∃ g : ℝ → ℝ, H10 g ∧ g =ᵐ[vol01] f ∧ ∫ t, deriv g t ^ 2 ∂vol01 ≤ C := by
   set ω : ℕ → ℝ := fun k => π * (k + 1)
   have hω : ∀ k, ω k ≠ 0 := fun k => by simp only [ω]; positivity
   set b : ℕ → ℝ := fun k => inner ℝ (sb k) f
   have hinner_sb : ∀ k {w : ℝ → ℝ} (hw : Continuous w),
-      inner ℝ (sb k) (toHL hw) = ∫ x, sn (k + 1) x * w x ∂μ1 := fun k w hw => by
+      inner ℝ (sb k) (toHL hw) = ∫ x, sn (k + 1) x * w x ∂vol01 := fun k w hw => by
     rw [sb_apply, inner_toHL_toHL]
   have huAC : ∀ j, AbsolutelyContinuousOnInterval (u j) 0 1 := fun j =>
     ContDiffOn.absolutelyContinuousOnInterval (hu j).contDiffOn
   have hdu : ∀ j, Continuous (deriv (u j)) := fun j => (hu j).continuous_deriv le_rfl
   -- the cosine coefficients of `u_j'`
-  set a : ℕ → ℕ → ℝ := fun j k => ∫ x, cs k x * deriv (u j) x ∂μ1
-  have ha : ∀ j k, a j k = ω k * ∫ x, sn (k + 1) x * u j x ∂μ1 := fun j k => by
+  set a : ℕ → ℕ → ℝ := fun j k => ∫ x, cs k x * deriv (u j) x ∂vol01
+  have ha : ∀ j k, a j k = ω k * ∫ x, sn (k + 1) x * u j x ∂vol01 := fun j k => by
     rw [sn_ibp (huAC j) (h0 j) (h1 j), ← mul_assoc, mul_inv_cancel₀ (hω k), one_mul]
   set α : ℕ → ℝ := fun k => ω k * b k
   have hα : ∀ k, Tendsto (fun j => a j k) atTop (𝓝 (α k)) := fun k => by
@@ -165,7 +165,7 @@ theorem h1_closure {u : ℕ → ℝ → ℝ} {f : HL} {C : ℝ} (hu : ∀ j, Con
     exact hsum.tsum_le_of_sum_le hbesα
   -- the primitive `g`
   set hf : ℝ → ℝ := (h : ℝ → ℝ)
-  have hfint : Integrable hf μ1 := integrable_HL h
+  have hfint : Integrable hf vol01 := integrable_HL h
   have hII : IntervalIntegrable hf volume 0 1 :=
     (intervalIntegrable_iff_integrableOn_Ioo_of_le zero_le_one).2 hfint
   set g : ℝ → ℝ := fun x => ∫ t in (0 : ℝ)..x, hf t
@@ -174,16 +174,16 @@ theorem h1_closure {u : ℕ → ℝ → ℝ} {f : HL} {C : ℝ} (hu : ∀ j, Con
   have hg0 : g 0 = 0 := intervalIntegral.integral_same
   have hg1 : g 1 = 0 := by
     simp only [g]
-    rw [← integral_mu1, ← hone_h, real_inner_comm, inner_toHL_right]
+    rw [← integral_vol01, ← hone_h, real_inner_comm, inner_toHL_right]
     simp [hf]
-  have hderiv : ∀ᵐ x ∂μ1, deriv g x = hf x := by
+  have hderiv : ∀ᵐ x ∂vol01, deriv g x = hf x := by
     have := hII.ae_hasDerivAt_integral
     rw [uIcc01] at this
     filter_upwards [ae_restrict_of_ae this, ae_restrict_mem measurableSet_Ioo] with x hx hxI
     exact (hx (Ioo_subset_Icc_self hxI) 0 ⟨le_rfl, zero_le_one⟩).deriv
-  have hsq_int : Integrable (fun x => hf x ^ 2) μ1 :=
+  have hsq_int : Integrable (fun x => hf x ^ 2) vol01 :=
     (memLp_two_iff_integrable_sq (Lp.aestronglyMeasurable h)).1 (Lp.memLp h)
-  have hgd2 : ∫ t, deriv g t ^ 2 ∂μ1 = ‖h‖ ^ 2 := by
+  have hgd2 : ∫ t, deriv g t ^ 2 ∂vol01 = ‖h‖ ^ 2 := by
     rw [← real_inner_self_eq_norm_sq, L2.inner_def]
     refine integral_congr_ae ?_
     filter_upwards [hderiv] with x hx
@@ -196,10 +196,10 @@ theorem h1_closure {u : ℕ → ℝ → ℝ} {f : HL} {C : ℝ} (hu : ∀ j, Con
   have hgc := H10.continuous_clamp hgH
   have hcoef : ∀ k, inner ℝ (sb k) (toHL hgc) = b k := fun k => by
     rw [hinner_sb]
-    have e1 : ∫ x, sn (k + 1) x * gc x ∂μ1 = ∫ x, sn (k + 1) x * g x ∂μ1 :=
+    have e1 : ∫ x, sn (k + 1) x * gc x ∂vol01 = ∫ x, sn (k + 1) x * g x ∂vol01 :=
       setIntegral_congr_fun measurableSet_Ioo fun x hx => by
         simp only [gc, H10.clamp_eq (Ioo_subset_Icc_self hx)]
-    have e2 : ∫ x, cs k x * deriv g x ∂μ1 = α k := by
+    have e2 : ∫ x, cs k x * deriv g x ∂vol01 = α k := by
       rw [← hcs_h k, real_inner_comm, inner_toHL_right]
       refine integral_congr_ae ?_
       filter_upwards [hderiv] with x hx
@@ -217,7 +217,7 @@ theorem h1_closure {u : ℕ → ℝ → ℝ} {f : HL} {C : ℝ} (hu : ∀ j, Con
     rw [sb_apply, real_inner_comm, inner_toHL_right] at this
     rw [← this]
     exact integral_congr_ae (ae_of_all _ fun x => mul_comm _ _)
-  have hae : gc =ᵐ[μ1] f := by
+  have hae : gc =ᵐ[vol01] f := by
     rw [← heq]; exact (toHL_ae hgc).symm
   filter_upwards [hae, ae_restrict_mem measurableSet_Ioo] with x hx hxI
   rw [← hx]; exact (H10.clamp_eq (Ioo_subset_Icc_self hxI)).symm

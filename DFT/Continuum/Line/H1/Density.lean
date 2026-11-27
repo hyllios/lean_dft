@@ -214,26 +214,26 @@ noncomputable def rhoN (Φ : Cfg n → ℝ) (t : ℝ) : ℝ := (n + 1) * marg Φ
 noncomputable def rhoD (Φ : Cfg n → ℝ) (t : ℝ) : ℝ := (n + 1) * margD Φ t
 
 /-- `rhoN` is the density: `⟨Φ, (Σ_k v(x_k)) Φ⟩ = ∫₀¹ v ρ`. -/
-theorem dens_eq_rhoN {w : Cfg n → ℝ} {hw : Continuous w} (hΦ : Φ ∈ Dom τ n) (v : Pot) :
-    dens (setting τ n w hw) Φ v = ∫ t in Ioo (0 : ℝ) 1, ext v t * rhoN Φ t := by
-  have hv := continuous_ext v
-  have swapsq : ∀ k : Fin (n + 1), ∫ x, ext v (x k) * (Φ x * Φ x) ∂μN n =
-      ∫ x, ext v (x 0) * (Φ x * Φ x) ∂μN n := by
+theorem dens_eq_rhoN {w : Cfg n → ℝ} {hw : Continuous w} (hΦ : Φ ∈ Dom τ n) (v : C01) :
+    dens (setting τ n w hw) Φ v = ∫ t in Ioo (0 : ℝ) 1, iccExt v t * rhoN Φ t := by
+  have hv := continuous_iccExt v
+  have swapsq : ∀ k : Fin (n + 1), ∫ x, iccExt v (x k) * (Φ x * Φ x) ∂μN n =
+      ∫ x, iccExt v (x 0) * (Φ x * Φ x) ∂μN n := by
     intro k
     rw [← integral_pm (Equiv.swap 0 k)]
     congr 1; funext x
     rw [sq_pm hΦ]
     simp
   simp only [dens, pf]
-  change ∫ x, (∑ k, ext v (x k)) * (Φ x * Φ x) ∂μN n = _
-  have hpt : (fun x : Cfg n => (∑ k, ext v (x k)) * (Φ x * Φ x)) =
-      fun x => ∑ k, ext v (x k) * (Φ x * Φ x) := by
+  change ∫ x, (∑ k, iccExt v (x k)) * (Φ x * Φ x) ∂μN n = _
+  have hpt : (fun x : Cfg n => (∑ k, iccExt v (x k)) * (Φ x * Φ x)) =
+      fun x => ∑ k, iccExt v (x k) * (Φ x * Φ x) := by
     funext x; rw [Finset.sum_mul]
-  rw [hpt, integral_finsetSum (f := fun k x => ext v (x k) * (Φ x * Φ x)) _
+  rw [hpt, integral_finsetSum (f := fun k x => iccExt v (x k) * (Φ x * Φ x)) _
     fun k _ => integrableN ((hv.comp (continuous_apply k)).mul
     (hΦ.1.continuous.mul hΦ.1.continuous))]
   simp only [swapsq, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-  rw [integral_cube_cons (F := fun x => ext v (x 0) * (Φ x * Φ x))
+  rw [integral_cube_cons (F := fun x => iccExt v (x 0) * (Φ x * Φ x))
     ((hv.comp (continuous_apply 0)).mul (hΦ.1.continuous.mul hΦ.1.continuous))]
   rw [← integral_const_mul]
   refine setIntegral_congr_fun measurableSet_Ioo fun t _ => ?_

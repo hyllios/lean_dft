@@ -237,7 +237,7 @@ theorem kinW_serW {s : SymT n} (ha : Dir s a) : kinW (serW a) = ∑' m, lam m * 
 /-- **Ground states exist in `H¹₀` for every continuous potential**, for any symmetry type that
 admits a normalised coefficient sequence (no smoothness, no symmetry assumption on `w`). -/
 theorem exists_isNGS_WS_cont {s : SymT n} (hne : ∃ c : (Fin (n + 1) → ℕ) → ℝ, Adm s c)
-    {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
+    {w : Cfg n → ℝ} (hw : Continuous w) (v : C01) :
     ∃ Φ, IsNGS (settingWS s w hw) v Φ := by
   set V : Cfg n → ℝ := fun x => LN n v x + w x
   have hV : Continuous V := (continuous_LN v).add hw
@@ -262,7 +262,7 @@ theorem exists_isNGS_WS_cont {s : SymT n} (hne : ∃ c : (Fin (n + 1) → ℕ) �
   exact (csInf_le (hK.bddBelow_Fn s) ⟨_, adm_cNW hΨ.1 h1, rfl⟩).trans (Fn_le_QW v hΨ.1)
 
 /-- **Ground states exist in `H¹₀` for every continuous potential**, bosons or fermions. -/
-theorem exists_isNGS_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
+theorem exists_isNGS_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : C01) :
     ∃ Φ, IsNGS (settingW τ n w hw) v Φ :=
   exists_isNGS_WS_cont (exists_adm τ) hw v
 

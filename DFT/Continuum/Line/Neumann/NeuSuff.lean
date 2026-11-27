@@ -35,12 +35,12 @@ variable {n : ℕ}
 /-! ### The mass functional -/
 
 /-- `f ↦ ∫ f` on `C([0, 1])`. -/
-noncomputable def intPot : Pot →L[ℝ] ℝ :=
+noncomputable def intPot : C01 →L[ℝ] ℝ :=
   LinearMap.mkContinuous
-    { toFun := fun f => ∫ t, ext f t ∂μ1
+    { toFun := fun f => ∫ t, iccExt f t ∂vol01
       map_add' := fun f g => by
-        rw [← integral_add (integrable_cont_mu1 (continuous_ext f))
-          (integrable_cont_mu1 (continuous_ext g))]
+        rw [← integral_add (integrable_cont_mu1 (continuous_iccExt f))
+          (integrable_cont_mu1 (continuous_iccExt g))]
         rfl
       map_smul' := fun c f => by
         simp only [RingHom.id_apply, smul_eq_mul]
@@ -48,7 +48,7 @@ noncomputable def intPot : Pot →L[ℝ] ℝ :=
         rfl }
     1 fun f => by
       simp only [LinearMap.coe_mk, AddHom.coe_mk, one_mul]
-      calc ‖∫ t, ext f t ∂μ1‖ ≤ ‖f‖ * μ1.real univ :=
+      calc ‖∫ t, iccExt f t ∂vol01‖ ≤ ‖f‖ * vol01.real univ :=
             norm_integral_le_of_norm_le_const (ae_of_all _ fun t => by
               simpa [Real.norm_eq_abs] using abs_ext_le f t)
         _ = ‖f‖ := by rw [mu1_real_univ, mul_one]
@@ -56,7 +56,7 @@ noncomputable def intPot : Pot →L[ℝ] ℝ :=
 /-- The mass functional `e ↦ ∫ fnE e`, a constant potential. -/
 noncomputable def ellE : PotH := intPot.comp evE
 
-lemma ellE_apply (e : H1E) : ellE e = ∫ t, fnE e t ∂μ1 :=
+lemma ellE_apply (e : H1E) : ellE e = ∫ t, fnE e t ∂vol01 :=
   setIntegral_congr_fun measurableSet_Ioo fun _ ht => ext_evE (Ioo_subset_Icc_self ht)
 
 lemma ellE_rhoE {τ : Stat} {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (hn : ∫ x, Φ x ^ 2 ∂μN n = 1) :
@@ -113,7 +113,7 @@ lemma exists_weak_subseq_PotH {f : ℕ → PotH} {R : ℝ} (hR : ∀ k, ‖f k�
 
 /-- **`v`-representability from local `N`-representability with bounded energy.** -/
 theorem vrepNH_of_rep {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ0 : H1E}
-    (hN : ∫ t, fnE ρ0 t ∂μ1 = n + 1)
+    (hN : ∫ t, fnE ρ0 t ∂vol01 = n + 1)
     (hRep : ∃ r > 0, ∃ M : ℝ, ∀ h : H1E, ellE h = 0 → ‖h‖ ≤ r →
       ∃ Φ ∈ DomN τ n, ∫ x, Φ x ^ 2 ∂μN n = 1 ∧ rhoE τ Φ = ρ0 + h ∧
         kinN Φ + ∫ x, w x * (Φ x * Φ x) ∂μN n ≤ M) :

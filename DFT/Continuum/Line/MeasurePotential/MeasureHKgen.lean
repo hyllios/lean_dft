@@ -111,8 +111,8 @@ theorem kinW_mul_le {Y : Cfg n → ℝ} (hY : H1W Y) {ζ : Cfg n → ℝ} (hζ :
 
 /-! ### Bilinearity of the mixed density -/
 
-lemma int_ext_sub (v p q : Pot) :
-    ∫ t, ext v t * ext (p - q) t ∂μ1 = ∫ t, ext v t * ext p t ∂μ1 - ∫ t, ext v t * ext q t ∂μ1 := by
+lemma int_ext_sub (v p q : C01) :
+    ∫ t, iccExt v t * iccExt (p - q) t ∂vol01 = ∫ t, iccExt v t * iccExt p t ∂vol01 - ∫ t, iccExt v t * iccExt q t ∂vol01 := by
   have := int_ext_add_smul v p q 1 (-1)
   simp only [one_smul, neg_smul, one_mul, neg_one_mul, ← sub_eq_add_neg] at this
   linarith
@@ -123,7 +123,7 @@ variable {w : Cfg n → ℝ} (hw : Continuous w)
 include hw
 
 lemma pf_sub_left {A A' B : Cfg n → ℝ} (hA : A ∈ DomW τ n) (hA' : A' ∈ DomW τ n)
-    (hB : B ∈ DomW τ n) (v : Pot) :
+    (hB : B ∈ DomW τ n) (v : C01) :
     pf (settingW τ n w hw) v (A - A') B = pf (settingW τ n w hw) v A B -
       pf (settingW τ n w hw) v A' B := by
   simp only [pf]
@@ -252,7 +252,7 @@ lemma dk_FF {f : ℝ → ℝ} (hf : Differentiable ℝ f) (k : Fin (n + 1)) (x :
 variable {w : Cfg n → ℝ}
 
 /-- The pair-density operator `T_Y f = ρ̂(Y, F_f Y) - f ρ̂_Y`. -/
-noncomputable def TG (τ : Stat) (Y : Cfg n → ℝ) {f : ℝ → ℝ} (hf : Continuous f) : Pot :=
+noncomputable def TG (τ : Stat) (Y : Cfg n → ℝ) {f : ℝ → ℝ} (hf : Continuous f) : C01 :=
   rhoHat2 τ Y (fun x => FF f x * Y x) - fP hf * rhoHat τ Y
 
 /-- **`T` is continuous in `H¹`**: `‖T_A f - T_B f‖ ≤ √(S(A-B) S(FA)) + √(S(B) S(F(A-B)))
@@ -376,8 +376,8 @@ section absc
 variable {m : ℕ} {w : Cfg (m + 1) → ℝ}
 
 lemma integrable_rX (ρ : Measure ℝ) [IsMeas01 ρ] {X : Cfg (m + 1) → ℝ} (hX : Continuous X)
-    {CX : ℝ} (hCX : ∀ x, |X x| ≤ CX) : Integrable (rX ρ X) μ1 := by
-  have hF : ∀ j : Fin (m + 1), Integrable (fun p : ℝ × ℝ => hP X j p.1 p.2) (ρ.prod μ1) :=
+    {CX : ℝ} (hCX : ∀ x, |X x| ≤ CX) : Integrable (rX ρ X) vol01 := by
+  have hF : ∀ j : Fin (m + 1), Integrable (fun p : ℝ × ℝ => hP X j p.1 p.2) (ρ.prod vol01) :=
     fun j => integrable_bdd_cont (C := CX ^ 2) (continuous_hP hX j) fun p => abs_hP_le hCX j _ _
   exact (integrable_finsetSum _ fun j _ => (hF j).integral_prod_right).const_mul _
 
@@ -426,8 +426,8 @@ lemma abs_FF_le {f : ℝ → ℝ} {Cf : ℝ} (hCf : ∀ t, |f t| ≤ Cf) (x : Cf
     _ = _ := by simp
 
 /-- The `L¹` distance between `L¹` classes of integrable functions. -/
-lemma dist_toL1 {F G : ℝ → ℝ} (hF : Integrable F μ1) (hG : Integrable G μ1) :
-    dist (hF.toL1 F) (hG.toL1 G) = ∫ u, |F u - G u| ∂μ1 := by
+lemma dist_toL1 {F G : ℝ → ℝ} (hF : Integrable F vol01) (hG : Integrable G vol01) :
+    dist (hF.toL1 F) (hG.toL1 G) = ∫ u, |F u - G u| ∂vol01 := by
   rw [dist_eq_norm, L1.norm_eq_integral_norm]
   refine integral_congr_ae ?_
   filter_upwards [Lp.coeFn_sub (hF.toL1 F) (hG.toL1 G), hF.coeFn_toL1, hG.coeFn_toL1]
@@ -439,9 +439,9 @@ there is `R ∈ L¹` with `∫ T_Φ f dρ = ∫ f R` for every bounded `C¹` fun
 derivative. -/
 theorem exists_pair_density (hw : Continuous w) {Φ : Cfg (m + 1) → ℝ}
     (hΦ : Φ ∈ DomW τ (m + 1)) (ρ : Measure ℝ) [IsMeas01 ρ] :
-    ∃ R : ℝ → ℝ, Integrable R μ1 ∧ ∀ (f : ℝ → ℝ) (hf : ContDiff ℝ 1 f) (Cf Cd : ℝ),
+    ∃ R : ℝ → ℝ, Integrable R vol01 ∧ ∀ (f : ℝ → ℝ) (hf : ContDiff ℝ 1 f) (Cf Cd : ℝ),
       (∀ t, |f t| ≤ Cf) → (∀ t, |deriv f t| ≤ Cd) →
-        intCLM ρ (TG τ Φ hf.continuous) = ∫ u, f u * R u ∂μ1 := by
+        intCLM ρ (TG τ Φ hf.continuous) = ∫ u, f u * R u ∂vol01 := by
   set N : ℝ := (m + 1 : ℕ) + 1
   have hN : 0 < N := by positivity
   set P : ℕ → Cfg (m + 1) → ℝ := fun M => trunc M Φ
@@ -480,10 +480,10 @@ theorem exists_pair_density (hw : Continuous w) {Φ : Cfg (m + 1) → ℝ}
   choose CP hCP using fun M => abs_trunc_le (n := m + 1) M Φ
   have hPc : ∀ M, Continuous (P M) := fun M => continuous_trunc M Φ
   set r : ℕ → ℝ → ℝ := fun M => rX ρ (P M)
-  have hr : ∀ M, Integrable (r M) μ1 := fun M => integrable_rX ρ (hPc M) (hCP M)
+  have hr : ∀ M, Integrable (r M) vol01 := fun M => integrable_rX ρ (hPc M) (hCP M)
   set C0 := N * (m + 1) * ρ.real univ / N
   have hC0 : 0 ≤ C0 := by positivity
-  have hdist : ∀ M M', ∫ u, |r M u - r M' u| ∂μ1 ≤ C0 * √(SH (P M - P M') * SH (P M + P M')) :=
+  have hdist : ∀ M M', ∫ u, |r M u - r M' u| ∂vol01 ≤ C0 * √(SH (P M - P M') * SH (P M + P M')) :=
     fun M M' => by
       have hC : ∀ x, |P M x| ≤ max (CP M) (CP M') := fun x => (hCP M x).trans (le_max_left _ _)
       have hC' : ∀ x, |P M' x| ≤ max (CP M) (CP M') := fun x =>
@@ -493,7 +493,7 @@ theorem exists_pair_density (hw : Continuous w) {Φ : Cfg (m + 1) → ℝ}
       refine this.trans (le_of_eq ?_)
       simp only [C0, N]; ring
   -- the `L¹` classes form a Cauchy sequence
-  set R1 : ℕ → (ℝ →₁[μ1] ℝ) := fun M => (hr M).toL1 (r M)
+  set R1 : ℕ → (ℝ →₁[vol01] ℝ) := fun M => (hr M).toL1 (r M)
   have hcauchy : CauchySeq R1 := by
     rw [Metric.cauchySeq_iff']
     intro ε hε
@@ -523,8 +523,8 @@ theorem exists_pair_density (hw : Continuous w) {Φ : Cfg (m + 1) → ℝ}
           mul_le_mul (by linarith) (hSsum M M0) (SH_nonneg _) (by positivity)
       _ = 4 * η * B2 := by ring
   obtain ⟨R', hR'⟩ := cauchySeq_tendsto_of_complete hcauchy
-  have hRi : Integrable (R' : ℝ → ℝ) μ1 := L1.integrable_coeFn R'
-  have hconv : Tendsto (fun M => ∫ u, |r M u - R' u| ∂μ1) atTop (𝓝 0) := by
+  have hRi : Integrable (R' : ℝ → ℝ) vol01 := L1.integrable_coeFn R'
+  have hconv : Tendsto (fun M => ∫ u, |r M u - R' u| ∂vol01) atTop (𝓝 0) := by
     have := (tendsto_iff_dist_tendsto_zero.1 hR')
     refine this.congr fun M => ?_
     rw [dist_eq_norm, L1.norm_eq_integral_norm]
@@ -535,7 +535,7 @@ theorem exists_pair_density (hw : Continuous w) {Φ : Cfg (m + 1) → ℝ}
   have hCf0 : 0 ≤ Cf := (abs_nonneg _).trans (hCf 0)
   have hfc := hf.continuous
   -- the identity for the truncations
-  have hTM : ∀ M, intCLM ρ (TG τ (P M) hfc) = ∫ u, f u * r M u ∂μ1 := fun M => by
+  have hTM : ∀ M, intCLM ρ (TG τ (P M) hfc) = ∫ u, f u * r M u ∂vol01 := fun M => by
     have e : TG τ (P M) hfc = TXP (hPc M) hfc := by
       rw [TG, rhoHat2_FF hw (hPW M) (hPc M) (Dom_sq_pm (hPD M)) hf]; ring
     rw [e]
@@ -575,13 +575,13 @@ theorem exists_pair_density (hw : Continuous w) {Φ : Cfg (m + 1) → ℝ}
     · exact mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt (mul_le_mul_of_nonneg_left e3 (hs0 M)))
         hCf0
   -- the right side converges
-  have hR : Tendsto (fun M => ∫ u, f u * r M u ∂μ1) atTop (𝓝 (∫ u, f u * R' u ∂μ1)) := by
+  have hR : Tendsto (fun M => ∫ u, f u * r M u ∂vol01) atTop (𝓝 (∫ u, f u * R' u ∂vol01)) := by
     rw [tendsto_iff_norm_sub_tendsto_zero]
     refine squeeze_zero (fun _ => norm_nonneg _) (fun M => ?_) (by simpa using hconv.const_mul Cf)
-    have i1 : Integrable (fun u => f u * r M u) μ1 :=
+    have i1 : Integrable (fun u => f u * r M u) vol01 :=
       (hr M).bdd_mul hfc.aestronglyMeasurable (ae_of_all _ fun u => by
         rw [Real.norm_eq_abs]; exact hCf u)
-    have i2 : Integrable (fun u => f u * R' u) μ1 :=
+    have i2 : Integrable (fun u => f u * R' u) vol01 :=
       hRi.bdd_mul hfc.aestronglyMeasurable (ae_of_all _ fun u => by
         rw [Real.norm_eq_abs]; exact hCf u)
     rw [← integral_sub i1 i2, ← integral_const_mul]

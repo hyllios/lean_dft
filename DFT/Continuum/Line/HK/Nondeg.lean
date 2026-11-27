@@ -120,7 +120,7 @@ namespace Line
 
 open SturmLiouville
 
-variable {n : ℕ} {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
+variable {n : ℕ} {w : Cfg n → ℝ} {hw : Continuous w} {v : C01}
 
 lemma integrableOn_of_memLp {f : Cfg n → ℝ} (hf : MemLp f 2 (μN n)) (R : Set (Cfg n)) :
     IntegrableOn f R (μN n) :=
@@ -216,14 +216,14 @@ theorem gs_unique_W {τ : Stat} {Ψ Φ : Cfg n → ℝ} (hΨ : IsGS (settingW τ
   · exact gs_unique_W_fer hΨ hΦ
 
 /-- **Existence and uniqueness of the ground state on `H¹₀`**, continuous `v` and `w`. -/
-theorem exists_unique_gs_W_cont {τ : Stat} (hw : Continuous w) (v : Pot) :
+theorem exists_unique_gs_W_cont {τ : Stat} (hw : Continuous w) (v : C01) :
     ∃ Φ, IsGS (settingW τ n w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 ∧
       ∀ Ψ, IsGS (settingW τ n w hw) v Ψ → ∃ c : ℝ, Ψ =ᵐ[μN n] c • Φ := by
   obtain ⟨Φ, hΦ, h1⟩ := exists_isGS_W_cont (τ := τ) hw v
   exact ⟨Φ, hΦ, h1, fun Ψ hΨ => gs_unique_W hΨ hΦ⟩
 
 /-- **Existence and uniqueness of the ground state in a spin sector**, continuous `v` and `w`. -/
-theorem exists_unique_gs_WY (a : ℕ) (hw : Continuous w) (v : Pot) :
+theorem exists_unique_gs_WY (a : ℕ) (hw : Continuous w) (v : C01) :
     ∃ Φ, IsGS (settingWS (ymix a) w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 ∧
       ∀ Ψ, IsGS (settingWS (ymix a) w hw) v Ψ → ∃ c : ℝ, Ψ =ᵐ[μN n] c • Φ := by
   obtain ⟨Φ, hΦ⟩ := exists_isNGS_WY_cont a hw v
@@ -232,7 +232,7 @@ theorem exists_unique_gs_WY (a : ℕ) (hw : Continuous w) (v : Pot) :
 /-! ### Ensembles give nothing new -/
 
 /-- **Ensemble densities are pure densities** on `H¹₀`, continuous `v` and `w`. -/
-theorem ensDens_iff_W_cont {τ : Stat} (v : Pot) (ρ : Pot → ℝ) :
+theorem ensDens_iff_W_cont {τ : Stat} (v : C01) (ρ : C01 → ℝ) :
     EnsDens (settingW τ n w hw) v ρ ↔ PureDens (settingW τ n w hw) v ρ :=
   ⟨pureDens_of_ensDens fun _ _ hψ hψ1 hφ hφ1 => by
       obtain ⟨c, hc⟩ := gs_unique_W hψ hφ
@@ -240,12 +240,12 @@ theorem ensDens_iff_W_cont {τ : Stat} (v : Pot) (ρ : Pot → ℝ) :
     ensDens_of_pureDens⟩
 
 /-- **Ensemble `v`-representability equals pure-state `v`-representability** on `H¹₀`. -/
-theorem ensVRep_iff_W_cont {τ : Stat} (ρ : Pot → ℝ) :
+theorem ensVRep_iff_W_cont {τ : Stat} (ρ : C01 → ℝ) :
     EnsVRep (settingW τ n w hw) ρ ↔ PureVRep (settingW τ n w hw) ρ :=
   ⟨fun ⟨v, h⟩ => ⟨v, (ensDens_iff_W_cont v ρ).1 h⟩, fun ⟨v, h⟩ => ⟨v, ensDens_of_pureDens h⟩⟩
 
 /-- **Ensemble densities are pure densities** in each spin sector. -/
-theorem ensDens_iff_WY {a : ℕ} (v : Pot) (ρ : Pot → ℝ) :
+theorem ensDens_iff_WY {a : ℕ} (v : C01) (ρ : C01 → ℝ) :
     EnsDens (settingWS (ymix a) w hw) v ρ ↔ PureDens (settingWS (ymix a) w hw) v ρ :=
   ⟨pureDens_of_ensDens fun _ _ hψ hψ1 hφ hφ1 => by
       obtain ⟨c, hc⟩ := gs_unique_WY hψ hφ

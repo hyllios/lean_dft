@@ -47,7 +47,7 @@ lemma ae_deriv_sq {ψ : ℝ → ℝ} (hψ : H10 ψ) :
 
 /-- **The sup bound**: `ψ(t)² ≤ a ∫ ψ² + (∫ ψ'²) / a` for `ψ ∈ H¹₀(0, 1)` and `a > 0`. -/
 theorem sq_le_H10 {ψ : ℝ → ℝ} (hψ : H10 ψ) {a : ℝ} (ha : 0 < a) {t : ℝ}
-    (ht : t ∈ Icc (0 : ℝ) 1) : ψ t ^ 2 ≤ a * ∫ s, ψ s ^ 2 ∂μ1 + kinM ψ / a := by
+    (ht : t ∈ Icc (0 : ℝ) 1) : ψ t ^ 2 ≤ a * ∫ s, ψ s ^ 2 ∂vol01 + kinM ψ / a := by
   have hac2 : AbsolutelyContinuousOnInterval (fun s => ψ s * ψ s) 0 1 := hψ.1.fun_mul hψ.1
   have hacT : AbsolutelyContinuousOnInterval (fun s => ψ s * ψ s) 0 t := hac2.mono (by
     rw [uIcc01, uIcc_of_le ht.1]; exact Icc_subset_Icc le_rfl ht.2)
@@ -76,15 +76,15 @@ theorem sq_le_H10 {ψ : ℝ → ℝ} (hψ : H10 ψ) {a : ℝ} (ha : 0 < a) {t : 
     intervalIntegral.integral_mono_interval le_rfl ht.1 ht.2
       (ae_of_all _ fun s => by simp only [g, Pi.zero_apply]; positivity)
       (hgi ⟨zero_le_one, le_rfl⟩)
-  have htot : ∫ s in (0 : ℝ)..1, g s = a * ∫ s, ψ s ^ 2 ∂μ1 + kinM ψ / a := by
-    rw [← integral_mu1, integral_add (hsq.const_mul a) (hψ.2.2.2.div_const a), integral_const_mul,
+  have htot : ∫ s in (0 : ℝ)..1, g s = a * ∫ s, ψ s ^ 2 ∂vol01 + kinM ψ / a := by
+    rw [← integral_vol01, integral_add (hsq.const_mul a) (hψ.2.2.2.div_const a), integral_const_mul,
       integral_div, kinM]
   linarith
 
 lemma norm_sqP_le {ψ : ℝ → ℝ} (hψ : H10 ψ) {a : ℝ} (ha : 0 < a) :
-    ‖sqP hψ‖ ≤ a * ∫ s, ψ s ^ 2 ∂μ1 + kinM ψ / a := by
+    ‖sqP hψ‖ ≤ a * ∫ s, ψ s ^ 2 ∂vol01 + kinM ψ / a := by
   have hk : 0 ≤ kinM ψ := integral_nonneg fun _ => sq_nonneg _
-  have hn : 0 ≤ ∫ s, ψ s ^ 2 ∂μ1 := integral_nonneg fun _ => sq_nonneg _
+  have hn : 0 ≤ ∫ s, ψ s ^ 2 ∂vol01 := integral_nonneg fun _ => sq_nonneg _
   refine (ContinuousMap.norm_le _ (by positivity)).2 fun t => ?_
   rw [sqP_apply, Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
   exact sq_le_H10 hψ ha t.2
@@ -96,7 +96,7 @@ lemma cM_nonneg (ν : PotM) : 0 ≤ cM ν := by unfold cM; positivity
 
 /-- **Form boundedness**: `|ν(ψ²)| ≤ ½ ∫ ψ'² + C_ν ∫ ψ²`. -/
 theorem abs_nu_sq_le (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) :
-    |ν (sqP hψ)| ≤ kinM ψ / 2 + cM ν * ∫ s, ψ s ^ 2 ∂μ1 := by
+    |ν (sqP hψ)| ≤ kinM ψ / 2 + cM ν * ∫ s, ψ s ^ 2 ∂vol01 := by
   have ha : 0 < 2 * ‖ν‖ + 1 := by positivity
   have hk : 0 ≤ kinM ψ := integral_nonneg fun _ => sq_nonneg _
   have h1 := ν.le_opNorm (sqP hψ)
@@ -106,17 +106,17 @@ theorem abs_nu_sq_le (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) :
     rw [mul_div_assoc', div_le_div_iff₀ ha two_pos]
     nlinarith [norm_nonneg ν]
   calc |ν (sqP hψ)| ≤ ‖ν‖ * ‖sqP hψ‖ := h1
-    _ ≤ ‖ν‖ * ((2 * ‖ν‖ + 1) * ∫ s, ψ s ^ 2 ∂μ1 + kinM ψ / (2 * ‖ν‖ + 1)) :=
+    _ ≤ ‖ν‖ * ((2 * ‖ν‖ + 1) * ∫ s, ψ s ^ 2 ∂vol01 + kinM ψ / (2 * ‖ν‖ + 1)) :=
         mul_le_mul_of_nonneg_left h2 (norm_nonneg ν)
-    _ ≤ kinM ψ / 2 + cM ν * ∫ s, ψ s ^ 2 ∂μ1 := by rw [cM]; nlinarith
+    _ ≤ kinM ψ / 2 + cM ν * ∫ s, ψ s ^ 2 ∂vol01 := by rw [cM]; nlinarith
 
 theorem QM_ge (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) :
-    kinM ψ / 2 - cM ν * ∫ s, ψ s ^ 2 ∂μ1 ≤ QM ν hψ := by
+    kinM ψ / 2 - cM ν * ∫ s, ψ s ^ 2 ∂vol01 ≤ QM ν hψ := by
   have := abs_nu_sq_le ν hψ
   rw [QM]; linarith [neg_abs_le (ν (sqP hψ))]
 
 theorem kinM_le_QM (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) :
-    kinM ψ ≤ 2 * (QM ν hψ + cM ν * ∫ s, ψ s ^ 2 ∂μ1) := by
+    kinM ψ ≤ 2 * (QM ν hψ + cM ν * ∫ s, ψ s ^ 2 ∂vol01) := by
   linarith [QM_ge ν hψ]
 
 /-! ### Scaling -/
@@ -132,14 +132,14 @@ lemma QM_smul (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) (c : ℝ) :
   rw [QM, QM, kinM_smul, sqP_smul hψ c, map_smul, smul_eq_mul]; ring
 
 lemma norm2_smul (c : ℝ) (ψ : ℝ → ℝ) :
-    ∫ t, (c * ψ t) ^ 2 ∂μ1 = c ^ 2 * ∫ t, ψ t ^ 2 ∂μ1 := by
+    ∫ t, (c * ψ t) ^ 2 ∂vol01 = c ^ 2 * ∫ t, ψ t ^ 2 ∂vol01 := by
   simp only [mul_pow, integral_const_mul]
 
 /-! ### The `L²` parametrisation -/
 
 instance fact_two_ne_top : Fact ((2 : ENNReal) ≠ ⊤) := ⟨ENNReal.ofNat_ne_top⟩
 
-lemma memLp_deriv {ψ : ℝ → ℝ} (hψ : H10 ψ) : MemLp (deriv ψ) 2 μ1 :=
+lemma memLp_deriv {ψ : ℝ → ℝ} (hψ : H10 ψ) : MemLp (deriv ψ) 2 vol01 :=
   (memLp_two_iff_integrable_sq (measurable_deriv ψ).aestronglyMeasurable).2 hψ.2.2.2
 
 /-- The derivative of `ψ ∈ H¹₀` as an element of `L²(0, 1)`. -/
@@ -169,7 +169,7 @@ lemma kinM_prim (f : L2I) : kinM (prim f) = ‖f‖ ^ 2 := by
   rw [this]
 
 /-- `∫₀ᵗ f` as a continuous function on `[0, 1]`. -/
-noncomputable def primP (f : L2I) : Pot := ⟨fun t => prim f t, (continuousOn_prim f).domRestrict⟩
+noncomputable def primP (f : L2I) : C01 := ⟨fun t => prim f t, (continuousOn_prim f).domRestrict⟩
 
 @[simp] lemma primP_apply (f : L2I) (t : Icc (0 : ℝ) 1) : primP f t = prim f t := rfl
 
@@ -192,7 +192,7 @@ lemma abs_prim_sub_le_sqrt (f : L2I) {s t : ℝ} (hs : s ∈ Icc (0 : ℝ) 1) (h
   have hf2 := integrable_sq_L2I f
   have key : ∀ {a b : ℝ}, a ∈ Icc (0 : ℝ) 1 → b ∈ Icc (0 : ℝ) 1 → a ≤ b →
       (prim f b - prim f a) ^ 2 ≤ (b - a) * ‖f‖ ^ 2 := fun {a b} ha hb hab => by
-    have ii : ∀ {g : ℝ → ℝ}, Integrable g μ1 → IntervalIntegrable g volume a b := fun hg =>
+    have ii : ∀ {g : ℝ → ℝ}, Integrable g vol01 → IntervalIntegrable g volume a b := fun hg =>
       (intervalIntegrable_iff_integrableOn_Ioo_of_le hab).2
         ((show IntegrableOn _ (Ioo (0 : ℝ) 1) volume from hg).mono_set (Ioo_subset_Ioo ha.1 hb.2))
     have e : prim f b - prim f a = ∫ s in a..b, (f : ℝ → ℝ) s := by
@@ -200,7 +200,7 @@ lemma abs_prim_sub_le_sqrt (f : L2I) {s t : ℝ} (hs : s ∈ Icc (0 : ℝ) 1) (h
         (intervalIntegrable_of_mu1 hf hb) (intervalIntegrable_of_mu1 hf ha)]
     have h1 := sq_le_interval hab (ii hf) (ii hf2)
     have h2 : ∫ s in a..b, (f : ℝ → ℝ) s ^ 2 ≤ ‖f‖ ^ 2 := by
-      rw [norm_sq_L2I, integral_mu1]
+      rw [norm_sq_L2I, integral_vol01]
       exact intervalIntegral.integral_mono_interval ha.1 hab hb.2
         (ae_of_all _ fun s => by simp only [Pi.zero_apply]; positivity)
         ((intervalIntegrable_iff_integrableOn_Ioo_of_le zero_le_one).2 hf2)
@@ -263,14 +263,14 @@ theorem tendsto_primP {f : ℕ → L2I} {g : L2I} {R : ℝ} (hR : ∀ k, ‖f k�
 
 /-! ### The minimiser -/
 
-lemma exists_norm_one : ∃ ψ : ℝ → ℝ, ∃ _ : H10 ψ, ∫ t, ψ t ^ 2 ∂μ1 = 1 := by
+lemma exists_norm_one : ∃ ψ : ℝ → ℝ, ∃ _ : H10 ψ, ∫ t, ψ t ^ 2 ∂vol01 = 1 := by
   have hI := integral_tentG_sq_pos
-  have hc2 : cKink 0 ^ 2 = 1 / ∫ t, tentG t ^ 2 ∂μ1 := by
+  have hc2 : cKink 0 ^ 2 = 1 / ∫ t, tentG t ^ 2 ∂vol01 := by
     rw [cKink, Real.sq_sqrt (by positivity)]; norm_num
   refine ⟨_, h10_tentG.const_mul (cKink 0), ?_⟩
   rw [norm2_smul, hc2, div_mul_cancel₀ _ hI.ne']
 
-lemma QM_ge_neg (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t ^ 2 ∂μ1 = 1) :
+lemma QM_ge_neg (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t ^ 2 ∂vol01 = 1) :
     -cM ν ≤ QM ν hψ := by
   have := QM_ge ν hψ
   have hk : 0 ≤ kinM ψ := integral_nonneg fun _ => sq_nonneg _
@@ -278,19 +278,19 @@ lemma QM_ge_neg (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t 
 
 /-- The ground-state energy of `-d²/dt² + ν` on `H¹₀(0, 1)`. -/
 noncomputable def EM (ν : PotM) : ℝ :=
-  sInf {e | ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧ QM ν hψ = e}
+  sInf {e | ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧ QM ν hψ = e}
 
-lemma EM_le (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t ^ 2 ∂μ1 = 1) :
+lemma EM_le (ν : PotM) {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t ^ 2 ∂vol01 = 1) :
     EM ν ≤ QM ν hψ :=
   csInf_le ⟨-cM ν, fun _ ⟨_, hφ, hφn, he⟩ => he ▸ QM_ge_neg ν hφ hφn⟩ ⟨ψ, hψ, hn, rfl⟩
 
 /-- **The energy has a normalised minimiser on `H¹₀(0, 1)`.** -/
 theorem exists_min (ν : PotM) :
-    ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧ QM ν hψ = EM ν := by
-  set S := {e | ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧ QM ν hψ = e}
+    ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧ QM ν hψ = EM ν := by
+  set S := {e | ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧ QM ν hψ = e}
   have hne : S.Nonempty := by
     obtain ⟨ψ, hψ, hn⟩ := exists_norm_one; exact ⟨_, ψ, hψ, hn, rfl⟩
-  have hseq : ∀ k : ℕ, ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧
+  have hseq : ∀ k : ℕ, ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧
       QM ν hψ < EM ν + 1 / ((k : ℝ) + 1) := fun k => by
     obtain ⟨_, ⟨ψ, hψ, hn, rfl⟩, he⟩ :=
       exists_lt_of_csInf_lt hne (lt_add_of_pos_right (EM ν) (by positivity : (0 : ℝ) < 1 / (k + 1)))
@@ -319,8 +319,8 @@ theorem exists_min (ν : PotM) :
     exact (tendsto_nhds_unique this tendsto_const_nhds)
   have hg := h10_prim h1
   -- normalisation of the limit
-  have hgn : ∫ t, prim g t ^ 2 ∂μ1 = 1 := by
-    have hlim : Tendsto (fun k => ∫ t, ψ (φ k) t ^ 2 ∂μ1) atTop (𝓝 (∫ t, prim g t ^ 2 ∂μ1)) := by
+  have hgn : ∫ t, prim g t ^ 2 ∂vol01 = 1 := by
+    have hlim : Tendsto (fun k => ∫ t, ψ (φ k) t ^ 2 ∂vol01) atTop (𝓝 (∫ t, prim g t ^ 2 ∂vol01)) := by
       refine tendsto_integral_of_dominated_convergence (fun _ => R ^ 2)
         (fun k => (H10.int_sq_of_contOn (hψ (φ k)).continuousOn).aestronglyMeasurable)
         (integrable_const _) (fun k => ?_) ?_
@@ -372,8 +372,8 @@ theorem exists_min (ν : PotM) :
 
 /-- `E₀ ∫ φ² ≤ QM ν φ` on all of `H¹₀`. -/
 theorem EM_mul_le (ν : PotM) {φ : ℝ → ℝ} (hφ : H10 φ) :
-    EM ν * ∫ t, φ t ^ 2 ∂μ1 ≤ QM ν hφ := by
-  set m := ∫ t, φ t ^ 2 ∂μ1
+    EM ν * ∫ t, φ t ^ 2 ∂vol01 ≤ QM ν hφ := by
+  set m := ∫ t, φ t ^ 2 ∂vol01
   have hm : 0 ≤ m := integral_nonneg fun _ => sq_nonneg _
   rcases hm.eq_or_lt with h | h
   · rw [← h, mul_zero]
@@ -383,14 +383,14 @@ theorem EM_mul_le (ν : PotM) {φ : ℝ → ℝ} (hφ : H10 φ) :
     rw [← h, mul_zero] at this; linarith
   · set c := 1 / √m
     have hc : c ^ 2 = 1 / m := by rw [div_pow, Real.sq_sqrt hm, one_pow]
-    have hn' : ∫ t, (c * φ t) ^ 2 ∂μ1 = 1 := by
+    have hn' : ∫ t, (c * φ t) ^ 2 ∂vol01 = 1 := by
       rw [norm2_smul, hc, one_div_mul_cancel h.ne']
     have := EM_le ν (hφ.const_mul c) hn'
     rw [QM_smul ν hφ c, hc, div_mul_eq_mul_div, one_mul, le_div_iff₀ h] at this
     exact this
 
 /-- A normalised minimiser is a ground state. -/
-theorem isGSM_of_min {ν : PotM} {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t ^ 2 ∂μ1 = 1)
+theorem isGSM_of_min {ν : PotM} {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t ^ 2 ∂vol01 = 1)
     (hmin : QM ν hψ = EM ν) : IsGSM ν ψ := by
   refine ⟨hψ, by rw [hn]; exact one_pos, fun φ hφ => ?_⟩
   rw [hn, mul_one, hmin]
@@ -398,15 +398,15 @@ theorem isGSM_of_min {ν : PotM} {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, 
 
 /-- **Every measure potential has a normalised ground state**, with energy `EM ν`. -/
 theorem exists_isGSM (ν : PotM) :
-    ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, IsGSM ν ψ ∧ ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧ QM ν hψ = EM ν := by
+    ∃ ψ : ℝ → ℝ, ∃ hψ : H10 ψ, IsGSM ν ψ ∧ ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧ QM ν hψ = EM ν := by
   obtain ⟨ψ, hψ, hn, hmin⟩ := exists_min ν
   exact ⟨ψ, hψ, isGSM_of_min hψ hn hmin, hn, hmin⟩
 
 /-! ### The Euler–Lagrange equation -/
 
-lemma integrable_mul_of_sq {u w : ℝ → ℝ} (hu : AEStronglyMeasurable u μ1)
-    (hw : AEStronglyMeasurable w μ1) (hu2 : Integrable (fun t => u t ^ 2) μ1)
-    (hw2 : Integrable (fun t => w t ^ 2) μ1) : Integrable (fun t => u t * w t) μ1 := by
+lemma integrable_mul_of_sq {u w : ℝ → ℝ} (hu : AEStronglyMeasurable u vol01)
+    (hw : AEStronglyMeasurable w vol01) (hu2 : Integrable (fun t => u t ^ 2) vol01)
+    (hw2 : Integrable (fun t => w t ^ 2) vol01) : Integrable (fun t => u t * w t) vol01 := by
   refine (hu2.add hw2).mono' (hu.mul hw) (ae_of_all _ fun t => ?_)
   rw [Real.norm_eq_abs, abs_mul]
   change |u t| * |w t| ≤ u t ^ 2 + w t ^ 2
@@ -414,17 +414,17 @@ lemma integrable_mul_of_sq {u w : ℝ → ℝ} (hu : AEStronglyMeasurable u μ1)
     abs_nonneg (w t)]
 
 lemma integrable_dd {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) :
-    Integrable (fun t => deriv ψ t * deriv φ t) μ1 :=
+    Integrable (fun t => deriv ψ t * deriv φ t) vol01 :=
   integrable_mul_of_sq (measurable_deriv ψ).aestronglyMeasurable
     (measurable_deriv φ).aestronglyMeasurable hψ.2.2.2 hφ.2.2.2
 
 lemma integrable_pp {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) :
-    Integrable (fun t => ψ t * φ t) μ1 :=
+    Integrable (fun t => ψ t * φ t) vol01 :=
   integrable_mul_of_sq (H10.aesm_of_contOn hψ.continuousOn) (H10.aesm_of_contOn hφ.continuousOn)
     (H10.int_sq_of_contOn hψ.continuousOn) (H10.int_sq_of_contOn hφ.continuousOn)
 
 lemma ae_deriv_add {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) (s : ℝ) :
-    ∀ᵐ t ∂μ1, deriv (fun t => ψ t + s * φ t) t = deriv ψ t + s * deriv φ t := by
+    ∀ᵐ t ∂vol01, deriv (fun t => ψ t + s * φ t) t = deriv ψ t + s * deriv φ t := by
   have h1 := hψ.1.ae_differentiableAt
   have h2 := hφ.1.ae_differentiableAt
   rw [uIcc01] at h1 h2
@@ -435,26 +435,26 @@ lemma ae_deriv_add {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) (s : ℝ)
 
 lemma kinM_add {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) (s : ℝ) :
     kinM (fun t => ψ t + s * φ t) =
-      kinM ψ + 2 * s * ∫ t, deriv ψ t * deriv φ t ∂μ1 + s ^ 2 * kinM φ := by
-  have e : (fun t => deriv (fun t => ψ t + s * φ t) t ^ 2) =ᵐ[μ1] fun t => deriv ψ t ^ 2 +
+      kinM ψ + 2 * s * ∫ t, deriv ψ t * deriv φ t ∂vol01 + s ^ 2 * kinM φ := by
+  have e : (fun t => deriv (fun t => ψ t + s * φ t) t ^ 2) =ᵐ[vol01] fun t => deriv ψ t ^ 2 +
       2 * s * (deriv ψ t * deriv φ t) + s ^ 2 * deriv φ t ^ 2 :=
     (ae_deriv_add hψ hφ s).mono fun t ht => by simp only [ht]; ring
-  have i1 : Integrable (fun t => deriv ψ t ^ 2) μ1 := hψ.2.2.2
-  have i2 : Integrable (fun t => 2 * s * (deriv ψ t * deriv φ t)) μ1 :=
+  have i1 : Integrable (fun t => deriv ψ t ^ 2) vol01 := hψ.2.2.2
+  have i2 : Integrable (fun t => 2 * s * (deriv ψ t * deriv φ t)) vol01 :=
     (integrable_dd hψ hφ).const_mul (2 * s)
-  have i12 : Integrable (fun t => deriv ψ t ^ 2 + 2 * s * (deriv ψ t * deriv φ t)) μ1 := i1.add i2
-  have i3 : Integrable (fun t => s ^ 2 * deriv φ t ^ 2) μ1 := hφ.2.2.2.const_mul _
+  have i12 : Integrable (fun t => deriv ψ t ^ 2 + 2 * s * (deriv ψ t * deriv φ t)) vol01 := i1.add i2
+  have i3 : Integrable (fun t => s ^ 2 * deriv φ t ^ 2) vol01 := hφ.2.2.2.const_mul _
   rw [kinM, integral_congr_ae e, integral_add i12 i3, integral_add i1 i2, integral_const_mul,
     integral_const_mul]
   rfl
 
 lemma norm2_add (ψ φ : ℝ → ℝ) (hψ : H10 ψ) (hφ : H10 φ) (s : ℝ) :
-    ∫ t, (ψ t + s * φ t) ^ 2 ∂μ1 =
-      ∫ t, ψ t ^ 2 ∂μ1 + 2 * s * ∫ t, ψ t * φ t ∂μ1 + s ^ 2 * ∫ t, φ t ^ 2 ∂μ1 := by
-  have i1 : Integrable (fun t => ψ t ^ 2) μ1 := H10.int_sq_of_contOn hψ.continuousOn
-  have i2 : Integrable (fun t => 2 * s * (ψ t * φ t)) μ1 := (integrable_pp hψ hφ).const_mul (2 * s)
-  have i12 : Integrable (fun t => ψ t ^ 2 + 2 * s * (ψ t * φ t)) μ1 := i1.add i2
-  have i3 : Integrable (fun t => s ^ 2 * φ t ^ 2) μ1 :=
+    ∫ t, (ψ t + s * φ t) ^ 2 ∂vol01 =
+      ∫ t, ψ t ^ 2 ∂vol01 + 2 * s * ∫ t, ψ t * φ t ∂vol01 + s ^ 2 * ∫ t, φ t ^ 2 ∂vol01 := by
+  have i1 : Integrable (fun t => ψ t ^ 2) vol01 := H10.int_sq_of_contOn hψ.continuousOn
+  have i2 : Integrable (fun t => 2 * s * (ψ t * φ t)) vol01 := (integrable_pp hψ hφ).const_mul (2 * s)
+  have i12 : Integrable (fun t => ψ t ^ 2 + 2 * s * (ψ t * φ t)) vol01 := i1.add i2
+  have i3 : Integrable (fun t => s ^ 2 * φ t ^ 2) vol01 :=
     (H10.int_sq_of_contOn hφ.continuousOn).const_mul (s ^ 2)
   rw [← integral_const_mul, ← integral_const_mul, ← integral_add i1 i2, ← integral_add i12 i3]
   congr 1; funext t; ring
@@ -463,14 +463,14 @@ lemma norm2_add (ψ φ : ℝ → ℝ) (hψ : H10 ψ) (hφ : H10 φ) (s : ℝ) :
 lemma H10.add_const_mul {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) (s : ℝ) :
     H10 fun t => ψ t + s * φ t := by
   refine ⟨hψ.1.add (hφ.const_mul s).1, by simp [hψ.2.1, hφ.2.1], by simp [hψ.2.2.1, hφ.2.2.1], ?_⟩
-  have i1 : Integrable (fun t => deriv ψ t ^ 2) μ1 := hψ.2.2.2
+  have i1 : Integrable (fun t => deriv ψ t ^ 2) vol01 := hψ.2.2.2
   have i2 := (integrable_dd hψ hφ).const_mul (2 * s)
-  have i3 : Integrable (fun t => s ^ 2 * deriv φ t ^ 2) μ1 := hφ.2.2.2.const_mul _
+  have i3 : Integrable (fun t => s ^ 2 * deriv φ t ^ 2) vol01 := hφ.2.2.2.const_mul _
   refine ((i1.add i2).add i3).congr ((ae_deriv_add hψ hφ s).mono fun t ht => ?_)
   simp only [Pi.add_apply, ht]; ring
 
 /-- `ψ φ` as a continuous function on `[0, 1]`. -/
-noncomputable def mulP {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) : Pot :=
+noncomputable def mulP {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) : C01 :=
   ⟨fun t => ψ t * φ t, (hψ.continuousOn.mul hφ.continuousOn).domRestrict⟩
 
 @[simp] lemma mulP_apply {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) (t : Icc (0 : ℝ) 1) :
@@ -478,7 +478,7 @@ noncomputable def mulP {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) : Pot
 
 lemma QM_add {ν : PotM} {ψ φ : ℝ → ℝ} (hψ : H10 ψ) (hφ : H10 φ) (s : ℝ) :
     QM ν (hψ.add_const_mul hφ s) = QM ν hψ +
-      2 * s * (∫ t, deriv ψ t * deriv φ t ∂μ1 + ν (mulP hψ hφ)) + s ^ 2 * QM ν hφ := by
+      2 * s * (∫ t, deriv ψ t * deriv φ t ∂vol01 + ν (mulP hψ hφ)) + s ^ 2 * QM ν hφ := by
   have e : sqP (hψ.add_const_mul hφ s) = sqP hψ + (2 * s) • mulP hψ hφ + s ^ 2 • sqP hφ := by
     ext t; simp; ring
   rw [QM, QM, QM, kinM_add hψ hφ, e, map_add, map_add, map_smul, map_smul, smul_eq_mul,
@@ -501,11 +501,11 @@ lemma eq_zero_of_quad {a c : ℝ} (h : ∀ s : ℝ, 0 ≤ 2 * s * a + s ^ 2 * c)
 
 /-- **The Euler–Lagrange equation**: a normalised minimiser satisfies `-ψ'' + ν ψ = E₀ ψ` weakly,
 `∫ ψ' φ' + ν(ψ φ) = E₀ ∫ ψ φ` for all `φ ∈ H¹₀(0, 1)`. -/
-theorem euler_lagrange {ν : PotM} {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t ^ 2 ∂μ1 = 1)
+theorem euler_lagrange {ν : PotM} {ψ : ℝ → ℝ} (hψ : H10 ψ) (hn : ∫ t, ψ t ^ 2 ∂vol01 = 1)
     (hmin : QM ν hψ = EM ν) {φ : ℝ → ℝ} (hφ : H10 φ) :
-    ∫ t, deriv ψ t * deriv φ t ∂μ1 + ν (mulP hψ hφ) = EM ν * ∫ t, ψ t * φ t ∂μ1 := by
-  have key := eq_zero_of_quad (a := ∫ t, deriv ψ t * deriv φ t ∂μ1 + ν (mulP hψ hφ) -
-      EM ν * ∫ t, ψ t * φ t ∂μ1) (c := QM ν hφ - EM ν * ∫ t, φ t ^ 2 ∂μ1) fun s => by
+    ∫ t, deriv ψ t * deriv φ t ∂vol01 + ν (mulP hψ hφ) = EM ν * ∫ t, ψ t * φ t ∂vol01 := by
+  have key := eq_zero_of_quad (a := ∫ t, deriv ψ t * deriv φ t ∂vol01 + ν (mulP hψ hφ) -
+      EM ν * ∫ t, ψ t * φ t ∂vol01) (c := QM ν hφ - EM ν * ∫ t, φ t ^ 2 ∂vol01) fun s => by
     have h := EM_mul_le ν (hψ.add_const_mul hφ s)
     rw [QM_add hψ hφ s, norm2_add ψ φ hψ hφ s, hn, hmin] at h
     linarith

@@ -247,7 +247,7 @@ lemma PhiBY_pm (Ψ : Cfg n → ℝ) {ρ : Equiv.Perm (Fin (n + 1))} (hρ : YG a 
   sumY_one_pm _ hρ x
 
 /-- **The chamber ground state.** -/
-theorem isGS_PhiY {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n → ℝ}
+theorem isGS_PhiY {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingWS (ymix a) w hw) v Ψ) :
     IsGS (settingWS (ymix a) w hw) v (PhiY a Ψ) := by
   have hD := PhiY_mem hΨ.1
@@ -335,7 +335,7 @@ end test
 
 section equation
 
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n → ℝ}
+variable {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {Ψ : Cfg n → ℝ}
 
 lemma sgnY_mul_self {x : Cfg n} (hx : x ∈ Cube n) (hinj : Function.Injective x) :
     sgnY a x * sgnY a x = 1 := by

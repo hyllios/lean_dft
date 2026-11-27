@@ -44,7 +44,7 @@ lemma relW_relW_inv (σ : Equiv.Perm (Fin (n + 1))) (f : W0 n) : relW σ (relW �
 
 section forms
 
-variable (w : Cfg n → ℝ) (hw : Continuous w) (v : Pot) (hws : ∀ σ x, w (pm σ x) = w x)
+variable (w : Cfg n → ℝ) (hw : Continuous w) (v : C01) (hws : ∀ σ x, w (pm σ x) = w x)
 
 lemma BQW_symm' (f g : W0 n) : BQW w hw v f g = BQW w hw v g f := by
   rw [BQW_apply, BQW_apply, kinB_symm, potB_symm]
@@ -155,7 +155,7 @@ lemma liftW_sc_ae {a : ℕ} {Φ : W0 n} (hanti : AntiY a (Φ : Cfg n → ℝ)) :
   simp only [altY]
   exact Finset.sum_congr rfl fun σ _ => by simp only [rel_sc_iff]
 
-lemma liftW_mem {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} (hws : ∀ σ x, w (pm σ x) = w x)
+lemma liftW_mem {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} (hws : ∀ σ x, w (pm σ x) = w x)
     {E : ℝ} {a : ℕ} {Φ : W0 n} (hΦ : Φ ∈ EigSp w hw v E) (s : SpinC n) :
     liftW a Φ s ∈ EigSp w hw v E := by
   classical
@@ -164,7 +164,7 @@ lemma liftW_mem {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} (hws : ∀ σ 
   · exact Submodule.smul_mem _ _ (relW_mem_EigSp w hw v hws hΦ σ)
   · exact Submodule.zero_mem _
 
-lemma Sp_mem {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {E : ℝ} {u : SpinC n → W0 n}
+lemma Sp_mem {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {E : ℝ} {u : SpinC n → W0 n}
     (hu : ∀ s, u s ∈ EigSp w hw v E) (s : SpinC n) : Sp u s ∈ EigSp w hw v E := by
   rw [Sp_apply]
   refine Submodule.sum_mem _ fun i _ => ?_
@@ -176,7 +176,7 @@ lemma Sp_mem {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {E : ℝ} {u : Sp
 
 section bounds
 
-variable {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} (hws : ∀ σ x, w (pm σ x) = w x)
+variable {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} (hws : ∀ σ x, w (pm σ x) = w x)
 include hws
 
 /-- **The lower bound** for states of total spin `S' = a' - N/2 ≥ 0`, continuous potentials. -/

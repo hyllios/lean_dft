@@ -36,37 +36,37 @@ namespace Box
 open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The (unnormalised) shooting ground state of `v`. -/
-noncomputable def fsh (v : Pot) (s : ℝ) : ℝ := (sol v (Estar v) s).1
+noncomputable def fsh (v : C01) (s : ℝ) : ℝ := (sol v (Estar v) s).1
 
-lemma continuousOn_fsh (v : Pot) : ContinuousOn (fsh v) (Icc 0 1) := (continuousOn_sol v _).fst
+lemma continuousOn_fsh (v : C01) : ContinuousOn (fsh v) (Icc 0 1) := (continuousOn_sol v _).fst
 
 /-- The weighted integral `∫ h ψ_{E*}²`. -/
-noncomputable def Nsh (v : Pot) (h : ℝ → ℝ) : ℝ := ∫ s, h s * fsh v s ^ 2 ∂μ1
+noncomputable def Nsh (v : C01) (h : ℝ → ℝ) : ℝ := ∫ s, h s * fsh v s ^ 2 ∂vol01
 
 lemma integrable_mu1_of_continuousOn {F : ℝ → ℝ} (hF : ContinuousOn F (Icc 0 1)) :
-    Integrable F μ1 :=
+    Integrable F vol01 :=
   (hF.integrableOn_compact isCompact_Icc).mono_set Ioo_subset_Icc_self
 
 /-- A normalised ground state of `v` built from the shooting solution. -/
-theorem exists_gsN (v : Pot) : ∃ ψ, IsNGS setting v ψ ∧ Q setting v ψ = Estar v ∧
-    0 < Nsh v (fun _ => 1) ∧ ∀ u : Pot, dens setting ψ u = Nsh v (ext u) / Nsh v (fun _ => 1) := by
+theorem exists_gsN (v : C01) : ∃ ψ, IsNGS setting v ψ ∧ Q setting v ψ = Estar v ∧
+    0 < Nsh v (fun _ => 1) ∧ ∀ u : C01, dens setting ψ u = Nsh v (iccExt u) / Nsh v (fun _ => 1) := by
   obtain ⟨ψe, hD, heq, hQ, hpos, hlow⟩ := gs_data v
-  have hcongr : ∀ h : ℝ → ℝ, ∫ s, h s * ψe s ^ 2 ∂μ1 = Nsh v h := fun h =>
+  have hcongr : ∀ h : ℝ → ℝ, ∫ s, h s * ψe s ^ 2 ∂vol01 = Nsh v h := fun h =>
     integral_congr_ae (by
       filter_upwards [ae_restrict_mem measurableSet_Ioo] with x hx
       rw [heq x ⟨by linarith [hx.1], by linarith [hx.2]⟩]; rfl)
-  have hip : ip (μ := μ1) ψe ψe = Nsh v (fun _ => 1) := by
+  have hip : ip (μ := vol01) ψe ψe = Nsh v (fun _ => 1) := by
     rw [ip_eq_sq, ← hcongr]; simp only [one_mul]
   set D := Nsh v (fun _ => 1)
   have hDpos : 0 < D := hip ▸ hpos
   set c := (Real.sqrt D)⁻¹
   have hc2 : c * c = D⁻¹ := by
     simp only [c]; rw [← mul_inv, Real.mul_self_sqrt hDpos.le]
-  have hc2' : c * c * ip (μ := μ1) ψe ψe = 1 := by rw [hc2, hip, inv_mul_cancel₀ hDpos.ne']
+  have hc2' : c * c * ip (μ := vol01) ψe ψe = 1 := by rw [hc2, hip, inv_mul_cancel₀ hDpos.ne']
   have hcD : c • ψe ∈ Dom := Dom.smul_mem c hD
   have hQc : Q setting v (c • ψe) = Estar v := by
     rw [Q_smul_self (S := setting) v c hD, hQ]
-    calc c * c * (Estar v * ip (μ := μ1) ψe ψe) = Estar v * (c * c * ip (μ := μ1) ψe ψe) := by
+    calc c * c * (Estar v * ip (μ := vol01) ψe ψe) = Estar v * (c * c * ip (μ := vol01) ψe ψe) := by
           ring
       _ = Estar v := by rw [hc2', mul_one]
   refine ⟨c • ψe, ⟨⟨hcD, by rw [ip_smul_self, hc2']⟩, fun φ hφ => ?_⟩, hQc, hDpos, fun u => ?_⟩
@@ -75,16 +75,16 @@ theorem exists_gsN (v : Pot) : ∃ ψ, IsNGS setting v ψ ∧ Q setting v ψ = E
     rwa [hφ.2, mul_one] at this
   · rw [dens_eq_sq]
     simp only [Pi.smul_apply, smul_eq_mul]
-    have : ∫ t, ext u t * (c * ψe t) ^ 2 ∂μ1 = (c * c) * ∫ t, ext u t * ψe t ^ 2 ∂μ1 := by
+    have : ∫ t, iccExt u t * (c * ψe t) ^ 2 ∂vol01 = (c * c) * ∫ t, iccExt u t * ψe t ^ 2 ∂vol01 := by
       rw [← integral_const_mul]; congr 1; funext t; ring
     rw [this, hcongr, hc2, div_eq_inv_mul]
 
 /-- The shooting energy is the ground-state energy. -/
-theorem estar_eq_gsEr (v : Pot) : Estar v = gsEr v := by
+theorem estar_eq_gsEr (v : C01) : Estar v = gsEr v := by
   obtain ⟨ψ, hψ, hQ, -⟩ := exists_gsN v
   rw [gsEr_eq_of_isNGS hψ, hQ]
 
-lemma estar_lipschitz (v w : Pot) : |Estar v - Estar w| ≤ ‖v - w‖ := by
+lemma estar_lipschitz (v w : C01) : |Estar v - Estar w| ≤ ‖v - w‖ := by
   rw [estar_eq_gsEr, estar_eq_gsEr]; exact gsEr_lipschitz v w
 
 lemma gronwall_le {K a t : ℝ} (hK : 0 < K) (ha : 0 ≤ a) (ht : t ∈ Icc (0 : ℝ) 1) :
@@ -99,12 +99,12 @@ lemma gronwall_le {K a t : ℝ} (hK : 0 < K) (ha : 0 ≤ a) (ht : t ∈ Icc (0 :
     _ = a * ((Real.exp K - 1) / K) := by ring
 
 /-- A bound for the shooting ground state on `[0, 1]`. -/
-lemma fsh_bound (v : Pot) : ∃ M, 0 ≤ M ∧ ∀ s ∈ Icc (0 : ℝ) 1, ‖sol v (Estar v) s‖ ≤ M := by
+lemma fsh_bound (v : C01) : ∃ M, 0 ≤ M ∧ ∀ s ∈ Icc (0 : ℝ) 1, ‖sol v (Estar v) s‖ ≤ M := by
   obtain ⟨M, hM⟩ := isCompact_Icc.exists_bound_of_continuousOn (continuousOn_sol v (Estar v))
   exact ⟨max M 0, le_max_right _ _, fun s hs => (hM s hs).trans (le_max_left _ _)⟩
 
 /-- **The shooting ground state is Lipschitz in the potential** (uniformly on `[0, 1]`). -/
-theorem fsh_close (v : Pot) : ∃ C, 0 ≤ C ∧ ∀ v' : Pot, ‖v' - v‖ ≤ 1 →
+theorem fsh_close (v : C01) : ∃ C, 0 ≤ C ∧ ∀ v' : C01, ‖v' - v‖ ≤ 1 →
     ∀ s ∈ Icc (0 : ℝ) 1, |fsh v' s - fsh v s| ≤ C * ‖v' - v‖ := by
   obtain ⟨M, hM0, hM⟩ := fsh_bound v
   set E := Estar v
@@ -121,16 +121,16 @@ theorem fsh_close (v : Pot) : ∃ C, 0 ≤ C ∧ ∀ v' : Pot, ‖v' - v‖ ≤ 
     have h1 := abs_ext_le v' t
     have h2 : ‖v'‖ ≤ ‖v‖ + 1 := by linarith [norm_sub_norm_le v' v]
     have h3 : |E'| ≤ |E| + 1 := by linarith [abs_sub_abs_le_abs_sub E' E]
-    calc |Wof v' E' t| = |ext v' t - E'| := rfl
-      _ ≤ |ext v' t| + |E'| := abs_sub _ _
+    calc |Wof v' E' t| = |iccExt v' t - E'| := rfl
+      _ ≤ |iccExt v' t| + |E'| := abs_sub _ _
       _ ≤ _ := by linarith
   have hε : ∀ t ∈ Icc (0 : ℝ) 1, |Wof v' E' t - Wof v E t| ≤ 2 * ‖v' - v‖ := by
     intro t _
     have h1 := abs_ext_le (v' - v) t
-    have hx : Wof v' E' t - Wof v E t = ext (v' - v) t - (E' - E) := by
-      simp only [Wof, SturmLiouville.ext, ContinuousMap.sub_apply]; ring
+    have hx : Wof v' E' t - Wof v E t = iccExt (v' - v) t - (E' - E) := by
+      simp only [Wof, SturmLiouville.iccExt, ContinuousMap.sub_apply]; ring
     rw [hx]
-    calc |ext (v' - v) t - (E' - E)| ≤ |ext (v' - v) t| + |E' - E| := abs_sub _ _
+    calc |iccExt (v' - v) t - (E' - E)| ≤ |iccExt (v' - v) t| + |E' - E| := abs_sub _ _
       _ ≤ _ := by linarith
   have h := sol_dist_le (by rw [sol_zero, sol_zero]) (sol_deriv v' E') (sol_deriv v E) hB hM hε s hs
   have hg := gronwall_le hK (by positivity : 0 ≤ 2 * ‖v' - v‖ * M) hs
@@ -142,13 +142,13 @@ theorem fsh_close (v : Pot) : ∃ C, 0 ≤ C ∧ ∀ v' : Pot, ‖v' - v‖ ≤ 
 lemma int_sq_close {h f g : ℝ → ℝ} (hh : ContinuousOn h (Icc 0 1)) (hf : ContinuousOn f (Icc 0 1))
     (hg : ContinuousOn g (Icc 0 1)) {H δ M : ℝ} (hH : ∀ s ∈ Icc (0 : ℝ) 1, |h s| ≤ H)
     (hδ : ∀ s ∈ Icc (0 : ℝ) 1, |f s - g s| ≤ δ) (hM : ∀ s ∈ Icc (0 : ℝ) 1, |g s| ≤ M) :
-    |∫ s, h s * f s ^ 2 ∂μ1 - ∫ s, h s * g s ^ 2 ∂μ1| ≤ H * (δ * (2 * M + δ)) := by
+    |∫ s, h s * f s ^ 2 ∂vol01 - ∫ s, h s * g s ^ 2 ∂vol01| ≤ H * (δ * (2 * M + δ)) := by
   have h0 : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := ⟨le_rfl, zero_le_one⟩
   have hH0 : 0 ≤ H := (abs_nonneg _).trans (hH 0 h0)
   have hδ0 : 0 ≤ δ := (abs_nonneg _).trans (hδ 0 h0)
   have hM0 : 0 ≤ M := (abs_nonneg _).trans (hM 0 h0)
-  have e : ∫ s, h s * f s ^ 2 ∂μ1 - ∫ s, h s * g s ^ 2 ∂μ1 =
-      ∫ s, (h s * f s ^ 2 - h s * g s ^ 2) ∂μ1 :=
+  have e : ∫ s, h s * f s ^ 2 ∂vol01 - ∫ s, h s * g s ^ 2 ∂vol01 =
+      ∫ s, (h s * f s ^ 2 - h s * g s ^ 2) ∂vol01 :=
     (integral_sub (integrable_mu1_of_continuousOn (hh.mul (hf.pow 2)))
       (integrable_mu1_of_continuousOn (hh.mul (hg.pow 2)))).symm
   rw [e, ← Real.norm_eq_abs]
@@ -170,7 +170,7 @@ lemma int_sq_close {h f g : ℝ → ℝ} (hh : ContinuousOn h (Icc 0 1)) (hf : C
       (by positivity) hH0
 
 /-- The weighted integrals `∫ h ψ_{E*}²` are continuous along lines `v + t u`. -/
-theorem tendsto_Nsh (v u : Pot) {h : ℝ → ℝ} (hh : ContinuousOn h (Icc 0 1)) {H : ℝ}
+theorem tendsto_Nsh (v u : C01) {h : ℝ → ℝ} (hh : ContinuousOn h (Icc 0 1)) {H : ℝ}
     (hH : ∀ s ∈ Icc (0 : ℝ) 1, |h s| ≤ H) :
     Tendsto (fun t : ℝ => Nsh (v + t • u) h) (𝓝 0) (𝓝 (Nsh v h)) := by
   obtain ⟨C, hC0, hC⟩ := fsh_close v
@@ -197,19 +197,19 @@ theorem tendsto_Nsh (v u : Pot) {h : ℝ → ℝ} (hh : ContinuousOn h (Icc 0 1)
 
 /-- **Converse of Hellmann–Feynman.** A supergradient of the ground-state energy at `v` is the
 density of a normalised ground state of `v`. -/
-theorem supergrad_eq {v : Pot} {ρ' : StrongDual ℝ Pot}
+theorem supergrad_eq {v : C01} {ρ' : StrongDual ℝ C01}
     (hρ' : ∀ w, gsEr w ≤ gsEr v + ρ' (w - v)) :
     ∃ ψ, ∃ hψ : IsNGS setting v ψ, ρ' = densL hψ.1 := by
   obtain ⟨ψ, hψ, -, hD, hdens⟩ := exists_gsN v
-  have key : ∀ u : Pot, dens setting ψ u ≤ ρ' u := by
+  have key : ∀ u : C01, dens setting ψ u ≤ ρ' u := by
     intro u
     have h1 : ContinuousOn (fun _ : ℝ => (1 : ℝ)) (Icc 0 1) := continuousOn_const
-    have hr := (tendsto_Nsh v u (continuous_ext u).continuousOn (fun s _ => abs_ext_le u s)).div
+    have hr := (tendsto_Nsh v u (continuous_iccExt u).continuousOn (fun s _ => abs_ext_le u s)).div
       (tendsto_Nsh v u h1 (H := 1) (fun s _ => by simp)) hD.ne'
     rw [← hdens] at hr
     refine le_of_tendsto (hr.mono_left nhdsWithin_le_nhds)
       (eventually_nhdsWithin_of_forall fun t (ht : t ∈ Ioi (0 : ℝ)) => ?_)
-    change Nsh (v + t • u) (ext u) / Nsh (v + t • u) (fun _ => 1) ≤ ρ' u
+    change Nsh (v + t • u) (iccExt u) / Nsh (v + t • u) (fun _ => 1) ≤ ρ' u
     obtain ⟨ψt, hψt, -, -, hdt⟩ := exists_gsN (v + t • u)
     rw [← hdt]
     have hE := hρ' (v + t • u)
@@ -227,16 +227,16 @@ theorem supergrad_eq {v : Pot} {ρ' : StrongDual ℝ Pot}
 /-- **v-representable densities are dense.** Every density of finite Lieb functional is within any
 `η > 0`, in the dual norm of `C([0, 1])`, of the density of a normalised ground state of some
 continuous potential. -/
-theorem dense_pureVRep (ρ : StrongDual ℝ Pot) {c : ℝ} (hF : liebF setting ρ ≤ (c : EReal))
+theorem dense_pureVRep (ρ : StrongDual ℝ C01) {c : ℝ} (hF : liebF setting ρ ≤ (c : EReal))
     {η : ℝ} (hη : 0 < η) :
-    ∃ (v : Pot) (ρ' : StrongDual ℝ Pot), ‖ρ' - ρ‖ ≤ η ∧ PureDens setting v ρ' := by
+    ∃ (v : C01) (ρ' : StrongDual ℝ C01), ‖ρ' - ρ‖ ≤ η ∧ PureDens setting v ρ' := by
   obtain ⟨v, ρ', hn, hs, -⟩ := dense_supergrad ρ hF hη
   obtain ⟨ψ, hψ, rfl⟩ := supergrad_eq hs
   refine ⟨v, densL hψ.1, hn, ψ, isGS_of_isNGS (fun φ _ _ => kin_nonneg φ) hψ, hψ.1.2, rfl⟩
 
 /-- Every N-representable density is a dual-norm limit of pure v-representable densities. -/
 theorem dense_pureVRep_of_nst {φ : ℝ → ℝ} (hφ : φ ∈ Nst setting) {η : ℝ} (hη : 0 < η) :
-    ∃ (v : Pot) (ρ' : StrongDual ℝ Pot), ‖ρ' - densL hφ‖ ≤ η ∧ PureDens setting v ρ' :=
+    ∃ (v : C01) (ρ' : StrongDual ℝ C01), ‖ρ' - densL hφ‖ ≤ η ∧ PureDens setting v ρ' :=
   dense_pureVRep (densL hφ) (liebF_le_h0 hφ) hη
 
 end Box

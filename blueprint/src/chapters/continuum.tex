@@ -65,7 +65,7 @@ $0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\
 
 \begin{lemma}[The box setting]
   \label{lem:box_setting}
-  \lean{SturmLiouville.μ1, SturmLiouville.Dom, SturmLiouville.mem_Dom, SturmLiouville.Pot, SturmLiouville.ext, SturmLiouville.continuous_ext, DFT.Continuum.Box.Lbox, SturmLiouville.integrable_of_continuous, DFT.Continuum.Box.kin, SturmLiouville.two_ge_one, SturmLiouville.diff_of_mem, SturmLiouville.cont_deriv_of_mem, DFT.Continuum.Box.setting, SturmLiouville.eq_zero_of_integral, DFT.Continuum.Box.sep_box, DFT.Continuum.Box.one, DFT.Continuum.Box.rigidL_box}
+  \lean{SturmLiouville.vol01, SturmLiouville.Dom, SturmLiouville.mem_Dom, SturmLiouville.C01, SturmLiouville.iccExt, SturmLiouville.continuous_iccExt, DFT.Continuum.Box.Lbox, SturmLiouville.integrable_of_continuous, DFT.Continuum.Box.kin, SturmLiouville.two_ge_one, SturmLiouville.diff_of_mem, SturmLiouville.cont_deriv_of_mem, DFT.Continuum.Box.setting, SturmLiouville.eq_zero_of_integral, DFT.Continuum.Box.sep_box, DFT.Continuum.Box.one, DFT.Continuum.Box.rigidL_box}
   \leanok
   \uses{def:continuum_setting}
   The box is a setting in which separation (fundamental lemma of the calculus of variations, with smooth test
@@ -282,7 +282,7 @@ the lowest eigenvalue. The spectrum comes instead from the Green operator, which
 
 \begin{lemma}[The Green operator on $L^2(0,1)$]
   \label{lem:spec_operator}
-  \lean{SturmLiouville.HL, SturmLiouville.mu1_univ, SturmLiouville.measureUnivNNReal_mu1, SturmLiouville.integrable_HL, SturmLiouville.Ksl, SturmLiouville.Ksl_ae, SturmLiouville.norm_Ksl_sub_le, SturmLiouville.continuous_Ksl, SturmLiouville.norm_Ksl_le, SturmLiouville.Gk_eq_inner, SturmLiouville.Bop, SturmLiouville.Bop_apply, SturmLiouville.memLp_comp_projIcc, SturmLiouville.Jop, SturmLiouville.Gop, SturmLiouville.Gop_ae, SturmLiouville.isCompactOperator_Bop, SturmLiouville.isCompactOperator_Gop, SturmLiouville.prod_mu1, SturmLiouville.integrable_kernel_prod, SturmLiouville.inner_Gop, SturmLiouville.Gop_symm, SturmLiouville.isSymmetric_Gop, SturmLiouville.test_out, SturmLiouville.test_c2, SturmLiouville.src, SturmLiouville.continuous_src, SturmLiouville.Gk_test, SturmLiouville.memLp_of_continuous, SturmLiouville.Gop_injective}
+  \lean{SturmLiouville.HL, SturmLiouville.vol01_univ, SturmLiouville.measureUnivNNReal_vol01, SturmLiouville.integrable_HL, SturmLiouville.Ksl, SturmLiouville.Ksl_ae, SturmLiouville.norm_Ksl_sub_le, SturmLiouville.continuous_Ksl, SturmLiouville.norm_Ksl_le, SturmLiouville.Gk_eq_inner, SturmLiouville.Bop, SturmLiouville.Bop_apply, SturmLiouville.memLp_comp_projIcc, SturmLiouville.Jop, SturmLiouville.Gop, SturmLiouville.Gop_ae, SturmLiouville.isCompactOperator_Bop, SturmLiouville.isCompactOperator_Gop, SturmLiouville.prod_vol01, SturmLiouville.integrable_kernel_prod, SturmLiouville.inner_Gop, SturmLiouville.Gop_symm, SturmLiouville.isSymmetric_Gop, SturmLiouville.test_out, SturmLiouville.test_c2, SturmLiouville.src, SturmLiouville.continuous_src, SturmLiouville.Gk_test, SturmLiouville.memLp_of_continuous, SturmLiouville.Gop_injective}
   \leanok
   \uses{lem:spec_green}
   The Green operator is a compact, symmetric and injective operator on $L^2(0,1)$.
@@ -297,7 +297,7 @@ the lowest eigenvalue. The spectrum comes instead from the Green operator, which
 
 \begin{lemma}[Eigenvectors are classical and the eigenbasis]
   \label{lem:spec_basis}
-  \lean{SturmLiouville.continuous_Gk_proj, SturmLiouville.Gk_congr, SturmLiouville.eigen_regular, SturmLiouville.integral_unit_mu1, SturmLiouville.eigenvalue_pos, CompactEigenbasis.EVal, CompactEigenbasis.eval_ne_zero, CompactEigenbasis.instFDEigen, CompactEigenbasis.EIdx, CompactEigenbasis.eigOB, CompactEigenbasis.eigVec, CompactEigenbasis.eigVec_apply, CompactEigenbasis.orthonormal_eigVec, CompactEigenbasis.span_eigVec_orthogonal, CompactEigenbasis.eigenBasis, CompactEigenbasis.eigenBasis_coe, CompactEigenbasis.finite_ge}
+  \lean{SturmLiouville.continuous_Gk_proj, SturmLiouville.Gk_congr, SturmLiouville.eigen_regular, SturmLiouville.integral_unit_vol01, SturmLiouville.eigenvalue_pos, CompactEigenbasis.EVal, CompactEigenbasis.eval_ne_zero, CompactEigenbasis.instFDEigen, CompactEigenbasis.EIdx, CompactEigenbasis.eigOB, CompactEigenbasis.eigVec, CompactEigenbasis.eigVec_apply, CompactEigenbasis.orthonormal_eigVec, CompactEigenbasis.span_eigVec_orthogonal, CompactEigenbasis.eigenBasis, CompactEigenbasis.eigenBasis_coe, CompactEigenbasis.finite_ge}
   \leanok
   \uses{lem:spec_operator}
   If $Gf=\mu f$ with $\mu\neq0$, then $f$ agrees almost everywhere with a $C^2$ function $e$ vanishing at the walls
@@ -316,7 +316,7 @@ the lowest eigenvalue. The spectrum comes instead from the Green operator, which
 
 \begin{lemma}[The one-particle bound]
   \label{lem:spec_bound}
-  \lean{SturmLiouville.toHL, SturmLiouville.toHL_ae, SturmLiouville.inner_toHL_right, SturmLiouville.inner_toHL_toHL, SturmLiouville.dom_c2, SturmLiouville.continuous_src_dom, SturmLiouville.Gk_src, SturmLiouville.Gop_toHL_src, SturmLiouville.inner_src, SturmLiouville.Idx, SturmLiouville.eB, SturmLiouville.mu, SturmLiouville.Gop_eB, SturmLiouville.mu_ne_zero, SturmLiouville.eB_ne_zero, SturmLiouville.mu_pos, SturmLiouville.exists_rep, SturmLiouville.rep, SturmLiouville.rep_mem, SturmLiouville.rep_ae, SturmLiouville.rep_ode, SturmLiouville.inner_eB_toHL, SturmLiouville.rep_orthonormal, SturmLiouville.coef, SturmLiouville.hasSum_sq, SturmLiouville.hasSum_form, SturmLiouville.cell, SturmLiouville.cell_sub, SturmLiouville.measurableSet_cell, SturmLiouville.cell_disjoint, SturmLiouville.mu1_cell, SturmLiouville.cellV, SturmLiouville.linearIndependent_cellV, SturmLiouville.exists_injective_idx, SturmLiouville.exists_top, DFT.Continuum.Spectral.exists_orbitals}
+  \lean{SturmLiouville.toHL, SturmLiouville.toHL_ae, SturmLiouville.inner_toHL_right, SturmLiouville.inner_toHL_toHL, SturmLiouville.dom_c2, SturmLiouville.continuous_src_dom, SturmLiouville.Gk_src, SturmLiouville.Gop_toHL_src, SturmLiouville.inner_src, SturmLiouville.Idx, SturmLiouville.eB, SturmLiouville.mu, SturmLiouville.Gop_eB, SturmLiouville.mu_ne_zero, SturmLiouville.eB_ne_zero, SturmLiouville.mu_pos, SturmLiouville.exists_rep, SturmLiouville.rep, SturmLiouville.rep_mem, SturmLiouville.rep_ae, SturmLiouville.rep_ode, SturmLiouville.inner_eB_toHL, SturmLiouville.rep_orthonormal, SturmLiouville.coef, SturmLiouville.hasSum_sq, SturmLiouville.hasSum_form, SturmLiouville.cell, SturmLiouville.cell_sub, SturmLiouville.measurableSet_cell, SturmLiouville.cell_disjoint, SturmLiouville.vol01_cell, SturmLiouville.cellV, SturmLiouville.linearIndependent_cellV, SturmLiouville.exists_injective_idx, SturmLiouville.exists_top, DFT.Continuum.Spectral.exists_orbitals}
   \leanok
   \uses{lem:spec_basis}
   For every continuous potential $v$ on $[0,1]$ and $N=n+1$ there are $C^2$ functions $\varphi_0,\dots,\varphi_n$,

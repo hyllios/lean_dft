@@ -43,12 +43,12 @@ lemma continuousOn (hg : H1N g) : ContinuousOn g (Icc 0 1) := by
 
 lemma of_H10 (hg : H10 g) : H1N g := ⟨hg.1, hg.2.2.2⟩
 
-lemma int_sq (hg : H1N g) : Integrable (fun t => g t ^ 2) μ1 :=
+lemma int_sq (hg : H1N g) : Integrable (fun t => g t ^ 2) vol01 :=
   H10.int_sq_of_contOn hg.continuousOn
 
-lemma int_dsq (hg : H1N g) : Integrable (fun t => deriv g t ^ 2) μ1 := hg.2
+lemma int_dsq (hg : H1N g) : Integrable (fun t => deriv g t ^ 2) vol01 := hg.2
 
-lemma memLp_deriv (hg : H1N g) : MemLp (deriv g) 2 μ1 :=
+lemma memLp_deriv (hg : H1N g) : MemLp (deriv g) 2 vol01 :=
   (memLp_two_iff_integrable_sq (measurable_deriv g).aestronglyMeasurable).2 hg.2
 
 lemma ac_mono (hg : H1N g) {a b : ℝ} (ha : a ∈ Icc (0 : ℝ) 1) (hb : b ∈ Icc (0 : ℝ) 1) :
@@ -75,11 +75,11 @@ end H1N
 
 /-- `ψ(t)² ≤ (1 + a) ∫ ψ² + (∫ ψ'²) / a` for `ψ ∈ H¹(0, 1)`, `a > 0`, `t ∈ [0, 1]`. -/
 theorem sq_le_H1N {ψ : ℝ → ℝ} (hψ : H1N ψ) {a : ℝ} (ha : 0 < a) {t : ℝ}
-    (ht : t ∈ Icc (0 : ℝ) 1) : ψ t ^ 2 ≤ (1 + a) * ∫ s, ψ s ^ 2 ∂μ1 + kinM ψ / a := by
+    (ht : t ∈ Icc (0 : ℝ) 1) : ψ t ^ 2 ≤ (1 + a) * ∫ s, ψ s ^ 2 ∂vol01 + kinM ψ / a := by
   set g : ℝ → ℝ := fun s => a * ψ s ^ 2 + deriv ψ s ^ 2 / a
-  have hg : Integrable g μ1 := (hψ.int_sq.const_mul a).add (hψ.int_dsq.div_const a)
+  have hg : Integrable g vol01 := (hψ.int_sq.const_mul a).add (hψ.int_dsq.div_const a)
   have hg0 : ∀ s, 0 ≤ g s := fun s => by simp only [g]; positivity
-  have hG : ∫ s, g s ∂μ1 = a * ∫ s, ψ s ^ 2 ∂μ1 + kinM ψ / a := by
+  have hG : ∫ s, g s ∂vol01 = a * ∫ s, ψ s ^ 2 ∂vol01 + kinM ψ / a := by
     rw [integral_add (hψ.int_sq.const_mul a) (hψ.int_dsq.div_const a), integral_const_mul,
       integral_div, kinM]
   have hpt : ∀ s, |2 * ψ s * deriv ψ s| ≤ g s := fun s => by
@@ -94,7 +94,7 @@ theorem sq_le_H1N {ψ : ℝ → ℝ} (hψ : H1N ψ) {a : ℝ} (ha : 0 < a) {t : 
       have : 0 ≤ (a * ψ s - deriv ψ s) ^ 2 / a := by positivity
       linarith
   have hD := H1N.ae_deriv_mul hψ hψ
-  have key : ∀ s ∈ Icc (0 : ℝ) 1, ψ t ^ 2 ≤ ψ s ^ 2 + ∫ x, g x ∂μ1 := fun s hs => by
+  have key : ∀ s ∈ Icc (0 : ℝ) 1, ψ t ^ 2 ≤ ψ s ^ 2 + ∫ x, g x ∂vol01 := fun s hs => by
     have hac : AbsolutelyContinuousOnInterval (fun x => ψ x * ψ x) s t :=
       (hψ.1.fun_mul hψ.1).mono (by rw [uIcc01]; exact uIcc_subset_Icc hs ht)
     have hFTC := hac.integral_deriv_eq_sub
@@ -114,25 +114,25 @@ theorem sq_le_H1N {ψ : ℝ → ℝ} (hψ : H1N ψ) {a : ℝ} (ha : 0 < a) {t : 
       rw [hx hxI', Real.norm_eq_abs]
       have := hpt x
       rwa [show deriv ψ x * ψ x + ψ x * deriv ψ x = 2 * ψ x * deriv ψ x by ring]
-    have h2 : ∫ x in Ι s t, g x ≤ ∫ x, g x ∂μ1 :=
+    have h2 : ∫ x in Ι s t, g x ≤ ∫ x, g x ∂vol01 :=
       setIntegral_mono_set hg (ae_of_all _ hg0)
         ((LE.le.eventuallySubset hsub).congr .rfl Ioo_ae_eq_Ioc.symm)
     have h3 := le_abs_self (∫ x in s..t, deriv (fun x => ψ x * ψ x) x)
     rw [hFTC] at h1 h3
     nlinarith
-  have hm : ∫ s, ψ t ^ 2 ∂μ1 ≤ ∫ s, (ψ s ^ 2 + ∫ x, g x ∂μ1) ∂μ1 :=
+  have hm : ∫ s, ψ t ^ 2 ∂vol01 ≤ ∫ s, (ψ s ^ 2 + ∫ x, g x ∂vol01) ∂vol01 :=
     integral_mono_ae (integrable_const _) (hψ.int_sq.add (integrable_const _))
       ((ae_restrict_mem measurableSet_Ioo).mono fun s hs => key s (Ioo_subset_Icc_self hs))
   rw [integral_const, integral_add hψ.int_sq (integrable_const _), integral_const, hG] at hm
-  have : (μ1.real univ) = 1 := by simp
+  have : (vol01.real univ) = 1 := by simp
   rw [this, one_smul, one_smul] at hm
   linarith
 
 /-- A uniform bound for `ψ ∈ H¹(0, 1)`: `ψ(t)² ≤ M` on `[0, 1]`. -/
 lemma H1N.exists_sq_bound {ψ : ℝ → ℝ} (hψ : H1N ψ) :
     ∃ M, 0 ≤ M ∧ ∀ t ∈ Icc (0 : ℝ) 1, ψ t ^ 2 ≤ M :=
-  ⟨2 * ∫ s, ψ s ^ 2 ∂μ1 + kinM ψ, by
-    have : 0 ≤ ∫ s, ψ s ^ 2 ∂μ1 := integral_nonneg fun s => sq_nonneg (ψ s)
+  ⟨2 * ∫ s, ψ s ^ 2 ∂vol01 + kinM ψ, by
+    have : 0 ≤ ∫ s, ψ s ^ 2 ∂vol01 := integral_nonneg fun s => sq_nonneg (ψ s)
     have : 0 ≤ kinM ψ := integral_nonneg fun _ => sq_nonneg _
     positivity, fun t ht => by simpa [one_add_one_eq_two] using sq_le_H1N hψ one_pos ht⟩
 
@@ -141,7 +141,7 @@ lemma H1N.mul {ψ φ : ℝ → ℝ} (hψ : H1N ψ) (hφ : H1N φ) : H1N fun t =>
   refine ⟨hψ.1.fun_mul hφ.1, ?_⟩
   obtain ⟨M, hM0, hM⟩ := hψ.exists_sq_bound
   obtain ⟨M', hM0', hM'⟩ := hφ.exists_sq_bound
-  have hi : Integrable (fun t => 2 * (M' * deriv ψ t ^ 2) + 2 * (M * deriv φ t ^ 2)) μ1 :=
+  have hi : Integrable (fun t => 2 * (M' * deriv ψ t ^ 2) + 2 * (M * deriv φ t ^ 2)) vol01 :=
     ((hψ.int_dsq.const_mul M').const_mul 2).add ((hφ.int_dsq.const_mul M).const_mul 2)
   refine hi.mono' ((measurable_deriv _).pow_const 2).aestronglyMeasurable ?_
   filter_upwards [ae_restrict_of_ae (H1N.ae_deriv_mul hψ hφ), ae_restrict_mem measurableSet_Ioo]
@@ -165,7 +165,7 @@ abbrev PotH : Type := StrongDual ℝ H1E
 /-- The derivative of `g ∈ H¹(0, 1)` as an element of `L²(0, 1)`. -/
 noncomputable def dN {g : ℝ → ℝ} (hg : H1N g) : L2I := hg.memLp_deriv.toLp (deriv g)
 
-lemma dN_ae {g : ℝ → ℝ} (hg : H1N g) : (dN hg : ℝ → ℝ) =ᵐ[μ1] deriv g :=
+lemma dN_ae {g : ℝ → ℝ} (hg : H1N g) : (dN hg : ℝ → ℝ) =ᵐ[vol01] deriv g :=
   MemLp.coeFn_toLp _
 
 lemma norm_dN_sq {g : ℝ → ℝ} (hg : H1N g) : ‖dN hg‖ ^ 2 = kinM g := by
@@ -218,12 +218,12 @@ lemma cH_nonneg (v : PotH) : 0 ≤ cH v := by unfold cH; positivity
 
 /-- **Form boundedness**: `|v(ψ²)| ≤ ½ ∫ ψ'² + C_v ∫ ψ²` for `ψ ∈ H¹(0, 1)` and `v ∈ H⁻¹`. -/
 theorem abs_v_sq_le (v : PotH) {ψ : ℝ → ℝ} (hψ : H1N ψ) :
-    |v (sqE hψ)| ≤ kinM ψ / 2 + cH v * ∫ s, ψ s ^ 2 ∂μ1 := by
+    |v (sqE hψ)| ≤ kinM ψ / 2 + cH v * ∫ s, ψ s ^ 2 ∂vol01 := by
   set c := ‖v‖ + 4 * ‖v‖ ^ 2 with hc
   set a := 4 * c + 1
   have hc0 : 0 ≤ c := by positivity
   have ha : 0 < a := by positivity
-  set m := ∫ s, ψ s ^ 2 ∂μ1
+  set m := ∫ s, ψ s ^ 2 ∂vol01
   set k := kinM ψ
   have hm0 : 0 ≤ m := integral_nonneg fun _ => sq_nonneg _
   have hk0 : 0 ≤ k := integral_nonneg fun _ => sq_nonneg _
@@ -269,7 +269,7 @@ lemma norm_snd_le (e : H1E) : ‖e.snd‖ ≤ ‖e‖ := by
     (by nlinarith [norm_nonneg e.fst])
 
 /-- The function `t ↦ e.fst + ∫₀ᵗ e.snd` on `[0, 1]` represented by `e ∈ H1E`. -/
-noncomputable def evE : H1E →L[ℝ] Pot :=
+noncomputable def evE : H1E →L[ℝ] C01 :=
   LinearMap.mkContinuous
     { toFun := fun e => ContinuousMap.const _ e.fst + primP e.snd
       map_add' := fun e e' => by

@@ -303,7 +303,7 @@ lemma cmd_orthonormal (k : Fin (n + 1)) (m m' : Fin (n + 1) → ℕ) :
       fun x => ∏ j, (cfac k m j (x j) * cfac k m' j (x j)) := by
     funext x; simp only [cmd, Finset.prod_mul_distrib]
   rw [e, muN_eq, integral_fintype_prod_eq_prod (f := fun j t => cfac k m j t * cfac k m' j t)]
-  have hj : ∀ j, ∫ t, cfac k m j t * cfac k m' j t ∂μ1 = if m j = m' j then 1 else 0 := by
+  have hj : ∀ j, ∫ t, cfac k m j t * cfac k m' j t ∂vol01 = if m j = m' j then 1 else 0 := by
     intro j
     by_cases hjk : j = k
     · subst hjk; simp only [cfac, ↓reduceIte, cs_orthonormal]

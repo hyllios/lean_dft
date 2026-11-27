@@ -245,7 +245,7 @@ lemma h0W_altY {χ φ : Cfg n → ℝ} (hχ : χ ∈ DomWS (ymix (n := n) a)) (h
   ring
 
 omit hw hws in
-lemma LN_altY (v : Pot) {χ φ : Cfg n → ℝ} (hχ : χ ∈ DomWS (ymix (n := n) a))
+lemma LN_altY (v : C01) {χ φ : Cfg n → ℝ} (hχ : χ ∈ DomWS (ymix (n := n) a))
     (hφ : MemLp φ 2 (μN n)) :
     ∫ x, LN n v x * (χ x * altY a φ x) ∂μN n = cardY n a * ∫ x, LN n v x * (χ x * φ x) ∂μN n := by
   have hLχ : MemLp (fun x => LN n v x * χ x) 2 (μN n) := by
@@ -260,7 +260,7 @@ lemma LN_altY (v : Pot) {χ φ : Cfg n → ℝ} (hχ : χ ∈ DomWS (ymix (n := 
 /-- **The weak equation against all `H¹` test functions.** A ground state of mixed symmetry `c`
 (relabelling-invariant `w`) satisfies `h₀(g, φ) + ⟨g, V φ⟩ = E ⟨g, φ⟩` for every `H¹` function
 `φ`, of any symmetry. -/
-theorem el_all {c : ℕ} {v : Pot} {g : Cfg n → ℝ} (hg : IsGS (settingWS (ymix c) w hw) v g)
+theorem el_all {c : ℕ} {v : C01} {g : Cfg n → ℝ} (hg : IsGS (settingWS (ymix c) w hw) v g)
     {φ : Cfg n → ℝ} (hφ : H1W φ) :
     h0W n w g φ + ∫ x, LN n v x * (g x * φ x) ∂μN n =
       Q (settingWS (ymix c) w hw) v g / ip (μ := μN n) g g * ∫ x, g x * φ x ∂μN n := by
@@ -284,7 +284,7 @@ lemma h0W_symm' (ψ φ : Cfg n → ℝ) : h0W n w ψ φ = h0W n w φ ψ := by
 
 /-- **The lowered state is an eigenstate with the same energy.** For a ground state `g` of type
 `c`, `f = altY a g` (of type `a`) has `Q(f) = E ⟨f, f⟩`. -/
-theorem Q_altY_W {c : ℕ} {v : Pot} {g : Cfg n → ℝ} (hg : IsGS (settingWS (ymix c) w hw) v g) :
+theorem Q_altY_W {c : ℕ} {v : C01} {g : Cfg n → ℝ} (hg : IsGS (settingWS (ymix c) w hw) v g) :
     Q (settingWS (ymix a) w hw) v (altY a g) =
       Q (settingWS (ymix c) w hw) v g / ip (μ := μN n) g g *
         ip (μ := μN n) (altY a g) (altY a g) := by

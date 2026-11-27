@@ -108,7 +108,7 @@ variable {w : Cfg n → ℝ} {hw : Continuous w}
 
 /-- **Hohenberg–Kohn in a spin sector**, continuous `v` and `w`: ground states exist, and ground
 states of `v` and `v'` with the same norm and density force `v - v'` to be constant. -/
-theorem hk_line_WY (v v' : Pot) :
+theorem hk_line_WY (v v' : C01) :
     (∃ Φ, IsGS (settingWS (ymix a) w hw) v Φ) ∧ ∀ Ψ Ψ', IsGS (settingWS (ymix a) w hw) v Ψ →
       IsGS (settingWS (ymix a) w hw) v' Ψ' → ip (μ := μN n) Ψ Ψ = ip (μ := μN n) Ψ' Ψ' →
       dens (settingWS (ymix a) w hw) Ψ = dens (settingWS (ymix a) w hw) Ψ' →
@@ -118,13 +118,13 @@ theorem hk_line_WY (v v' : Pot) :
       (gs_ne_zero_WY hΨ)⟩
 
 /-- **The Lieb functional of a spin sector at a v-representable density.** -/
-theorem lieb_line_WY_of {v : Pot} {ψ : Cfg n → ℝ} (hψ : IsNGS (settingWS (ymix a) w hw) v ψ) :
+theorem lieb_line_WY_of {v : C01} {ψ : Cfg n → ℝ} (hψ : IsNGS (settingWS (ymix a) w hw) v ψ) :
     liebF (settingWS (ymix a) w hw) (dens (settingWS (ymix a) w hw) ψ) =
         (((settingWS (ymix a) w hw).h0 ψ ψ : ℝ) : EReal) ∧
-      (∀ ρ : Pot → ℝ, (((settingWS (ymix a) w hw).h0 ψ ψ +
+      (∀ ρ : C01 → ℝ, (((settingWS (ymix a) w hw).h0 ψ ψ +
         dens (settingWS (ymix a) w hw) ψ v - ρ v : ℝ) : EReal) ≤
           liebF (settingWS (ymix a) w hw) ρ) ∧
-      ∀ v' : Pot, (∀ ρ : Pot → ℝ, (((settingWS (ymix a) w hw).h0 ψ ψ +
+      ∀ v' : C01, (∀ ρ : C01 → ℝ, (((settingWS (ymix a) w hw).h0 ψ ψ +
         dens (settingWS (ymix a) w hw) ψ v' - ρ v' : ℝ) : EReal) ≤
           liebF (settingWS (ymix a) w hw) ρ) → ∃ k : ℝ, v - v' = k • one := by
   have hnull : ∀ φ ∈ (settingWS (ymix a) w hw).D, ip (μ := μN n) φ φ = 0 →
@@ -136,14 +136,14 @@ theorem lieb_line_WY_of {v : Pot} {ψ : Cfg n → ℝ} (hψ : IsNGS (settingWS (
 
 /-- **The Lieb functional of a spin sector**, continuous `v` and `w`: a normalised ground state
 exists, and at its density the conclusions of `lieb_line_WY_of` hold. -/
-theorem lieb_line_WY (hw : Continuous w) (v : Pot) :
+theorem lieb_line_WY (hw : Continuous w) (v : C01) :
     ∃ ψ, IsNGS (settingWS (ymix a) w hw) v ψ ∧
       liebF (settingWS (ymix a) w hw) (dens (settingWS (ymix a) w hw) ψ) =
         (((settingWS (ymix a) w hw).h0 ψ ψ : ℝ) : EReal) ∧
-      (∀ ρ : Pot → ℝ, (((settingWS (ymix a) w hw).h0 ψ ψ +
+      (∀ ρ : C01 → ℝ, (((settingWS (ymix a) w hw).h0 ψ ψ +
         dens (settingWS (ymix a) w hw) ψ v - ρ v : ℝ) : EReal) ≤
           liebF (settingWS (ymix a) w hw) ρ) ∧
-      ∀ v' : Pot, (∀ ρ : Pot → ℝ, (((settingWS (ymix a) w hw).h0 ψ ψ +
+      ∀ v' : C01, (∀ ρ : C01 → ℝ, (((settingWS (ymix a) w hw).h0 ψ ψ +
         dens (settingWS (ymix a) w hw) ψ v' - ρ v' : ℝ) : EReal) ≤
           liebF (settingWS (ymix a) w hw) ρ) → ∃ k : ℝ, v - v' = k • one := by
   obtain ⟨ψ, hψ⟩ := exists_isNGS_WY_cont a hw v

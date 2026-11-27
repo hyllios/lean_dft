@@ -278,7 +278,7 @@ end forms
 
 section bil
 
-variable (w : Cfg n → ℝ) (hw : Continuous w) (v : Pot)
+variable (w : Cfg n → ℝ) (hw : Continuous w) (v : C01)
 
 /-- The potential `Σ v(x_k) + w`. -/
 noncomputable def Vt : Cfg n → ℝ := fun x => LN n v x + w x
@@ -488,7 +488,7 @@ lemma sector_reduce_W (B : W0 n →ₗ[ℝ] W0 n →ₗ[ℝ] ℝ)
 
 section main
 
-variable (w : Cfg n → ℝ) (hw : Continuous w) (v : Pot)
+variable (w : Cfg n → ℝ) (hw : Continuous w) (v : C01)
 
 /-- The energy of a spin-orbital state of finite kinetic energy. -/
 noncomputable def QSW (u : SpinC n → W0 n) : ℝ := ∑ s, BQW w hw v (u s) (u s)

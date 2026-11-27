@@ -121,7 +121,7 @@ theorem compact_states {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {Φ :
     rw [hΦn, mul_one] at h2
     have h3 := (kinM_gNH_le (hΦ (φ j))).trans (hkin (φ j))
     change g j 0 ^ 2 ≤ _
-    have h2' : ∫ s, g j s ^ 2 ∂μ1 = n + 1 := h2
+    have h2' : ∫ s, g j s ^ 2 ∂vol01 = n + 1 := h2
     have h3' : kinM (g j) ≤ M := h3
     rw [h2'] at h1
     linarith
@@ -150,7 +150,7 @@ theorem compact_states {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {Φ :
   have hrho : dE e₀ = rhoE τ Ψ := by
     rw [dE_eq_sqE, rhoE]
     refine sqE_congr _ _ fun t ht => ?_
-    have := congrArg (fun P : Pot => P ⟨t, ht⟩) hid
+    have := congrArg (fun P : C01 => P ⟨t, ht⟩) hid
     simp only [ContinuousMap.mul_apply, evE_apply, fnE_toE _ ht] at this
     rw [sq, sq]; exact this
   refine ⟨Ψ, φ ∘ ψ, hφ.comp hψ, hΨ, hΨn, fun L hL => ?_, ?_, fun u => ?_⟩

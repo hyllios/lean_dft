@@ -167,12 +167,12 @@ lemma dkk_slater (x : Cfg n) (k : Fin (n + 1)) :
 
 /-- **The Schrödinger equation** on the closed cube:
 `ΔΦ = (Σₖ v(xₖ) - Σⱼ λⱼ) Φ` when `φⱼ'' = (v - λⱼ) φⱼ`. -/
-lemma lapN_slater {v : Pot} {lam : Fin (n + 1) → ℝ}
-    (hode : ∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (ext v x - lam j) * φ j x)
+lemma lapN_slater {v : C01} {lam : Fin (n + 1) → ℝ}
+    (hode : ∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (iccExt v x - lam j) * φ j x)
     {x : Cfg n} (hx : x ∈ CubeC n) :
     lapN (slater φ) x = (LN n v x - ∑ j, lam j) * slater φ x := by
   have hk : ∀ k, dkk k (slater φ) x =
-      ext v (x k) * slater φ x - ∑ j, lam j * (φ j (x k) * cof φ x k j) := by
+      iccExt v (x k) * slater φ x - ∑ j, lam j * (φ j (x k) * cof φ x k j) := by
     intro k
     rw [dkk_slater hφ, slater_eq_cof x k, Finset.mul_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -198,8 +198,8 @@ end slater
 
 section energy
 
-variable {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, φ j ∈ SturmLiouville.Dom) {v : Pot} {lam : Fin (n + 1) → ℝ}
-  (hode : ∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (ext v x - lam j) * φ j x)
+variable {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, φ j ∈ SturmLiouville.Dom) {v : C01} {lam : Fin (n + 1) → ℝ}
+  (hode : ∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (iccExt v x - lam j) * φ j x)
 include hφ hode
 
 /-- **The Slater determinant has energy `Σⱼ λⱼ`.** -/
@@ -239,12 +239,12 @@ lemma integral_pos_of_pt {F : Cfg n → ℝ} (hF : Continuous F) (h0 : ∀ x, 0 
 
 /-- **The Slater determinant of orthonormal orbitals is not zero.** -/
 lemma ip_slater_pos {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, φ j ∈ SturmLiouville.Dom)
-    (hon : ∀ j k, ∫ x, φ j x * φ k x ∂μ1 = if j = k then 1 else 0) :
+    (hon : ∀ j k, ∫ x, φ j x * φ k x ∂vol01 = if j = k then 1 else 0) :
     0 < ip (μ := μN n) (slater φ) (slater φ) := by
   have hind : ∀ a : Fin (n + 1) → ℝ, (∀ t ∈ Ioo (0 : ℝ) 1, ∑ j, a j * φ j t = 0) → a = 0 := by
     intro a ha
     funext k
-    have h0 : ∫ t, (∑ j, a j * φ j t) * φ k t ∂μ1 = 0 := by
+    have h0 : ∫ t, (∑ j, a j * φ j t) * φ k t ∂vol01 = 0 := by
       refine integral_eq_zero_of_ae ?_
       filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
       rw [ha t ht, zero_mul]; rfl
@@ -273,10 +273,10 @@ lemma slice_update_mem (k : Fin (n + 1)) (x : Cfg n) :
   simp only [Fin.insertNth_removeNth] at h
   exact h
 
-variable (v : Pot) {φ : Fin (n + 1) → ℝ → ℝ} {lam : Fin (n + 1) → ℝ} {Λ : ℝ}
+variable (v : C01) {φ : Fin (n + 1) → ℝ → ℝ} {lam : Fin (n + 1) → ℝ} {Λ : ℝ}
   (hφ : ∀ j, φ j ∈ SturmLiouville.Dom)
-  (hbound : ∀ ψ ∈ SturmLiouville.Dom, Λ * ip (μ := μ1) ψ ψ -
-    ∑ j, (Λ - lam j) * (∫ x, φ j x * ψ x ∂μ1) ^ 2 ≤ Q Box.setting v ψ)
+  (hbound : ∀ ψ ∈ SturmLiouville.Dom, Λ * ip (μ := vol01) ψ ψ -
+    ∑ j, (Λ - lam j) * (∫ x, φ j x * ψ x ∂vol01) ^ 2 ≤ Q Box.setting v ψ)
 include hΦ hφ hbound
 
 /-- The one-particle bound along coordinate `k`, integrated over the other coordinates. -/
@@ -295,7 +295,7 @@ lemma slice_bound (k : Fin (n + 1)) :
     set ψ : ℝ → ℝ := fun t => Φ (Function.update x k t)
     have hψ : ψ ∈ SturmLiouville.Dom := slice_update_mem hΦ k x
     have hψc := hψ.1.continuous
-    have hG : ∀ j, gK Φ (φ j) k x = ∫ t, φ j t * ψ t ∂μ1 := fun j => gK_apply k x
+    have hG : ∀ j, gK Φ (φ j) k x = ∫ t, φ j t * ψ t ∂vol01 := fun j => gK_apply k x
     have hpt : ∀ t, H (Function.update x k t) = (deriv ψ t ^ 2 + Wof v 0 t * ψ t ^ 2) -
         Λ * (ψ t * ψ t) + ∑ j, ((Λ - lam j) * gK Φ (φ j) k x) * (φ j t * ψ t) := by
       intro t
@@ -305,16 +305,16 @@ lemma slice_bound (k : Fin (n + 1)) :
       congr 1
       refine Finset.sum_congr rfl fun j _ => ?_
       ring
-    have i1 : Integrable (fun t => deriv ψ t ^ 2 + Wof v 0 t * ψ t ^ 2) μ1 :=
+    have i1 : Integrable (fun t => deriv ψ t ^ 2 + Wof v 0 t * ψ t ^ 2) vol01 :=
       integrable_of_continuous (((cont_deriv_of_mem hψ).pow 2).add
         ((continuous_Wof v 0).mul (hψc.pow 2)))
-    have i2 : Integrable (fun t => Λ * (ψ t * ψ t)) μ1 :=
+    have i2 : Integrable (fun t => Λ * (ψ t * ψ t)) vol01 :=
       integrable_of_continuous (continuous_const.mul (hψc.mul hψc))
-    have i3 : Integrable (fun t => ∑ j, ((Λ - lam j) * gK Φ (φ j) k x) * (φ j t * ψ t)) μ1 :=
+    have i3 : Integrable (fun t => ∑ j, ((Λ - lam j) * gK Φ (φ j) k x) * (φ j t * ψ t)) vol01 :=
       integrable_of_continuous (continuous_finsetSum _ fun j _ =>
         continuous_const.mul ((hφ j).1.continuous.mul hψc))
-    have hval : avgK k H x = (Q Box.setting v ψ - 0 * ip (μ := μ1) ψ ψ) -
-        Λ * ip (μ := μ1) ψ ψ + ∑ j, (Λ - lam j) * (∫ t, φ j t * ψ t ∂μ1) ^ 2 := by
+    have hval : avgK k H x = (Q Box.setting v ψ - 0 * ip (μ := vol01) ψ ψ) -
+        Λ * ip (μ := vol01) ψ ψ + ∑ j, (Λ - lam j) * (∫ t, φ j t * ψ t ∂vol01) ^ 2 := by
       simp only [avgK, hpt]
       rw [integral_add (f := fun t => deriv ψ t ^ 2 + Wof v 0 t * ψ t ^ 2 - Λ * (ψ t * ψ t))
           (g := fun t => ∑ j, ((Λ - lam j) * gK Φ (φ j) k x) * (φ j t * ψ t)) (i1.sub i2) i3,
@@ -351,7 +351,7 @@ lemma slice_bound (k : Fin (n + 1)) :
 
 /-- **Lower bound.** With `λⱼ ≤ Λ` and orthonormal `φⱼ`, every state of `n + 1` fermions has
 energy at least `Σⱼ λⱼ`. -/
-theorem lower_bound_fer (hle : ∀ j, lam j ≤ Λ) (hnorm : ∀ j, ∫ x, φ j x * φ j x ∂μ1 = 1) :
+theorem lower_bound_fer (hle : ∀ j, lam j ≤ Λ) (hnorm : ∀ j, ∫ x, φ j x * φ j x ∂vol01 = 1) :
     (∑ j, lam j) * ip (μ := μN n) Φ Φ ≤ Q (freeS .fer n) v Φ := by
   have hQ := Q_slices (τ := .fer) v 0 hΦ
   have hk := fun k => slice_bound hΦ v hφ hbound k
@@ -374,11 +374,11 @@ end lower
 /-! ### Unconditional theorems -/
 
 /-- **The Slater determinant of the lowest orbitals is an `(n + 1)`-fermion ground state.** -/
-theorem slater_isGS (v : Pot) : ∃ Ψ E, IsGS (freeS .fer n) v Ψ ∧
+theorem slater_isGS (v : C01) : ∃ Ψ E, IsGS (freeS .fer n) v Ψ ∧
     Q (freeS .fer n) v Ψ = E * ip (μ := μN n) Ψ Ψ ∧
     ∀ φ ∈ DomF n, E * ip (μ := μN n) φ φ ≤ Q (freeS .fer n) v φ := by
   obtain ⟨φ, lam, Λ, hφ, hode, hon, hle, hbound⟩ := Spectral.exists_orbitals v n
-  have hnorm : ∀ j, ∫ x, φ j x * φ j x ∂μ1 = 1 := fun j => by rw [hon]; simp
+  have hnorm : ∀ j, ∫ x, φ j x * φ j x ∂vol01 = 1 := fun j => by rw [hon]; simp
   have hD := slater_mem hφ
   have hQ := Q_slater hφ hode
   have hpos := ip_slater_pos hφ hon
@@ -389,7 +389,7 @@ theorem slater_isGS (v : Pot) : ∃ Ψ E, IsGS (freeS .fer n) v Ψ ∧
   nlinarith [mul_le_mul_of_nonneg_left (hlow φ' hφ') hpos.le]
 
 /-- **Normalised ground states exist** for `N` free fermions. -/
-theorem exists_isNGS_free_fer (v : Pot) : ∃ ψ, IsNGS (freeS .fer n) v ψ := by
+theorem exists_isNGS_free_fer (v : C01) : ∃ ψ, IsNGS (freeS .fer n) v ψ := by
   obtain ⟨Ψ, E, hΨ, hQΨ, hlow⟩ := slater_isGS (n := n) v
   obtain ⟨hD, hpos, -⟩ := hΨ
   set c := (Real.sqrt (ip (μ := μN n) Ψ Ψ))⁻¹

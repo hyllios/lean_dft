@@ -34,7 +34,7 @@ variable {n : ℕ}
 
 lemma toE_congr {g h : ℝ → ℝ} (hg : H1N g) (hh : H1N h) (he : EqOn g h (Icc 0 1)) :
     toE hg = toE hh := by
-  have hd : (dN hg : ℝ → ℝ) =ᵐ[μ1] (dN hh : ℝ → ℝ) := by
+  have hd : (dN hg : ℝ → ℝ) =ᵐ[vol01] (dN hh : ℝ → ℝ) := by
     filter_upwards [dN_ae hg, dN_ae hh, ae_restrict_mem measurableSet_Ioo] with t h1 h2 ht
     rw [h1, h2]
     exact Filter.EventuallyEq.deriv_eq (Filter.eventually_of_mem (Ioo_mem_nhds ht.1 ht.2)
@@ -46,7 +46,7 @@ lemma sqE_congr {g h : ℝ → ℝ} (hg : H1N g) (hh : H1N h)
   toE_congr _ _ fun t ht => by simp only [← sq]; exact he t ht
 
 lemma sqE_eq_of_ae {g h : ℝ → ℝ} (hg : H1N g) (hh : H1N h)
-    (he : ∀ᵐ t ∂μ1, g t ^ 2 = h t ^ 2) : sqE hg = sqE hh := by
+    (he : ∀ᵐ t ∂vol01, g t ^ 2 = h t ^ 2) : sqE hg = sqE hh := by
   have hIoo : EqOn (fun t => g t ^ 2) (fun t => h t ^ 2) (Ioo 0 1) :=
     Measure.eqOn_of_ae_eq he ((hg.continuousOn.pow 2).mono Ioo_subset_Icc_self)
       ((hh.continuousOn.pow 2).mono Ioo_subset_Icc_self)
@@ -69,7 +69,7 @@ noncomputable def gNH (Φ : Cfg n → ℝ) : ℝ → ℝ :=
 variable {τ}
 
 lemma gNH_spec {Φ : Cfg n → ℝ} (h : Φ ∈ DomN τ n) :
-    H1N (gNH τ Φ) ∧ (∀ᵐ t ∂μ1, gNH τ Φ t ^ 2 = rhoN Φ t) ∧ kinM (gNH τ Φ) ≤ kinN Φ := by
+    H1N (gNH τ Φ) ∧ (∀ᵐ t ∂vol01, gNH τ Φ t ^ 2 = rhoN Φ t) ∧ kinM (gNH τ Φ) ≤ kinN Φ := by
   simp only [gNH, h, ↓reduceDIte]; exact (sqrt_dens_H1N h).choose_spec
 
 lemma h1N_gNH (Φ : Cfg n → ℝ) : H1N (gNH τ Φ) := by
@@ -86,13 +86,13 @@ variable {τ}
 
 /-- Any `H¹` square root of the density gives `rhoE`. -/
 lemma rhoE_eq_sqE {Φ : Cfg n → ℝ} (h : Φ ∈ DomN τ n) {g : ℝ → ℝ} (hg : H1N g)
-    (hρ : ∀ᵐ t ∂μ1, g t ^ 2 = rhoN Φ t) : rhoE τ Φ = sqE hg := by
+    (hρ : ∀ᵐ t ∂vol01, g t ^ 2 = rhoN Φ t) : rhoE τ Φ = sqE hg := by
   refine sqE_eq_of_ae _ hg ?_
   filter_upwards [(gNH_spec h).2.1, hρ] with t h1 h2
   rw [h1, h2]
 
 lemma integral_gNH_sq {Φ : Cfg n → ℝ} (h : Φ ∈ DomN τ n) :
-    ∫ t, gNH τ Φ t ^ 2 ∂μ1 = (n + 1) * ∫ x, Φ x ^ 2 ∂μN n := by
+    ∫ t, gNH τ Φ t ^ 2 ∂vol01 = (n + 1) * ∫ x, Φ x ^ 2 ∂μN n := by
   rw [← integral_rhoN h.1]
   exact integral_congr_ae (gNH_spec h).2.1
 
@@ -160,40 +160,40 @@ lemma cC_sub {f g : Cfg n → ℝ} (hf : MemLp f 2 (μN n)) (hg : MemLp g 2 (μN
   exact integral_congr_ae (ae_of_all _ fun x => by simp only [Pi.sub_apply]; ring)
 
 /-- `∫ u ρ_P = ∫ u (g_P)²` written through `ext (evE (toE g) * evE (toE g))`. -/
-lemma integral_ext_evE_sq {Φ : Cfg n → ℝ} (h : Φ ∈ DomN τ n) (u : Pot) :
-    ∫ t, ext u t * ext (evE (toE (h1N_gNH (τ := τ) Φ)) * evE (toE (h1N_gNH (τ := τ) Φ))) t ∂μ1 =
-      ∫ t, ext u t * rhoN Φ t ∂μ1 := by
+lemma integral_ext_evE_sq {Φ : Cfg n → ℝ} (h : Φ ∈ DomN τ n) (u : C01) :
+    ∫ t, iccExt u t * iccExt (evE (toE (h1N_gNH (τ := τ) Φ)) * evE (toE (h1N_gNH (τ := τ) Φ))) t ∂vol01 =
+      ∫ t, iccExt u t * rhoN Φ t ∂vol01 := by
   refine integral_congr_ae ?_
   filter_upwards [(gNH_spec h).2.1, ae_restrict_mem measurableSet_Ioo] with t h1 ht
   have htI := Ioo_subset_Icc_self ht
-  change ext u t * (ext (evE (toE _)) t * ext (evE (toE _)) t) = _
+  change iccExt u t * (iccExt (evE (toE _)) t * iccExt (evE (toE _)) t) = _
   rw [ext_evE htI, fnE_toE _ htI, ← sq, h1]
 
 /-- `L¹` convergence of `P_k²` gives convergence of `∫ u ρ_{P_k}`. -/
-lemma tendsto_int_rhoN (u : Pot) {P : ℕ → Cfg n → ℝ} {Ψ : Cfg n → ℝ}
+lemma tendsto_int_rhoN (u : C01) {P : ℕ → Cfg n → ℝ} {Ψ : Cfg n → ℝ}
     (hP : ∀ k, MemLp (P k) 2 (μN n)) (hΨ : MemLp Ψ 2 (μN n))
     (hL1 : Tendsto (fun k => ∫ x, |P k x ^ 2 - Ψ x ^ 2| ∂μN n) atTop (𝓝 0)) :
-    Tendsto (fun k => ∫ t, ext u t * rhoN (P k) t ∂μ1) atTop
-      (𝓝 (∫ t, ext u t * rhoN Ψ t ∂μ1)) := by
+    Tendsto (fun k => ∫ t, iccExt u t * rhoN (P k) t ∂vol01) atTop
+      (𝓝 (∫ t, iccExt u t * rhoN Ψ t ∂vol01)) := by
   rw [tendsto_iff_norm_sub_tendsto_zero]
-  have hb : ∀ x, |ext u x| ≤ ‖u‖ := fun x => by simpa [SturmLiouville.ext] using u.norm_coe_le_norm _
+  have hb : ∀ x, |iccExt u x| ≤ ‖u‖ := fun x => by simpa [SturmLiouville.iccExt] using u.norm_coe_le_norm _
   refine squeeze_zero (fun _ => norm_nonneg _) (fun k => ?_)
     (by simpa using (hL1.const_mul ((n + 1) * ‖u‖)))
   have hρi : ∀ (Q : Cfg n → ℝ), MemLp Q 2 (μN n) →
-      Integrable (fun t => ext u t * rhoN Q t) μ1 := fun Q hQ =>
-    ((integrable_marg hQ).const_mul _).bdd_mul (continuous_ext u).aestronglyMeasurable
+      Integrable (fun t => iccExt u t * rhoN Q t) vol01 := fun Q hQ =>
+    ((integrable_marg hQ).const_mul _).bdd_mul (continuous_iccExt u).aestronglyMeasurable
       (ae_of_all _ fun x => by simpa using hb x)
   rw [← integral_sub (hρi _ (hP k)) (hρi _ hΨ)]
-  calc ‖∫ t, ext u t * rhoN (P k) t - ext u t * rhoN Ψ t ∂μ1‖
-      ≤ ∫ t, ‖u‖ * |rhoN (P k) t - rhoN Ψ t| ∂μ1 := by
-        have hint : Integrable (fun t => ‖u‖ * |rhoN (P k) t - rhoN Ψ t|) μ1 := by
-          have h1 : Integrable (rhoN (P k)) μ1 := (integrable_marg (hP k)).const_mul _
-          have h2 : Integrable (rhoN Ψ) μ1 := (integrable_marg hΨ).const_mul _
+  calc ‖∫ t, iccExt u t * rhoN (P k) t - iccExt u t * rhoN Ψ t ∂vol01‖
+      ≤ ∫ t, ‖u‖ * |rhoN (P k) t - rhoN Ψ t| ∂vol01 := by
+        have hint : Integrable (fun t => ‖u‖ * |rhoN (P k) t - rhoN Ψ t|) vol01 := by
+          have h1 : Integrable (rhoN (P k)) vol01 := (integrable_marg (hP k)).const_mul _
+          have h2 : Integrable (rhoN Ψ) vol01 := (integrable_marg hΨ).const_mul _
           exact (h1.sub h2).abs.const_mul _
         refine norm_integral_le_of_norm_le hint (ae_of_all _ fun t => ?_)
         rw [← mul_sub, Real.norm_eq_abs, abs_mul]
         exact mul_le_mul_of_nonneg_right (hb t) (abs_nonneg _)
-    _ = ‖u‖ * ∫ t, |rhoN (P k) t - rhoN Ψ t| ∂μ1 := integral_const_mul _ _
+    _ = ‖u‖ * ∫ t, |rhoN (P k) t - rhoN Ψ t| ∂vol01 := integral_const_mul _ _
     _ ≤ ‖u‖ * ((n + 1) * ∫ x, |P k x ^ 2 - Ψ x ^ 2| ∂μN n) :=
         mul_le_mul_of_nonneg_left (integral_abs_rhoN_sub (hP k) hΨ) (norm_nonneg _)
     _ = (n + 1) * ‖u‖ * ∫ x, |P k x ^ 2 - Ψ x ^ 2| ∂μN n := by ring
@@ -339,7 +339,7 @@ theorem exists_isGSNH (τ : Stat) {w : Cfg n → ℝ} (hw : Continuous w) (v : P
     rw [hΦn, mul_one] at h2
     have h3 := (kinM_gNH_le (hΦ (φ j))).trans (hkin (φ j))
     change g j 0 ^ 2 ≤ _
-    have h2' : ∫ s, g j s ^ 2 ∂μ1 = n + 1 := h2
+    have h2' : ∫ s, g j s ^ 2 ∂vol01 = n + 1 := h2
     have h3' : kinM (g j) ≤ M := h3
     rw [h2'] at h1
     linarith
@@ -370,7 +370,7 @@ theorem exists_isGSNH (τ : Stat) {w : Cfg n → ℝ} (hw : Continuous w) (v : P
   have hrho : dE e₀ = rhoE τ Ψ := by
     rw [dE_eq_sqE, rhoE]
     refine sqE_congr _ _ fun t ht => ?_
-    have := congrArg (fun P : Pot => P ⟨t, ht⟩) hid
+    have := congrArg (fun P : C01 => P ⟨t, ht⟩) hid
     simp only [ContinuousMap.mul_apply, evE_apply, fnE_toE _ ht] at this
     rw [sq, sq]; exact this
   have hvlim : Tendsto (fun k => v (rhoE τ (Φ (φ (ψ k))))) atTop (𝓝 (v (rhoE τ Ψ))) := by

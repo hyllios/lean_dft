@@ -36,7 +36,7 @@ lemma ip_smul_self (c : ℝ) (ψ : Cfg n → ℝ) :
   simp only [ip, Pi.smul_apply, smul_eq_mul]
   rw [← integral_const_mul]; congr 1; funext x; ring
 
-lemma isGS_smul {S : Setting (μN n) Pot} {v : Pot} {ψ : Cfg n → ℝ} (h : IsGS S v ψ) {c : ℝ}
+lemma isGS_smul {S : Setting (μN n) C01} {v : C01} {ψ : Cfg n → ℝ} (h : IsGS S v ψ) {c : ℝ}
     (hc : c ≠ 0) : IsGS S v (c • ψ) := by
   have hcc : 0 < c * c := mul_self_pos.2 hc
   refine ⟨S.D.smul_mem c h.1, by rw [ip_smul_self]; exact mul_pos hcc h.2.1, fun φ hφ => ?_⟩
@@ -48,7 +48,7 @@ section setting
 
 variable {w : Cfg n → ℝ} {hw : Continuous w}
 
-lemma QW_eq_Q (v : Pot) {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) :
+lemma QW_eq_Q (v : C01) {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) :
     Q (settingW τ n w hw) v φ = Q (setting τ n w hw) v φ := by
   change h0W n w φ φ + pf (settingW τ n w hw) v φ φ = h0N n w φ φ + pf (setting τ n w hw) v φ φ
   rw [h0W_eq hφ hφ]; rfl
@@ -60,7 +60,7 @@ lemma kinW_nonneg (Ψ : Cfg n → ℝ) : 0 ≤ kinW Ψ :=
   Finset.sum_nonneg fun _ _ => integral_nonneg fun _ => mul_self_nonneg _
 
 /-- `Q = T + ∫ V ψ²` with `V = Σ_k v(x_k) + w`. -/
-lemma QW_eq {s : SymT n} (v : Pot) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomWS s) :
+lemma QW_eq {s : SymT n} (v : C01) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomWS s) :
     Q (settingWS s w hw) v Ψ = kinW Ψ + ∫ x, (LN n v x + w x) * (Ψ x * Ψ x) ∂μN n := by
   change h0W n w Ψ Ψ + ∫ x, LN n v x * (Ψ x * Ψ x) ∂μN n = _
   have hsq := int_mul_L2 hΨ.1 hΨ.1
@@ -72,7 +72,7 @@ lemma QW_eq {s : SymT n} (v : Pot) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomWS s) :
       (hsq.bdd_mul hw.aestronglyMeasurable hC2)]
   simp only [h0W, kinW]; ring
 
-lemma Q_le_trunc (v : Pot) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (M : ℕ) :
+lemma Q_le_trunc (v : C01) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (M : ℕ) :
     Q (setting τ n w hw) v (trunc M Ψ) ≤
       kinW Ψ + ∫ x, (LN n v x + w x) * (trunc M Ψ x * trunc M Ψ x) ∂μN n := by
   have hP := trunc_mem hΨ M
@@ -124,7 +124,7 @@ section energy
 variable {w : Cfg n → ℝ} {hw : Continuous w}
 
 /-- **The `C²` ground-state energy is at most the energy of every `H¹₀` state.** -/
-theorem gsE_le_QW (v : Pot) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ Nst (settingW τ n w hw)) :
+theorem gsE_le_QW (v : C01) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ Nst (settingW τ n w hw)) :
     gsE (setting τ n w hw) v ≤ ((Q (settingW τ n w hw) v Ψ : ℝ) : EReal) := by
   set V : Cfg n → ℝ := fun x => LN n v x + w x
   have hV : Continuous V := (continuous_LN v).add hw
@@ -153,7 +153,7 @@ theorem gsE_le_QW (v : Pot) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ Nst (settingW τ 
   exact ge_of_tendsto ((continuous_coe_real_ereal.tendsto _).comp hb) hev
 
 /-- **The ground-state energies of the `C²` and `H¹₀` settings agree.** -/
-theorem gsE_W_eq (v : Pot) : gsE (settingW τ n w hw) v = gsE (setting τ n w hw) v := by
+theorem gsE_W_eq (v : C01) : gsE (settingW τ n w hw) v = gsE (setting τ n w hw) v := by
   refine le_antisymm (le_iInf₂ fun ψ hψ => ?_) (le_iInf₂ fun ψ hψ => gsE_le_QW v hψ)
   have hψW : ψ ∈ Nst (settingW τ n w hw) := ⟨Dom_le_DomW hψ.1, hψ.2⟩
   refine (gsE_le hψW).trans (le_of_eq ?_)
@@ -287,7 +287,7 @@ lemma adm_cNW {s : SymT n} {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomWS s) (h1 : ∫
     sym := fun σ hσ m => cN_pmWS hΨ hσ m
     norm := by rw [(parsevalW hΨ.1).tsum_eq, h1] }
 
-lemma Fn_le_QW {s : SymT n} {w : Cfg n → ℝ} {hw : Continuous w} (v : Pot) {Ψ : Cfg n → ℝ}
+lemma Fn_le_QW {s : SymT n} {w : Cfg n → ℝ} {hw : Continuous w} (v : C01) {Ψ : Cfg n → ℝ}
     (hΨ : Ψ ∈ DomWS s) :
     Fn (fun x => LN n v x + w x) (fun m => cN m Ψ) ≤ Q (settingWS s w hw) v Ψ := by
   rw [Fn, Bf_cNW (V := fun x => LN n v x + w x) ((continuous_LN v).add hw) hΨ.1, QW_eq v hΨ]

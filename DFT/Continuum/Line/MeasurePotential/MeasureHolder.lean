@@ -231,7 +231,7 @@ theorem tendsto_rhoHat_trunc (hw : Continuous w) {Φ : Cfg n → ℝ} (hΦ : Φ 
   have hb : ∀ M, |rhoHat τ (trunc M Φ) t - rhoHat τ Φ t| ≤
       √(SH (D M) * (6 * SH Φ + 4 * SH (D M))) := fun M => by
     have hDm : D M ∈ DomW τ n := sub_mem hΦ (hT M)
-    have e := congrArg (fun p : Pot => p t) (rhoHat_sub hw hΦ (hT M))
+    have e := congrArg (fun p : C01 => p t) (rhoHat_sub hw hΦ (hT M))
     simp only [ContinuousMap.sub_apply] at e
     rw [abs_sub_comm, e]
     refine (abs_rhoHat2_le_SH hw hDm (add_mem hΦ (hT M)) t).trans (Real.sqrt_le_sqrt ?_)

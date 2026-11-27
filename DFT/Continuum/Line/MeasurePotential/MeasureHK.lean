@@ -83,15 +83,15 @@ lemma h10_cutF {a : ℝ} (ha : 0 < a) : H10 (cutF a) :=
 
 /-- **The products `g φ`, `φ ∈ H¹₀`, are dense** in the continuous functions vanishing at the
 walls, when `g ∈ H¹₀` is positive on `(0, 1)`. -/
-theorem dense_mulP {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) (h : Pot)
+theorem dense_mulP {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) (h : C01)
     (h0 : h ⟨0, le_rfl, zero_le_one⟩ = 0) (h1 : h ⟨1, zero_le_one, le_rfl⟩ = 0) {ε : ℝ}
     (hε : 0 < ε) : ∃ φ : ℝ → ℝ, ∃ hφ : H10 φ, ‖mulP hg hφ - h‖ ≤ 2 * ε := by
-  set H := SturmLiouville.ext h
-  have hHc : Continuous H := continuous_ext h
+  set H := SturmLiouville.iccExt h
+  have hHc : Continuous H := continuous_iccExt h
   have hH0 : H 0 = 0 := by
-    simp only [H, SturmLiouville.ext]; rw [projIcc_left]; exact h0
+    simp only [H, SturmLiouville.iccExt]; rw [projIcc_left]; exact h0
   have hH1 : H 1 = 0 := by
-    simp only [H, SturmLiouville.ext]; rw [projIcc_right]; exact h1
+    simp only [H, SturmLiouville.iccExt]; rw [projIcc_right]; exact h1
   -- `|h| < ε` near the walls
   obtain ⟨δ0, hδ0, hb0⟩ := Metric.continuousAt_iff.1 hHc.continuousAt ε hε
   obtain ⟨δ1, hδ1, hb1⟩ := Metric.continuousAt_iff.1 (hHc.continuousAt (x := 1)) ε hε
@@ -130,7 +130,7 @@ theorem dense_mulP {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t ∈ Ioo (0 : ℝ
     (lipschitz_cutF ha).continuous (by simpa using p.contDiff_aeval (𝕜 := ℝ) 1)
   refine ⟨_, hφ, (ContinuousMap.norm_le _ (by positivity)).2 fun t => ?_⟩
   have htI : (t : ℝ) ∈ Icc (0 : ℝ) 1 := t.2
-  have hHt : h t = H t := by simp [H, SturmLiouville.ext, projIcc_of_mem _ htI]
+  have hHt : h t = H t := by simp [H, SturmLiouville.iccExt, projIcc_of_mem _ htI]
   simp only [ContinuousMap.sub_apply, mulP_apply, Real.norm_eq_abs, hHt]
   have hgt : |g t| ≤ G' := (by simpa using hG t htI : |g t| ≤ G).trans (le_max_left _ _)
   by_cases hout : (t : ℝ) ≤ a ∨ 1 - a ≤ t
@@ -173,10 +173,10 @@ theorem dense_mulP {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t ∈ Ioo (0 : ℝ
 /-! ### Hohenberg–Kohn -/
 
 /-- The linear function `t`, and `1 - t`, on `[0, 1]`. -/
-noncomputable def linP (b : ℝ) : Pot := ⟨fun t => b + (1 - 2 * b) * (t : ℝ), by fun_prop⟩
+noncomputable def linP (b : ℝ) : C01 := ⟨fun t => b + (1 - 2 * b) * (t : ℝ), by fun_prop⟩
 
 lemma eq_zero_of_dense {D : PotM} {g : ℝ → ℝ} (hg : H10 g)
-    (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) (hD : ∀ φ (hφ : H10 φ), D (mulP hg hφ) = 0) (h : Pot)
+    (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) (hD : ∀ φ (hφ : H10 φ), D (mulP hg hφ) = 0) (h : C01)
     (h0 : h ⟨0, le_rfl, zero_le_one⟩ = 0) (h1 : h ⟨1, zero_le_one, le_rfl⟩ = 0) : D h = 0 := by
   by_contra hne
   set r := |D h|
@@ -200,22 +200,22 @@ lemma eq_zero_of_dense {D : PotM} {g : ℝ → ℝ} (hg : H10 g)
 `-g'' + ν' g = E' g` weakly, then `ν - ν' = (E - E') dx + a δ₀ + b δ₁`. -/
 theorem hk_of_pos {ν ν' : PotM} {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t)
     {E E' : ℝ}
-    (hE : ∀ φ (hφ : H10 φ), ∫ t, deriv g t * deriv φ t ∂μ1 + ν (mulP hg hφ) =
-      E * ∫ t, g t * φ t ∂μ1)
-    (hE' : ∀ φ (hφ : H10 φ), ∫ t, deriv g t * deriv φ t ∂μ1 + ν' (mulP hg hφ) =
-      E' * ∫ t, g t * φ t ∂μ1) :
-    ∃ a b : ℝ, ν - ν' = (E - E') • intCLM μ1 + a • deltaM ⟨0, le_rfl, zero_le_one⟩ +
+    (hE : ∀ φ (hφ : H10 φ), ∫ t, deriv g t * deriv φ t ∂vol01 + ν (mulP hg hφ) =
+      E * ∫ t, g t * φ t ∂vol01)
+    (hE' : ∀ φ (hφ : H10 φ), ∫ t, deriv g t * deriv φ t ∂vol01 + ν' (mulP hg hφ) =
+      E' * ∫ t, g t * φ t ∂vol01) :
+    ∃ a b : ℝ, ν - ν' = (E - E') • intCLM vol01 + a • deltaM ⟨0, le_rfl, zero_le_one⟩ +
       b • deltaM ⟨1, zero_le_one, le_rfl⟩ := by
-  set D := ν - ν' - (E - E') • intCLM μ1
+  set D := ν - ν' - (E - E') • intCLM vol01
   have hD : ∀ φ (hφ : H10 φ), D (mulP hg hφ) = 0 := fun φ hφ => by
     have := hE φ hφ
     have := hE' φ hφ
-    simp only [D, sub_apply, smul_apply, smul_eq_mul, intCLM_mulP μ1]
+    simp only [D, sub_apply, smul_apply, smul_eq_mul, intCLM_mulP vol01]
     linarith
   set z : Icc (0 : ℝ) 1 := ⟨0, le_rfl, zero_le_one⟩
   set o : Icc (0 : ℝ) 1 := ⟨1, zero_le_one, le_rfl⟩
   refine ⟨D (linP 1), D (linP 0), ?_⟩
-  have key : ∀ h : Pot, D h = h z * D (linP 1) + h o * D (linP 0) := fun h => by
+  have key : ∀ h : C01, D h = h z * D (linP 1) + h o * D (linP 0) := fun h => by
     set h' := h - h z • linP 1 - h o • linP 0
     have hz : h' z = 0 := by simp [h', linP, z]
     have ho : h' o = 0 := by simp [h', linP, o]; norm_num
@@ -223,7 +223,7 @@ theorem hk_of_pos {ν ν' : PotM} {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t �
     simp only [h', map_sub, map_smul, smul_eq_mul] at this
     linarith
   ext h
-  have hDh : D h = ν h - ν' h - (E - E') * intCLM μ1 h := by simp [D]
+  have hDh : D h = ν h - ν' h - (E - E') * intCLM vol01 h := by simp [D]
   rw [key h] at hDh
   simp only [add_apply, sub_apply, smul_apply, smul_eq_mul, deltaM,
     ContinuousMap.evalCLM_apply]
@@ -231,12 +231,12 @@ theorem hk_of_pos {ν ν' : PotM} {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t �
 
 /-- **Gauge invariance**: adding `C dx + a δ₀ + b δ₁` does not change the ground states. -/
 theorem isGSM_gauge {ν : PotM} {ψ : ℝ → ℝ} (C a b : ℝ) :
-    IsGSM (ν + C • intCLM μ1 + a • deltaM ⟨0, le_rfl, zero_le_one⟩ +
+    IsGSM (ν + C • intCLM vol01 + a • deltaM ⟨0, le_rfl, zero_le_one⟩ +
       b • deltaM ⟨1, zero_le_one, le_rfl⟩) ψ ↔ IsGSM ν ψ := by
-  have hQ : ∀ {φ : ℝ → ℝ} (hφ : H10 φ), QM (ν + C • intCLM μ1 +
+  have hQ : ∀ {φ : ℝ → ℝ} (hφ : H10 φ), QM (ν + C • intCLM vol01 +
       a • deltaM ⟨0, le_rfl, zero_le_one⟩ + b • deltaM ⟨1, zero_le_one, le_rfl⟩) hφ =
-      QM ν hφ + C * ∫ t, φ t ^ 2 ∂μ1 := fun {φ} hφ => by
-    have hs : intCLM μ1 (sqP hφ) = ∫ t, φ t ^ 2 ∂μ1 := by
+      QM ν hφ + C * ∫ t, φ t ^ 2 ∂vol01 := fun {φ} hφ => by
+    have hs : intCLM vol01 (sqP hφ) = ∫ t, φ t ^ 2 ∂vol01 := by
       rw [← mulP_self, intCLM_mulP]; simp_rw [sq]
     simp only [QM, add_apply, smul_apply, smul_eq_mul, deltaM, ContinuousMap.evalCLM_apply,
       sqP_apply, hs, hφ.2.1, hφ.2.2.1]
@@ -256,16 +256,16 @@ theorem isGSM_gauge {ν : PotM} {ψ : ℝ → ℝ} (C a b : ℝ) :
 lemma exists_pos_gs {μp μm : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] {ν' : PotM} {ψ : ℝ → ℝ}
     (h : IsGSM (nuOf μp μm) ψ) (h' : IsGSM ν' ψ) :
     ∃ g : ℝ → ℝ, ∃ _ : H10 g, IsGSM (nuOf μp μm) g ∧ IsGSM ν' g ∧
-      ∫ t, g t ^ 2 ∂μ1 = 1 ∧ ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t := by
+      ∫ t, g t ^ 2 ∂vol01 = 1 ∧ ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t := by
   have hψ := h.1
   have hpos := h.2.1
-  set m := ∫ t, ψ t ^ 2 ∂μ1
+  set m := ∫ t, ψ t ^ 2 ∂vol01
   set c := 1 / √m
   have hc2 : c ^ 2 = 1 / m := by rw [div_pow, Real.sq_sqrt hpos.le, one_pow]
   have hc : c ≠ 0 := by
     intro h0; rw [h0] at hc2; have : (0 : ℝ) < 1 / m := by positivity
     simp at hc2; linarith
-  have hn1 : ∫ t, (c * ψ t) ^ 2 ∂μ1 = 1 := by rw [norm2_smul, hc2, one_div_mul_cancel hpos.ne']
+  have hn1 : ∫ t, (c * ψ t) ^ 2 ∂vol01 = 1 := by rw [norm2_smul, hc2, one_div_mul_cancel hpos.ne']
   rcases gs_pos_or_neg (h.const_mul hc) with hp | hn
   · exact ⟨_, hψ.const_mul c, h.const_mul hc, h'.const_mul hc, hn1, hp⟩
   · refine ⟨_, hψ.const_mul (-c), h.const_mul (neg_ne_zero.2 hc), h'.const_mul (neg_ne_zero.2 hc),
@@ -278,7 +278,7 @@ lemma exists_pos_gs {μp μm : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] {ν' :
 differ by `C dx + a δ₀ + b δ₁`. -/
 theorem hk_meas {μp μm μp' μm' : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] [IsMeas01 μp']
     [IsMeas01 μm'] {ψ : ℝ → ℝ} (h : IsGSM (nuOf μp μm) ψ) (h' : IsGSM (nuOf μp' μm') ψ) :
-    ∃ C a b : ℝ, nuOf μp μm - nuOf μp' μm' = C • intCLM μ1 +
+    ∃ C a b : ℝ, nuOf μp μm - nuOf μp' μm' = C • intCLM vol01 +
       a • deltaM ⟨0, le_rfl, zero_le_one⟩ + b • deltaM ⟨1, zero_le_one, le_rfl⟩ := by
   obtain ⟨g, hg, hgs, hgs', hn, hpos⟩ := exists_pos_gs h h'
   obtain ⟨a, b, hab⟩ := hk_of_pos hg hpos
@@ -291,13 +291,13 @@ measure potential `ν`, `ψ` is a ground state of another measure potential `ν'
 `ν' = ν + C dx + a δ₀ + b δ₁`. -/
 theorem isGSM_iff_gauge {μp μm μp' μm' : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] [IsMeas01 μp']
     [IsMeas01 μm'] {ψ : ℝ → ℝ} (h : IsGSM (nuOf μp μm) ψ) :
-    IsGSM (nuOf μp' μm') ψ ↔ ∃ C a b : ℝ, nuOf μp' μm' = nuOf μp μm + C • intCLM μ1 +
+    IsGSM (nuOf μp' μm') ψ ↔ ∃ C a b : ℝ, nuOf μp' μm' = nuOf μp μm + C • intCLM vol01 +
       a • deltaM ⟨0, le_rfl, zero_le_one⟩ + b • deltaM ⟨1, zero_le_one, le_rfl⟩ := by
   constructor
   · intro h'
     obtain ⟨C, a, b, hab⟩ := hk_meas h h'
     refine ⟨-C, -a, -b, ?_⟩
-    have : nuOf μp' μm' = nuOf μp μm - (C • intCLM μ1 + a • deltaM ⟨0, le_rfl, zero_le_one⟩ +
+    have : nuOf μp' μm' = nuOf μp μm - (C • intCLM vol01 + a • deltaM ⟨0, le_rfl, zero_le_one⟩ +
         b • deltaM ⟨1, zero_le_one, le_rfl⟩) := by rw [← hab]; abel
     rw [this]; module
   · rintro ⟨C, a, b, hν⟩

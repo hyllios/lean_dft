@@ -47,8 +47,8 @@ lemma two_sin_mul_sin (a b : ℝ) :
 
 /-- **Orthonormality.** -/
 lemma sn_orthonormal {k l : ℕ} (hk : 0 < k) (hl : 0 < l) :
-    ∫ x, sn k x * sn l x ∂μ1 = if k = l then 1 else 0 := by
-  rw [integral_mu1]
+    ∫ x, sn k x * sn l x ∂vol01 = if k = l then 1 else 0 := by
+  rw [integral_vol01]
   have e : ∀ x, sn k x * sn l x =
       Real.cos (π * ((k : ℤ) - l : ℤ) * x) - Real.cos (π * ((k : ℤ) + l : ℤ) * x) := by
     intro x
@@ -116,14 +116,14 @@ lemma eq_sin_of_ode {g : ℝ → ℝ} (hg : ContDiff ℝ 2 g) {ω : ℝ} (hω : 
 
 lemma inner_eB_HL {W : ℝ → ℝ} (hWc : Continuous W) (hW0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ W t)
     (i : SturmLiouville.Idx hWc) (f : SturmLiouville.HL) :
-    inner ℝ (SturmLiouville.eB hWc hW0 i) f = ∫ x, SturmLiouville.rep hWc hW0 i x * f x ∂μ1 := by
+    inner ℝ (SturmLiouville.eB hWc hW0 i) f = ∫ x, SturmLiouville.rep hWc hW0 i x * f x ∂vol01 := by
   rw [L2.inner_def]
   refine integral_congr_ae ?_
   filter_upwards [SturmLiouville.rep_ae hWc hW0 i] with x hx
   rw [hx]; simp [mul_comm]
 
 /-- **The sines are complete in `L²(0, 1)`.** -/
-theorem sn_complete (f : SturmLiouville.HL) (h : ∀ k : ℕ, 0 < k → ∫ x, sn k x * f x ∂μ1 = 0) :
+theorem sn_complete (f : SturmLiouville.HL) (h : ∀ k : ℕ, 0 < k → ∫ x, sn k x * f x ∂vol01 = 0) :
     f = 0 := by
   set W : ℝ → ℝ := fun _ => 0
   have hWc : Continuous W := continuous_const
@@ -170,7 +170,7 @@ theorem sn_complete (f : SturmLiouville.HL) (h : ∀ k : ℕ, 0 < k → ∫ x, s
     · push Not at hall
       obtain ⟨x0, hx0, hgx0⟩ := hall
       obtain ⟨k, hk, hgk⟩ := (hzero x0 hx0).resolve_left hgx0
-      rw [show ∫ x, g x * f x ∂μ1 = ∫ x, (deriv g 0 / ω / √2) * (sn k x * f x) ∂μ1 from
+      rw [show ∫ x, g x * f x ∂vol01 = ∫ x, (deriv g 0 / ω / √2) * (sn k x * f x) ∂vol01 from
         integral_congr_ae (by
           filter_upwards [ae_restrict_mem measurableSet_Ioo] with y hy
           rw [hgk y hy]; ring),
@@ -211,12 +211,12 @@ lemma sb_apply (k : ℕ) : sb k = SturmLiouville.toHL (continuous_sn (k + 1)) :=
 
 /-- **Parseval** for a continuous function, in `ℝ≥0∞`. -/
 theorem parseval1 {g : ℝ → ℝ} (hg : Continuous g) :
-    ∑' k : ℕ, ENNReal.ofReal ((∫ x, sn (k + 1) x * g x ∂μ1) ^ 2) =
-      ∫⁻ x, ENNReal.ofReal (g x ^ 2) ∂μ1 := by
+    ∑' k : ℕ, ENNReal.ofReal ((∫ x, sn (k + 1) x * g x ∂vol01) ^ 2) =
+      ∫⁻ x, ENNReal.ofReal (g x ^ 2) ∂vol01 := by
   have h := sb.hasSum_inner_mul_inner (SturmLiouville.toHL hg) (SturmLiouville.toHL hg)
   simp only [sb_apply, SturmLiouville.inner_toHL_toHL] at h
-  have e : ∀ k, (∫ x, g x * sn (k + 1) x ∂μ1) * ∫ x, sn (k + 1) x * g x ∂μ1 =
-      (∫ x, sn (k + 1) x * g x ∂μ1) ^ 2 := fun k => by
+  have e : ∀ k, (∫ x, g x * sn (k + 1) x ∂vol01) * ∫ x, sn (k + 1) x * g x ∂vol01 =
+      (∫ x, sn (k + 1) x * g x ∂vol01) ^ 2 := fun k => by
     rw [sq]; congr 1; exact integral_congr_ae (ae_of_all _ fun x => mul_comm _ _)
   simp only [e] at h
   rw [← ENNReal.ofReal_tsum_of_nonneg (fun k => sq_nonneg _) h.summable, h.tsum_eq,

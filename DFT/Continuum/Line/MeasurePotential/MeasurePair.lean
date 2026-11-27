@@ -69,20 +69,20 @@ lemma continuous_TX {X : Cfg n → ℝ} (hX : Continuous X) {f : ℝ → ℝ} (h
     (continuous_finsetSum _ fun j _ => hf.comp ((continuous_apply j).comp continuous_snd))
 
 /-- `T_X f` as a continuous function on `[0, 1]`. -/
-noncomputable def TXP {X : Cfg n → ℝ} (hX : Continuous X) {f : ℝ → ℝ} (hf : Continuous f) : Pot :=
+noncomputable def TXP {X : Cfg n → ℝ} (hX : Continuous X) {f : ℝ → ℝ} (hf : Continuous f) : C01 :=
   ⟨fun t => TX X f t, (continuous_TX hX hf).comp continuous_subtype_val⟩
 
 /-- `f` as a continuous function on `[0, 1]`. -/
-noncomputable def fP {f : ℝ → ℝ} (hf : Continuous f) : Pot :=
+noncomputable def fP {f : ℝ → ℝ} (hf : Continuous f) : C01 :=
   ⟨fun t => f t, hf.comp continuous_subtype_val⟩
 
 lemma ext_fP {f : ℝ → ℝ} (hf : Continuous f) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
-    ext (fP hf) t = f t := by
-  simp [SturmLiouville.ext, fP, projIcc_of_mem _ ht]
+    iccExt (fP hf) t = f t := by
+  simp [SturmLiouville.iccExt, fP, projIcc_of_mem _ ht]
 
 lemma ext_TXP {X : Cfg n → ℝ} (hX : Continuous X) {f : ℝ → ℝ} (hf : Continuous f) {t : ℝ}
-    (ht : t ∈ Icc (0 : ℝ) 1) : ext (TXP hX hf) t = TX X f t := by
-  simp [SturmLiouville.ext, TXP, projIcc_of_mem _ ht]
+    (ht : t ∈ Icc (0 : ℝ) 1) : iccExt (TXP hX hf) t = TX X f t := by
+  simp [SturmLiouville.iccExt, TXP, projIcc_of_mem _ ht]
 
 lemma ae_cube_x0 : ∀ᵐ x ∂μN n, x 0 ∈ Icc (0 : ℝ) 1 := by
   filter_upwards [ae_cube] with x hx
@@ -96,7 +96,7 @@ theorem rhoHat2_FF (hw : Continuous w) {X : Cfg n → ℝ} (hX : X ∈ DomW τ n
       fP hf.continuous * rhoHat τ X + TXP hXc hf.continuous := by
   have hfc := hf.continuous
   refine pot_eq_of_integral fun v => ?_
-  have hv := continuous_ext v
+  have hv := continuous_iccExt v
   -- the left side, reduced to the first particle
   rw [int_rhoHat2 hw hX (mem_FF_mul hX hf)]
   have hG : ∀ σ x, (X (pm σ x) * (FF f (pm σ x) * X (pm σ x))) = X x * (FF f x * X x) :=
@@ -104,19 +104,19 @@ theorem rhoHat2_FF (hw : Continuous w) {X : Cfg n → ℝ} (hX : X ∈ DomW τ n
   have hcont : Continuous fun x : Cfg n => X x * (FF f x * X x) :=
     hXc.mul ((contDiff_FF hf).continuous.mul hXc)
   have hL : pf (settingW τ n w hw) v X (fun x => FF f x * X x) =
-      (n + 1) * ∫ x, ext v (x 0) * (X x * (FF f x * X x)) ∂μN n := by
+      (n + 1) * ∫ x, iccExt v (x 0) * (X x * (FF f x * X x)) ∂μN n := by
     change ∫ x, LN n v x * (X x * (FF f x * X x)) ∂μN n = _
     rw [integral_LN_mul v hcont]
-    simp only [integral_sym_xk (G := fun x => X x * (FF f x * X x)) hG (ext v), Finset.sum_const,
+    simp only [integral_sym_xk (G := fun x => X x * (FF f x * X x)) hG (iccExt v), Finset.sum_const,
       Finset.card_univ, Fintype.card_fin,
       nsmul_eq_mul]
     push_cast; ring
   rw [hL]
   -- the right side
-  have hR1 : ∫ t, ext v t * ext (fP hfc * rhoHat τ X) t ∂μ1 =
-      (n + 1) * ∫ x, ext v (x 0) * (f (x 0) * (X x * X x)) ∂μN n := by
-    have e : ∀ t, ext v t * ext (fP hfc * rhoHat τ X) t = ext (v * fP hfc) t * ext (rhoHat τ X) t :=
-      fun t => by simp only [SturmLiouville.ext, ContinuousMap.mul_apply]; ring
+  have hR1 : ∫ t, iccExt v t * iccExt (fP hfc * rhoHat τ X) t ∂vol01 =
+      (n + 1) * ∫ x, iccExt v (x 0) * (f (x 0) * (X x * X x)) ∂μN n := by
+    have e : ∀ t, iccExt v t * iccExt (fP hfc * rhoHat τ X) t = iccExt (v * fP hfc) t * iccExt (rhoHat τ X) t :=
+      fun t => by simp only [SturmLiouville.iccExt, ContinuousMap.mul_apply]; ring
     simp only [e]
     rw [int_rhoHat hw hX]
     change ∫ x, LN n (v * fP hfc) x * (X x * X x) ∂μN n = _
@@ -124,20 +124,20 @@ theorem rhoHat2_FF (hw : Continuous w) {X : Cfg n → ℝ} (hX : X ∈ DomW τ n
     rw [integral_LN_mul _ hc2]
     have hG2 : ∀ σ x, X (pm σ x) * X (pm σ x) = X x * X x := fun σ x => by
       linear_combination hXs σ x
-    simp only [integral_sym_xk (G := fun x => X x * X x) hG2 (ext (v * fP hfc)), Finset.sum_const,
+    simp only [integral_sym_xk (G := fun x => X x * X x) hG2 (iccExt (v * fP hfc)), Finset.sum_const,
       Finset.card_univ,
       Fintype.card_fin, nsmul_eq_mul]
     push_cast
     congr 1
     refine integral_congr_ae ?_
     filter_upwards [ae_cube_x0] with x hx
-    simp only [SturmLiouville.ext, ContinuousMap.mul_apply] at *
+    simp only [SturmLiouville.iccExt, ContinuousMap.mul_apply] at *
     rw [show (fP hfc) (projIcc 0 1 zero_le_one (x 0)) = f (x 0) by
       simp [fP, projIcc_of_mem _ hx]]
     ring
-  have hR2 : ∫ t, ext v t * ext (TXP hXc hfc) t ∂μ1 =
-      (n + 1) * ∫ x, ext v (x 0) * (X x ^ 2 * ∑ j : Fin n, f (x j.succ)) ∂μN n := by
-    have hc3 : Continuous fun x : Cfg n => ext v (x 0) * (X x ^ 2 * ∑ j : Fin n, f (x j.succ)) :=
+  have hR2 : ∫ t, iccExt v t * iccExt (TXP hXc hfc) t ∂vol01 =
+      (n + 1) * ∫ x, iccExt v (x 0) * (X x ^ 2 * ∑ j : Fin n, f (x j.succ)) ∂μN n := by
+    have hc3 : Continuous fun x : Cfg n => iccExt v (x 0) * (X x ^ 2 * ∑ j : Fin n, f (x j.succ)) :=
       (hv.comp (continuous_apply 0)).mul ((hXc.pow 2).mul
         (continuous_finsetSum _ fun j _ => hfc.comp (continuous_apply _)))
     rw [integral_cube_cons hc3, ← integral_const_mul]
@@ -146,15 +146,15 @@ theorem rhoHat2_FF (hw : Continuous w) {X : Cfg n → ℝ} (hX : X ∈ DomW τ n
       ← integral_const_mul]
     congr 1; funext y
     simp only [Fin.cons_zero, Fin.cons_succ]; ring
-  have hsplit : ∫ t, ext v t * ext (fP hfc * rhoHat τ X + TXP hXc hfc) t ∂μ1 =
-      ∫ t, ext v t * ext (fP hfc * rhoHat τ X) t ∂μ1 + ∫ t, ext v t * ext (TXP hXc hfc) t ∂μ1 := by
+  have hsplit : ∫ t, iccExt v t * iccExt (fP hfc * rhoHat τ X + TXP hXc hfc) t ∂vol01 =
+      ∫ t, iccExt v t * iccExt (fP hfc * rhoHat τ X) t ∂vol01 + ∫ t, iccExt v t * iccExt (TXP hXc hfc) t ∂vol01 := by
     have := int_ext_add_smul v (fP hfc * rhoHat τ X) (TXP hXc hfc) 1 1
     simpa using this
   rw [hsplit, hR1, hR2, ← mul_add]
-  have i1 : Integrable (fun x : Cfg n => ext v (x 0) * (f (x 0) * (X x * X x))) (μN n) :=
+  have i1 : Integrable (fun x : Cfg n => iccExt v (x 0) * (f (x 0) * (X x * X x))) (μN n) :=
     integrableN ((hv.comp (continuous_apply 0)).mul ((hfc.comp (continuous_apply 0)).mul
       (hXc.mul hXc)))
-  have i2 : Integrable (fun x : Cfg n => ext v (x 0) * (X x ^ 2 * ∑ j : Fin n, f (x j.succ)))
+  have i2 : Integrable (fun x : Cfg n => iccExt v (x 0) * (X x ^ 2 * ∑ j : Fin n, f (x j.succ)))
       (μN n) :=
     integrableN ((hv.comp (continuous_apply 0)).mul ((hXc.pow 2).mul
       (continuous_finsetSum _ fun j _ => hfc.comp (continuous_apply _))))
@@ -172,27 +172,27 @@ theorem rhoHat_eq_marg (hw : Continuous w) {X : Cfg n → ℝ} (hX : X ∈ DomW 
     rhoHat τ X t = (n + 1) * ∫ y in Cube' n, X (Fin.cons (t : ℝ) y) ^ 2 := by
   have hc : Continuous fun s : ℝ => (n + 1) * ∫ y in Cube' n, X (Fin.cons s y) ^ 2 :=
     continuous_const.mul (continuous_integral_cube' ((hXc.comp continuous_cons_pair).pow 2))
-  set p : Pot := ⟨fun s => (n + 1) * ∫ y in Cube' n, X (Fin.cons (s : ℝ) y) ^ 2,
+  set p : C01 := ⟨fun s => (n + 1) * ∫ y in Cube' n, X (Fin.cons (s : ℝ) y) ^ 2,
     hc.comp continuous_subtype_val⟩
   have hp : rhoHat τ X = p := by
     refine pot_eq_of_integral fun v => ?_
-    have hv := continuous_ext v
+    have hv := continuous_iccExt v
     rw [int_rhoHat hw hX]
     change ∫ x, LN n v x * (X x * X x) ∂μN n = _
     have hc2 : Continuous fun x : Cfg n => X x * X x := hXc.mul hXc
     have hG2 : ∀ σ x, X (pm σ x) * X (pm σ x) = X x * X x := fun σ x => by
       linear_combination hXs σ x
     rw [integral_LN_mul v hc2]
-    simp only [integral_sym_xk (G := fun x => X x * X x) hG2 (ext v), Finset.sum_const,
+    simp only [integral_sym_xk (G := fun x => X x * X x) hG2 (iccExt v), Finset.sum_const,
       Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-    have hc3 : Continuous fun x : Cfg n => ext v (x 0) * (X x * X x) :=
+    have hc3 : Continuous fun x : Cfg n => iccExt v (x 0) * (X x * X x) :=
       (hv.comp (continuous_apply 0)).mul hc2
     rw [integral_cube_cons hc3]
     push_cast
     rw [← integral_const_mul]
     refine setIntegral_congr_fun measurableSet_Ioo fun s hs => ?_
     have hsI := Ioo_subset_Icc_self hs
-    simp only [SturmLiouville.ext, projIcc_of_mem _ hsI, p, ContinuousMap.coe_mk, Fin.cons_zero]
+    simp only [SturmLiouville.iccExt, projIcc_of_mem _ hsI, p, ContinuousMap.coe_mk, Fin.cons_zero]
     rw [← integral_const_mul, ← integral_const_mul, ← integral_const_mul]
     congr 1; funext y; ring
   rw [hp]; rfl
@@ -281,7 +281,7 @@ lemma TX_eq {X : Cfg (m + 1) → ℝ} (hX : Continuous X) {CX : ℝ} (hCX : ∀ 
 theorem intCLM_TXP (ρ : Measure ℝ) [IsMeas01 ρ] {X : Cfg (m + 1) → ℝ} (hX : Continuous X)
     {CX : ℝ} (hCX : ∀ x, |X x| ≤ CX) {f : ℝ → ℝ} (hf : Continuous f) {Cf : ℝ}
     (hCf : ∀ t, |f t| ≤ Cf) :
-    intCLM ρ (TXP hX hf) = ∫ u, f u * rX ρ X u ∂μ1 := by
+    intCLM ρ (TXP hX hf) = ∫ u, f u * rX ρ X u ∂vol01 := by
   have hCX0 : 0 ≤ CX := (abs_nonneg _).trans (hCX 0)
   have hCf0 : 0 ≤ Cf := (abs_nonneg _).trans (hCf 0)
   rw [intCLM_apply]
@@ -289,19 +289,19 @@ theorem intCLM_TXP (ρ : Measure ℝ) [IsMeas01 ρ] {X : Cfg (m + 1) → ℝ} (h
     rw [ext_TXP hX hf ht, TX_eq hX hCX hf hCf t])]
   -- the integrand `f(u) h_j(t, u)` on `ρ × du`
   have hFj : ∀ j : Fin (m + 1), Integrable (fun p : ℝ × ℝ => f p.2 * hP X j p.1 p.2)
-      (ρ.prod μ1) := fun j =>
+      (ρ.prod vol01) := fun j =>
     integrable_bdd_cont (C := Cf * CX ^ 2) ((hf.comp continuous_snd).mul (continuous_hP hX j))
       fun p => by
         rw [abs_mul]
         exact mul_le_mul (hCf _) (abs_hP_le hCX j _ _) (abs_nonneg _) hCf0
-  have hin : ∀ j : Fin (m + 1), Integrable (fun t => ∫ u, f u * hP X j t u ∂μ1) ρ := fun j =>
+  have hin : ∀ j : Fin (m + 1), Integrable (fun t => ∫ u, f u * hP X j t u ∂vol01) ρ := fun j =>
     (hFj j).integral_prod_left
   rw [integral_const_mul, integral_finsetSum _ fun j _ => hin j]
-  have hsw : ∀ j : Fin (m + 1), ∫ t, ∫ u, f u * hP X j t u ∂μ1 ∂ρ =
-      ∫ u, ∫ t, f u * hP X j t u ∂ρ ∂μ1 := fun j =>
+  have hsw : ∀ j : Fin (m + 1), ∫ t, ∫ u, f u * hP X j t u ∂vol01 ∂ρ =
+      ∫ u, ∫ t, f u * hP X j t u ∂ρ ∂vol01 := fun j =>
     integral_integral_swap (f := fun t u => f u * hP X j t u) (hFj j)
   simp only [hsw]
-  have hout : ∀ j : Fin (m + 1), Integrable (fun u => ∫ t, f u * hP X j t u ∂ρ) μ1 := fun j =>
+  have hout : ∀ j : Fin (m + 1), Integrable (fun u => ∫ t, f u * hP X j t u ∂ρ) vol01 := fun j =>
     (hFj j).integral_prod_right
   rw [← integral_finsetSum _ fun j _ => hout j, ← integral_const_mul]
   refine integral_congr_ae (ae_of_all _ fun u => ?_)
@@ -311,7 +311,7 @@ theorem intCLM_TXP (ρ : Measure ℝ) [IsMeas01 ρ] {X : Cfg (m + 1) → ℝ} (h
 /-- `∫ |h_j(t, ·) - h'_j(t, ·)| ≤ ∫ |X² - X'²|(t, y) dy`. -/
 lemma integral_abs_hP_sub_le {X X' : Cfg (m + 1) → ℝ} (hX : Continuous X) (hX' : Continuous X')
     {CX : ℝ} (hCX : ∀ x, |X x| ≤ CX) (hCX' : ∀ x, |X' x| ≤ CX) (j : Fin (m + 1)) (t : ℝ) :
-    ∫ u, |hP X j t u - hP X' j t u| ∂μ1 ≤
+    ∫ u, |hP X j t u - hP X' j t u| ∂vol01 ≤
       ∫ y in Cube' (m + 1), |X (Fin.cons t y) ^ 2 - X' (Fin.cons t y) ^ 2| := by
   have hCX0 : 0 ≤ CX := (abs_nonneg _).trans (hCX 0)
   have hpt : ∀ u, |hP X j t u - hP X' j t u| ≤
@@ -338,7 +338,7 @@ lemma integral_abs_hP_sub_le {X X' : Cfg (m + 1) → ℝ} (hX : Continuous X) (h
     change ∫ y, |X (Fin.cons t y) ^ 2 - X' (Fin.cons t y) ^ 2| ∂μN m = _
     rw [integral_cube_insertNth hc j, integral_integral_swap hF]
   rw [hR]
-  have hi1 : Integrable (fun u => |hP X j t u - hP X' j t u|) μ1 :=
+  have hi1 : Integrable (fun u => |hP X j t u - hP X' j t u|) vol01 :=
     integrable_bdd_cont (C := 2 * CX ^ 2) (by
       have h1 := continuous_hP hX j; have h2 := continuous_hP hX' j
       exact ((h1.comp (Continuous.prodMk continuous_const continuous_id)).sub
@@ -356,12 +356,12 @@ theorem integral_abs_rX_sub_le (ρ : Measure ℝ) [IsMeas01 ρ] {X X' : Cfg (m +
     (hCX' : ∀ x, |X' x| ≤ CX) {K : ℝ}
     (hK : ∀ t ∈ Icc (0 : ℝ) 1,
       ∫ y in Cube' (m + 1), |X (Fin.cons t y) ^ 2 - X' (Fin.cons t y) ^ 2| ≤ K) :
-    ∫ u, |rX ρ X u - rX ρ X' u| ∂μ1 ≤ ((m + 1 : ℕ) + 1) * (m + 1) * (ρ.real univ * K) := by
+    ∫ u, |rX ρ X u - rX ρ X' u| ∂vol01 ≤ ((m + 1 : ℕ) + 1) * (m + 1) * (ρ.real univ * K) := by
   have hCX0 : 0 ≤ CX := (abs_nonneg _).trans (hCX 0)
   set N : ℝ := (m + 1 : ℕ) + 1
   have hN : 0 ≤ N := by positivity
   have hD : ∀ j : Fin (m + 1), Integrable (fun p : ℝ × ℝ => |hP X j p.1 p.2 - hP X' j p.1 p.2|)
-      (ρ.prod μ1) := fun j =>
+      (ρ.prod vol01) := fun j =>
     integrable_bdd_cont (C := 2 * CX ^ 2) ((continuous_hP hX j).sub (continuous_hP hX' j)).abs
       fun p => by
         rw [abs_abs]
@@ -369,7 +369,7 @@ theorem integral_abs_rX_sub_le (ρ : Measure ℝ) [IsMeas01 ρ] {X X' : Cfg (m +
         calc _ ≤ |hP X j p.1 p.2| + |hP X' j p.1 p.2| := abs_sub _ _
           _ ≤ 2 * CX ^ 2 := by linarith
   have hd : ∀ j : Fin (m + 1), Integrable (fun p : ℝ × ℝ => hP X j p.1 p.2 - hP X' j p.1 p.2)
-      (ρ.prod μ1) := fun j =>
+      (ρ.prod vol01) := fun j =>
     integrable_bdd_cont (C := 2 * CX ^ 2) ((continuous_hP hX j).sub (continuous_hP hX' j))
       fun p => by
         have h1 := abs_hP_le hCX j p.1 p.2; have h2 := abs_hP_le hCX' j p.1 p.2
@@ -387,12 +387,12 @@ theorem integral_abs_rX_sub_le (ρ : Measure ℝ) [IsMeas01 ρ] {X X' : Cfg (m +
       (Finset.sum_le_sum fun j _ => ?_)) hN
     rw [← integral_sub (hiX j) (hiX' j)]
     exact abs_integral_le_integral_abs
-  have hi : Integrable (fun u => N * ∑ j, ∫ t, |hP X j t u - hP X' j t u| ∂ρ) μ1 :=
+  have hi : Integrable (fun u => N * ∑ j, ∫ t, |hP X j t u - hP X' j t u| ∂ρ) vol01 :=
     (integrable_finsetSum _ fun j _ => (hD j).integral_prod_right).const_mul N
-  have hir : Integrable (fun u => |rX ρ X u - rX ρ X' u|) μ1 :=
+  have hir : Integrable (fun u => |rX ρ X u - rX ρ X' u|) vol01 :=
     hi.mono' (by
-      have : AEStronglyMeasurable (fun u => rX ρ X u - rX ρ X' u) μ1 := by
-        have h1 : Integrable (fun u => ∑ j, ∫ t, (hP X j t u - hP X' j t u) ∂ρ) μ1 :=
+      have : AEStronglyMeasurable (fun u => rX ρ X u - rX ρ X' u) vol01 := by
+        have h1 : Integrable (fun u => ∑ j, ∫ t, (hP X j t u - hP X' j t u) ∂ρ) vol01 :=
           integrable_finsetSum _ fun j _ => (hd j).integral_prod_right
         refine ((h1.const_mul N).aestronglyMeasurable).congr (ae_of_all _ fun u => ?_)
         have hiX : ∀ j : Fin (m + 1), Integrable (fun t => hP X j t u) ρ := fun j =>
@@ -404,9 +404,9 @@ theorem integral_abs_rX_sub_le (ρ : Measure ℝ) [IsMeas01 ρ] {X X' : Cfg (m +
         exact Finset.sum_congr rfl fun j _ => integral_sub (hiX j) (hiX' j)
       exact this.norm) (ae_of_all _ fun u => by
         rw [Real.norm_eq_abs, abs_abs]; exact hpt u)
-  calc ∫ u, |rX ρ X u - rX ρ X' u| ∂μ1
-      ≤ ∫ u, N * ∑ j, ∫ t, |hP X j t u - hP X' j t u| ∂ρ ∂μ1 := integral_mono hir hi hpt
-    _ = N * ∑ j, ∫ t, ∫ u, |hP X j t u - hP X' j t u| ∂μ1 ∂ρ := by
+  calc ∫ u, |rX ρ X u - rX ρ X' u| ∂vol01
+      ≤ ∫ u, N * ∑ j, ∫ t, |hP X j t u - hP X' j t u| ∂ρ ∂vol01 := integral_mono hir hi hpt
+    _ = N * ∑ j, ∫ t, ∫ u, |hP X j t u - hP X' j t u| ∂vol01 ∂ρ := by
         rw [integral_const_mul, integral_finsetSum _ fun j _ => (hD j).integral_prod_right]
         congr 1
         exact Finset.sum_congr rfl fun j _ =>

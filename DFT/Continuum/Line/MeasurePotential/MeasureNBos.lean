@@ -54,7 +54,7 @@ section prod
 
 variable {g : ℝ → ℝ}
 
-lemma kinW_prodS (hg : H10 g) (hn : ∫ t, g t ^ 2 ∂μ1 = 1) :
+lemma kinW_prodS (hg : H10 g) (hn : ∫ t, g t ^ 2 ∂vol01 = 1) :
     kinW (prodS (n := n) g) = (n + 1) * kinM g := by
   have hk : ∀ k : Fin (n + 1), ∫ x, dW k (prodS (n := n) g) x * dW k (prodS g) x ∂μN n =
       kinM g := fun k => by
@@ -69,14 +69,14 @@ lemma kinW_prodS (hg : H10 g) (hn : ∫ t, g t ^ 2 ∂μ1 = 1) :
       · subst hi; simp [sq]
       · simp [hi, sq]
     rw [integral_congr_ae e, integral_prod_cube]
-    simp only [apply_ite (fun f : ℝ → ℝ => ∫ t, f t ∂μ1), hn]
+    simp only [apply_ite (fun f : ℝ → ℝ => ∫ t, f t ∂vol01), hn]
     rw [Finset.prod_eq_single k (fun i _ hi => ite_eq_right hi)
       (fun h => absurd (Finset.mem_univ k) h), ite_eq_left rfl]
     rfl
   simp only [kinW, hk, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   push_cast; ring
 
-lemma rhoHat_prodS (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂μ1 = 1) :
+lemma rhoHat_prodS (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂vol01 = 1) :
     rhoHat .bos (prodS (n := n) g) = ((n : ℝ) + 1) • sqP hg := by
   have hmem := prodS_memW (n := n) hg hgc
   refine rhoHat_unique hmem fun v => ?_
@@ -85,19 +85,19 @@ lemma rhoHat_prodS (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂μ1
   change ∫ x, LN n v x * (prodS g x * prodS g x) ∂μN n = _ at h1
   rw [← h1, h2]
   refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
-  simp [SturmLiouville.ext, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]
+  simp [SturmLiouville.iccExt, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]
 
-lemma QMN_prodS (ν : PotM) (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂μ1 = 1) :
+lemma QMN_prodS (ν : PotM) (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂vol01 = 1) :
     QMN .bos 0 ν (prodS (n := n) g) = (n + 1) * QM ν hg := by
   rw [QMN_zero, kinW_prodS hg hn, rhoHat_prodS hg hgc hn, map_smul, smul_eq_mul, QM]; ring
 
-lemma norm_prodS (hn : ∫ t, g t ^ 2 ∂μ1 = 1) : ∫ x, prodS (n := n) g x ^ 2 ∂μN n = 1 := by
+lemma norm_prodS (hn : ∫ t, g t ^ 2 ∂vol01 = 1) : ∫ x, prodS (n := n) g x ^ 2 ∂μN n = 1 := by
   have := ip_prodS (n := n) hn
   simp only [ip] at this
   rw [← this]; simp_rw [sq]
 
 /-- **The product of a one-particle ground state is an `N`-boson ground state.** -/
-theorem isGSN_prodS (ν : PotM) (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂μ1 = 1)
+theorem isGSN_prodS (ν : PotM) (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂vol01 = 1)
     (hmin : QM ν hg = EM ν) : IsGSN .bos 0 ν (prodS (n := n) g) :=
   ⟨prodS_memW hg hgc, norm_prodS hn, fun Ψ hΨ hΨn => by
     rw [QMN_prodS ν hg hgc hn, hmin]; exact QMN_ge_EM ν hΨ hΨn⟩
@@ -106,7 +106,7 @@ end prod
 
 /-- A continuous normalised one-particle ground state. -/
 lemma exists_min_cont (ν : PotM) :
-    ∃ g : ℝ → ℝ, ∃ hg : H10 g, Continuous g ∧ ∫ t, g t ^ 2 ∂μ1 = 1 ∧ QM ν hg = EM ν := by
+    ∃ g : ℝ → ℝ, ∃ hg : H10 g, Continuous g ∧ ∫ t, g t ^ 2 ∂vol01 = 1 ∧ QM ν hg = EM ν := by
   obtain ⟨ψ, hψ, hn, hmin⟩ := exists_min ν
   refine ⟨_, H10.clamp_H10 hψ, H10.continuous_clamp hψ, ?_, (QM_clamp ν hψ).trans hmin⟩
   rw [integral_mu1_clamp (F := fun _ y => y ^ 2)]; exact hn
@@ -126,14 +126,14 @@ lemma QMN_isGSN {ν : PotM} {Φ : Cfg n → ℝ} (h : IsGSN .bos 0 ν Φ) :
 
 /-- **The density of an `N`-boson ground state is `N g²`, `g` a one-particle ground state.** -/
 theorem gs1_of_isGSN {ν : PotM} {Φ : Cfg n → ℝ} (h : IsGSN .bos 0 ν Φ) :
-    ∃ g : ℝ → ℝ, ∃ hg : H10 g, ∫ t, g t ^ 2 ∂μ1 = 1 ∧ QM ν hg = EM ν ∧
+    ∃ g : ℝ → ℝ, ∃ hg : H10 g, ∫ t, g t ^ 2 ∂vol01 = 1 ∧ QM ν hg = EM ν ∧
       rhoHat .bos Φ = ((n : ℝ) + 1) • sqP hg := by
   have hG := h10_gN (τ := .bos) Φ
   have hN : (0 : ℝ) < n + 1 := by positivity
   set c := 1 / √((n : ℝ) + 1)
   have hc2 : c ^ 2 = 1 / ((n : ℝ) + 1) := by rw [div_pow, Real.sq_sqrt hN.le, one_pow]
-  have hgn : ∫ t, gN .bos Φ t ^ 2 ∂μ1 = n + 1 := by rw [integral_gN_sq h.1, h.2.1, mul_one]
-  have hn : ∫ t, (c * gN .bos Φ t) ^ 2 ∂μ1 = 1 := by
+  have hgn : ∫ t, gN .bos Φ t ^ 2 ∂vol01 = n + 1 := by rw [integral_gN_sq h.1, h.2.1, mul_one]
+  have hn : ∫ t, (c * gN .bos Φ t) ^ 2 ∂vol01 = 1 := by
     rw [norm2_smul, hc2, hgn, one_div_mul_cancel hN.ne']
   have hQ : QM ν hG ≤ (n + 1) * EM ν := by
     rw [← QMN_isGSN h, QMN_zero, QM]
@@ -147,8 +147,8 @@ theorem gs1_of_isGSN {ν : PotM} {Φ : Cfg n → ℝ} (h : IsGSN .bos 0 ν Φ) :
 
 /-- **Non-interacting bosons in a measure potential**: `ρ` is an `N`-boson ground-state density iff
 `ρ / N` is a one-particle ground-state density. -/
-theorem vrepMeasN_bos_iff (ρ : Pot) :
-    VRepMeasN .bos n 0 ρ ↔ ∃ ρ1 : Pot, VRepMeas ρ1 ∧ ρ = ((n : ℝ) + 1) • ρ1 := by
+theorem vrepMeasN_bos_iff (ρ : C01) :
+    VRepMeasN .bos n 0 ρ ↔ ∃ ρ1 : C01, VRepMeas ρ1 ∧ ρ = ((n : ℝ) + 1) • ρ1 := by
   constructor
   · rintro ⟨μp, μm, _, _, Φ, hΦ, rfl⟩
     obtain ⟨g, hg, hn, hmin, hρ⟩ := gs1_of_isGSN hΦ
@@ -158,7 +158,7 @@ theorem vrepMeasN_bos_iff (ρ : Pot) :
     have hψ := hgs.1
     have hmin := QM_eq_EM_of_isGSM hgs hn hψ
     have hgc := H10.clamp_H10 hψ
-    have hn' : ∫ t, H10.clamp ψ t ^ 2 ∂μ1 = 1 := by
+    have hn' : ∫ t, H10.clamp ψ t ^ 2 ∂vol01 = 1 := by
       rw [integral_mu1_clamp (F := fun _ y => y ^ 2)]; exact hn
     refine ⟨μp, μm, inferInstance, inferInstance, _,
       isGSN_prodS _ hgc (H10.continuous_clamp hψ) hn' ((QM_clamp _ hψ).trans hmin), ?_⟩
@@ -180,7 +180,7 @@ lemma intCLM_dirac {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     @intCLM (Measure.dirac t) (isMeas01_dirac ht).toIsFiniteMeasure = deltaM ⟨t, ht⟩ := by
   ext h
   rw [intCLM_apply, integral_dirac]
-  simp [SturmLiouville.ext, projIcc_of_mem _ ht, deltaM]
+  simp [SturmLiouville.iccExt, projIcc_of_mem _ ht, deltaM]
 
 /-- **The plateau density is the ground-state density of `N` non-interacting bosons** in a
 measure potential (`-3δ_{1/3} - 3δ_{2/3}`). -/
@@ -196,7 +196,7 @@ theorem trap_vrepMeasN : VRepMeasN .bos n 0 (((n : ℝ) + 1) • trapP) := by
     simp only [nuOf, sub_apply, intCLM_apply, integral_zero_measure, zero_sub, μm, nuTrap]
     rw [integral_add_measure (integrable_ext _ h) (integrable_ext _ h),
       integral_smul_nnreal_measure, integral_smul_nnreal_measure, integral_dirac, integral_dirac,
-      SturmLiouville.ext, SturmLiouville.ext, projIcc_of_mem _ h13, projIcc_of_mem _ h23]
+      SturmLiouville.iccExt, SturmLiouville.iccExt, projIcc_of_mem _ h13, projIcc_of_mem _ h23]
     simp only [NNReal.smul_def, smul_eq_mul, deltaM, smul_apply, ContinuousMap.evalCLM_apply,
       NNReal.coe_ofNat]
     ring

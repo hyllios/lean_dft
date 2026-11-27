@@ -76,7 +76,7 @@ theorem isWDN_tens {f : Fin (n + 1) → ℝ → ℝ} (hf : ∀ j, H1N (f j))
   rw [e1, e2, ibp]; ring
 
 lemma integral_tens_sq (f : Fin (n + 1) → ℝ → ℝ) :
-    ∫ x, tens f x ^ 2 ∂μN n = ∏ i, ∫ t, f i t ^ 2 ∂μ1 := by
+    ∫ x, tens f x ^ 2 ∂μN n = ∏ i, ∫ t, f i t ^ 2 ∂vol01 := by
   rw [← integral_prod_cube (fun i t => f i t ^ 2)]
   congr 1; funext x; simp only [tens, Finset.prod_pow]
 
@@ -94,11 +94,11 @@ lemma prodS_memN (hg : H1N g) (hgc : Continuous g) : prodS (n := n) g ∈ DomN .
   rw [one_mul]
   exact Equiv.prod_comp σ fun i => g (x i)
 
-lemma integral_prodS_sq (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+lemma integral_prodS_sq (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     ∫ x, prodS (n := n) g x ^ 2 ∂μN n = 1 := by
   rw [prodS_eq_tens, integral_tens_sq]; simp [hnorm]
 
-lemma kinN_prodS (hg : H1N g) (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+lemma kinN_prodS (hg : H1N g) (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     kinN (prodS (n := n) g) = (n + 1) * kinM g := by
   have hk : ∀ k : Fin (n + 1), ∫ x, dWN k (prodS (n := n) g) x * dWN k (prodS g) x ∂μN n =
       kinM g := fun k => by
@@ -152,7 +152,7 @@ lemma hasDerivAt_sqrtProf {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) (hd : Different
   exact sqrtProf_eq (Ioo_subset_Icc_self hs)
 
 lemma deriv_sqrtProf_sq_le :
-    ∀ᵐ t ∂μ1, deriv (sqrtProf n ρ) t ^ 2 ≤ deriv ρ t ^ 2 / (4 * (n + 1) * c) := by
+    ∀ᵐ t ∂vol01, deriv (sqrtProf n ρ) t ^ 2 ≤ deriv ρ t ^ 2 / (4 * (n + 1) * c) := by
   filter_upwards [ae_restrict_of_ae hρ.1.ae_differentiableAt, ae_restrict_mem measurableSet_Ioo]
     with t hdt ht
   have hd := hdt (by rw [uIcc01]; exact Ioo_subset_Icc_self ht)
@@ -201,7 +201,7 @@ lemma h1N_sqrtProf : H1N (sqrtProf n ρ) := by
   refine ⟨hAC'.congr ?_, ?_⟩
   · intro t ht; rw [uIcc01] at ht
     simp only [Function.comp, sqrtProf_eq ht]
-  · have hm : AEStronglyMeasurable (fun t => deriv (sqrtProf n ρ) t ^ 2) μ1 :=
+  · have hm : AEStronglyMeasurable (fun t => deriv (sqrtProf n ρ) t ^ 2) vol01 :=
       ((measurable_deriv _).pow_const 2).aestronglyMeasurable
     refine Integrable.mono' (hρ.int_dsq.div_const (4 * (n + 1) * c)) hm ?_
     filter_upwards [deriv_sqrtProf_sq_le hρ hc hρc] with t ht
@@ -247,10 +247,10 @@ lemma slater_memN (hφ : ∀ j, H1N (φ j)) (hφc : ∀ j, Continuous (φ j)) :
 /-- **The kinetic energy of a Slater determinant** of orthonormal orbitals is at most
 `N · N!² · max_j ∫ φ_j'²`. -/
 lemma kinN_slater_le (hφ : ∀ j, H1N (φ j)) (hφc : ∀ j, Continuous (φ j))
-    (hon : ∀ a b, ∫ t, φ a t * φ b t ∂μ1 = if a = b then 1 else 0) {K : ℝ}
+    (hon : ∀ a b, ∫ t, φ a t * φ b t ∂vol01 = if a = b then 1 else 0) {K : ℝ}
     (hK : ∀ j, kinM (φ j) ≤ K) :
     kinN (slater φ) ≤ (n + 1) * ((Nat.factorial (n + 1) : ℝ) ^ 2 * K) := by
-  have h1 : ∀ j, ∫ t, φ j t ^ 2 ∂μ1 = 1 := fun j => by
+  have h1 : ∀ j, ∫ t, φ j t ^ 2 ∂vol01 = 1 := fun j => by
     have := hon j j; simp only [↓reduceIte] at this; rw [← this]; simp only [sq]
   have hk : ∀ k : Fin (n + 1), ∫ x, dWN k (slater φ) x * dWN k (slater φ) x ∂μN n ≤
       (Nat.factorial (n + 1) : ℝ) ^ 2 * K := fun k => by
@@ -317,7 +317,7 @@ lemma exists_eH_bound (N : ℕ) : ∃ C, 0 ≤ C ∧ ∀ a : Hix N, ∀ u ∈ Ic
 
 section harr
 
-variable {g : ℝ → ℝ} (hg : H1N g) (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1)
+variable {g : ℝ → ℝ} (hg : H1N g) (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1)
 include hg hgc hnorm
 
 /-- **Harriman orbitals** of a continuous `g ∈ H¹(0, 1)`, with a kinetic bound. -/
@@ -325,7 +325,7 @@ lemma harrimanN {Gm Kg : ℝ} (hGm : ∀ t ∈ Icc (0 : ℝ) 1, |g t| ≤ Gm) (h
     {C : ℝ} (hC : 0 ≤ C) (hCb : ∀ a : Hix (n + 1), ∀ u ∈ Icc (0 : ℝ) 1,
       |eH a u| ≤ C ∧ |deriv (eH a) u| ≤ C) :
     ∃ φ : Fin (n + 1) → ℝ → ℝ, (∀ j, H1N (φ j)) ∧ (∀ j, Continuous (φ j)) ∧
-      (∀ a b, ∫ t, φ a t * φ b t ∂μ1 = if a = b then 1 else 0) ∧
+      (∀ a b, ∫ t, φ a t * φ b t ∂vol01 = if a = b then 1 else 0) ∧
       (∀ t, ∑ j, φ j t ^ 2 = (n + 1) * g t ^ 2) ∧
       ∀ j, kinM (φ j) ≤ 2 * C ^ 2 * (Kg + Gm ^ 6) := by
   set N := n + 1
@@ -349,7 +349,7 @@ lemma harrimanN {Gm Kg : ℝ} (hGm : ∀ t ∈ Icc (0 : ℝ) 1, |g t| ≤ Gm) (h
     rw [e.sum_comp (fun a => eH a (cumF g t) ^ 2), sum_eH_sq]
     simp only [N]; push_cast; ring
   · -- the kinetic bound
-    have hpt : ∀ᵐ t ∂μ1, deriv (fun x => g x * eH (e j) (cumF g x)) t ^ 2 ≤
+    have hpt : ∀ᵐ t ∂vol01, deriv (fun x => g x * eH (e j) (cumF g x)) t ^ 2 ≤
         2 * C ^ 2 * (deriv g t ^ 2 + Gm ^ 6) := by
       filter_upwards [ae_restrict_of_ae hg.1.ae_differentiableAt,
         ae_restrict_mem measurableSet_Ioo] with t hdt ht
@@ -384,7 +384,7 @@ lemma harrimanN {Gm Kg : ℝ} (hGm : ∀ t ∈ Icc (0 : ℝ) 1, |g t| ≤ Gm) (h
           _ = C ^ 2 * Gm ^ 6 := by ring
       nlinarith [sq_nonneg (a - b)]
     calc kinM (fun x => g x * eH (e j) (cumF g x))
-        ≤ ∫ t, 2 * C ^ 2 * (deriv g t ^ 2 + Gm ^ 6) ∂μ1 :=
+        ≤ ∫ t, 2 * C ^ 2 * (deriv g t ^ 2 + Gm ^ 6) ∂vol01 :=
           integral_mono_ae (hg.mul (huN j)).int_dsq
             ((hg.int_dsq.add (integrable_const _)).const_mul _) hpt
       _ = 2 * C ^ 2 * (kinM g + Gm ^ 6) := by
@@ -399,11 +399,11 @@ end harr
 /-- **A normalised Neumann state with density `N g²`** and kinetic energy bounded in terms of
 `sup g` and `∫ g'²`, for bosons or fermions. -/
 theorem rep_of_prof (τ : Stat) {g : ℝ → ℝ} (hg : H1N g) (hgc : Continuous g)
-    (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) {Gm Kg : ℝ} (hGm : ∀ t ∈ Icc (0 : ℝ) 1, |g t| ≤ Gm)
+    (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) {Gm Kg : ℝ} (hGm : ∀ t ∈ Icc (0 : ℝ) 1, |g t| ≤ Gm)
     (hKg : kinM g ≤ Kg) {C : ℝ} (hC : 0 ≤ C) (hCb : ∀ a : Hix (n + 1), ∀ u ∈ Icc (0 : ℝ) 1,
       |eH a u| ≤ C ∧ |deriv (eH a) u| ≤ C) :
     ∃ Φ ∈ DomN τ n, ∫ x, Φ x ^ 2 ∂μN n = 1 ∧
-      (∀ u : Pot, pfN u Φ Φ = ∫ t, ext u t * ((n + 1) * g t ^ 2) ∂μ1) ∧
+      (∀ u : C01, pfN u Φ Φ = ∫ t, iccExt u t * ((n + 1) * g t ^ 2) ∂vol01) ∧
       kinN Φ ≤ (n + 1) * ((Nat.factorial (n + 1) : ℝ) * (2 * C ^ 2 * (Kg + Gm ^ 6)) + Kg) := by
   have hKg0 : 0 ≤ Kg := (integral_nonneg fun _ => sq_nonneg _).trans hKg
   have hGm0 : 0 ≤ Gm := (abs_nonneg _).trans (hGm 0 ⟨le_rfl, zero_le_one⟩)
@@ -457,14 +457,14 @@ lemma abs_fnE_le (e : H1E) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : |fnE e t| �
 
 lemma fnE_add (e e' : H1E) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     fnE (e + e') t = fnE e t + fnE e' t := by
-  have := congrArg (fun P : Pot => P ⟨t, ht⟩) (map_add evE e e')
+  have := congrArg (fun P : C01 => P ⟨t, ht⟩) (map_add evE e e')
   simpa only [ContinuousMap.add_apply, evE_apply] using this
 
 /-- **Sufficiency in Corso's Theorem 2.3**: every `ρ ∈ H¹(0, 1)`, positive on `[0, 1]`, with
 `∫ ρ = N`, is the density of a Neumann ground state of some `v ∈ H⁻¹`, for bosons or fermions
 and any continuous interaction. -/
 theorem vrepNH_suff {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ0 : H1E}
-    (hpos : ∀ t ∈ Icc (0 : ℝ) 1, 0 < fnE ρ0 t) (hN : ∫ t, fnE ρ0 t ∂μ1 = n + 1) :
+    (hpos : ∀ t ∈ Icc (0 : ℝ) 1, 0 < fnE ρ0 t) (hN : ∫ t, fnE ρ0 t ∂vol01 = n + 1) :
     VRepNH τ n w ρ0 := by
   refine vrepNH_of_rep hw hN ?_
   obtain ⟨tm, htm, hmin⟩ := isCompact_Icc.exists_isMinOn (nonempty_Icc.2 zero_le_one)
@@ -503,10 +503,10 @@ theorem vrepNH_suff {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ0 : H
   set g := sqrtProf n ρ
   have hg := h1N_sqrtProf (n := n) hρ hc2 hρc
   have hgc := continuous_sqrtProf (n := n) hρ
-  have hmass : ∫ t, ρ t ∂μ1 = n + 1 := by
+  have hmass : ∫ t, ρ t ∂vol01 = n + 1 := by
     rw [← ellE_apply, map_add, hh, add_zero, ellE_apply, hN]
-  have hnorm : ∫ t, g t ^ 2 ∂μ1 = 1 := by
-    have e : ∫ t, g t ^ 2 ∂μ1 = ∫ t, ρ t / (n + 1) ∂μ1 :=
+  have hnorm : ∫ t, g t ^ 2 ∂vol01 = 1 := by
+    have e : ∫ t, g t ^ 2 ∂vol01 = ∫ t, ρ t / (n + 1) ∂vol01 :=
       setIntegral_congr_fun measurableSet_Ioo fun t ht => by
         have := sqrtProf_sq (n := n) hc2 hρc (Ioo_subset_Icc_self ht)
         simp only [g]; field_simp; linarith
@@ -533,7 +533,7 @@ theorem vrepNH_suff {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ0 : H
 fermions and any continuous interaction, `ρ ∈ H¹(0, 1)` is the density of a Neumann ground state
 of some `H⁻¹` potential if and only if `ρ > 0` on `[0, 1]` and `∫ ρ = N`. -/
 theorem vrepNH_iff {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) (ρ : H1E) :
-    VRepNH τ n w ρ ↔ (∀ t ∈ Icc (0 : ℝ) 1, 0 < fnE ρ t) ∧ ∫ t, fnE ρ t ∂μ1 = n + 1 :=
+    VRepNH τ n w ρ ↔ (∀ t ∈ Icc (0 : ℝ) 1, 0 < fnE ρ t) ∧ ∫ t, fnE ρ t ∂vol01 = n + 1 :=
   ⟨vrepNH_nec hw, fun h => vrepNH_suff hw h.1 h.2⟩
 
 end DFT.Continuum.Line

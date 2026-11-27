@@ -36,7 +36,7 @@ lemma Dir_cN {τ : Stat} {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) : Dir τ.t
     cN_InS hφ⟩
 
 /-- **The energy in the sine basis**: `⟨φ, H φ⟩ = Σ λ_m c_m² + Σ c_m (K c)_m`. -/
-lemma Q_eq_Fn {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) {φ : Cfg n → ℝ}
+lemma Q_eq_Fn {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) (v : C01) {φ : Cfg n → ℝ}
     (hφ : φ ∈ Dom τ n) :
     Q (setting τ n w hw) v φ = Fn (fun x => LN n v x + w x) fun m => cN m φ := by
   have hc := hφ.1.continuous

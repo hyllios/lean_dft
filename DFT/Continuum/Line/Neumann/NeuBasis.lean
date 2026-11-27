@@ -37,7 +37,7 @@ lemma continuous_cn (k : ℕ) : Continuous (cn k) := by
   | zero => exact continuous_const
   | succ k => exact continuous_cs k
 
-lemma cn_orthonormal (k l : ℕ) : ∫ x, cn k x * cn l x ∂μ1 = if k = l then 1 else 0 := by
+lemma cn_orthonormal (k l : ℕ) : ∫ x, cn k x * cn l x ∂vol01 = if k = l then 1 else 0 := by
   cases k with
   | zero =>
     cases l with
@@ -52,31 +52,31 @@ lemma cn_orthonormal (k l : ℕ) : ∫ x, cn k x * cn l x ∂μ1 = if k = l then
       simp only [cn, cs_orthonormal, add_left_inj]
 
 /-- **The cosines are complete in `L²(0, 1)`.** -/
-theorem cn_complete (f : L2I) (h : ∀ k : ℕ, ∫ x, cn k x * f x ∂μ1 = 0) : f = 0 := by
+theorem cn_complete (f : L2I) (h : ∀ k : ℕ, ∫ x, cn k x * f x ∂vol01 = 0) : f = 0 := by
   have hF1 : prim f 1 = 0 := by
     have := h 0
     simp only [cn, one_mul] at this
-    rw [prim, ← integral_mu1]; exact this
+    rw [prim, ← integral_vol01]; exact this
   have hF := h10_prim hF1
   have hc := H10.continuous_clamp hF
   have hcl : ∀ x ∈ Icc (0 : ℝ) 1, H10.clamp (prim f) x = prim f x := fun x hx => H10.clamp_eq hx
   -- `F ⊥` every sine
-  have hsin : ∀ k : ℕ, 0 < k → ∫ x, sn k x * (toHL hc : ℝ → ℝ) x ∂μ1 = 0 := by
+  have hsin : ∀ k : ℕ, 0 < k → ∫ x, sn k x * (toHL hc : ℝ → ℝ) x ∂vol01 = 0 := by
     intro k hk
     obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
-    have e1 : ∫ x, sn (k + 1) x * (toHL hc : ℝ → ℝ) x ∂μ1 = ∫ x, sn (k + 1) x * prim f x ∂μ1 := by
+    have e1 : ∫ x, sn (k + 1) x * (toHL hc : ℝ → ℝ) x ∂vol01 = ∫ x, sn (k + 1) x * prim f x ∂vol01 := by
       refine integral_congr_ae ?_
       filter_upwards [toHL_ae hc, ae_restrict_mem measurableSet_Ioo] with x h1 h2
       rw [h1, hcl x (Ioo_subset_Icc_self h2)]
     rw [e1, sn_ibp hF.1 hF.2.1 hF1 k]
-    have e2 : ∫ x, cs k x * deriv (prim f) x ∂μ1 = ∫ x, cn (k + 1) x * f x ∂μ1 := by
+    have e2 : ∫ x, cs k x * deriv (prim f) x ∂vol01 = ∫ x, cn (k + 1) x * f x ∂vol01 := by
       refine integral_congr_ae ?_
       filter_upwards [ae_deriv_prim f] with x hx
       rw [hx]; rfl
     rw [e2, h (k + 1), mul_zero]
   have h0 := sn_complete (toHL hc) hsin
-  have hae : H10.clamp (prim f) =ᵐ[μ1] fun _ => 0 := by
-    filter_upwards [toHL_ae hc, Lp.coeFn_zero ℝ 2 μ1] with x h1 h2
+  have hae : H10.clamp (prim f) =ᵐ[vol01] fun _ => 0 := by
+    filter_upwards [toHL_ae hc, Lp.coeFn_zero ℝ 2 vol01] with x h1 h2
     rw [← h1, h0]; exact h2
   have hEq : EqOn (H10.clamp (prim f)) (fun _ => (0 : ℝ)) (Ioo 0 1) :=
     Measure.eqOn_open_of_ae_eq hae isOpen_Ioo hc.continuousOn continuousOn_const
@@ -117,12 +117,12 @@ lemma cb_apply (k : ℕ) : cb k = toHL (continuous_cn k) := by
 
 /-- **Parseval** for a continuous function, cosine version, in `ℝ≥0∞`. -/
 theorem parsevalC1 {g : ℝ → ℝ} (hg : Continuous g) :
-    ∑' k : ℕ, ENNReal.ofReal ((∫ x, cn k x * g x ∂μ1) ^ 2) =
-      ∫⁻ x, ENNReal.ofReal (g x ^ 2) ∂μ1 := by
+    ∑' k : ℕ, ENNReal.ofReal ((∫ x, cn k x * g x ∂vol01) ^ 2) =
+      ∫⁻ x, ENNReal.ofReal (g x ^ 2) ∂vol01 := by
   have h := cb.hasSum_inner_mul_inner (toHL hg) (toHL hg)
   simp only [cb_apply, inner_toHL_toHL] at h
-  have e : ∀ k, (∫ x, g x * cn k x ∂μ1) * ∫ x, cn k x * g x ∂μ1 =
-      (∫ x, cn k x * g x ∂μ1) ^ 2 := fun k => by
+  have e : ∀ k, (∫ x, g x * cn k x ∂vol01) * ∫ x, cn k x * g x ∂vol01 =
+      (∫ x, cn k x * g x ∂vol01) ^ 2 := fun k => by
     rw [sq]; congr 1; exact integral_congr_ae (ae_of_all _ fun x => mul_comm _ _)
   simp only [e] at h
   rw [← ENNReal.ofReal_tsum_of_nonneg (fun k => sq_nonneg _) h.summable, h.tsum_eq,
@@ -170,8 +170,8 @@ theorem parsevalC : ∀ (d : ℕ) {f : (Fin d → ℝ) → ℝ}, Continuous f �
   | succ d ih =>
     intro f hf
     set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (d + 1) => ℝ) 0
-    have hmp : MeasurePreserving e (piM (d + 1)) (μ1.prod (piM d)) :=
-      measurePreserving_piFinSuccAbove (fun _ => μ1) 0
+    have hmp : MeasurePreserving e (piM (d + 1)) (vol01.prod (piM d)) :=
+      measurePreserving_piFinSuccAbove (fun _ => vol01) 0
     have hsymm : ∀ p : ℝ × (Fin d → ℝ), e.symm p = Fin.cons p.1 p.2 := fun p => by
       simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]
     set F : ℝ → (Fin d → ℝ) → ℝ := fun t y => f (Fin.cons t y)
@@ -183,15 +183,15 @@ theorem parsevalC : ∀ (d : ℕ) {f : (Fin d → ℝ) → ℝ}, Continuous f �
       continuous_param (G := fun t y => cP m y * F t y)
         (((continuous_cP m).comp continuous_snd).mul hFc)
     have hint : ∀ G : (Fin (d + 1) → ℝ) → ℝ, Continuous G →
-        ∫ x, G x ∂piM (d + 1) = ∫ t, ∫ y, G (Fin.cons t y) ∂piM d ∂μ1 := by
+        ∫ x, G x ∂piM (d + 1) = ∫ t, ∫ y, G (Fin.cons t y) ∂piM d ∂vol01 := by
       intro G hG
       rw [← hmp.symm.integral_comp' (f := e.symm) (g := G)]
-      have hi : Integrable (fun p : ℝ × (Fin d → ℝ) => G (e.symm p)) (μ1.prod (piM d)) :=
+      have hi : Integrable (fun p : ℝ × (Fin d → ℝ) => G (e.symm p)) (vol01.prod (piM d)) :=
         (hmp.symm.integrable_comp_emb e.symm.measurableEmbedding).2 (integrable_piM hG)
       rw [integral_prod _ hi]
       simp only [hsymm]
     have hlint : ∫⁻ x, ENNReal.ofReal (f x ^ 2) ∂piM (d + 1) =
-        ∫⁻ t, ∫⁻ y, ENNReal.ofReal (F t y ^ 2) ∂piM d ∂μ1 := by
+        ∫⁻ t, ∫⁻ y, ENNReal.ofReal (F t y ^ 2) ∂piM d ∂vol01 := by
       rw [← hmp.symm.lintegral_comp_emb e.symm.measurableEmbedding, lintegral_prod]
       · simp only [hsymm, F]
       · exact ((hf.measurable.comp e.symm.measurable).pow_const 2).ennreal_ofReal.aemeasurable
@@ -201,11 +201,11 @@ theorem parsevalC : ∀ (d : ℕ) {f : (Fin d → ℝ) → ℝ}, Continuous f �
     simp only [hslice]
     rw [lintegral_tsum (f := fun m t => ENNReal.ofReal (a m t ^ 2))
       fun m => ((ha m).measurable.pow_const 2).ennreal_ofReal.aemeasurable]
-    have h1 : ∀ m, ∫⁻ t, ENNReal.ofReal ((a m t) ^ 2) ∂μ1 =
-        ∑' k, ENNReal.ofReal ((∫ t, cn k t * a m t ∂μ1) ^ 2) := fun m =>
+    have h1 : ∀ m, ∫⁻ t, ENNReal.ofReal ((a m t) ^ 2) ∂vol01 =
+        ∑' k, ENNReal.ofReal ((∫ t, cn k t * a m t ∂vol01) ^ 2) := fun m =>
       (parsevalC1 (ha m)).symm
     simp only [h1]
-    have hcoef : ∀ k m, ∫ t, cn k t * a m t ∂μ1 =
+    have hcoef : ∀ k m, ∫ t, cn k t * a m t ∂vol01 =
         ∫ x, cP (Fin.cons k m : Fin (d + 1) → ℕ) x * f x ∂piM (d + 1) := by
       intro k m
       rw [hint (fun x => cP (Fin.cons k m : Fin (d + 1) → ℕ) x * f x)

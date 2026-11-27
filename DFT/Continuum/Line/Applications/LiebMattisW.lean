@@ -30,7 +30,7 @@ namespace DFT.Continuum.Line
 
 open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
-variable {n : ℕ} {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
+variable {n : ℕ} {w : Cfg n → ℝ} {hw : Continuous w} {v : C01}
 
 /-- **The Lieb–Mattis theorem on `H¹₀`**, continuous `v` and relabelling-invariant continuous `w`:
 `E(a, b) < E(a + 1, b - 1)` for `a + b = N`, `a ≥ b ≥ 1`. -/

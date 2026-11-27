@@ -44,7 +44,7 @@ def H10 (g : ℝ → ℝ) : Prop :=
   AbsolutelyContinuousOnInterval g 0 1 ∧ g 0 = 0 ∧ g 1 = 0 ∧
     IntegrableOn (fun t => deriv g t ^ 2) (Ioo (0 : ℝ) 1)
 
-instance : IsProbabilityMeasure μ1 := ⟨by simp⟩
+instance : IsProbabilityMeasure vol01 := ⟨by simp⟩
 
 lemma uIcc01 : uIcc (0 : ℝ) 1 = Icc 0 1 := uIcc_of_le zero_le_one
 
@@ -55,11 +55,11 @@ variable {g : ℝ → ℝ}
 lemma continuousOn (hg : H10 g) : ContinuousOn g (Icc 0 1) := by
   simpa [uIcc01] using hg.1.continuousOn
 
-lemma aesm_of_contOn {f : ℝ → ℝ} (hf : ContinuousOn f (Icc 0 1)) : AEStronglyMeasurable f μ1 :=
+lemma aesm_of_contOn {f : ℝ → ℝ} (hf : ContinuousOn f (Icc 0 1)) : AEStronglyMeasurable f vol01 :=
   (hf.mono Ioo_subset_Icc_self).aestronglyMeasurable measurableSet_Ioo
 
 lemma int_sq_of_contOn {f : ℝ → ℝ} (hf : ContinuousOn f (Icc 0 1)) :
-    Integrable (fun t => f t ^ 2) μ1 :=
+    Integrable (fun t => f t ^ 2) vol01 :=
   ((hf.pow 2).integrableOn_compact isCompact_Icc).mono_set Ioo_subset_Icc_self
 
 /-- The clamped function `g ∘ proj_{[0,1]}`: continuous on `ℝ`, equal to `g` on `[0, 1]`. -/
@@ -96,7 +96,7 @@ lemma mul_C1 (hg : H10 g) (hgc : Continuous g) {u : ℝ → ℝ} (hu : ContDiff 
   obtain ⟨Cg, hCg⟩ := (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1)).exists_bound_of_continuousOn
     hgc.continuousOn
   refine ⟨hg.1.fun_mul huAC, by simp [hg.2.1], by simp [hg.2.2.1], ?_⟩
-  have hbound : Integrable (fun t => 2 * Cu ^ 2 * deriv g t ^ 2 + 2 * (Cg * Cd) ^ 2) μ1 :=
+  have hbound : Integrable (fun t => 2 * Cu ^ 2 * deriv g t ^ 2 + 2 * (Cg * Cd) ^ 2) vol01 :=
     (hg.2.2.2.const_mul _).add (integrable_const _)
   refine hbound.mono' ((measurable_deriv _).pow_const 2).aestronglyMeasurable ?_
   have hdiff := hg.1.ae_differentiableAt
@@ -129,14 +129,14 @@ noncomputable def tens (f : Fin (n + 1) → ℝ → ℝ) (x : Cfg n) : ℝ := �
 lemma continuous_tens {f : Fin (n + 1) → ℝ → ℝ} (hf : ∀ j, Continuous (f j)) : Continuous (tens f) :=
   continuous_finsetProd _ fun j _ => (hf j).comp (continuous_apply j)
 
-lemma memLp_tens {f : Fin (n + 1) → ℝ → ℝ} (hm : ∀ j, AEStronglyMeasurable (f j) μ1)
-    (hs : ∀ j, Integrable (fun t => f j t ^ 2) μ1) : MemLp (tens f) 2 (μN n) := by
+lemma memLp_tens {f : Fin (n + 1) → ℝ → ℝ} (hm : ∀ j, AEStronglyMeasurable (f j) vol01)
+    (hs : ∀ j, Integrable (fun t => f j t ^ 2) vol01) : MemLp (tens f) 2 (μN n) := by
   rw [Sine.muN_eq]
   have hmeas : AEStronglyMeasurable (tens f) (Sine.piM (n + 1)) :=
     Finset.aestronglyMeasurable_fun_prod _ fun j _ =>
-      (hm j).comp_measurePreserving (measurePreserving_eval (μ := fun _ => μ1) j)
+      (hm j).comp_measurePreserving (measurePreserving_eval (μ := fun _ => vol01) j)
   refine (memLp_two_iff_integrable_sq hmeas).2 ?_
-  refine (Integrable.fintype_prod (μ := fun _ : Fin (n + 1) => μ1)
+  refine (Integrable.fintype_prod (μ := fun _ : Fin (n + 1) => vol01)
     (f := fun j t => f j t ^ 2) hs).congr (ae_of_all _ fun x => ?_)
   simp [tens, Finset.prod_pow]
 
@@ -213,8 +213,8 @@ lemma prodS_memW (hg : H10 g) (hgc : Continuous g) : prodS (n := n) g ∈ DomW .
   simp only [prodS, pm, ch_bos, one_mul]
   exact Equiv.prod_comp σ fun i => g (x i)
 
-lemma dens_prodS (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) (v : Pot) :
-    ∫ x, LN n v x * (prodS g x * prodS g x) ∂μN n = ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1 := by
+lemma dens_prodS (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) (v : C01) :
+    ∫ x, LN n v x * (prodS g x * prodS g x) ∂μN n = ∫ t, iccExt v t * ((n + 1) * g t ^ 2) ∂vol01 := by
   have hsq : ∀ x : Cfg n, prodS g x * prodS g x = ∏ i, g (x i) ^ 2 := fun x => by
     simp only [prodS, ← Finset.prod_mul_distrib, sq]
   have hPc : Continuous fun x : Cfg n => prodS g x * prodS g x := by
@@ -222,15 +222,15 @@ lemma dens_prodS (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) (v : P
       continuous_finsetProd _ fun k _ => hgc.comp (continuous_apply k)
     exact this.mul this
   rw [integral_LN_mul v hPc]
-  have hk : ∀ k : Fin (n + 1), ∫ x, ext v (x k) * (prodS g x * prodS g x) ∂μN n =
-      ∫ t, ext v t * g t ^ 2 ∂μ1 := fun k => by
-    have e : (fun x : Cfg n => ext v (x k) * (prodS g x * prodS g x)) = fun x =>
-        ∏ i, (if i = k then fun t => ext v t * g t ^ 2 else fun t => g t ^ 2) (x i) := by
+  have hk : ∀ k : Fin (n + 1), ∫ x, iccExt v (x k) * (prodS g x * prodS g x) ∂μN n =
+      ∫ t, iccExt v t * g t ^ 2 ∂vol01 := fun k => by
+    have e : (fun x : Cfg n => iccExt v (x k) * (prodS g x * prodS g x)) = fun x =>
+        ∏ i, (if i = k then fun t => iccExt v t * g t ^ 2 else fun t => g t ^ 2) (x i) := by
       funext x
-      rw [hsq, ← prod_ite_mul k (fun i => ext v (x i)) (fun i => g (x i) ^ 2)]
+      rw [hsq, ← prod_ite_mul k (fun i => iccExt v (x i)) (fun i => g (x i) ^ 2)]
       exact Finset.prod_congr rfl fun i _ => by split_ifs with h <;> simp [h]
     rw [e, integral_prod_cube]
-    simp only [apply_ite (fun f : ℝ → ℝ => ∫ t, f t ∂μ1), hnorm]
+    simp only [apply_ite (fun f : ℝ → ℝ => ∫ t, f t ∂vol01), hnorm]
     rw [Finset.prod_eq_single k (fun i _ hi => ite_eq_right hi)
       (fun h => absurd (Finset.mem_univ k) h), ite_eq_left rfl]
   simp only [hk, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
@@ -238,7 +238,7 @@ lemma dens_prodS (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) (v : P
   push_cast
   exact integral_congr_ae (ae_of_all _ fun t => by ring)
 
-lemma ip_prodS (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) : ip (μ := μN n) (prodS g) (prodS g) = 1 := by
+lemma ip_prodS (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) : ip (μ := μN n) (prodS g) (prodS g) = 1 := by
   have hsq : ∀ x : Cfg n, prodS g x * prodS g x = ∏ i, g (x i) ^ 2 := fun x => by
     simp only [prodS, ← Finset.prod_mul_distrib, sq]
   simp only [ip, hsq, integral_prod_cube (fun _ t => g t ^ 2), hnorm, Finset.prod_const_one]
@@ -260,11 +260,11 @@ lemma contDiff_cumF' (hgc : Continuous g) : ContDiff ℝ 1 (cumF g) := by
   rw [show deriv (cumF g) = fun x => g x ^ 2 from funext fun x => (hasDerivAt_cumF' hgc x).deriv]
   exact hgc.pow 2
 
-lemma integral_cumF' (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) {h : ℝ → ℝ}
-    (hh : Continuous h) : ∫ t, g t ^ 2 * h (cumF g t) ∂μ1 = ∫ u in (0 : ℝ)..1, h u := by
+lemma integral_cumF' (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) {h : ℝ → ℝ}
+    (hh : Continuous h) : ∫ t, g t ^ 2 * h (cumF g t) ∂vol01 = ∫ u in (0 : ℝ)..1, h u := by
   have h0 : cumF g 0 = 0 := intervalIntegral.integral_same
-  have h1 : cumF g 1 = 1 := by rw [cumF, ← SturmLiouville.integral_mu1, hnorm]
-  rw [SturmLiouville.integral_mu1]
+  have h1 : cumF g 1 = 1 := by rw [cumF, ← SturmLiouville.integral_vol01, hnorm]
+  rw [SturmLiouville.integral_vol01]
   have := intervalIntegral.integral_comp_mul_deriv (a := 0) (b := 1) (f := cumF g)
     (f' := fun x => g x ^ 2) (g := h) (fun x _ => hasDerivAt_cumF' hgc x)
     (hgc.pow 2).continuousOn hh
@@ -294,9 +294,9 @@ lemma slater_memW {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, H10 (φ j))
   · rw [slater_eq_alt, alt_pm]
 
 /-- The Harriman orbitals `g · e_j(F)` and their orthonormality. -/
-lemma harriman (hg : H10 g) (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+lemma harriman (hg : H10 g) (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     ∃ φ : Fin (n + 1) → ℝ → ℝ, (∀ j, H10 (φ j)) ∧ (∀ j, Continuous (φ j)) ∧
-      (∀ a b, ∫ t, φ a t * φ b t ∂μ1 = if a = b then 1 else 0) ∧
+      (∀ a b, ∫ t, φ a t * φ b t ∂vol01 = if a = b then 1 else 0) ∧
       ∀ t, ∑ j, φ j t ^ 2 = (n + 1) * g t ^ 2 := by
   set N := n + 1
   let e : Fin N ≃ Hix N := (Fintype.equivFinOfCardEq (card_Hix N)).symm
@@ -323,13 +323,13 @@ variable {w : Cfg n → ℝ} {hw : Continuous w} {g : ℝ → ℝ}
 
 /-- The integral over `(0, 1)` only sees `g` on `[0, 1]`. -/
 lemma integral_mu1_clamp {F : ℝ → ℝ → ℝ} :
-    ∫ t, F t (H10.clamp g t) ∂μ1 = ∫ t, F t (g t) ∂μ1 :=
+    ∫ t, F t (H10.clamp g t) ∂vol01 = ∫ t, F t (g t) ∂vol01 :=
   setIntegral_congr_fun measurableSet_Ioo fun t ht => by
     simp only [H10.clamp_eq (Ioo_subset_Icc_self ht)]
 
-lemma nrepW_cont {τ : Stat} (hg : H10 g) (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+lemma nrepW_cont {τ : Stat} (hg : H10 g) (hgc : Continuous g) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     ∃ ψ ∈ Nst (settingW τ n w hw),
-      ∀ v, dens (settingW τ n w hw) ψ v = ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1 := by
+      ∀ v, dens (settingW τ n w hw) ψ v = ∫ t, iccExt v t * ((n + 1) * g t ^ 2) ∂vol01 := by
   cases τ
   · refine ⟨prodS g, ⟨prodS_memW hg hgc, ip_prodS hnorm⟩, fun v => ?_⟩
     exact dens_prodS hgc hnorm v
@@ -355,18 +355,18 @@ lemma nrepW_cont {τ : Stat} (hg : H10 g) (hgc : Continuous g) (hnorm : ∫ t, g
 
 /-- **`N`-representability on `H¹₀`**: for `g ∈ H¹₀(0, 1)` with `∫ g² = 1`, the density `N g²`
 is the density of a normalised `H¹₀` state, bosonic or fermionic. -/
-theorem nrepW {τ : Stat} (hg : H10 g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+theorem nrepW {τ : Stat} (hg : H10 g) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     ∃ ψ ∈ Nst (settingW τ n w hw),
-      ∀ v, dens (settingW τ n w hw) ψ v = ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1 := by
-  have hn' : ∫ t, H10.clamp g t ^ 2 ∂μ1 = 1 := by
+      ∀ v, dens (settingW τ n w hw) ψ v = ∫ t, iccExt v t * ((n + 1) * g t ^ 2) ∂vol01 := by
+  have hn' : ∫ t, H10.clamp g t ^ 2 ∂vol01 = 1 := by
     rw [integral_mu1_clamp (F := fun _ s => s ^ 2)]; exact hnorm
   obtain ⟨ψ, hψ, hd⟩ := nrepW_cont (τ := τ) (w := w) (hw := hw) hg.clamp_H10
     (H10.continuous_clamp hg) hn'
   refine ⟨ψ, hψ, fun v => ?_⟩
-  rw [hd v, integral_mu1_clamp (F := fun t s => ext v t * ((n + 1) * s ^ 2))]
+  rw [hd v, integral_mu1_clamp (F := fun t s => iccExt v t * ((n + 1) * s ^ 2))]
 
 /-- **The Lieb functional on `H¹₀` is finite** at every density `N g²` with `g ∈ H¹₀(0, 1)`. -/
-theorem liebF_W_ne_top {τ : Stat} (hg : H10 g) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+theorem liebF_W_ne_top {τ : Stat} (hg : H10 g) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     liebF (settingW τ n w hw) (rhoG n g) ≠ ⊤ := by
   obtain ⟨ψ, hψ, hd⟩ := nrepW (τ := τ) (w := w) (hw := hw) hg hnorm
   have h := liebF_le_h0 hψ
@@ -377,9 +377,9 @@ theorem liebF_W_ne_top {τ : Stat} (hg : H10 g) (hnorm : ∫ t, g t ^ 2 ∂μ1 =
 `∫₀¹ ρ = N` and `√ρ` absolutely continuous on `[0, 1]`, zero at the ends, with
 `(√ρ)' ∈ L²`, is the density of a normalised `H¹₀` state of `N` bosons or fermions. -/
 theorem nrepW_of_sqrt {τ : Stat} {ρ : ℝ → ℝ} (hρ0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ ρ t)
-    (hH : H10 fun t => √(ρ t)) (hN : ∫ t, ρ t ∂μ1 = n + 1) :
+    (hH : H10 fun t => √(ρ t)) (hN : ∫ t, ρ t ∂vol01 = n + 1) :
     ∃ ψ ∈ Nst (settingW τ n w hw),
-      ∀ v, dens (settingW τ n w hw) ψ v = ∫ t, ext v t * ρ t ∂μ1 := by
+      ∀ v, dens (settingW τ n w hw) ψ v = ∫ t, iccExt v t * ρ t ∂vol01 := by
   have hNp : (0 : ℝ) < n + 1 := by positivity
   set c := (√((n : ℝ) + 1))⁻¹
   have hc2 : c ^ 2 * ((n : ℝ) + 1) = 1 := by
@@ -393,8 +393,8 @@ theorem nrepW_of_sqrt {τ : Stat} {ρ : ℝ → ℝ} (hρ0 : ∀ t ∈ Icc (0 : 
   have hsq : ∀ t ∈ Ioo (0 : ℝ) 1, ((n : ℝ) + 1) * g t ^ 2 = ρ t := fun t ht => by
     simp only [g, mul_pow, Real.sq_sqrt (hρ0 t (Ioo_subset_Icc_self ht))]
     linear_combination ρ t * hc2
-  have hnorm : ∫ t, g t ^ 2 ∂μ1 = 1 := by
-    have : ∫ t, g t ^ 2 ∂μ1 = c ^ 2 * ∫ t, ρ t ∂μ1 := by
+  have hnorm : ∫ t, g t ^ 2 ∂vol01 = 1 := by
+    have : ∫ t, g t ^ 2 ∂vol01 = c ^ 2 * ∫ t, ρ t ∂vol01 := by
       rw [← integral_const_mul]
       refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
       simp only [g, mul_pow, Real.sq_sqrt (hρ0 t (Ioo_subset_Icc_self ht))]

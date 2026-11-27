@@ -59,21 +59,21 @@ lemma tentR_ge_half (hh : 0 < h) {t : ℝ} (ht : |t - m| ≤ h / 2) : 1 / 2 ≤ 
   have : |t - m| / h ≤ 1 / 2 := by rw [div_le_iff₀ hh]; linarith
   linarith
 
-lemma integrable_cont_mu1 {f : ℝ → ℝ} (hf : Continuous f) : Integrable f μ1 :=
+lemma integrable_cont_mu1 {f : ℝ → ℝ} (hf : Continuous f) : Integrable f vol01 :=
   hf.integrableOn_Icc.mono_set Ioo_subset_Icc_self
 
 lemma integral_tentR_pos (hh : 0 < h) (h0 : 0 ≤ m - h) (h1 : m + h ≤ 1) :
-    0 < ∫ t, tentR m h t ∂μ1 := by
+    0 < ∫ t, tentR m h t ∂vol01 := by
   set J := Ioo (m - h / 2) (m + h / 2)
   have hJ : J ⊆ Ioo 0 1 := fun t ht => ⟨by linarith [ht.1], by linarith [ht.2]⟩
-  have hle : ∫ t, J.indicator (fun _ => (1 / 2 : ℝ)) t ∂μ1 ≤ ∫ t, tentR m h t ∂μ1 := by
+  have hle : ∫ t, J.indicator (fun _ => (1 / 2 : ℝ)) t ∂vol01 ≤ ∫ t, tentR m h t ∂vol01 := by
     refine integral_mono ((integrable_const _).indicator measurableSet_Ioo)
       (integrable_cont_mu1 (continuous_tentR m h)) fun t => ?_
     by_cases ht : t ∈ J
     · rw [indicator_of_mem ht]
       exact tentR_ge_half hh (abs_le.2 ⟨by linarith [ht.1], by linarith [ht.2]⟩)
     · rw [indicator_of_notMem ht]; exact tentR_nonneg t
-  have hval : ∫ t, J.indicator (fun _ => (1 / 2 : ℝ)) t ∂μ1 = h * (1 / 2) := by
+  have hval : ∫ t, J.indicator (fun _ => (1 / 2 : ℝ)) t ∂vol01 = h * (1 / 2) := by
     rw [integral_indicator_const _ measurableSet_Ioo, smul_eq_mul, measureReal_def,
       Measure.restrict_apply measurableSet_Ioo, inter_eq_left.2 hJ, Real.volume_Ioo]
     rw [ENNReal.toReal_ofReal (by linarith)]
@@ -83,7 +83,7 @@ lemma integral_tentR_pos (hh : 0 < h) (h0 : 0 ≤ m - h) (h1 : m + h ≤ 1) :
 end tent
 
 /-- The normalised tent. -/
-noncomputable def nbump (m h t : ℝ) : ℝ := tentR m h t / ∫ s, tentR m h s ∂μ1
+noncomputable def nbump (m h t : ℝ) : ℝ := tentR m h t / ∫ s, tentR m h s ∂vol01
 
 section nbump
 
@@ -97,7 +97,7 @@ include hh h0 h1
 lemma nbump_nonneg (t : ℝ) : 0 ≤ nbump m h t :=
   div_nonneg (tentR_nonneg t) (integral_tentR_pos hh h0 h1).le
 
-lemma integral_nbump : ∫ t, nbump m h t ∂μ1 = 1 := by
+lemma integral_nbump : ∫ t, nbump m h t ∂vol01 = 1 := by
   unfold nbump
   rw [integral_div]
   exact div_self (integral_tentR_pos hh h0 h1).ne'
@@ -107,7 +107,7 @@ lemma nbump_eq_zero {t : ℝ} (ht : h ≤ |t - m|) : nbump m h t = 0 := by
   rw [nbump, tentR_eq_zero hh ht, zero_div]
 
 lemma nbump_ge {t : ℝ} (ht : |t - m| ≤ h / 2) :
-    1 / 2 / (∫ s, tentR m h s ∂μ1) ≤ nbump m h t :=
+    1 / 2 / (∫ s, tentR m h s ∂vol01) ≤ nbump m h t :=
   div_le_div_of_nonneg_right (tentR_ge_half hh ht) (integral_tentR_pos hh h0 h1).le
 
 end nbump
@@ -137,19 +137,19 @@ lemma chiAB_eq_sub (t : ℝ) :
 omit hα hβ in
 lemma chiAB_zero : chiAB α β 0 = 0 := by simp [chiAB]
 
-variable (hα0 : ∀ t, 0 ≤ α t) (hβ0 : ∀ t, 0 ≤ β t) (hα1 : ∫ t, α t ∂μ1 = 1)
-  (hβ1 : ∫ t, β t ∂μ1 = 1)
+variable (hα0 : ∀ t, 0 ≤ α t) (hβ0 : ∀ t, 0 ≤ β t) (hα1 : ∫ t, α t ∂vol01 = 1)
+  (hβ1 : ∫ t, β t ∂vol01 = 1)
 
 include hα1 hβ1 in
 lemma chiAB_one : chiAB α β 1 = 0 := by
-  rw [chiAB_eq_sub hα hβ, ← integral_mu1, ← integral_mu1, hα1, hβ1, sub_self]
+  rw [chiAB_eq_sub hα hβ, ← integral_vol01, ← integral_vol01, hα1, hβ1, sub_self]
 
 omit hα hβ in
-lemma int_mem01 {f : ℝ → ℝ} (hf : Continuous f) (hf0 : ∀ t, 0 ≤ f t) (hf1 : ∫ t, f t ∂μ1 = 1)
+lemma int_mem01 {f : ℝ → ℝ} (hf : Continuous f) (hf0 : ∀ t, 0 ≤ f t) (hf1 : ∫ t, f t ∂vol01 = 1)
     {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     0 ≤ ∫ s in (0 : ℝ)..t, f s ∧ ∫ s in (0 : ℝ)..t, f s ≤ 1 := by
   refine ⟨intervalIntegral.integral_nonneg ht.1 fun s _ => hf0 s, ?_⟩
-  rw [← hf1, integral_mu1]
+  rw [← hf1, integral_vol01]
   exact intervalIntegral.integral_mono_interval le_rfl ht.1 ht.2
     (ae_of_all _ fun s => hf0 s) (hf.intervalIntegrable _ _)
 
@@ -172,8 +172,8 @@ lemma chiAB_eq_zero_of {lo hi : ℝ} (hlo : ∀ t, t ≤ lo → α t = 0 ∧ β 
     have := hlo s (hs.2.trans h)
     rw [this.1, this.2, sub_self]
   · have e : ∀ f : ℝ → ℝ, Continuous f → (∀ s, hi ≤ s → f s = 0) →
-        ∫ s in (0 : ℝ)..t, f s = ∫ s, f s ∂μ1 := fun f hf hz => by
-      rw [integral_mu1, ← intervalIntegral.integral_add_adjacent_intervals
+        ∫ s in (0 : ℝ)..t, f s = ∫ s, f s ∂vol01 := fun f hf hz => by
+      rw [integral_vol01, ← intervalIntegral.integral_add_adjacent_intervals
         (hf.intervalIntegrable 0 t) (hf.intervalIntegrable t 1)]
       have : ∫ s in t..1, f s = 0 :=
         intervalIntegral.integral_zero_ae (ae_of_all _ fun s hs => by
@@ -201,7 +201,7 @@ lemma dk0_eq_zero {Z : Cfg n → ℝ} (hZ : ContDiff ℝ 1 Z)
   exact h1.unique h2
 
 lemma integral_coord0 {f : ℝ → ℝ} (hf : Continuous f) :
-    ∫ x, f (x 0) ∂μN n = ∫ t, f t ∂μ1 := by
+    ∫ x, f (x 0) ∂μN n = ∫ t, f t ∂vol01 := by
   have hi : Integrable (fun x : Cfg n => f (x 0)) (μN n) :=
     integrableN (hf.comp (continuous_apply 0))
   rw [integral_cube_cons' hi]
@@ -216,7 +216,7 @@ theorem log_wall_ineq {u : Cfg n → ℝ} (hu : u ∈ DomN .bos n) (hu0 : ∀ᵐ
     {η : Cfg n → ℝ} (hη : ContDiff ℝ 1 η) {K : ℝ} {ε : ℝ} (hε : 0 < ε)
     (hK : ∫ x, (η x * (dWN 0 u x / (u x + ε))) ^ 2 ∂μN n ≤ K)
     {α β : ℝ → ℝ} (hα : Continuous α) (hβ : Continuous β) (hα0 : ∀ t, 0 ≤ α t)
-    (hβ0 : ∀ t, 0 ≤ β t) (hα1 : ∫ t, α t ∂μ1 = 1) (hβ1 : ∫ t, β t ∂μ1 = 1)
+    (hβ0 : ∀ t, 0 ≤ β t) (hα1 : ∫ t, α t ∂vol01 = 1) (hβ1 : ∫ t, β t ∂vol01 = 1)
     {Z : Cfg n → ℝ} (hZ : ContDiff ℝ 1 Z) (hZ0 : ∀ x, 0 ≤ Z x) (hZ1 : ∀ x, Z x ≤ 1)
     (hZc : ∀ x (s : ℝ), Z (x + s • (Pi.single 0 1 : Cfg n)) = Z x) {c : ℝ} (hc : 0 < c)
     (hηc : ∀ x ∈ Cube n, chiAB α β (x 0) * Z x ≠ 0 → c ≤ |η x|) :
@@ -407,7 +407,7 @@ lemma sq_sub_le_H1N {g : ℝ → ℝ} (hg : H1N g) {a b : ℝ} (ha : a ∈ Icc (
     have h1 := sq_le_interval hab hac.intervalIntegrable_deriv hii
     rw [hac.integral_deriv_eq_sub] at h1
     have h2 : ∫ t in a..b, deriv g t ^ 2 ≤ kinM g := by
-      rw [kinM, integral_mu1]
+      rw [kinM, integral_vol01]
       exact intervalIntegral.integral_mono_interval ha.1 hab hb.2
         (ae_of_all _ fun s => by simp only [Pi.zero_apply]; positivity)
         ((intervalIntegrable_iff_integrableOn_Ioo_of_le zero_le_one).2 hd2)
@@ -478,8 +478,8 @@ theorem rho_pos_core {u : Cfg n → ℝ} (hu : u ∈ DomN .bos n) (hu0 : ∀ᵐ 
   set α := nbump m' (a / 2)
   have hαc : Continuous α := continuous_nbump _ _
   have hα0 : ∀ t, 0 ≤ α t := nbump_nonneg ha2 hm'.1 hm'.2.1
-  have hα1 : ∫ t, α t ∂μ1 = 1 := integral_nbump ha2 hm'.1 hm'.2.1
-  set κ := 1 / 2 / (∫ s, tentR m' (a / 2) s ∂μ1)
+  have hα1 : ∫ t, α t ∂vol01 = 1 := integral_nbump ha2 hm'.1 hm'.2.1
+  set κ := 1 / 2 / (∫ s, tentR m' (a / 2) s ∂vol01)
   have hκ : 0 < κ := div_pos (by norm_num) (integral_tentR_pos ha2 hm'.1 hm'.2.1)
   -- the windows `Z`
   set Z : Cfg n → ℝ := fun x => ∏ j : Fin n,
@@ -620,7 +620,7 @@ theorem rho_pos_core {u : Cfg n → ℝ} (hu : u ∈ DomN .bos n) (hu0 : ∀ᵐ 
     set β := nbump m (δ / 2)
     have hβc : Continuous β := continuous_nbump _ _
     have hβ0 : ∀ t, 0 ≤ β t := nbump_nonneg hδ2 hm1 hm2
-    have hβ1 : ∫ t, β t ∂μ1 = 1 := integral_nbump hδ2 hm1 hm2
+    have hβ1 : ∫ t, β t ∂vol01 = 1 := integral_nbump hδ2 hm1 hm2
     -- the supports
     rw [abs_le] at hm3
     have hlo : ∀ t, t ≤ t0 - 2 * a → α t = 0 ∧ β t = 0 := by
@@ -667,19 +667,19 @@ theorem rho_pos_core {u : Cfg n → ℝ} (hu : u ∈ DomN .bos n) (hu0 : ∀ᵐ 
       refine ((int_sq hu.1).bdd_mul hm hCβ).congr (ae_of_all _ fun x => ?_)
       simp only [mul_comm]
     have hI := integral_tentR_pos hδ2 hm1 hm2
-    have hρi : Integrable (fun t => β t * rhoN u t) μ1 := by
-      have hb : ∀ᵐ t ∂μ1, ‖β t‖ ≤ 1 / ∫ s, tentR m (δ / 2) s ∂μ1 := ae_of_all _ fun t => by
+    have hρi : Integrable (fun t => β t * rhoN u t) vol01 := by
+      have hb : ∀ᵐ t ∂vol01, ‖β t‖ ≤ 1 / ∫ s, tentR m (δ / 2) s ∂vol01 := ae_of_all _ fun t => by
         rw [Real.norm_eq_abs, abs_of_nonneg (hβ0 t)]
         exact div_le_div_of_nonneg_right (tentR_le_one hδ2 t) hI.le
       exact ((integrable_marg hu.1).const_mul ((n : ℝ) + 1)).bdd_mul hβc.aestronglyMeasurable hb
-    have he : ∫ x, u x ^ 2 * β (x 0) ∂μN n = (∫ t, β t * rhoN u t ∂μ1) / ((n : ℝ) + 1) := by
+    have he : ∫ x, u x ^ 2 * β (x 0) ∂μN n = (∫ t, β t * rhoN u t ∂vol01) / ((n : ℝ) + 1) := by
       rw [integral_cube_cons' hβi, ← integral_div]
       refine setIntegral_congr_fun measurableSet_Ioo fun t _ => ?_
       simp only [Fin.cons_zero, rhoN, marg]
       rw [integral_mul_const]
       field_simp
-    have hb : ∫ t, β t * rhoN u t ∂μ1 ≤ δ * Lc := by
-      calc ∫ t, β t * rhoN u t ∂μ1 ≤ ∫ t, β t * (δ * Lc) ∂μ1 := by
+    have hb : ∫ t, β t * rhoN u t ∂vol01 ≤ δ * Lc := by
+      calc ∫ t, β t * rhoN u t ∂vol01 ≤ ∫ t, β t * (δ * Lc) ∂vol01 := by
             refine integral_mono_ae hρi ((integrable_cont_mu1 hβc).mul_const _) ?_
             filter_upwards [hgρ, ae_restrict_mem measurableSet_Ioo] with t h1 ht
             rw [← h1]
@@ -697,7 +697,7 @@ theorem rho_pos_core {u : Cfg n → ℝ} (hu : u ∈ DomN .bos n) (hu0 : ∀ᵐ 
               calc g t ^ 2 ≤ |t - t0| * Lc := hgle t (Ioo_subset_Icc_self ht)
                 _ ≤ δ * Lc := mul_le_mul_of_nonneg_right htt hLc
         _ = δ * Lc := by rw [integral_mul_const, hβ1, one_mul]
-    have hX0 : 0 ≤ ∫ t, β t * rhoN u t ∂μ1 :=
+    have hX0 : 0 ≤ ∫ t, β t * rhoN u t ∂vol01 :=
       integral_nonneg fun t => mul_nonneg (hβ0 t) (mul_nonneg (by positivity) (marg_nonneg t))
     have hN : (1 : ℝ) ≤ (n : ℝ) + 1 := by
       have := Nat.cast_nonneg (α := ℝ) n; linarith only [this]
@@ -706,7 +706,7 @@ theorem rho_pos_core {u : Cfg n → ℝ} (hu : u ∈ DomN .bos n) (hu0 : ∀ᵐ 
       have haε : a * ε ≤ 1 := by
         calc a * ε ≤ 1 * 1 := mul_le_mul (by linarith only [ha1]) hε1 hε.le zero_le_one
           _ = 1 := one_mul 1
-      calc 1 / (2 * ε ^ 3) * ((∫ t, β t * rhoN u t ∂μ1) / ((n : ℝ) + 1))
+      calc 1 / (2 * ε ^ 3) * ((∫ t, β t * rhoN u t ∂vol01) / ((n : ℝ) + 1))
           ≤ 1 / (2 * ε ^ 3) * (δ * Lc) :=
             mul_le_mul_of_nonneg_left ((div_le_self hX0 hN).trans hb) (by positivity)
         _ = a * ε * Lc / 2 := by simp only [δ]; field_simp
@@ -836,7 +836,7 @@ theorem rhoE_pos {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} 
 
 /-- The density has mass `N ∫ Ψ²`. -/
 theorem integral_fnE_rhoE {τ : Stat} {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomN τ n) :
-    ∫ t, fnE (rhoE τ Ψ) t ∂μ1 = (n + 1) * ∫ x, Ψ x ^ 2 ∂μN n := by
+    ∫ t, fnE (rhoE τ Ψ) t ∂vol01 = (n + 1) * ∫ x, Ψ x ^ 2 ∂μN n := by
   rw [← integral_gNH_sq hΨ]
   refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
   rw [rhoE, sqE, fnE_toE _ (Ioo_subset_Icc_self ht), sq]
@@ -850,7 +850,7 @@ potentials, continuous interaction, bosons or fermions) is an `H¹(0, 1)` functi
 `[0, 1]`, with mass `N`. -/
 theorem vrepNH_nec {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ : H1E}
     (h : VRepNH τ n w ρ) :
-    (∀ t ∈ Icc (0 : ℝ) 1, 0 < fnE ρ t) ∧ ∫ t, fnE ρ t ∂μ1 = n + 1 := by
+    (∀ t ∈ Icc (0 : ℝ) 1, 0 < fnE ρ t) ∧ ∫ t, fnE ρ t ∂vol01 = n + 1 := by
   obtain ⟨v, Ψ, hΨ, rfl⟩ := h
   refine ⟨fun t ht => rhoE_pos hw hΨ ht, ?_⟩
   rw [integral_fnE_rhoE hΨ.1, hΨ.2.1, mul_one]

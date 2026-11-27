@@ -103,7 +103,7 @@ lemma integrable_cube'_Ioo {F : (Fin m → ℝ) × ℝ → ℝ} (hF : Continuous
 /-- **The pair term in coordinates**: `∫ F(t, y) Σ_j g(y_j) dy = Σ_j ∫ g(u) hQ F j t u du`. -/
 lemma mF_mulG {F : Cfg (m + 1) → ℝ} (hF : Continuous F) {g : ℝ → ℝ} (hg : Continuous g)
     (t : ℝ) : mF (fun x => F x * ∑ j : Fin (m + 1), g (x j.succ)) t =
-      ∑ j : Fin (m + 1), ∫ u, g u * hQ F j t u ∂μ1 := by
+      ∑ j : Fin (m + 1), ∫ u, g u * hQ F j t u ∂vol01 := by
   rw [mF]
   simp only [Fin.cons_succ]
   have hint : ∀ j : Fin (m + 1), IntegrableOn (fun y : Fin (m + 1) → ℝ =>
@@ -127,7 +127,7 @@ lemma mF_mulG {F : Cfg (m + 1) → ℝ} (hF : Continuous F) {g : ℝ → ℝ} (h
 
 lemma D_apply (D : PotH) (e : H1E) :
     D e = ((InnerProductSpace.toDual ℝ H1E).symm D).fst * fnE e 0 +
-      ∫ t, ((InnerProductSpace.toDual ℝ H1E).symm D).snd t * e.snd t ∂μ1 := by
+      ∫ t, ((InnerProductSpace.toDual ℝ H1E).symm D).snd t * e.snd t ∂vol01 := by
   rw [← InnerProductSpace.toDual_symm_apply, WithLp.prod_inner_apply, L2.inner_def]
   simp only [fnE, prim_zero, add_zero, Real.inner_apply]
   ring_nf
@@ -137,10 +137,10 @@ lemma D_apply (D : PotH) (e : H1E) :
 noncomputable def LgD (D : PotH) (g : ℝ → ℝ) (e : H1E) : ℝ :=
   ((InnerProductSpace.toDual ℝ H1E).symm D).fst * (g 0 * fnE e 0) +
     ∫ t, ((InnerProductSpace.toDual ℝ H1E).symm D).snd t *
-      (deriv g t * fnE e t + g t * e.snd t) ∂μ1
+      (deriv g t * fnE e t + g t * e.snd t) ∂vol01
 
 /-- A continuous function a.e. equal to `fnE e` agrees with it on `[0, 1]`. -/
-lemma fnE_eq_of_ae {e : H1E} {f : ℝ → ℝ} (hf : Continuous f) (h : fnE e =ᵐ[μ1] f) :
+lemma fnE_eq_of_ae {e : H1E} {f : ℝ → ℝ} (hf : Continuous f) (h : fnE e =ᵐ[vol01] f) :
     ∀ t ∈ Icc (0 : ℝ) 1, fnE e t = f t := by
   have hIoo : EqOn (fnE e) f (Ioo 0 1) :=
     Measure.eqOn_of_ae_eq h ((continuousOn_fnE e).mono Ioo_subset_Icc_self) hf.continuousOn
@@ -159,14 +159,14 @@ noncomputable def RfD (D : PotH) (X : Cfg (m + 1) → ℝ) (u : ℝ) : ℝ :=
   ((↑(m + 1) : ℝ) + 1) * ∑ j : Fin (m + 1),
     (((InnerProductSpace.toDual ℝ H1E).symm D).fst * hQ (fun x => X x * X x) j 0 u +
       ∫ t, ((InnerProductSpace.toDual ℝ H1E).symm D).snd t *
-        hQ (dk 0 (fun x => X x * X x)) j t u ∂μ1)
+        hQ (dk 0 (fun x => X x * X x)) j t u ∂vol01)
 
 /-- The mixed density of a smooth state with its product by `FF g`, as an element with the
 integrals of `N mF (X² FF g)`. -/
 lemma int_rhoE2_FF {X : Cfg (m + 1) → ℝ} (hX : X ∈ DomN τ (m + 1)) (hX1 : ContDiff ℝ 1 X)
-    {g : ℝ → ℝ} (hg : ContDiff ℝ 1 g) (u : Pot) :
-    ∫ t, ext u t * ext (evE (rhoE2 τ X (fun x => FF g x * X x))) t ∂μ1 =
-      ∫ t, ext u t * (((↑(m + 1) : ℝ) + 1) * mF (fun x => X x * X x * FF g x) t) ∂μ1 := by
+    {g : ℝ → ℝ} (hg : ContDiff ℝ 1 g) (u : C01) :
+    ∫ t, iccExt u t * iccExt (evE (rhoE2 τ X (fun x => FF g x * X x))) t ∂vol01 =
+      ∫ t, iccExt u t * (((↑(m + 1) : ℝ) + 1) * mF (fun x => X x * X x * FF g x) t) ∂vol01 := by
   have hχ : (fun x => FF g x * X x) ∈ DomN τ (m + 1) :=
     ⟨memLp_mul_cont (contDiff_FF hg).continuous hX.1,
       fun k => ⟨_, (dWN_spec (hX.2.1 k)).mul_C1 hX.1 (contDiff_FF hg)⟩,
@@ -215,42 +215,42 @@ lemma mF_FF_split {F : Cfg (m + 1) → ℝ} (hF : Continuous F) {g : ℝ → ℝ
 
 lemma continuous_int_hQ {F : Cfg (m + 1) → ℝ} (hF : Continuous F) {g : ℝ → ℝ}
     (hg : Continuous g) (j : Fin (m + 1)) :
-    Continuous fun t => ∫ u, g u * hQ F j t u ∂μ1 := by
-  have e : ∀ t, ∫ u, g u * hQ F j t u ∂μ1 = ∫ u in Icc (0 : ℝ) 1, g u * hQ F j t u :=
+    Continuous fun t => ∫ u, g u * hQ F j t u ∂vol01 := by
+  have e : ∀ t, ∫ u, g u * hQ F j t u ∂vol01 = ∫ u in Icc (0 : ℝ) 1, g u * hQ F j t u :=
     fun t => setIntegral_congr_set Ioo_ae_eq_Icc
-  rw [show (fun t => ∫ u, g u * hQ F j t u ∂μ1) = fun t => ∫ u in Icc (0 : ℝ) 1,
+  rw [show (fun t => ∫ u, g u * hQ F j t u ∂vol01) = fun t => ∫ u in Icc (0 : ℝ) 1,
     g u * hQ F j t u from funext e]
   exact continuous_parametric_integral_of_continuous
     (f := fun (t u : ℝ) => g u * hQ F j t u)
     ((hg.comp continuous_snd).mul (continuous_hQ hF j)) isCompact_Icc
 
 /-- Fubini for `∫ β(t) ∫ g(u) hQ(t, u)`. -/
-lemma swap_beta {β : ℝ → ℝ} (hβ : Integrable β μ1) {F : Cfg (m + 1) → ℝ} (hF : Continuous F)
+lemma swap_beta {β : ℝ → ℝ} (hβ : Integrable β vol01) {F : Cfg (m + 1) → ℝ} (hF : Continuous F)
     {g : ℝ → ℝ} (hg : Continuous g) (j : Fin (m + 1)) :
-    ∫ t, β t * ∫ u, g u * hQ F j t u ∂μ1 ∂μ1 = ∫ u, g u * ∫ t, β t * hQ F j t u ∂μ1 ∂μ1 := by
+    ∫ t, β t * ∫ u, g u * hQ F j t u ∂vol01 ∂vol01 = ∫ u, g u * ∫ t, β t * hQ F j t u ∂vol01 ∂vol01 := by
   obtain ⟨CF, -, hCF⟩ := exists_bound_cubeC hF
   obtain ⟨Cg, hCg⟩ := isCompact_Icc.exists_bound_of_continuousOn
     (hg.continuousOn (s := Icc (0 : ℝ) 1))
-  have hb : ∀ᵐ z ∂(μ1.prod μ1), ‖g z.2 * hQ F j z.1 z.2‖ ≤ Cg * CF := by
+  have hb : ∀ᵐ z ∂(vol01.prod vol01), ‖g z.2 * hQ F j z.1 z.2‖ ≤ Cg * CF := by
     rw [Measure.prod_restrict]
     filter_upwards [ae_restrict_mem (measurableSet_Ioo.prod measurableSet_Ioo)] with z hz
     rw [norm_mul, Real.norm_eq_abs (hQ F j z.1 z.2)]
     exact mul_le_mul (hCg _ (Ioo_subset_Icc_self hz.2))
       (abs_hQ_le hCF j (Ioo_subset_Icc_self hz.1) (Ioo_subset_Icc_self hz.2))
       (abs_nonneg _) ((norm_nonneg _).trans (hCg _ (Ioo_subset_Icc_self hz.2)))
-  have hm : AEStronglyMeasurable (fun z : ℝ × ℝ => g z.2 * hQ F j z.1 z.2) (μ1.prod μ1) :=
+  have hm : AEStronglyMeasurable (fun z : ℝ × ℝ => g z.2 * hQ F j z.1 z.2) (vol01.prod vol01) :=
     ((hg.comp continuous_snd).mul (continuous_hQ hF j)).aestronglyMeasurable
-  have hint : Integrable (fun z : ℝ × ℝ => β z.1 * (g z.2 * hQ F j z.1 z.2)) (μ1.prod μ1) := by
-    have h1 := (hβ.mul_prod (integrable_const (1 : ℝ) (μ := μ1))).bdd_mul hm hb
+  have hint : Integrable (fun z : ℝ × ℝ => β z.1 * (g z.2 * hQ F j z.1 z.2)) (vol01.prod vol01) := by
+    have h1 := (hβ.mul_prod (integrable_const (1 : ℝ) (μ := vol01))).bdd_mul hm hb
     refine h1.congr (ae_of_all _ fun z => ?_)
     simp only [mul_one]; ring
-  have e1 : ∫ t, β t * ∫ u, g u * hQ F j t u ∂μ1 ∂μ1 =
-      ∫ t, ∫ u, β t * (g u * hQ F j t u) ∂μ1 ∂μ1 :=
+  have e1 : ∫ t, β t * ∫ u, g u * hQ F j t u ∂vol01 ∂vol01 =
+      ∫ t, ∫ u, β t * (g u * hQ F j t u) ∂vol01 ∂vol01 :=
     integral_congr_ae (ae_of_all _ fun t => (integral_const_mul _ _).symm)
-  have e2 : ∫ u, g u * ∫ t, β t * hQ F j t u ∂μ1 ∂μ1 =
-      ∫ u, ∫ t, β t * (g u * hQ F j t u) ∂μ1 ∂μ1 :=
+  have e2 : ∫ u, g u * ∫ t, β t * hQ F j t u ∂vol01 ∂vol01 =
+      ∫ u, ∫ t, β t * (g u * hQ F j t u) ∂vol01 ∂vol01 :=
     integral_congr_ae (ae_of_all _ fun u => by
-      show g u * ∫ t, β t * hQ F j t u ∂μ1 = ∫ t, β t * (g u * hQ F j t u) ∂μ1
+      show g u * ∫ t, β t * hQ F j t u ∂vol01 = ∫ t, β t * (g u * hQ F j t u) ∂vol01
       rw [← integral_const_mul]; congr 1; funext t; ring)
   rw [e1, e2]
   exact integral_integral_swap (f := fun t u => β t * (g u * hQ F j t u)) hint
@@ -258,10 +258,10 @@ lemma swap_beta {β : ℝ → ℝ} (hβ : Integrable β μ1) {F : Cfg (m + 1) �
 /-- **The identity for smooth states**: `D(ρ(X, X FF g)) = D(g ρ_X) + ∫ g R_X`. -/
 theorem D_smooth (D : PotH) {τ : Stat} {X : Cfg (m + 1) → ℝ} (hX : X ∈ DomN τ (m + 1))
     (hX2 : ContDiff ℝ 2 X) {g : ℝ → ℝ} (hg : ContDiff ℝ 1 g) :
-    D (rhoE2 τ X (fun x => FF g x * X x)) = LgD D g (rhoE τ X) + ∫ u, g u * RfD D X u ∂μ1 := by
+    D (rhoE2 τ X (fun x => FF g x * X x)) = LgD D g (rhoE τ X) + ∫ u, g u * RfD D X u ∂vol01 := by
   set α := ((InnerProductSpace.toDual ℝ H1E).symm D).fst
   set β := ((InnerProductSpace.toDual ℝ H1E).symm D).snd
-  have hβi : Integrable (β : ℝ → ℝ) μ1 := integrable_L2I β
+  have hβi : Integrable (β : ℝ → ℝ) vol01 := integrable_L2I β
   set N : ℝ := (↑(m + 1) : ℝ) + 1
   have hX1 : ContDiff ℝ 1 X := hX2.of_le (by norm_num)
   set p0 : Cfg (m + 1) → ℝ := fun x => X x * X x
@@ -281,8 +281,8 @@ theorem D_smooth (D : PotH) {τ : Stat} {X : Cfg (m + 1) → ℝ} (hX : X ∈ Do
       have hc := ch_mul_self τ σ
       simp only [p0, hx]
       linear_combination (X x * X x) * hc
-  have he0 : ∀ u : Pot, ∫ t, ext u t * ext (evE (rhoE τ X)) t ∂μ1 =
-      ∫ t, ext u t * (N * mF p0 t) ∂μ1 := fun u => by
+  have he0 : ∀ u : C01, ∫ t, iccExt u t * iccExt (evE (rhoE τ X)) t ∂vol01 =
+      ∫ t, iccExt u t * (N * mF p0 t) ∂vol01 := fun u => by
     rw [int_rhoE hX, int_mF (integrableN hp0.continuous) hsym0]; rfl
   obtain ⟨hf0, hs0⟩ := snd_marg (memLp_cont hp0.continuous) (isWDN_of_C1 hp0 0) he0
   have hv0 : fnE e 0 = N * mF p 0 :=
@@ -303,18 +303,18 @@ theorem D_smooth (D : PotH) {τ : Stat} {X : Cfg (m + 1) → ℝ} (hX : X ∈ Do
     rw [e1, mF_add (F := fun x => dk 0 p0 x * FF g x) (G := fun x => p0 x * deriv g (x 0))
       (hdp0.mul (contDiff_FF hg).continuous)
       (hp0.continuous.mul (hgd.comp (continuous_apply 0))), mF_FF_split hdp0 hgc, mF_mul_coord0]
-  have hG : ∀ t, G t = ∑ j : Fin (m + 1), ∫ u, g u * hQ p0 j t u ∂μ1 :=
+  have hG : ∀ t, G t = ∑ j : Fin (m + 1), ∫ u, g u * hQ p0 j t u ∂vol01 :=
     mF_mulG hp0.continuous hgc
-  have hGD : ∀ t, GD t = ∑ j : Fin (m + 1), ∫ u, g u * hQ (dk 0 p0) j t u ∂μ1 :=
+  have hGD : ∀ t, GD t = ∑ j : Fin (m + 1), ∫ u, g u * hQ (dk 0 p0) j t u ∂vol01 :=
     mF_mulG hdp0 hgc
   -- the two sides
   have hcd : Continuous (mF (dk 0 p)) := continuous_mF (continuous_dk_of_C1 hp 0)
-  have hD : D e = α * (N * mF p 0) + ∫ t, β t * (N * mF (dk 0 p) t) ∂μ1 := by
+  have hD : D e = α * (N * mF p 0) + ∫ t, β t * (N * mF (dk 0 p) t) ∂vol01 := by
     rw [D_apply, hv0]
     congr 1
     exact integral_congr_ae (by filter_upwards [hs] with t ht; rw [ht])
   have hL : LgD D g (rhoE τ X) = α * (g 0 * (N * mF p0 0)) +
-      ∫ t, β t * (deriv g t * (N * mF p0 t) + g t * (N * mF (dk 0 p0) t)) ∂μ1 := by
+      ∫ t, β t * (deriv g t * (N * mF p0 t) + g t * (N * mF (dk 0 p0) t)) ∂vol01 := by
     rw [LgD, hvρ 0 ⟨le_rfl, zero_le_one⟩]
     congr 1
     refine integral_congr_ae ?_
@@ -326,77 +326,77 @@ theorem D_smooth (D : PotH) {τ : Stat} {X : Cfg (m + 1) → ℝ} (hX : X ∈ Do
       (hgc.mul (continuous_const.mul (continuous_mF hdp0)))
   have hcGD : Continuous GD := continuous_mF (hdp0.mul
     (continuous_finsetSum _ fun j _ => hgc.comp (continuous_apply _)))
-  have iA : Integrable (fun t => β t * (N * mF (dk 0 p) t)) μ1 :=
+  have iA : Integrable (fun t => β t * (N * mF (dk 0 p) t)) vol01 :=
     integrable_mul_cont1 hβi (continuous_const.mul hcd)
   have iB : Integrable (fun t => β t * (deriv g t * (N * mF p0 t) +
-      g t * (N * mF (dk 0 p0) t))) μ1 := integrable_mul_cont1 hβi hc1
-  have hdiff : D e - LgD D g (rhoE τ X) = α * (N * G 0) + ∫ t, β t * (N * GD t) ∂μ1 := by
+      g t * (N * mF (dk 0 p0) t))) vol01 := integrable_mul_cont1 hβi hc1
+  have hdiff : D e - LgD D g (rhoE τ X) = α * (N * G 0) + ∫ t, β t * (N * GD t) ∂vol01 := by
     rw [hD, hL]
-    have h1 : ∫ t, β t * (N * mF (dk 0 p) t) ∂μ1 -
-        ∫ t, β t * (deriv g t * (N * mF p0 t) + g t * (N * mF (dk 0 p0) t)) ∂μ1 =
-        ∫ t, β t * (N * GD t) ∂μ1 := by
+    have h1 : ∫ t, β t * (N * mF (dk 0 p) t) ∂vol01 -
+        ∫ t, β t * (deriv g t * (N * mF p0 t) + g t * (N * mF (dk 0 p0) t)) ∂vol01 =
+        ∫ t, β t * (N * GD t) ∂vol01 := by
       rw [← integral_sub iA iB]
       congr 1; funext t; rw [hsd t]; ring
     rw [hsp 0]
     linarith
 
   -- the pair term as `∫ g R`
-  have hR : α * (N * G 0) + ∫ t, β t * (N * GD t) ∂μ1 = ∫ u, g u * RfD D X u ∂μ1 := by
-    have hQ0i : ∀ j : Fin (m + 1), Integrable (fun u => g u * hQ p0 j 0 u) μ1 := fun j =>
+  have hR : α * (N * G 0) + ∫ t, β t * (N * GD t) ∂vol01 = ∫ u, g u * RfD D X u ∂vol01 := by
+    have hQ0i : ∀ j : Fin (m + 1), Integrable (fun u => g u * hQ p0 j 0 u) vol01 := fun j =>
       integrable_cont_mu1 (hgc.mul ((continuous_hQ hp0.continuous j).comp
         (Continuous.prodMk continuous_const continuous_id)))
-    have hQDi : ∀ j : Fin (m + 1), Integrable (fun u => g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂μ1)
-        μ1 := fun j => by
+    have hQDi : ∀ j : Fin (m + 1), Integrable (fun u => g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂vol01)
+        vol01 := fun j => by
       obtain ⟨CF, -, hCF⟩ := exists_bound_cubeC hdp0
       obtain ⟨Cg, hCg⟩ := isCompact_Icc.exists_bound_of_continuousOn
         (hgc.continuousOn (s := Icc (0 : ℝ) 1))
-      have hmeas : AEStronglyMeasurable (fun u => ∫ t, β t * hQ (dk 0 p0) j t u ∂μ1) μ1 := by
-        have hint : Integrable (fun z : ℝ × ℝ => β z.1 * hQ (dk 0 p0) j z.1 z.2) (μ1.prod μ1) := by
-          have hb : ∀ᵐ z ∂(μ1.prod μ1), ‖hQ (dk 0 p0) j z.1 z.2‖ ≤ CF := by
+      have hmeas : AEStronglyMeasurable (fun u => ∫ t, β t * hQ (dk 0 p0) j t u ∂vol01) vol01 := by
+        have hint : Integrable (fun z : ℝ × ℝ => β z.1 * hQ (dk 0 p0) j z.1 z.2) (vol01.prod vol01) := by
+          have hb : ∀ᵐ z ∂(vol01.prod vol01), ‖hQ (dk 0 p0) j z.1 z.2‖ ≤ CF := by
             rw [Measure.prod_restrict]
             filter_upwards [ae_restrict_mem (measurableSet_Ioo.prod measurableSet_Ioo)] with z hz
             rw [Real.norm_eq_abs]
             exact abs_hQ_le hCF j (Ioo_subset_Icc_self hz.1) (Ioo_subset_Icc_self hz.2)
-          have h1 := (hβi.mul_prod (integrable_const (1 : ℝ) (μ := μ1))).bdd_mul
+          have h1 := (hβi.mul_prod (integrable_const (1 : ℝ) (μ := vol01))).bdd_mul
             (continuous_hQ hdp0 j).aestronglyMeasurable hb
           refine h1.congr (ae_of_all _ fun z => ?_)
           simp only [mul_one]; ring
         exact hint.integral_prod_right.aestronglyMeasurable
-      refine Integrable.of_bound (hgc.aestronglyMeasurable.mul hmeas) (Cg * (CF * ∫ t, |β t| ∂μ1))
+      refine Integrable.of_bound (hgc.aestronglyMeasurable.mul hmeas) (Cg * (CF * ∫ t, |β t| ∂vol01))
         ?_
       filter_upwards [ae_restrict_mem measurableSet_Ioo] with u hu
       rw [norm_mul]
       refine mul_le_mul (hCg u (Ioo_subset_Icc_self hu)) ?_ (norm_nonneg _)
         ((norm_nonneg _).trans (hCg u (Ioo_subset_Icc_self hu)))
       rw [Real.norm_eq_abs]
-      calc |∫ t, β t * hQ (dk 0 p0) j t u ∂μ1| ≤ ∫ t, |β t| * CF ∂μ1 := by
+      calc |∫ t, β t * hQ (dk 0 p0) j t u ∂vol01| ≤ ∫ t, |β t| * CF ∂vol01 := by
             rw [← Real.norm_eq_abs]
             refine norm_integral_le_of_norm_le (hβi.abs.mul_const _) ?_
             filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
             rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
             exact mul_le_mul_of_nonneg_left
               (abs_hQ_le hCF j (Ioo_subset_Icc_self ht) (Ioo_subset_Icc_self hu)) (abs_nonneg _)
-        _ = CF * ∫ t, |β t| ∂μ1 := by rw [integral_mul_const, mul_comm]
-    have hIc : ∀ j : Fin (m + 1), Continuous fun t => ∫ u, g u * hQ (dk 0 p0) j t u ∂μ1 :=
+        _ = CF * ∫ t, |β t| ∂vol01 := by rw [integral_mul_const, mul_comm]
+    have hIc : ∀ j : Fin (m + 1), Continuous fun t => ∫ u, g u * hQ (dk 0 p0) j t u ∂vol01 :=
       fun j => continuous_int_hQ hdp0 hgc j
-    have e1 : ∫ t, β t * (N * GD t) ∂μ1 =
-        ∑ j : Fin (m + 1), N * ∫ u, g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂μ1 ∂μ1 := by
+    have e1 : ∫ t, β t * (N * GD t) ∂vol01 =
+        ∑ j : Fin (m + 1), N * ∫ u, g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂vol01 ∂vol01 := by
       simp only [hGD, Finset.mul_sum]
-      rw [integral_finsetSum (f := fun j t => β t * (N * ∫ u, g u * hQ (dk 0 p0) j t u ∂μ1))
+      rw [integral_finsetSum (f := fun j t => β t * (N * ∫ u, g u * hQ (dk 0 p0) j t u ∂vol01))
         _ fun j _ => integrable_mul_cont1 hβi (continuous_const.mul (hIc j))]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [← swap_beta hβi hdp0 hgc j, ← integral_const_mul]
       congr 1; funext t; ring
     have hpt : ∀ u, g u * RfD D X u = ∑ j : Fin (m + 1), (N * α * (g u * hQ p0 j 0 u) +
-        N * (g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂μ1)) := fun u => by
+        N * (g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂vol01)) := fun u => by
       simp only [RfD, Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       simp only [p0, α, β, N]; ring
-    have e2 : ∫ u, g u * RfD D X u ∂μ1 = ∑ j : Fin (m + 1), (N * α * ∫ u, g u * hQ p0 j 0 u ∂μ1 +
-        N * ∫ u, g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂μ1 ∂μ1) := by
+    have e2 : ∫ u, g u * RfD D X u ∂vol01 = ∑ j : Fin (m + 1), (N * α * ∫ u, g u * hQ p0 j 0 u ∂vol01 +
+        N * ∫ u, g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂vol01 ∂vol01) := by
       simp only [hpt]
       rw [integral_finsetSum (f := fun j u => N * α * (g u * hQ p0 j 0 u) +
-        N * (g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂μ1))
+        N * (g u * ∫ t, β t * hQ (dk 0 p0) j t u ∂vol01))
         _ fun j _ => ((hQ0i j).const_mul _).add ((hQDi j).const_mul _)]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [integral_add ((hQ0i j).const_mul _) ((hQDi j).const_mul _), integral_const_mul,
@@ -413,7 +413,7 @@ theorem D_smooth (D : PotH) {τ : Stat} {X : Cfg (m + 1) → ℝ} (hX : X ∈ Do
 /-- `∫ |hQ F j t · - hQ F' j t ·| ≤ ∫ |F - F'|(t, y) dy`. -/
 lemma integral_abs_hQ_sub_le {F F' : Cfg (m + 1) → ℝ} (hF : Continuous F) (hF' : Continuous F')
     (j : Fin (m + 1)) (t : ℝ) :
-    ∫ u, |hQ F j t u - hQ F' j t u| ∂μ1 ≤ ∫ y in Cube' (m + 1), |F (Fin.cons t y) - F' (Fin.cons t y)| := by
+    ∫ u, |hQ F j t u - hQ F' j t u| ∂vol01 ≤ ∫ y in Cube' (m + 1), |F (Fin.cons t y) - F' (Fin.cons t y)| := by
   have hpt : ∀ u, |hQ F j t u - hQ F' j t u| ≤
       ∫ z in Cube' m, |F (Fin.cons t (Fin.insertNth j u z)) -
         F' (Fin.cons t (Fin.insertNth j u z))| := fun u => by
@@ -429,25 +429,25 @@ lemma integral_abs_hQ_sub_le {F F' : Cfg (m + 1) → ℝ} (hF : Continuous F) (h
     change ∫ y, |F (Fin.cons t y) - F' (Fin.cons t y)| ∂μN m = _
     rw [integral_cube_insertNth hc j, integral_integral_swap hFi]
   rw [hR]
-  have hi1 : Integrable (fun u => |hQ F j t u - hQ F' j t u|) μ1 :=
+  have hi1 : Integrable (fun u => |hQ F j t u - hQ F' j t u|) vol01 :=
     integrable_cont_mu1 (((continuous_hQ hF j).comp (Continuous.prodMk continuous_const
       continuous_id)).sub ((continuous_hQ hF' j).comp (Continuous.prodMk continuous_const
         continuous_id))).abs
   exact integral_mono hi1 hFi.integral_prod_right hpt
 
 /-- Cauchy–Schwarz on `(0, 1)`. -/
-lemma integral_abs_mul_le_mu1 {a b : ℝ → ℝ} (ha : MemLp a 2 μ1) (hb : MemLp b 2 μ1) :
-    ∫ t, |a t * b t| ∂μ1 ≤ √(∫ t, a t ^ 2 ∂μ1) * √(∫ t, b t ^ 2 ∂μ1) := by
-  have h := integral_mul_le_Lp_mul_Lq_of_nonneg (μ := μ1) Real.HolderConjugate.two_two
+lemma integral_abs_mul_le_mu1 {a b : ℝ → ℝ} (ha : MemLp a 2 vol01) (hb : MemLp b 2 vol01) :
+    ∫ t, |a t * b t| ∂vol01 ≤ √(∫ t, a t ^ 2 ∂vol01) * √(∫ t, b t ^ 2 ∂vol01) := by
+  have h := integral_mul_le_Lp_mul_Lq_of_nonneg (μ := vol01) Real.HolderConjugate.two_two
     (f := fun t => |a t|) (g := fun t => |b t|)
     (ae_of_all _ fun t => abs_nonneg _) (ae_of_all _ fun t => abs_nonneg _)
     (by rw [ENNReal.ofReal_ofNat]; exact ha.abs) (by rw [ENNReal.ofReal_ofNat]; exact hb.abs)
-  have e1 : (∫ t, |a t| ^ (2 : ℝ) ∂μ1) = ∫ t, a t ^ 2 ∂μ1 := by
+  have e1 : (∫ t, |a t| ^ (2 : ℝ) ∂vol01) = ∫ t, a t ^ 2 ∂vol01 := by
     congr 1; funext t; rw [Real.rpow_two, sq_abs]
-  have e2 : (∫ t, |b t| ^ (2 : ℝ) ∂μ1) = ∫ t, b t ^ 2 ∂μ1 := by
+  have e2 : (∫ t, |b t| ^ (2 : ℝ) ∂vol01) = ∫ t, b t ^ 2 ∂vol01 := by
     congr 1; funext t; rw [Real.rpow_two, sq_abs]
   rw [e1, e2, ← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow] at h
-  calc ∫ t, |a t * b t| ∂μ1 = ∫ t, |a t| * |b t| ∂μ1 := by congr 1; funext t; rw [abs_mul]
+  calc ∫ t, |a t * b t| ∂vol01 = ∫ t, |a t| * |b t| ∂vol01 := by congr 1; funext t; rw [abs_mul]
     _ ≤ _ := h
 
 section est
@@ -463,8 +463,8 @@ lemma mF_sq_eq {X : Cfg (m + 1) → ℝ} (hX : X ∈ DomN τ (m + 1)) (hX1 : Con
     filter_upwards [hX.2.2 σ trivial] with x hx
     have hc := ch_mul_self τ σ
     rw [hx]; linear_combination (X x * X x) * hc
-  have he0 : ∀ u : Pot, ∫ t, ext u t * ext (evE (rhoE τ X)) t ∂μ1 =
-      ∫ t, ext u t * (((↑(m + 1) : ℝ) + 1) * mF (fun x => X x * X x) t) ∂μ1 := fun u => by
+  have he0 : ∀ u : C01, ∫ t, iccExt u t * iccExt (evE (rhoE τ X)) t ∂vol01 =
+      ∫ t, iccExt u t * (((↑(m + 1) : ℝ) + 1) * mF (fun x => X x * X x) t) ∂vol01 := fun u => by
     rw [int_rhoE hX, int_mF (integrableN hp0.continuous) hsym0]; rfl
   obtain ⟨hf0, -⟩ := snd_marg (memLp_cont hp0.continuous) (isWDN_of_C1 hp0 0) he0
   exact fnE_eq_of_ae (continuous_const.mul (continuous_mF hp0.continuous)) hf0
@@ -490,9 +490,9 @@ lemma mF_sq_le {X : Cfg (m + 1) → ℝ} (hX : X ∈ DomN τ (m + 1)) (hX1 : Con
   nlinarith
 
 lemma integral_mF_dk_sq_le {X : Cfg (m + 1) → ℝ} (hX1 : ContDiff ℝ 1 X) :
-    ∫ t, mF (fun x => dk 0 X x * dk 0 X x) t ∂μ1 ≤ kinN X := by
+    ∫ t, mF (fun x => dk 0 X x * dk 0 X x) t ∂vol01 ≤ kinN X := by
   have hd := continuous_dk_of_C1 hX1 0
-  have hc : ∫ t, mF (fun x => dk 0 X x * dk 0 X x) t ∂μ1 =
+  have hc : ∫ t, mF (fun x => dk 0 X x * dk 0 X x) t ∂vol01 =
       ∫ x, dk 0 X x * dk 0 X x ∂μN (m + 1) :=
     (integral_cube_cons' (F := fun x => dk 0 X x * dk 0 X x) (integrableN (hd.mul hd))).symm
   rw [hc]
@@ -507,16 +507,16 @@ lemma integral_mF_dk_sq_le {X : Cfg (m + 1) → ℝ} (hX1 : ContDiff ℝ 1 X) :
 end est
 
 /-- Fubini with absolute values for the `β` part. -/
-lemma int_beta_abs_le {β : ℝ → ℝ} (hβ : Integrable β μ1) {F F' : Cfg (m + 1) → ℝ}
+lemma int_beta_abs_le {β : ℝ → ℝ} (hβ : Integrable β vol01) {F F' : Cfg (m + 1) → ℝ}
     (hF : Continuous F) (hF' : Continuous F') (j : Fin (m + 1)) :
-    Integrable (fun u => ∫ t, |β t| * |hQ F j t u - hQ F' j t u| ∂μ1) μ1 ∧
-    ∫ u, ∫ t, |β t| * |hQ F j t u - hQ F' j t u| ∂μ1 ∂μ1 ≤
-      ∫ t, |β t| * mF (fun x => |F x - F' x|) t ∂μ1 := by
+    Integrable (fun u => ∫ t, |β t| * |hQ F j t u - hQ F' j t u| ∂vol01) vol01 ∧
+    ∫ u, ∫ t, |β t| * |hQ F j t u - hQ F' j t u| ∂vol01 ∂vol01 ≤
+      ∫ t, |β t| * mF (fun x => |F x - F' x|) t ∂vol01 := by
   obtain ⟨CF, -, hCF⟩ := exists_bound_cubeC hF
   obtain ⟨CF', -, hCF'⟩ := exists_bound_cubeC hF'
   have hc : Continuous fun z : ℝ × ℝ => |hQ F j z.1 z.2 - hQ F' j z.1 z.2| :=
     ((continuous_hQ hF j).sub (continuous_hQ hF' j)).abs
-  have hb : ∀ᵐ z ∂(μ1.prod μ1), ‖|hQ F j z.1 z.2 - hQ F' j z.1 z.2|‖ ≤ CF + CF' := by
+  have hb : ∀ᵐ z ∂(vol01.prod vol01), ‖|hQ F j z.1 z.2 - hQ F' j z.1 z.2|‖ ≤ CF + CF' := by
     rw [Measure.prod_restrict]
     filter_upwards [ae_restrict_mem (measurableSet_Ioo.prod measurableSet_Ioo)] with z hz
     rw [Real.norm_eq_abs, abs_abs]
@@ -524,8 +524,8 @@ lemma int_beta_abs_le {β : ℝ → ℝ} (hβ : Integrable β μ1) {F F' : Cfg (
     have h2 := abs_hQ_le hCF' j (Ioo_subset_Icc_self hz.1) (Ioo_subset_Icc_self hz.2)
     exact (abs_sub _ _).trans (add_le_add h1 h2)
   have hint : Integrable (fun z : ℝ × ℝ => |β z.1| * |hQ F j z.1 z.2 - hQ F' j z.1 z.2|)
-      (μ1.prod μ1) := by
-    have h1 := (hβ.abs.mul_prod (integrable_const (1 : ℝ) (μ := μ1))).bdd_mul
+      (vol01.prod vol01) := by
+    have h1 := (hβ.abs.mul_prod (integrable_const (1 : ℝ) (μ := vol01))).bdd_mul
       hc.aestronglyMeasurable hb
     refine h1.congr (ae_of_all _ fun z => ?_)
     simp only [mul_one]; ring
@@ -543,7 +543,7 @@ section cauchy
 variable {τ : Stat}
 
 lemma sqrt_mF_memLp {F : Cfg n → ℝ} (hF : Continuous F) :
-    MemLp (fun t => √(mF F t)) 2 μ1 :=
+    MemLp (fun t => √(mF F t)) 2 vol01 :=
   (memLp_two_iff_integrable_sq ((continuous_mF hF).sqrt).aestronglyMeasurable).2
     (integrable_cont_mu1 (((continuous_mF hF).sqrt).pow 2))
 
@@ -625,32 +625,32 @@ lemma continuous_hQ_left {F : Cfg (m + 1) → ℝ} (hF : Continuous F) (j : Fin 
   (continuous_hQ hF j).comp (Continuous.prodMk continuous_id continuous_const)
 
 /-- `∫ |β| √b ≤ ‖β‖ √(∫ b)`. -/
-lemma int_abs_mul_sqrt_le {β : ℝ → ℝ} (hβ : MemLp β 2 μ1) {b : ℝ → ℝ} (hb : Continuous b)
+lemma int_abs_mul_sqrt_le {β : ℝ → ℝ} (hβ : MemLp β 2 vol01) {b : ℝ → ℝ} (hb : Continuous b)
     (hb0 : ∀ t, 0 ≤ b t) :
-    ∫ t, |β t| * √(b t) ∂μ1 ≤ √(∫ t, β t ^ 2 ∂μ1) * √(∫ t, b t ∂μ1) := by
-  have hm : MemLp (fun t => √(b t)) 2 μ1 :=
+    ∫ t, |β t| * √(b t) ∂vol01 ≤ √(∫ t, β t ^ 2 ∂vol01) * √(∫ t, b t ∂vol01) := by
+  have hm : MemLp (fun t => √(b t)) 2 vol01 :=
     (memLp_two_iff_integrable_sq hb.sqrt.aestronglyMeasurable).2 (integrable_cont_mu1 (hb.sqrt.pow 2))
   have h := integral_abs_mul_le_mu1 hβ hm
-  have e1 : ∫ t, |β t * √(b t)| ∂μ1 = ∫ t, |β t| * √(b t) ∂μ1 := by
+  have e1 : ∫ t, |β t * √(b t)| ∂vol01 = ∫ t, |β t| * √(b t) ∂vol01 := by
     congr 1; funext t; rw [abs_mul, abs_of_nonneg (Real.sqrt_nonneg _)]
-  have e2 : ∫ t, √(b t) ^ 2 ∂μ1 = ∫ t, b t ∂μ1 := by
+  have e2 : ∫ t, √(b t) ^ 2 ∂vol01 = ∫ t, b t ∂vol01 := by
     congr 1; funext t; rw [Real.sq_sqrt (hb0 t)]
   rw [e1, e2] at h; exact h
 
 /-- **The pair densities of nearby smooth states are `L¹`-close.** -/
 theorem integral_abs_RfD_sub_le (D : PotH) {X Y : Cfg (m + 1) → ℝ} (hX : X ∈ DomN τ (m + 1))
     (hY : Y ∈ DomN τ (m + 1)) (hX1 : ContDiff ℝ 1 X) (hY1 : ContDiff ℝ 1 Y) :
-    ∫ u, |RfD D X u - RfD D Y u| ∂μ1 ≤
+    ∫ u, |RfD D X u - RfD D Y u| ∂vol01 ≤
       ((↑(m + 1) : ℝ) + 1) * (m + 1) *
         ((2 * |((InnerProductSpace.toDual ℝ H1E).symm D).fst| +
-          3 * √(∫ t, ((InnerProductSpace.toDual ℝ H1E).symm D).snd t ^ 2 ∂μ1)) *
+          3 * √(∫ t, ((InnerProductSpace.toDual ℝ H1E).symm D).snd t ^ 2 ∂vol01)) *
         (√(SHN (X - Y)) * (√(SHN (X + Y)) + √(SHN X) + √(SHN Y)))) := by
   set α := ((InnerProductSpace.toDual ℝ H1E).symm D).fst
   set β := ((InnerProductSpace.toDual ℝ H1E).symm D).snd
-  have hβi : Integrable (β : ℝ → ℝ) μ1 := integrable_L2I β
+  have hβi : Integrable (β : ℝ → ℝ) vol01 := integrable_L2I β
   set N : ℝ := (↑(m + 1) : ℝ) + 1
   have hN : 0 ≤ N := by positivity
-  set nb := √(∫ t, β t ^ 2 ∂μ1)
+  set nb := √(∫ t, β t ^ 2 ∂vol01)
   set Sm := SHN (X - Y)
   set Sp := SHN (X + Y)
   have hSm := SHN_nonneg (X - Y)
@@ -665,54 +665,54 @@ theorem integral_abs_RfD_sub_le (D : PotH) {X Y : Cfg (m + 1) → ℝ} (hX : X �
   have hGY : Continuous GY := continuous_dk_of_C1 (hY1.mul hY1) 0
   -- pointwise bound
   have hβQ : ∀ (F : Cfg (m + 1) → ℝ), Continuous F → ∀ j u,
-      Integrable (fun t => β t * hQ F j t u) μ1 := fun F hF j u =>
+      Integrable (fun t => β t * hQ F j t u) vol01 := fun F hF j u =>
     integrable_mul_cont1 hβi (continuous_hQ_left hF j u)
   set U : ℝ → ℝ := fun u => N * ∑ j : Fin (m + 1), (|α| * |hQ FX j 0 u - hQ FY j 0 u| +
-    ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂μ1)
+    ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂vol01)
   have hpt : ∀ u, |RfD D X u - RfD D Y u| ≤ U u := fun u => by
     simp only [RfD, U, ← mul_sub, ← Finset.sum_sub_distrib, abs_mul]
     rw [abs_of_nonneg (by positivity : (0 : ℝ) ≤ (↑(m + 1) : ℝ) + 1)]
     refine mul_le_mul_of_nonneg_left ((Finset.abs_sum_le_sum_abs _ _).trans
       (Finset.sum_le_sum fun j _ => ?_)) hN
-    have e : α * hQ FX j 0 u + ∫ t, β t * hQ GX j t u ∂μ1 -
-        (α * hQ FY j 0 u + ∫ t, β t * hQ GY j t u ∂μ1) =
-        α * (hQ FX j 0 u - hQ FY j 0 u) + ∫ t, β t * (hQ GX j t u - hQ GY j t u) ∂μ1 := by
-      have hi : ∫ t, β t * (hQ GX j t u - hQ GY j t u) ∂μ1 =
-          ∫ t, β t * hQ GX j t u ∂μ1 - ∫ t, β t * hQ GY j t u ∂μ1 := by
+    have e : α * hQ FX j 0 u + ∫ t, β t * hQ GX j t u ∂vol01 -
+        (α * hQ FY j 0 u + ∫ t, β t * hQ GY j t u ∂vol01) =
+        α * (hQ FX j 0 u - hQ FY j 0 u) + ∫ t, β t * (hQ GX j t u - hQ GY j t u) ∂vol01 := by
+      have hi : ∫ t, β t * (hQ GX j t u - hQ GY j t u) ∂vol01 =
+          ∫ t, β t * hQ GX j t u ∂vol01 - ∫ t, β t * hQ GY j t u ∂vol01 := by
         rw [← integral_sub (hβQ GX hGX j u) (hβQ GY hGY j u)]; simp only [mul_sub]
       rw [hi]; ring
-    change |α * hQ FX j 0 u + ∫ t, β t * hQ GX j t u ∂μ1 -
-        (α * hQ FY j 0 u + ∫ t, β t * hQ GY j t u ∂μ1)| ≤ _
+    change |α * hQ FX j 0 u + ∫ t, β t * hQ GX j t u ∂vol01 -
+        (α * hQ FY j 0 u + ∫ t, β t * hQ GY j t u ∂vol01)| ≤ _
     rw [e]
     refine (abs_add_le _ _).trans (add_le_add (le_of_eq (abs_mul _ _)) ?_)
     rw [← Real.norm_eq_abs]
     refine (norm_integral_le_integral_norm _).trans (le_of_eq ?_)
     congr 1; funext t; rw [Real.norm_eq_abs, abs_mul]
   -- integrability of the upper function
-  have hU0 : ∀ j : Fin (m + 1), Integrable (fun u => |hQ FX j 0 u - hQ FY j 0 u|) μ1 := fun j =>
+  have hU0 : ∀ j : Fin (m + 1), Integrable (fun u => |hQ FX j 0 u - hQ FY j 0 u|) vol01 := fun j =>
     integrable_cont_mu1 (((continuous_hQ hFX j).comp (Continuous.prodMk continuous_const
       continuous_id)).sub ((continuous_hQ hFY j).comp (Continuous.prodMk continuous_const
         continuous_id))).abs
-  have hU1 : ∀ j : Fin (m + 1), Integrable (fun u => ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂μ1)
-      μ1 := fun j => (int_beta_abs_le hβi hGX hGY j).1
-  have hUi : Integrable U μ1 :=
+  have hU1 : ∀ j : Fin (m + 1), Integrable (fun u => ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂vol01)
+      vol01 := fun j => (int_beta_abs_le hβi hGX hGY j).1
+  have hUi : Integrable U vol01 :=
     (integrable_finsetSum _ fun j _ => ((hU0 j).const_mul _).add (hU1 j)).const_mul _
-  have h1 : ∫ u, |RfD D X u - RfD D Y u| ∂μ1 ≤ ∫ u, U u ∂μ1 :=
+  have h1 : ∫ u, |RfD D X u - RfD D Y u| ∂vol01 ≤ ∫ u, U u ∂vol01 :=
     integral_mono_of_nonneg (ae_of_all _ fun _ => abs_nonneg _) hUi (ae_of_all _ hpt)
   -- the bound on `∫ U`
   set A0 := mF (fun x => |FX x - FY x|) 0
-  set B := ∫ t, |β t| * mF (fun x => |GX x - GY x|) t ∂μ1
-  have h2 : ∫ u, U u ∂μ1 ≤ N * (m + 1) * (|α| * A0 + B) := by
+  set B := ∫ t, |β t| * mF (fun x => |GX x - GY x|) t ∂vol01
+  have h2 : ∫ u, U u ∂vol01 ≤ N * (m + 1) * (|α| * A0 + B) := by
     simp only [U]
     rw [integral_const_mul, integral_finsetSum (f := fun j u => |α| * |hQ FX j 0 u - hQ FY j 0 u| +
-      ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂μ1) _ fun j _ => ((hU0 j).const_mul _).add (hU1 j)]
+      ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂vol01) _ fun j _ => ((hU0 j).const_mul _).add (hU1 j)]
     have hj : ∀ j : Fin (m + 1), ∫ u, (|α| * |hQ FX j 0 u - hQ FY j 0 u| +
-        ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂μ1) ∂μ1 ≤ |α| * A0 + B := fun j => by
+        ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂vol01) ∂vol01 ≤ |α| * A0 + B := fun j => by
       rw [integral_add ((hU0 j).const_mul _) (hU1 j), integral_const_mul]
       exact add_le_add (mul_le_mul_of_nonneg_left (integral_abs_hQ_sub_le hFX hFY j 0)
         (abs_nonneg _)) (int_beta_abs_le hβi hGX hGY j).2
     calc N * ∑ j : Fin (m + 1), ∫ u, (|α| * |hQ FX j 0 u - hQ FY j 0 u| +
-          ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂μ1) ∂μ1
+          ∫ t, |β t| * |hQ GX j t u - hQ GY j t u| ∂vol01) ∂vol01
         ≤ N * ∑ _j : Fin (m + 1), (|α| * A0 + B) :=
           mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun j _ => hj j) hN
       _ = N * (m + 1) * (|α| * A0 + B) := by
@@ -744,7 +744,7 @@ theorem integral_abs_RfD_sub_le (D : PotH) {X Y : Cfg (m + 1) → ℝ} (hX : X �
   have hb10 : ∀ t, 0 ≤ b1 t := fun t => integral_nonneg fun _ => mul_self_nonneg _
   have hb20 : ∀ t, 0 ≤ b2 t := fun t => integral_nonneg fun _ => mul_self_nonneg _
   have hSY := SHN_nonneg Y
-  have hB1 : B ≤ ∫ t, |β t| * (2 * √(2 * Sm) * √(b1 t) + 2 * √(2 * SHN Y) * √(b2 t)) ∂μ1 := by
+  have hB1 : B ≤ ∫ t, |β t| * (2 * √(2 * Sm) * √(b1 t) + 2 * √(2 * SHN Y) * √(b2 t)) ∂vol01 := by
     refine integral_mono_of_nonneg (ae_of_all _ fun t => by
       simp only [Pi.zero_apply]; exact mul_nonneg (abs_nonneg _) (integral_nonneg fun _ => abs_nonneg _))
       (integrable_mul_cont1 hβi.abs (((continuous_const.mul hb1c.sqrt)).add
@@ -764,15 +764,15 @@ theorem integral_abs_RfD_sub_le (D : PotH) {X Y : Cfg (m + 1) → ℝ} (hX : X �
       exact mul_le_mul_of_nonneg_right (Real.sqrt_le_sqrt ha2) (Real.sqrt_nonneg _)
     change 2 * √(a1 t * b1 t) + 2 * √(a2 t * b2 t) ≤ _
     linarith
-  have hβL : MemLp (β : ℝ → ℝ) 2 μ1 := Lp.memLp β
+  have hβL : MemLp (β : ℝ → ℝ) 2 vol01 := Lp.memLp β
   have hC1 := int_abs_mul_sqrt_le hβL hb1c hb10
   have hC2 := int_abs_mul_sqrt_le hβL hb2c hb20
-  have hib1 : ∫ t, b1 t ∂μ1 ≤ SHN X := (integral_mF_dk_sq_le hX1).trans (by
+  have hib1 : ∫ t, b1 t ∂vol01 ≤ SHN X := (integral_mF_dk_sq_le hX1).trans (by
     simp only [SHN]; have : (0 : ℝ) ≤ (↑(m + 1) + 1) * ∫ x, X x ^ 2 ∂μN (m + 1) := by
       have : 0 ≤ ∫ x, X x ^ 2 ∂μN (m + 1) := integral_nonneg fun x => sq_nonneg _
       positivity
     linarith)
-  have hib2 : ∫ t, b2 t ∂μ1 ≤ Sm := (integral_mF_dk_sq_le (hX1.sub hY1)).trans (by
+  have hib2 : ∫ t, b2 t ∂vol01 ≤ Sm := (integral_mF_dk_sq_le (hX1.sub hY1)).trans (by
     simp only [Sm, SHN]
     have : (0 : ℝ) ≤ (↑(m + 1) + 1) * ∫ x, (X - Y) x ^ 2 ∂μN (m + 1) := by
       have : 0 ≤ ∫ x, (X - Y) x ^ 2 ∂μN (m + 1) := integral_nonneg fun x => sq_nonneg _
@@ -782,16 +782,16 @@ theorem integral_abs_RfD_sub_le (D : PotH) {X Y : Cfg (m + 1) → ℝ} (hX : X �
   have hB : B ≤ 3 * nb * (√Sm * (√(SHN X) + √(SHN Y))) := by
     have i1 := integrable_mul_cont1 hβi.abs hb1c.sqrt
     have i2 := integrable_mul_cont1 hβi.abs hb2c.sqrt
-    have e : ∫ t, |β t| * (2 * √(2 * Sm) * √(b1 t) + 2 * √(2 * SHN Y) * √(b2 t)) ∂μ1 =
-        2 * √(2 * Sm) * ∫ t, |β t| * √(b1 t) ∂μ1 + 2 * √(2 * SHN Y) * ∫ t, |β t| * √(b2 t) ∂μ1 := by
+    have e : ∫ t, |β t| * (2 * √(2 * Sm) * √(b1 t) + 2 * √(2 * SHN Y) * √(b2 t)) ∂vol01 =
+        2 * √(2 * Sm) * ∫ t, |β t| * √(b1 t) ∂vol01 + 2 * √(2 * SHN Y) * ∫ t, |β t| * √(b2 t) ∂vol01 := by
       rw [← integral_const_mul, ← integral_const_mul, ← integral_add (i1.const_mul _)
         (i2.const_mul _)]
       congr 1; funext t; ring
     have hs2 : √2 ≤ 3 / 2 := by
       rw [Real.sqrt_le_left (by norm_num)]; norm_num
-    have hnb := Real.sqrt_nonneg (∫ t, β t ^ 2 ∂μ1)
-    have k1 : 2 * √(2 * Sm) * ∫ t, |β t| * √(b1 t) ∂μ1 ≤ 3 * nb * (√Sm * √(SHN X)) := by
-      calc 2 * √(2 * Sm) * ∫ t, |β t| * √(b1 t) ∂μ1
+    have hnb := Real.sqrt_nonneg (∫ t, β t ^ 2 ∂vol01)
+    have k1 : 2 * √(2 * Sm) * ∫ t, |β t| * √(b1 t) ∂vol01 ≤ 3 * nb * (√Sm * √(SHN X)) := by
+      calc 2 * √(2 * Sm) * ∫ t, |β t| * √(b1 t) ∂vol01
           ≤ 2 * √(2 * Sm) * (nb * √(SHN X)) :=
             mul_le_mul_of_nonneg_left (hC1.trans (mul_le_mul_of_nonneg_left
               (Real.sqrt_le_sqrt hib1) hnb)) (by positivity)
@@ -799,8 +799,8 @@ theorem integral_abs_RfD_sub_le (D : PotH) {X Y : Cfg (m + 1) → ℝ} (hX : X �
         _ ≤ 3 * nb * (√Sm * √(SHN X)) := by
             have : 0 ≤ nb * (√Sm * √(SHN X)) := by positivity
             nlinarith
-    have k2 : 2 * √(2 * SHN Y) * ∫ t, |β t| * √(b2 t) ∂μ1 ≤ 3 * nb * (√Sm * √(SHN Y)) := by
-      calc 2 * √(2 * SHN Y) * ∫ t, |β t| * √(b2 t) ∂μ1
+    have k2 : 2 * √(2 * SHN Y) * ∫ t, |β t| * √(b2 t) ∂vol01 ≤ 3 * nb * (√Sm * √(SHN Y)) := by
+      calc 2 * √(2 * SHN Y) * ∫ t, |β t| * √(b2 t) ∂vol01
           ≤ 2 * √(2 * SHN Y) * (nb * √Sm) :=
             mul_le_mul_of_nonneg_left (hC2.trans (mul_le_mul_of_nonneg_left
               (Real.sqrt_le_sqrt hib2) hnb)) (by positivity)
@@ -814,8 +814,8 @@ theorem integral_abs_RfD_sub_le (D : PotH) {X Y : Cfg (m + 1) → ℝ} (hX : X �
   have hY0 := Real.sqrt_nonneg (SHN Y)
   have hp0 := Real.sqrt_nonneg Sp
   have hm0 := Real.sqrt_nonneg Sm
-  have hnb := Real.sqrt_nonneg (∫ t, β t ^ 2 ∂μ1)
-  calc ∫ u, |RfD D X u - RfD D Y u| ∂μ1 ≤ N * (m + 1) * (|α| * A0 + B) := h1.trans h2
+  have hnb := Real.sqrt_nonneg (∫ t, β t ^ 2 ∂vol01)
+  calc ∫ u, |RfD D X u - RfD D Y u| ∂vol01 ≤ N * (m + 1) * (|α| * A0 + B) := h1.trans h2
     _ ≤ N * (m + 1) * (|α| * (2 * √Sm * √Sp) + 3 * nb * (√Sm * (√(SHN X) + √(SHN Y)))) := by
         gcongr
     _ ≤ _ := by

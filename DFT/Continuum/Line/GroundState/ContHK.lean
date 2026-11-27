@@ -31,7 +31,7 @@ variable {n : ℕ} {τ : Stat}
 
 /-- **Unique continuation for `H¹₀` ground states** (the remaining analytic input). -/
 def UcpW (τ : Stat) (n : ℕ) (w : Cfg n → ℝ) (hw : Continuous w) : Prop :=
-  ∀ (v : Pot) (Ψ : Cfg n → ℝ), IsGS (settingW τ n w hw) v Ψ → ∀ᵐ x ∂μN n, Ψ x ≠ 0
+  ∀ (v : C01) (Ψ : Cfg n → ℝ), IsGS (settingW τ n w hw) v Ψ → ∀ᵐ x ∂μN n, Ψ x ≠ 0
 
 /-- On `H¹₀`, the energy form is nonnegative on null states. -/
 lemma h0W_null {s : Sine.SymT n} {w : Cfg n → ℝ} (hw : Continuous w) {φ : Cfg n → ℝ}
@@ -47,12 +47,12 @@ lemma h0W_null {s : Sine.SymT n} {w : Cfg n → ℝ} (hw : Continuous w) {φ : C
   simp only [h0W, hw0, add_zero]
   exact Finset.sum_nonneg fun k _ => integral_nonneg fun x => mul_self_nonneg _
 
-lemma isGS_W_of_isNGS_W {s : Sine.SymT n} {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
+lemma isGS_W_of_isNGS_W {s : Sine.SymT n} {w : Cfg n → ℝ} {hw : Continuous w} {v : C01}
     {Φ : Cfg n → ℝ} (h : IsNGS (settingWS s w hw) v Φ) : IsGS (settingWS s w hw) v Φ :=
   isGS_of_isNGS (fun _ hφ h0 => h0W_null hw hφ h0) h
 
 /-- **Ground states exist on `H¹₀`** for every continuous `v` and continuous `w`. -/
-theorem exists_isGS_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
+theorem exists_isGS_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : C01) :
     ∃ Φ, IsGS (settingW τ n w hw) v Φ ∧ ip (μ := μN n) Φ Φ = 1 := by
   obtain ⟨Φ, hΦ⟩ := exists_isNGS_W_cont (τ := τ) hw v
   exact ⟨Φ, isGS_W_of_isNGS_W hΦ, hΦ.1.2⟩
@@ -60,7 +60,7 @@ theorem exists_isGS_W_cont {w : Cfg n → ℝ} (hw : Continuous w) (v : Pot) :
 /-- **Hohenberg–Kohn on `H¹₀` for continuous potentials, given unique continuation.** The ground
 state of every continuous `v` exists, and ground states of `v` and `v'` with the same norm and
 density force `v - v'` to be constant. -/
-theorem hk_line_W_cont {w : Cfg n → ℝ} {hw : Continuous w} (hU : UcpW τ n w hw) (v v' : Pot) :
+theorem hk_line_W_cont {w : Cfg n → ℝ} {hw : Continuous w} (hU : UcpW τ n w hw) (v v' : C01) :
     (∃ Φ, IsGS (settingW τ n w hw) v Φ) ∧ ∀ Ψ Ψ', IsGS (settingW τ n w hw) v Ψ →
       IsGS (settingW τ n w hw) v' Ψ' → ip (μ := μN n) Ψ Ψ = ip (μ := μN n) Ψ' Ψ' →
       dens (settingW τ n w hw) Ψ = dens (settingW τ n w hw) Ψ' → ∃ k : ℝ, v - v' = k • one :=

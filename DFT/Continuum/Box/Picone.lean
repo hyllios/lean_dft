@@ -101,7 +101,7 @@ theorem picone {W : ℝ → ℝ} (hW : Continuous W) {ψ ψ' : ℝ → ℝ}
     (hψ'd : ∀ t ∈ Ioo (-1 : ℝ) 2, HasDerivAt ψ' (W t * ψ t) t)
     (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < ψ t) (h0 : ψ 0 = 0) (h1 : ψ 1 = 0)
     (hd0 : 0 < ψ' 0) (hd1 : ψ' 1 < 0) {φ : ℝ → ℝ} (hφ : φ ∈ Dom) :
-    0 ≤ ∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂μ1 := by
+    0 ≤ ∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂vol01 := by
   have hφd := diff_of_mem hφ
   have hφc := cont_deriv_of_mem hφ
   have hI : ∀ x ∈ Icc (0 : ℝ) 1, x ∈ Ioo (-1 : ℝ) 2 := fun x hx =>
@@ -235,7 +235,7 @@ theorem picone {W : ℝ → ℝ} (hW : Continuous W) {ψ ψ' : ℝ → ℝ}
   have h0P : P 0 = 0 := by simp [P]
   have hfin := ge_of_tendsto hlim hev
   rw [h0P, sub_zero] at hfin
-  have hP1 : P 1 = ∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂μ1 := by
+  have hP1 : P 1 = ∫ x, (deriv φ x ^ 2 + W x * φ x ^ 2) ∂vol01 := by
     simp only [P]
     rw [intervalIntegral.integral_of_le zero_le_one, integral_Ioc_eq_integral_Ioo]
   rw [← hP1]

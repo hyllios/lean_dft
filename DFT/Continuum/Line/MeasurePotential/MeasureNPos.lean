@@ -40,7 +40,7 @@ lemma sq_sub_le_H10 {g : ℝ → ℝ} (hg : H10 g) {a b : ℝ} (ha : a ∈ Icc (
     have h1 := sq_le_interval hab hac.intervalIntegrable_deriv hii
     rw [hac.integral_deriv_eq_sub] at h1
     have h2 : ∫ t in a..b, deriv g t ^ 2 ≤ kinM g := by
-      rw [kinM, integral_mu1]
+      rw [kinM, integral_vol01]
       exact intervalIntegral.integral_mono_interval ha.1 hab hb.2
         (ae_of_all _ fun s => by simp only [Pi.zero_apply]; positivity)
         ((intervalIntegrable_iff_integrableOn_Ioo_of_le zero_le_one).2 hd2)
@@ -54,17 +54,17 @@ lemma rhoHat2_eq_zero (hw : Continuous w) {τ : Stat} {Φ Ψ : Cfg n → ℝ} (h
     (hΨ : Ψ ∈ DomW τ n) (h : ∀ x, Φ x * Ψ x = 0) : rhoHat2 τ Φ Ψ = 0 :=
   pot_eq_of_integral fun v => by
     rw [int_rhoHat2 hw hΦ hΨ]
-    simp [pf, h, SturmLiouville.ext]
+    simp [pf, h, SturmLiouville.iccExt]
 
 /-- **Given unique continuation, the density of a ground state of a measure potential is positive
 on `(0, 1)`.** -/
 theorem rhoHat_pos_of_ucp (hw : Continuous w) {τ : Stat} {ν : PotM}
     (hucp : ∀ Φ : Cfg n → ℝ, IsGSN τ w ν Φ → ∀ᵐ x ∂μN n, Φ x ≠ 0) {Ψ : Cfg n → ℝ}
-    (hΨ : IsGSN τ w ν Ψ) {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < ext (rhoHat τ Ψ) t0 := by
+    (hΨ : IsGSN τ w ν Ψ) {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < iccExt (rhoHat τ Ψ) t0 := by
   have ht0I := Ioo_subset_Icc_self ht0
   set g := gN τ Ψ
   have hg : H10 g := h10_gN Ψ
-  set K := ext (rhoHat τ Ψ)
+  set K := iccExt (rhoHat τ Ψ)
   have hKg : ∀ t ∈ Icc (0 : ℝ) 1, K t = g t ^ 2 := fun t ht => ext_rhoHat ht
   have hK0 : 0 ≤ K t0 := by rw [hKg t0 ht0I]; positivity
   by_contra hcon
@@ -83,10 +83,10 @@ theorem rhoHat_pos_of_ucp (hw : Continuous w) {τ : Stat} {ν : PotM}
     have := sq_sub_le_H10 hg ht0I htI
     rw [hg0, sub_zero] at this
     linarith [mul_comm L |t - t0|]
-  have hρ : ∀ v : Pot, dens (settingW τ n w hw) Ψ v = ∫ t, ext v t * K t ∂μ1 := fun v =>
+  have hρ : ∀ v : C01, dens (settingW τ n w hw) Ψ v = ∫ t, iccExt v t * K t ∂vol01 := fun v =>
     (int_rhoHat hw hΨ.1 v).symm
-  have hKi : Integrable K μ1 :=
-    (continuous_ext _).integrableOn_Icc.mono_set Ioo_subset_Icc_self
+  have hKi : Integrable K vol01 :=
+    (continuous_iccExt _).integrableOn_Icc.mono_set Ioo_subset_Icc_self
   have hslab := fun (F : Cfg n → ℝ) (_ : AEStronglyMeasurable F (μN n)) hF i =>
     slab_small (w := w) (hw := hw) hΨ.1 (K := K) hρ hKi hη hL hKle (F := F) hF i
   -- the cut state
@@ -196,7 +196,7 @@ theorem rhoHat_pos_of_ucp (hw : Continuous w) {τ : Stat} {ν : PotM}
 
 /-- **The density of a bosonic ground state of a measure potential is positive on `(0, 1)`.** -/
 theorem rhoHat_pos_bos (hw : Continuous w) {ν : PotM} {Ψ : Cfg n → ℝ} (hΨ : IsGSN .bos w ν Ψ)
-    {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < ext (rhoHat .bos Ψ) t0 :=
+    {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) : 0 < iccExt (rhoHat .bos Ψ) t0 :=
   rhoHat_pos_of_ucp hw (fun _ h => gsN_ne_zero_bos hw h) hΨ ht0
 
 end DFT.Continuum.Line

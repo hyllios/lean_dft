@@ -42,14 +42,14 @@ instance : IsMeas01 (volume.restrict (Icc (0 : ℝ) 1)) where
 lemma IsMeas01.ae_mem (ρ : Measure ℝ) [IsMeas01 ρ] : ∀ᵐ x ∂ρ, x ∈ Icc (0 : ℝ) 1 :=
   measure_eq_zero_iff_ae_notMem.1 (IsMeas01.compl_zero (ρ := ρ)) |>.mono fun _ h => not_not.1 h
 
-lemma integrable_ext (ρ : Measure ℝ) [IsFiniteMeasure ρ] (h : Pot) : Integrable (SturmLiouville.ext h) ρ :=
-  Integrable.of_bound (continuous_ext h).aestronglyMeasurable ‖h‖
-    (ae_of_all _ fun x => by simpa [SturmLiouville.ext] using h.norm_coe_le_norm _)
+lemma integrable_ext (ρ : Measure ℝ) [IsFiniteMeasure ρ] (h : C01) : Integrable (SturmLiouville.iccExt h) ρ :=
+  Integrable.of_bound (continuous_iccExt h).aestronglyMeasurable ‖h‖
+    (ae_of_all _ fun x => by simpa [SturmLiouville.iccExt] using h.norm_coe_le_norm _)
 
 /-- `h ↦ ∫ h dρ` on `C([0, 1])`. -/
 noncomputable def intCLM (ρ : Measure ℝ) [IsFiniteMeasure ρ] : PotM :=
   LinearMap.mkContinuous
-    { toFun := fun h => ∫ x, SturmLiouville.ext h x ∂ρ
+    { toFun := fun h => ∫ x, SturmLiouville.iccExt h x ∂ρ
       map_add' := fun h h' => by
         rw [← integral_add (integrable_ext ρ h) (integrable_ext ρ h')]; rfl
       map_smul' := fun c h => by
@@ -58,10 +58,10 @@ noncomputable def intCLM (ρ : Measure ℝ) [IsFiniteMeasure ρ] : PotM :=
       simp only [LinearMap.coe_mk, AddHom.coe_mk]
       rw [mul_comm]
       exact norm_integral_le_of_norm_le_const
-        (ae_of_all _ fun x => by simpa [SturmLiouville.ext] using h.norm_coe_le_norm _)
+        (ae_of_all _ fun x => by simpa [SturmLiouville.iccExt] using h.norm_coe_le_norm _)
 
-lemma intCLM_apply (ρ : Measure ℝ) [IsFiniteMeasure ρ] (h : Pot) :
-    intCLM ρ h = ∫ x, SturmLiouville.ext h x ∂ρ := rfl
+lemma intCLM_apply (ρ : Measure ℝ) [IsFiniteMeasure ρ] (h : C01) :
+    intCLM ρ h = ∫ x, SturmLiouville.iccExt h x ∂ρ := rfl
 
 /-- The measure potential `μ₊ - μ₋`. -/
 noncomputable def nuOf (μp μm : Measure ℝ) [IsFiniteMeasure μp] [IsFiniteMeasure μm] : PotM :=
@@ -71,7 +71,7 @@ lemma intCLM_mulP (ρ : Measure ℝ) [IsMeas01 ρ] {ψ φ : ℝ → ℝ} (hψ : 
     intCLM ρ (mulP hψ hφ) = ∫ x, ψ x * φ x ∂ρ := by
   rw [intCLM_apply]
   refine integral_congr_ae ((IsMeas01.ae_mem ρ).mono fun x hx => ?_)
-  rw [SturmLiouville.ext, projIcc_of_mem _ hx, mulP_apply]
+  rw [SturmLiouville.iccExt, projIcc_of_mem _ hx, mulP_apply]
 
 /-! ### Fubini -/
 
@@ -79,7 +79,7 @@ lemma intCLM_mulP (ρ : Measure ℝ) [IsMeas01 ρ] {ψ φ : ℝ → ℝ} (hψ : 
 noncomputable def Gρ (ρ : Measure ℝ) (ψ : ℝ → ℝ) (t : ℝ) : ℝ := ∫ x in Iio t, ψ x ∂ρ
 
 lemma phi_eq_neg {φ : ℝ → ℝ} (hφ : H10 φ) {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
-    φ x = -∫ t, (Ioi x).indicator (deriv φ) t ∂μ1 := by
+    φ x = -∫ t, (Ioi x).indicator (deriv φ) t ∂vol01 := by
   rw [integral_indicator measurableSet_Ioi, Measure.restrict_restrict measurableSet_Ioi,
     show Ioi x ∩ Ioo (0 : ℝ) 1 = Ioo x 1 by
       ext t; simp only [mem_inter_iff, mem_Ioi, mem_Ioo]
@@ -91,22 +91,22 @@ lemma phi_eq_neg {φ : ℝ → ℝ} (hφ : H10 φ) {x : ℝ} (hx : x ∈ Icc (0 
     rw [uIcc01, uIcc_of_le hx.2]; exact Icc_subset_Icc hx.1 le_rfl)
   rw [hac.integral_deriv_eq_sub, hφ.2.2.1]; ring
 
-lemma integrable_deriv_mu1 {φ : ℝ → ℝ} (hφ : H10 φ) : Integrable (deriv φ) μ1 :=
+lemma integrable_deriv_mu1 {φ : ℝ → ℝ} (hφ : H10 φ) : Integrable (deriv φ) vol01 :=
   (memLp_deriv hφ).integrable one_le_two
 
 /-- **Fubini**: `∫ ψ φ dρ = -∫ φ'(t) G_ρ(t) dt` for `φ ∈ H¹₀`. -/
 theorem integral_mul_eq_neg (ρ : Measure ℝ) [IsMeas01 ρ] {ψ : ℝ → ℝ} (hψc : Continuous ψ)
     {φ : ℝ → ℝ} (hφ : H10 φ) :
-    ∫ x, ψ x * φ x ∂ρ = -∫ t, deriv φ t * Gρ ρ ψ t ∂μ1 := by
+    ∫ x, ψ x * φ x ∂ρ = -∫ t, deriv φ t * Gρ ρ ψ t ∂vol01 := by
   obtain ⟨B, hB⟩ := (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1)).exists_bound_of_continuousOn
     hψc.continuousOn
   have hψi : Integrable ψ ρ := Integrable.of_bound hψc.aestronglyMeasurable B
     ((IsMeas01.ae_mem ρ).mono fun x hx => hB x hx)
   set F : ℝ × ℝ → ℝ := {p : ℝ × ℝ | p.1 < p.2}.indicator fun p => ψ p.1 * deriv φ p.2
-  have hF : Integrable F (ρ.prod μ1) :=
+  have hF : Integrable F (ρ.prod vol01) :=
     (hψi.mul_prod (integrable_deriv_mu1 hφ)).indicator
       (measurableSet_lt measurable_fst measurable_snd)
-  have e1 : ∀ x ∈ Icc (0 : ℝ) 1, ψ x * φ x = -∫ t, F (x, t) ∂μ1 := fun x hx => by
+  have e1 : ∀ x ∈ Icc (0 : ℝ) 1, ψ x * φ x = -∫ t, F (x, t) ∂vol01 := fun x hx => by
     rw [phi_eq_neg hφ hx, mul_neg, ← integral_const_mul]
     congr 1
     refine integral_congr_ae (ae_of_all _ fun t => ?_)
@@ -124,19 +124,19 @@ theorem integral_mul_eq_neg (ρ : Measure ℝ) [IsMeas01 ρ] {ψ : ℝ → ℝ} 
 /-! ### du Bois-Reymond -/
 
 /-- **du Bois-Reymond**: `h ∈ L²(0, 1)` with `∫ h φ' = 0` for all `φ ∈ H¹₀` is a.e. constant. -/
-theorem ae_eq_const_of_orth {h : ℝ → ℝ} (hm : MemLp h 2 μ1)
-    (h0 : ∀ φ (_hφ : H10 φ), ∫ t, deriv φ t * h t ∂μ1 = 0) :
-    h =ᵐ[μ1] fun _ => ∫ t, h t ∂μ1 := by
-  set m := ∫ t, h t ∂μ1
-  have hmc : MemLp (fun t => h t - m) 2 μ1 := hm.sub (memLp_const m)
+theorem ae_eq_const_of_orth {h : ℝ → ℝ} (hm : MemLp h 2 vol01)
+    (h0 : ∀ φ (_hφ : H10 φ), ∫ t, deriv φ t * h t ∂vol01 = 0) :
+    h =ᵐ[vol01] fun _ => ∫ t, h t ∂vol01 := by
+  set m := ∫ t, h t ∂vol01
+  have hmc : MemLp (fun t => h t - m) 2 vol01 := hm.sub (memLp_const m)
   set f : L2I := hmc.toLp _
-  have hf : (f : ℝ → ℝ) =ᵐ[μ1] fun t => h t - m := MemLp.coeFn_toLp hmc
-  have hi : Integrable h μ1 := hm.integrable one_le_two
+  have hf : (f : ℝ → ℝ) =ᵐ[vol01] fun t => h t - m := MemLp.coeFn_toLp hmc
+  have hi : Integrable h vol01 := hm.integrable one_le_two
   have h1 : prim f 1 = 0 := by
-    rw [prim, integral_congr_mu1 hf ⟨zero_le_one, le_rfl⟩, ← integral_mu1,
+    rw [prim, integral_congr_mu1 hf ⟨zero_le_one, le_rfl⟩, ← integral_vol01,
       integral_sub hi (integrable_const m)]
     simp [m]
-  have hd : deriv (prim f) =ᵐ[μ1] fun t => h t - m := by
+  have hd : deriv (prim f) =ᵐ[vol01] fun t => h t - m := by
     have hd := (intervalIntegrable_of_mu1 (integrable_L2I f)
       ⟨zero_le_one, le_rfl⟩).ae_hasDerivAt_integral
     filter_upwards [ae_restrict_of_ae hd, ae_restrict_mem measurableSet_Ioo, hf] with t h ht hft
@@ -144,19 +144,19 @@ theorem ae_eq_const_of_orth {h : ℝ → ℝ} (hm : MemLp h 2 μ1)
     change deriv (fun x => ∫ s in (0 : ℝ)..x, (f : ℝ → ℝ) s) t = _
     rw [this, hft]
   have hz := h0 _ (h10_prim h1)
-  have hz' : ∫ t, (h t - m) * h t ∂μ1 = 0 := by
+  have hz' : ∫ t, (h t - m) * h t ∂vol01 = 0 := by
     rw [← hz]; exact integral_congr_ae (hd.mono fun t ht => by simp only [ht])
-  have hsq : Integrable (fun t => (h t - m) ^ 2) μ1 :=
+  have hsq : Integrable (fun t => (h t - m) ^ 2) vol01 :=
     (memLp_two_iff_integrable_sq hmc.aestronglyMeasurable).1 hmc
-  have hzero : ∫ t, (h t - m) ^ 2 ∂μ1 = 0 := by
+  have hzero : ∫ t, (h t - m) ^ 2 ∂vol01 = 0 := by
     have e : (fun t => (h t - m) ^ 2) = fun t => (h t - m) * h t - m * (h t - m) := by
       funext t; ring
-    have i0 : Integrable (fun t => h t - m) μ1 := hi.sub (integrable_const m)
-    have i2 : Integrable (fun t => m * (h t - m)) μ1 := i0.const_mul m
-    have i1 : Integrable (fun t => (h t - m) * h t) μ1 := by
+    have i0 : Integrable (fun t => h t - m) vol01 := hi.sub (integrable_const m)
+    have i2 : Integrable (fun t => m * (h t - m)) vol01 := i0.const_mul m
+    have i1 : Integrable (fun t => (h t - m) * h t) vol01 := by
       refine (hsq.add i2).congr (ae_of_all _ fun t => ?_)
       simp only [Pi.add_apply]; ring
-    have hc : ∫ t, h t - m ∂μ1 = 0 := by rw [integral_sub hi (integrable_const m)]; simp [m]
+    have hc : ∫ t, h t - m ∂vol01 = 0 := by rw [integral_sub hi (integrable_const m)]; simp [m]
     rw [e, integral_sub i1 i2, hz', integral_const_mul, hc]
     simp
   have := (integral_eq_zero_iff_of_nonneg (fun t => sq_nonneg _) hsq).1 hzero
@@ -165,7 +165,7 @@ theorem ae_eq_const_of_orth {h : ℝ → ℝ} (hm : MemLp h 2 μ1)
 
 /-! ### The derivative of a solution -/
 
-instance : IsMeas01 μ1 where
+instance : IsMeas01 vol01 where
   compl_zero := by
     have e : (Icc (0 : ℝ) 1)ᶜ ∩ Ioo 0 1 = ∅ :=
       eq_empty_iff_forall_notMem.2 fun x hx => hx.1 (Ioo_subset_Icc_self hx.2)
@@ -206,7 +206,7 @@ lemma measurable_Gρ (ρ : Measure ℝ) [IsMeas01 ρ] {ψ : ℝ → ℝ} (hψc :
       (measurableSet_lt measurable_snd measurable_fst)).stronglyMeasurable
 
 lemma integrable_dG (ρ : Measure ℝ) [IsMeas01 ρ] {ψ : ℝ → ℝ} (hψc : Continuous ψ) {φ : ℝ → ℝ}
-    (hφ : H10 φ) : Integrable (fun t => deriv φ t * Gρ ρ ψ t) μ1 := by
+    (hφ : H10 φ) : Integrable (fun t => deriv φ t * Gρ ρ ψ t) vol01 := by
   obtain ⟨C, hC⟩ := Gρ_bdd ρ hψc
   refine ((integrable_deriv_mu1 hφ).norm.const_mul C).mono'
     ((measurable_deriv φ).aestronglyMeasurable.mul
@@ -216,7 +216,7 @@ lemma integrable_dG (ρ : Measure ℝ) [IsMeas01 ρ] {ψ : ℝ → ℝ} (hψc : 
 
 /-- `R = c + G₊ - G₋ - E G_L`. -/
 noncomputable def Rψ (μp μm : Measure ℝ) (ψ : ℝ → ℝ) (E c t : ℝ) : ℝ :=
-  c + Gρ μp ψ t - Gρ μm ψ t - E * Gρ μ1 ψ t
+  c + Gρ μp ψ t - Gρ μm ψ t - E * Gρ vol01 ψ t
 
 section rep
 
@@ -225,41 +225,41 @@ variable {μp μm : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] {ψ : ℝ → ℝ
 /-- **The derivative of a solution**: if `-ψ'' + νψ = Eψ` weakly with `ν = μ₊ - μ₋`, then
 `ψ' = R = c + G₊ - G₋ - E G_L` a.e. -/
 theorem deriv_ae_eq_R (hψ : H10 ψ) (hψc : Continuous ψ)
-    (hE : ∀ φ (hφ : H10 φ), ∫ t, deriv ψ t * deriv φ t ∂μ1 + nuOf μp μm (mulP hψ hφ) =
-      E * ∫ t, ψ t * φ t ∂μ1) :
-    ∃ c, deriv ψ =ᵐ[μ1] Rψ μp μm ψ E c := by
-  set h : ℝ → ℝ := fun t => deriv ψ t - Gρ μp ψ t + Gρ μm ψ t + E * Gρ μ1 ψ t
-  have hm : MemLp h 2 μ1 := by
+    (hE : ∀ φ (hφ : H10 φ), ∫ t, deriv ψ t * deriv φ t ∂vol01 + nuOf μp μm (mulP hψ hφ) =
+      E * ∫ t, ψ t * φ t ∂vol01) :
+    ∃ c, deriv ψ =ᵐ[vol01] Rψ μp μm ψ E c := by
+  set h : ℝ → ℝ := fun t => deriv ψ t - Gρ μp ψ t + Gρ μm ψ t + E * Gρ vol01 ψ t
+  have hm : MemLp h 2 vol01 := by
     obtain ⟨C1, hC1⟩ := Gρ_bdd μp hψc
     obtain ⟨C2, hC2⟩ := Gρ_bdd μm hψc
-    obtain ⟨C3, hC3⟩ := Gρ_bdd μ1 hψc
+    obtain ⟨C3, hC3⟩ := Gρ_bdd vol01 hψc
     have b : ∀ (ρ : Measure ℝ) [IsMeas01 ρ] (C : ℝ), (∀ t, |Gρ ρ ψ t| ≤ C) →
-        MemLp (Gρ ρ ψ) 2 μ1 := fun ρ _ C hC =>
+        MemLp (Gρ ρ ψ) 2 vol01 := fun ρ _ C hC =>
       MemLp.of_bound (measurable_Gρ ρ hψc).aestronglyMeasurable C
         (ae_of_all _ fun t => by simpa using hC t)
     exact (((memLp_deriv hψ).sub (b μp C1 hC1)).add (b μm C2 hC2)).add
-      ((b μ1 C3 hC3).const_mul E)
-  have h0 : ∀ φ (_hφ : H10 φ), ∫ t, deriv φ t * h t ∂μ1 = 0 := fun φ hφ => by
+      ((b vol01 C3 hC3).const_mul E)
+  have h0 : ∀ φ (_hφ : H10 φ), ∫ t, deriv φ t * h t ∂vol01 = 0 := fun φ hφ => by
     have hw := hE φ hφ
     rw [nuOf, sub_apply, intCLM_mulP, intCLM_mulP,
       integral_mul_eq_neg μp hψc hφ, integral_mul_eq_neg μm hψc hφ,
-      show ∫ t, ψ t * φ t ∂μ1 = -∫ t, deriv φ t * Gρ μ1 ψ t ∂μ1 from
-        integral_mul_eq_neg μ1 hψc hφ] at hw
-    have i0 : Integrable (fun t => deriv φ t * deriv ψ t) μ1 := integrable_dd hφ hψ
+      show ∫ t, ψ t * φ t ∂vol01 = -∫ t, deriv φ t * Gρ vol01 ψ t ∂vol01 from
+        integral_mul_eq_neg vol01 hψc hφ] at hw
+    have i0 : Integrable (fun t => deriv φ t * deriv ψ t) vol01 := integrable_dd hφ hψ
     have i1 := integrable_dG μp hψc hφ
     have i2 := integrable_dG μm hψc hφ
-    have i3 := (integrable_dG μ1 hψc hφ).const_mul E
+    have i3 := (integrable_dG vol01 hψc hφ).const_mul E
     have e : (fun t => deriv φ t * h t) = fun t => deriv φ t * deriv ψ t -
-        deriv φ t * Gρ μp ψ t + deriv φ t * Gρ μm ψ t + E * (deriv φ t * Gρ μ1 ψ t) := by
+        deriv φ t * Gρ μp ψ t + deriv φ t * Gρ μm ψ t + E * (deriv φ t * Gρ vol01 ψ t) := by
       funext t; simp only [h]; ring
-    have i01 : Integrable (fun t => deriv φ t * deriv ψ t - deriv φ t * Gρ μp ψ t) μ1 := i0.sub i1
+    have i01 : Integrable (fun t => deriv φ t * deriv ψ t - deriv φ t * Gρ μp ψ t) vol01 := i0.sub i1
     have i012 : Integrable (fun t => deriv φ t * deriv ψ t - deriv φ t * Gρ μp ψ t +
-      deriv φ t * Gρ μm ψ t) μ1 := i01.add i2
+      deriv φ t * Gρ μm ψ t) vol01 := i01.add i2
     rw [e, integral_add i012 i3, integral_add i01 i2, integral_sub i0 i1, integral_const_mul]
-    have e2 : ∫ t, deriv φ t * deriv ψ t ∂μ1 = ∫ t, deriv ψ t * deriv φ t ∂μ1 := by
+    have e2 : ∫ t, deriv φ t * deriv ψ t ∂vol01 = ∫ t, deriv ψ t * deriv φ t ∂vol01 := by
       simp_rw [mul_comm (deriv φ _)]
     rw [e2]; linarith
-  refine ⟨∫ t, h t ∂μ1, (ae_eq_const_of_orth hm h0).mono fun t ht => ?_⟩
+  refine ⟨∫ t, h t ∂vol01, (ae_eq_const_of_orth hm h0).mono fun t ht => ?_⟩
   simp only [h] at ht
   simp only [Rψ]; linarith
 
@@ -269,7 +269,7 @@ end rep
 
 /-- The total mass `Λ` of `μ₊ + μ₋ + |E| dt`. -/
 noncomputable def LamM (μp μm : Measure ℝ) (E : ℝ) : ℝ :=
-  μp.real univ + μm.real univ + |E| * μ1.real univ
+  μp.real univ + μm.real univ + |E| * vol01.real univ
 
 lemma LamM_nonneg (μp μm : Measure ℝ) (E : ℝ) : 0 ≤ LamM μp μm E := by
   unfold LamM; positivity
@@ -301,19 +301,19 @@ lemma R_sub_le_of_le (hψc : Continuous ψ) {a t M : ℝ} (hat : a ≤ t) (hM0 :
       rw [Gρ_sub ρ hψc hat]
       exact abs_setIntegral_le ρ measurableSet_Ico hM0 fun x hx => hM x (Ico_subset_Icc_self hx.1)
   have e : Rψ μp μm ψ E c t - Rψ μp μm ψ E c a = (Gρ μp ψ t - Gρ μp ψ a) -
-      (Gρ μm ψ t - Gρ μm ψ a) - E * (Gρ μ1 ψ t - Gρ μ1 ψ a) := by simp only [Rψ]; ring
+      (Gρ μm ψ t - Gρ μm ψ a) - E * (Gρ vol01 ψ t - Gρ vol01 ψ a) := by simp only [Rψ]; ring
   rw [e, LamM]
   have h1 := hb μp
   have h2 := hb μm
-  have h3 := hb μ1
+  have h3 := hb vol01
   calc _ ≤ |Gρ μp ψ t - Gρ μp ψ a| + |Gρ μm ψ t - Gρ μm ψ a| +
-        |E * (Gρ μ1 ψ t - Gρ μ1 ψ a)| := by
+        |E * (Gρ vol01 ψ t - Gρ vol01 ψ a)| := by
           refine (abs_sub _ _).trans ?_
           gcongr
           exact abs_sub _ _
-    _ ≤ M * μp.real univ + M * μm.real univ + |E| * (M * μ1.real univ) := by
+    _ ≤ M * μp.real univ + M * μm.real univ + |E| * (M * vol01.real univ) := by
           rw [abs_mul]; gcongr
-    _ = M * (μp.real univ + μm.real univ + |E| * μ1.real univ) := by ring
+    _ = M * (μp.real univ + μm.real univ + |E| * vol01.real univ) := by ring
 
 lemma R_sub_le (hψc : Continuous ψ) {a t M : ℝ} (hM0 : 0 ≤ M)
     (hM : ∀ x ∈ uIcc a t, |ψ x| ≤ M) :
@@ -327,7 +327,7 @@ lemma ae_ne_pt' (c : ℝ) : ∀ᵐ x ∂(volume : Measure ℝ), x ≠ c := by
   rw [ae_iff]; simp
 
 omit [IsMeas01 μp] [IsMeas01 μm] in
-lemma intervalIntegrable_R (hψ : H10 ψ) (hR : deriv ψ =ᵐ[μ1] Rψ μp μm ψ E c) {a t : ℝ}
+lemma intervalIntegrable_R (hψ : H10 ψ) (hR : deriv ψ =ᵐ[vol01] Rψ μp μm ψ E c) {a t : ℝ}
     (ha : a ∈ Icc (0 : ℝ) 1) (ht : t ∈ Icc (0 : ℝ) 1) :
     IntervalIntegrable (Rψ μp μm ψ E c) volume a t := by
   have hi : IntegrableOn (Rψ μp μm ψ E c) (Ioo (0 : ℝ) 1) :=
@@ -336,7 +336,7 @@ lemma intervalIntegrable_R (hψ : H10 ψ) (hR : deriv ψ =ᵐ[μ1] Rψ μp μm �
   exact (hi.mono_set (uIcc_subset_Icc ha ht)).intervalIntegrable
 
 omit [IsMeas01 μp] [IsMeas01 μm] in
-lemma psi_sub (hψ : H10 ψ) (hR : deriv ψ =ᵐ[μ1] Rψ μp μm ψ E c) {a t : ℝ}
+lemma psi_sub (hψ : H10 ψ) (hR : deriv ψ =ᵐ[vol01] Rψ μp μm ψ E c) {a t : ℝ}
     (ha : a ∈ Icc (0 : ℝ) 1) (ht : t ∈ Icc (0 : ℝ) 1) :
     ψ t - ψ a = ∫ x in a..t, Rψ μp μm ψ E c x := by
   have hac : AbsolutelyContinuousOnInterval ψ a t := hψ.1.mono (by
@@ -352,7 +352,7 @@ lemma psi_sub (hψ : H10 ψ) (hR : deriv ψ =ᵐ[μ1] Rψ μp μm ψ E c) {a t :
 
 /-- **One step**: if `ψ(a) = R(a) = 0` and `|t - a| Λ ≤ ½`, then `ψ = 0` between `a` and `t`
 and `R(t) = 0`. -/
-theorem step_zero (hψ : H10 ψ) (hψc : Continuous ψ) (hR : deriv ψ =ᵐ[μ1] Rψ μp μm ψ E c)
+theorem step_zero (hψ : H10 ψ) (hψc : Continuous ψ) (hR : deriv ψ =ᵐ[vol01] Rψ μp μm ψ E c)
     {a t : ℝ} (ha : a ∈ Icc (0 : ℝ) 1) (ht : t ∈ Icc (0 : ℝ) 1) (hψa : ψ a = 0)
     (hRa : Rψ μp μm ψ E c a = 0) (hd : |t - a| * LamM μp μm E ≤ 1 / 2) :
     (∀ x ∈ uIcc a t, ψ x = 0) ∧ Rψ μp μm ψ E c t = 0 := by
@@ -393,7 +393,7 @@ theorem step_zero (hψ : H10 ψ) (hψc : Continuous ψ) (hR : deriv ψ =ᵐ[μ1]
 
 /-- **Unique continuation**: if `ψ(a) = R(a) = 0` for some `a ∈ [0, 1]`, then `ψ ≡ 0` on
 `[0, 1]`. -/
-theorem eq_zero_of_R_zero (hψ : H10 ψ) (hψc : Continuous ψ) (hR : deriv ψ =ᵐ[μ1] Rψ μp μm ψ E c)
+theorem eq_zero_of_R_zero (hψ : H10 ψ) (hψc : Continuous ψ) (hR : deriv ψ =ᵐ[vol01] Rψ μp μm ψ E c)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) 1) (hψa : ψ a = 0) (hRa : Rψ μp μm ψ E c a = 0) :
     ∀ t ∈ Icc (0 : ℝ) 1, ψ t = 0 := by
   set Λ := LamM μp μm E
@@ -452,7 +452,7 @@ theorem eq_zero_of_R_zero (hψ : H10 ψ) (hψc : Continuous ψ) (hR : deriv ψ =
     _ ≤ k * δ := mul_le_mul_of_nonneg_right hk hδ.le
 
 /-- **At an interior zero of a nonnegative solution, `R` vanishes.** -/
-theorem R_zero_of_min (hψ : H10 ψ) (hψc : Continuous ψ) (hR : deriv ψ =ᵐ[μ1] Rψ μp μm ψ E c)
+theorem R_zero_of_min (hψ : H10 ψ) (hψc : Continuous ψ) (hR : deriv ψ =ᵐ[vol01] Rψ μp μm ψ E c)
     (hψ0 : ∀ x ∈ Icc (0 : ℝ) 1, 0 ≤ ψ x) {t0 : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1) (hz : ψ t0 = 0) :
     Rψ μp μm ψ E c t0 = 0 := by
   set R := Rψ μp μm ψ E c
@@ -529,7 +529,7 @@ lemma QM_clamp (ν : PotM) {g : ℝ → ℝ} (hg : H10 g) : QM ν (H10.clamp_H10
   rw [QM, QM, kinM_clamp, this]
 
 /-- A normalised ground state has energy `E₀`. -/
-lemma QM_eq_EM_of_isGSM {ν : PotM} {ψ : ℝ → ℝ} (h : IsGSM ν ψ) (hn : ∫ t, ψ t ^ 2 ∂μ1 = 1)
+lemma QM_eq_EM_of_isGSM {ν : PotM} {ψ : ℝ → ℝ} (h : IsGSM ν ψ) (hn : ∫ t, ψ t ^ 2 ∂vol01 = 1)
     (hψ : H10 ψ) : QM ν hψ = EM ν := by
   obtain ⟨hψ', -, hmin⟩ := h
   refine le_antisymm ?_ (EM_le ν hψ hn)
@@ -545,19 +545,19 @@ theorem gs_ne_zero {μp μm : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] {ψ : �
   set ν := nuOf μp μm
   have hψ := h.1
   have hpos := h.2.1
-  set m := ∫ t, ψ t ^ 2 ∂μ1
+  set m := ∫ t, ψ t ^ 2 ∂vol01
   set c := 1 / √m
   have hc2 : c ^ 2 = 1 / m := by rw [div_pow, Real.sq_sqrt hpos.le, one_pow]
   have hc : c ≠ 0 := by
     intro h0; rw [h0] at hc2; have : (0 : ℝ) < 1 / m := by positivity
     simp at hc2; linarith
-  have hn1 : ∫ t, (c * ψ t) ^ 2 ∂μ1 = 1 := by rw [norm2_smul, hc2, one_div_mul_cancel hpos.ne']
+  have hn1 : ∫ t, (c * ψ t) ^ 2 ∂vol01 = 1 := by rw [norm2_smul, hc2, one_div_mul_cancel hpos.ne']
   have hQ1 := QM_eq_EM_of_isGSM (h.const_mul hc) hn1 (hψ.const_mul c)
   have hχ1 := (hψ.const_mul c).abs
   have hχ := H10.clamp_H10 hχ1
   set χ := H10.clamp fun t => |c * ψ t|
   have hχc : Continuous χ := H10.continuous_clamp hχ1
-  have hnχ : ∫ t, χ t ^ 2 ∂μ1 = 1 := by
+  have hnχ : ∫ t, χ t ^ 2 ∂vol01 = 1 := by
     rw [integral_mu1_clamp (F := fun _ y => y ^ 2)]; simp only [sq_abs]; exact hn1
   have hQ : QM ν hχ = EM ν := le_antisymm
     ((QM_clamp ν hχ1).trans_le ((QM_abs_le ν _).trans hQ1.le)) (EM_le ν hχ hnχ)
@@ -570,9 +570,9 @@ theorem gs_ne_zero {μp μm : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] {ψ : �
   have hzχ : χ t0 = 0 := by rw [hχx t0 (Ioo_subset_Icc_self ht0), hz, mul_zero, abs_zero]
   have hR0 := R_zero_of_min hχ hχc hR hχ0 ht0 hzχ
   have hall := eq_zero_of_R_zero hχ hχc hR (Ioo_subset_Icc_self ht0) hzχ hR0
-  have : ∫ t, χ t ^ 2 ∂μ1 = 0 := by
+  have : ∫ t, χ t ^ 2 ∂vol01 = 0 := by
     rw [integral_congr_ae ((ae_restrict_mem measurableSet_Ioo).mono fun t ht => by
-      simp only [hall t (Ioo_subset_Icc_self ht)] : (fun t => χ t ^ 2) =ᵐ[μ1] fun _ => (0 : ℝ) ^ 2)]
+      simp only [hall t (Ioo_subset_Icc_self ht)] : (fun t => χ t ^ 2) =ᵐ[vol01] fun _ => (0 : ℝ) ^ 2)]
     simp
   rw [hnχ] at this; exact one_ne_zero this
 
@@ -596,19 +596,19 @@ theorem gs_pos_or_neg {μp μm : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] {ψ 
 
 /-- `ρ ∈ C([0, 1])` is the density of a normalised ground state of a measure potential
 `μ₊ - μ₋`. -/
-def VRepMeas (ρ : Pot) : Prop :=
+def VRepMeas (ρ : C01) : Prop :=
   ∃ (μp μm : Measure ℝ) (_ : IsMeas01 μp) (_ : IsMeas01 μm) (ψ : ℝ → ℝ),
-    IsGSM (nuOf μp μm) ψ ∧ ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧ ∀ t : Icc (0 : ℝ) 1, ρ t = ψ t ^ 2
+    IsGSM (nuOf μp μm) ψ ∧ ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧ ∀ t : Icc (0 : ℝ) 1, ρ t = ψ t ^ 2
 
 /-- **`v`-representability with measure potentials, one particle**: a density is the ground-state
 density of a measure potential iff `ρ = g²` with `g ∈ H¹₀` normalised, positive on `(0, 1)`, and
 solving `-g'' + ν g = E g` weakly for some measure `ν` and some `E`. -/
-theorem vrepMeas_iff (ρ : Pot) : VRepMeas ρ ↔
-    ∃ g : ℝ → ℝ, ∃ hg : H10 g, ∫ t, g t ^ 2 ∂μ1 = 1 ∧ (∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) ∧
+theorem vrepMeas_iff (ρ : C01) : VRepMeas ρ ↔
+    ∃ g : ℝ → ℝ, ∃ hg : H10 g, ∫ t, g t ^ 2 ∂vol01 = 1 ∧ (∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) ∧
       (∀ t : Icc (0 : ℝ) 1, ρ t = g t ^ 2) ∧
       ∃ (μp μm : Measure ℝ) (_ : IsMeas01 μp) (_ : IsMeas01 μm) (E : ℝ),
-        ∀ φ (hφ : H10 φ), ∫ t, deriv g t * deriv φ t ∂μ1 + nuOf μp μm (mulP hg hφ) =
-          E * ∫ t, g t * φ t ∂μ1 := by
+        ∀ φ (hφ : H10 φ), ∫ t, deriv g t * deriv φ t ∂vol01 + nuOf μp μm (mulP hg hφ) =
+          E * ∫ t, g t * φ t ∂vol01 := by
   constructor
   · rintro ⟨μp, μm, _, _, ψ, hgs, hn, hρ⟩
     have hψ := hgs.1
@@ -616,7 +616,7 @@ theorem vrepMeas_iff (ρ : Pot) : VRepMeas ρ ↔
     · exact ⟨ψ, hψ, hn, hp, hρ, μp, μm, inferInstance, inferInstance, EM (nuOf μp μm),
         fun φ hφ => euler_lagrange hψ hn (QM_eq_EM_of_isGSM hgs hn hψ) hφ⟩
     · have hgs' := hgs.const_mul (c := -1) (by norm_num)
-      have hn' : ∫ t, (-1 * ψ t) ^ 2 ∂μ1 = 1 := by rw [norm2_smul, hn]; norm_num
+      have hn' : ∫ t, (-1 * ψ t) ^ 2 ∂vol01 = 1 := by rw [norm2_smul, hn]; norm_num
       have hg := hψ.const_mul (-1)
       refine ⟨fun t => -1 * ψ t, hg, hn', fun t ht => by linarith [hneg t ht],
         fun t => by rw [hρ t]; ring, μp, μm, inferInstance, inferInstance, EM (nuOf μp μm),

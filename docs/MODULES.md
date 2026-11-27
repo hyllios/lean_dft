@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-22 modules, 4338 lines.
+22 modules, 4339 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -50,7 +50,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
-| `ForMathlib.Analysis.SturmLiouville.Basic` | 110 | The Dirichlet problem on `[0, 1]`: basic definitions |
+| `ForMathlib.Analysis.SturmLiouville.Basic` | 111 | The Dirichlet problem on `[0, 1]`: basic definitions |
 | `ForMathlib.Analysis.SturmLiouville.Eigen` | 198 | Eigenvectors of the Green operator are classical eigenfunctions |
 | `ForMathlib.Analysis.SturmLiouville.Expand` | 312 | The energy in the eigenbasis |
 | `ForMathlib.Analysis.SturmLiouville.Extend` | 78 | Regularity of ODE solutions and cutoff extension |
@@ -156,7 +156,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-206 modules, 55830 lines.
+206 modules, 55826 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -500,7 +500,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
-| `DFT.Lattice.TDDFT.Counterexample` | 186 | Counterexample to Theorem 2 of Farzanehpour–Tokatly |
+| `DFT.Lattice.TDDFT.Counterexample` | 182 | Counterexample to Theorem 2 of Farzanehpour–Tokatly |
 | `DFT.Lattice.TDDFT.Dimer` | 233 | A reality check: one particle on two sites |
 | `DFT.Lattice.TDDFT.Dynamics` | 293 | Lattice quantum dynamics: continuity and force balance |
 | `DFT.Lattice.TDDFT.Ensemble` | 369 | Ensembles in lattice TDDFT (purification) |
@@ -519,4 +519,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 73272 lines of Lean.
+Total: 73269 lines of Lean.

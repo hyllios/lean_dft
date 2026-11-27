@@ -29,45 +29,45 @@ variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ}
 
 lemma evE_inj {e e' : H1E} (h : evE e = evE e') : e = e' := by
   have hc : toE (h1N_fnE e) = toE (h1N_fnE e') := toE_congr _ _ fun t ht => by
-    have := congrArg (fun P : Pot => P ⟨t, ht⟩) h
+    have := congrArg (fun P : C01 => P ⟨t, ht⟩) h
     simpa only [evE_apply] using this
   simpa only [toE_fnE] using hc
 
 lemma eq_of_int {e e' : H1E}
-    (h : ∀ u : Pot, ∫ t, ext u t * ext (evE e) t ∂μ1 = ∫ t, ext u t * ext (evE e') t ∂μ1) :
+    (h : ∀ u : C01, ∫ t, iccExt u t * iccExt (evE e) t ∂vol01 = ∫ t, iccExt u t * iccExt (evE e') t ∂vol01) :
     e = e' :=
   evE_inj (pot_eq_of_integral h)
 
-lemma int_ext_evE_add_smul (u : Pot) (e e' : H1E) (a b : ℝ) :
-    ∫ t, ext u t * ext (evE (a • e + b • e')) t ∂μ1 =
-      a * ∫ t, ext u t * ext (evE e) t ∂μ1 + b * ∫ t, ext u t * ext (evE e') t ∂μ1 := by
+lemma int_ext_evE_add_smul (u : C01) (e e' : H1E) (a b : ℝ) :
+    ∫ t, iccExt u t * iccExt (evE (a • e + b • e')) t ∂vol01 =
+      a * ∫ t, iccExt u t * iccExt (evE e) t ∂vol01 + b * ∫ t, iccExt u t * iccExt (evE e') t ∂vol01 := by
   rw [map_add, map_smul, map_smul, int_ext_add_smul]
 
 /-! ### The density through its integrals -/
 
 /-- `rhoN` has the integrals `∫ Σ_k u(x_k) Φ²` for Neumann states. -/
-theorem int_rhoN_N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (v : Pot) :
-    ∫ t, ext v t * rhoN Φ t ∂μ1 = ∫ x, (∑ k, ext v (x k)) * (Φ x * Φ x) ∂μN n := by
-  have hv := continuous_ext v
+theorem int_rhoN_N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (v : C01) :
+    ∫ t, iccExt v t * rhoN Φ t ∂vol01 = ∫ x, (∑ k, iccExt v (x k)) * (Φ x * Φ x) ∂μN n := by
+  have hv := continuous_iccExt v
   have hsq : Integrable (fun x => Φ x * Φ x) (μN n) := int_mul_L2 hΦ.1 hΦ.1
-  have hint : ∀ k : Fin (n + 1), Integrable (fun x => ext v (x k) * (Φ x * Φ x)) (μN n) := by
+  have hint : ∀ k : Fin (n + 1), Integrable (fun x => iccExt v (x k) * (Φ x * Φ x)) (μN n) := by
     intro k
     obtain ⟨C, hC⟩ := ae_bound_cont (n := n) (hv.comp (continuous_apply k))
     exact hsq.bdd_mul (hv.comp (continuous_apply k)).aestronglyMeasurable hC
-  have swapsq : ∀ k : Fin (n + 1), ∫ x, ext v (x k) * (Φ x * Φ x) ∂μN n =
-      ∫ x, ext v (x 0) * (Φ x * Φ x) ∂μN n := by
+  have swapsq : ∀ k : Fin (n + 1), ∫ x, iccExt v (x k) * (Φ x * Φ x) ∂μN n =
+      ∫ x, iccExt v (x 0) * (Φ x * Φ x) ∂μN n := by
     intro k
-    rw [← integral_pm (Equiv.swap 0 k) (fun x => ext v (x 0) * (Φ x * Φ x))]
+    rw [← integral_pm (Equiv.swap 0 k) (fun x => iccExt v (x 0) * (Φ x * Φ x))]
     refine integral_congr_ae ?_
     filter_upwards [hΦ.2.2 (Equiv.swap 0 k) trivial] with x hx
     simp only [pm, Equiv.swap_apply_left] at hx ⊢
     rw [hx]
     have := ch_mul_self τ (Equiv.swap 0 k)
-    linear_combination (-(ext v (x k) * (Φ x * Φ x))) * this
-  have hpt : (fun x : Cfg n => (∑ k, ext v (x k)) * (Φ x * Φ x)) =
-      fun x => ∑ k, ext v (x k) * (Φ x * Φ x) := by
+    linear_combination (-(iccExt v (x k) * (Φ x * Φ x))) * this
+  have hpt : (fun x : Cfg n => (∑ k, iccExt v (x k)) * (Φ x * Φ x)) =
+      fun x => ∑ k, iccExt v (x k) * (Φ x * Φ x) := by
     funext x; rw [Finset.sum_mul]
-  rw [hpt, integral_finsetSum (f := fun k x => ext v (x k) * (Φ x * Φ x)) _ fun k _ => hint k]
+  rw [hpt, integral_finsetSum (f := fun k x => iccExt v (x k) * (Φ x * Φ x)) _ fun k _ => hint k]
   simp only [swapsq, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   rw [integral_cube_cons' (hint 0), ← integral_const_mul]
   refine (setIntegral_congr_fun measurableSet_Ioo fun t _ => ?_).symm
@@ -76,23 +76,23 @@ theorem int_rhoN_N {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (v : Pot) :
   congr 1; funext y; ring
 
 /-- The one-body form `∫ Σ_k u(x_k) Φ Ψ`. -/
-noncomputable def pfN (u : Pot) (Φ Ψ : Cfg n → ℝ) : ℝ :=
-  ∫ x, (∑ k, ext u (x k)) * (Φ x * Ψ x) ∂μN n
+noncomputable def pfN (u : C01) (Φ Ψ : Cfg n → ℝ) : ℝ :=
+  ∫ x, (∑ k, iccExt u (x k)) * (Φ x * Ψ x) ∂μN n
 
-lemma integrable_pfN (u : Pot) {Φ Ψ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n))
-    (hΨ : MemLp Ψ 2 (μN n)) : Integrable (fun x => (∑ k, ext u (x k)) * (Φ x * Ψ x)) (μN n) := by
-  have hc : Continuous fun x : Cfg n => ∑ k, ext u (x k) :=
-    continuous_finsetSum _ fun k _ => (continuous_ext u).comp (continuous_apply k)
+lemma integrable_pfN (u : C01) {Φ Ψ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n))
+    (hΨ : MemLp Ψ 2 (μN n)) : Integrable (fun x => (∑ k, iccExt u (x k)) * (Φ x * Ψ x)) (μN n) := by
+  have hc : Continuous fun x : Cfg n => ∑ k, iccExt u (x k) :=
+    continuous_finsetSum _ fun k _ => (continuous_iccExt u).comp (continuous_apply k)
   obtain ⟨C, hC⟩ := ae_bound_cont (n := n) hc
   exact (int_mul_L2 hΦ hΨ).bdd_mul hc.aestronglyMeasurable hC
 
-lemma pfN_expand (u : Pot) {Φ Ψ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) (hΨ : MemLp Ψ 2 (μN n))
+lemma pfN_expand (u : C01) {Φ Ψ : Cfg n → ℝ} (hΦ : MemLp Φ 2 (μN n)) (hΨ : MemLp Ψ 2 (μN n))
     (s : ℝ) : pfN u (Φ + s • Ψ) (Φ + s • Ψ) = pfN u Φ Φ + 2 * s * pfN u Φ Ψ + s ^ 2 * pfN u Ψ Ψ :=
   integral_expand (integrable_pfN u hΦ hΦ) (integrable_pfN u hΦ hΨ) (integrable_pfN u hΨ hΨ) s
 
 /-- `rhoE` has the integrals of the density. -/
-lemma int_rhoE {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (u : Pot) :
-    ∫ t, ext u t * ext (evE (rhoE τ Φ)) t ∂μ1 = pfN u Φ Φ := by
+lemma int_rhoE {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (u : C01) :
+    ∫ t, iccExt u t * iccExt (evE (rhoE τ Φ)) t ∂vol01 = pfN u Φ Φ := by
   rw [pfN, ← int_rhoN_N hΦ u]
   refine integral_congr_ae ?_
   filter_upwards [(gNH_spec hΦ).2.1, ae_restrict_mem measurableSet_Ioo] with t h1 ht
@@ -104,8 +104,8 @@ variable (τ) in
 noncomputable def rhoE2 (Φ Ψ : Cfg n → ℝ) : H1E :=
   (1 / 4 : ℝ) • (rhoE τ (Φ + Ψ) - rhoE τ (Φ - Ψ))
 
-lemma int_rhoE2 {Φ Ψ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (hΨ : Ψ ∈ DomN τ n) (u : Pot) :
-    ∫ t, ext u t * ext (evE (rhoE2 τ Φ Ψ)) t ∂μ1 = pfN u Φ Ψ := by
+lemma int_rhoE2 {Φ Ψ : Cfg n → ℝ} (hΦ : Φ ∈ DomN τ n) (hΨ : Ψ ∈ DomN τ n) (u : C01) :
+    ∫ t, iccExt u t * iccExt (evE (rhoE2 τ Φ Ψ)) t ∂vol01 = pfN u Φ Ψ := by
   have e : rhoE2 τ Φ Ψ = (1 / 4 : ℝ) • rhoE τ (Φ + Ψ) + (-(1 / 4) : ℝ) • rhoE τ (Φ - Ψ) := by
     rw [rhoE2, smul_sub, sub_eq_add_neg, neg_smul]
   rw [e, int_ext_evE_add_smul, int_rhoE (add_mem hΦ hΨ), int_rhoE (sub_mem hΦ hΨ)]
@@ -132,11 +132,11 @@ lemma rhoE_smul {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomN τ n) (c : ℝ) :
   have h0 : rhoE τ (0 : Cfg n → ℝ) = 0 := by
     refine eq_of_int fun u => ?_
     rw [int_rhoE (zero_mem _)]
-    simp [pfN, SturmLiouville.ext]
+    simp [pfN, SturmLiouville.iccExt]
   have h2 : rhoE2 τ (0 : Cfg n → ℝ) Ψ = 0 := by
     refine eq_of_int fun u => ?_
     rw [int_rhoE2 (zero_mem _) hΨ]
-    simp [pfN, SturmLiouville.ext]
+    simp [pfN, SturmLiouville.iccExt]
   rw [zero_add, h0, h2] at h
   simpa using h
 
@@ -149,8 +149,8 @@ lemma rhoE_null {χ : Cfg n → ℝ} (hχ : χ ∈ DomN τ n) (h0 : ∫ x, χ x 
   refine eq_of_int fun u => ?_
   rw [int_rhoE hχ, pfN]
   rw [integral_congr_ae (hzz.mono fun x hx => by simp only [hx, Pi.zero_apply, mul_zero] :
-    (fun x => (∑ k, ext u (x k)) * (χ x * χ x)) =ᵐ[μN n] fun _ => (0 : ℝ))]
-  simp [SturmLiouville.ext]
+    (fun x => (∑ k, iccExt u (x k)) * (χ x * χ x)) =ᵐ[μN n] fun _ => (0 : ℝ))]
+  simp [SturmLiouville.iccExt]
 
 /-! ### The kinetic form -/
 

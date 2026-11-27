@@ -144,18 +144,18 @@ lemma tent_le_indicator {t0 w : ℝ} (hw : 0 < w) (t : ℝ) :
     · rw [abs_of_pos (by linarith)]; linarith
 
 lemma integral_indicator_Icc_le {a b : ℝ} (hab : a ≤ b) :
-    ∫ t, (Icc a b).indicator (1 : ℝ → ℝ) t ∂μ1 ≤ b - a := by
+    ∫ t, (Icc a b).indicator (1 : ℝ → ℝ) t ∂vol01 ≤ b - a := by
   rw [integral_indicator_one measurableSet_Icc]
-  have h1 : μ1 (Icc a b) ≤ volume (Icc a b) := Measure.restrict_le_self _
+  have h1 : vol01 (Icc a b) ≤ volume (Icc a b) := Measure.restrict_le_self _
   rw [Real.volume_Icc] at h1
   have := ENNReal.toReal_mono ENNReal.ofReal_ne_top h1
   rwa [ENNReal.toReal_ofReal (by linarith)] at this
 
-lemma integral_tent_le {t0 w : ℝ} (hw : 0 < w) : ∫ t, tentF t0 w t ∂μ1 ≤ 2 * w := by
+lemma integral_tent_le {t0 w : ℝ} (hw : 0 < w) : ∫ t, tentF t0 w t ∂vol01 ≤ 2 * w := by
   have hc : Continuous (tentF t0 w) := (lipschitz_tent (t0 := t0) hw).continuous
-  have hi : Integrable ((Icc (t0 - w) (t0 + w)).indicator (1 : ℝ → ℝ)) μ1 :=
+  have hi : Integrable ((Icc (t0 - w) (t0 + w)).indicator (1 : ℝ → ℝ)) vol01 :=
     (integrable_const (1 : ℝ)).indicator measurableSet_Icc
-  calc ∫ t, tentF t0 w t ∂μ1 ≤ ∫ t, (Icc (t0 - w) (t0 + w)).indicator 1 t ∂μ1 :=
+  calc ∫ t, tentF t0 w t ∂vol01 ≤ ∫ t, (Icc (t0 - w) (t0 + w)).indicator 1 t ∂vol01 :=
         integral_mono_of_nonneg (ae_of_all _ fun t => tentF_nonneg _ _ _) hi
           (ae_of_all _ fun t => tent_le_indicator hw t)
     _ ≤ t0 + w - (t0 - w) := integral_indicator_Icc_le (by linarith)
@@ -176,7 +176,7 @@ lemma exists_tent_L2' {t0 w : ℝ} (hw : 0 < w) (hw0 : w ≤ t0) (hw1 : w ≤ 1 
       ‖q‖ ^ 2 ≤ 2 / w := by
   have hl := lipschitz_tent (t0 := t0) hw
   have hb : ∀ t, ‖deriv (tentF t0 w) t‖ ≤ 1 / w := fun t => norm_deriv_le_of_lipschitz hl
-  have hm : MemLp (deriv (tentF t0 w)) 2 μ1 :=
+  have hm : MemLp (deriv (tentF t0 w)) 2 vol01 :=
     MemLp.of_bound (measurable_deriv _).aestronglyMeasurable (1 / w) (ae_of_all _ hb)
   set q : L2I := hm.toLp _
   have h0 : tentF t0 w 0 = 0 := by
@@ -202,12 +202,12 @@ lemma exists_tent_L2' {t0 w : ℝ} (hw : 0 < w) (hw0 : w ≤ t0) (hw1 : w ≤ 1 
             rcases ht with ht | ht
             · rw [abs_of_neg (by linarith)]; linarith
             · rw [abs_of_pos (by linarith)]; linarith
-    have hi : Integrable ((Icc (t0 - w) (t0 + w)).indicator (1 : ℝ → ℝ)) μ1 :=
+    have hi : Integrable ((Icc (t0 - w) (t0 + w)).indicator (1 : ℝ → ℝ)) vol01 :=
       (integrable_const (1 : ℝ)).indicator measurableSet_Icc
     rw [norm_sq_L2I]
-    calc ∫ t, (q : ℝ → ℝ) t ^ 2 ∂μ1 = ∫ t, deriv (tentF t0 w) t ^ 2 ∂μ1 :=
+    calc ∫ t, (q : ℝ → ℝ) t ^ 2 ∂vol01 = ∫ t, deriv (tentF t0 w) t ^ 2 ∂vol01 :=
           integral_congr_ae (by filter_upwards [MemLp.coeFn_toLp hm] with t ht; rw [ht])
-      _ ≤ ∫ t, (1 / w) ^ 2 * (Icc (t0 - w) (t0 + w)).indicator 1 t ∂μ1 :=
+      _ ≤ ∫ t, (1 / w) ^ 2 * (Icc (t0 - w) (t0 + w)).indicator 1 t ∂vol01 :=
           integral_mono_of_nonneg (ae_of_all _ fun t => sq_nonneg _) (hi.const_mul _)
             (ae_of_all _ hbd)
       _ ≤ (1 / w) ^ 2 * (t0 + w - (t0 - w)) := by
@@ -302,13 +302,13 @@ set_option maxHeartbeats 1000000 in -- many local definitions; the final term is
 theorem exists_not_BsetL {L : ℝ} (hL : 0 ≤ L) (k : ℕ) {x : L2I} (hx : x ∈ SN n)
     (hxB : x ∈ BsetL L k) {ε : ℝ} (hε : 0 < ε) : ∃ y ∈ SN n, ‖y - x‖ < ε ∧ y ∉ BsetL L k := by
   set g := prim x
-  have hN : ∫ t, g t ^ 2 ∂μ1 = n + 1 := hx.2
+  have hN : ∫ t, g t ^ 2 ∂vol01 = n + 1 := hx.2
   set N : ℝ := n + 1
   have hNp : 0 < N := by positivity
   obtain ⟨t0, ht0, hg0⟩ : ∃ t0 ∈ Ioo (0 : ℝ) 1, g t0 ≠ 0 := by
     by_contra hcon
     push Not at hcon
-    have : ∫ t, g t ^ 2 ∂μ1 = 0 :=
+    have : ∫ t, g t ^ 2 ∂vol01 = 0 :=
       setIntegral_eq_zero_of_forall_eq_zero fun t ht => by simp [hcon t ht]
     linarith
   set γ := g t0
@@ -375,19 +375,19 @@ theorem exists_not_BsetL {L : ℝ} (hL : 0 ≤ L) (k : ℕ) {x : L2I} (hx : x �
   set F : L2I := x + δ • q
   have hFp : ∀ t ∈ Icc (0 : ℝ) 1, prim F t = g t + δ * tentF t0 w t := fun t ht => by
     simp only [F]; rw [prim_add _ _ ht, prim_smul _ _ ht, hqp t ht]
-  set J := ∫ t, prim F t ^ 2 ∂μ1
+  set J := ∫ t, prim F t ^ 2 ∂vol01
   have hp_c : Continuous (tentF t0 w) := (lipschitz_tent (t0 := t0) hw).continuous
   have hJN : |J - N| ≤ (2 * M + 1) * (2 * r) := by
-    have hint1 : Integrable (fun t => prim F t ^ 2 - g t ^ 2) μ1 :=
+    have hint1 : Integrable (fun t => prim F t ^ 2 - g t ^ 2) vol01 :=
       (integrable_prim_sq F).sub (integrable_prim_sq x)
-    have hint2 : Integrable (fun t => (2 * |δ| * M + δ ^ 2) * tentF t0 w t) μ1 :=
+    have hint2 : Integrable (fun t => (2 * |δ| * M + δ ^ 2) * tentF t0 w t) vol01 :=
       (hp_c.continuousOn.integrableOn_compact (K := Icc (0 : ℝ) 1) isCompact_Icc
         |>.mono_set Ioo_subset_Icc_self).const_mul _
-    have e : J - N = ∫ t, (prim F t ^ 2 - g t ^ 2) ∂μ1 := by
+    have e : J - N = ∫ t, (prim F t ^ 2 - g t ^ 2) ∂vol01 := by
       rw [integral_sub (integrable_prim_sq F) (integrable_prim_sq x), hN]
     rw [e, ← Real.norm_eq_abs]
-    calc ‖∫ t, (prim F t ^ 2 - g t ^ 2) ∂μ1‖
-        ≤ ∫ t, (2 * |δ| * M + δ ^ 2) * tentF t0 w t ∂μ1 := by
+    calc ‖∫ t, (prim F t ^ 2 - g t ^ 2) ∂vol01‖
+        ≤ ∫ t, (2 * |δ| * M + δ ^ 2) * tentF t0 w t ∂vol01 := by
           refine norm_integral_le_of_norm_le hint2 ?_
           filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
           have hti := Ioo_subset_Icc_self ht
@@ -405,7 +405,7 @@ theorem exists_not_BsetL {L : ℝ} (hL : 0 ≤ L) (k : ℕ) {x : L2I} (hx : x �
             rw [abs_mul, abs_of_nonneg (sq_nonneg δ), abs_of_nonneg p0]
             exact mul_le_of_le_one_right (sq_nonneg δ) p1
           exact (abs_add_le _ _).trans (by linarith)
-      _ = (2 * |δ| * M + δ ^ 2) * ∫ t, tentF t0 w t ∂μ1 := integral_const_mul _ _
+      _ = (2 * |δ| * M + δ ^ 2) * ∫ t, tentF t0 w t ∂vol01 := integral_const_mul _ _
       _ ≤ (2 * |δ| * M + δ ^ 2) * (2 * w) :=
           mul_le_mul_of_nonneg_left (integral_tent_le hw) (by positivity)
       _ ≤ (2 * M + 1) * (2 * r) := by
@@ -448,7 +448,7 @@ theorem exists_not_BsetL {L : ℝ} (hL : 0 ≤ L) (k : ℕ) {x : L2I} (hx : x �
       rw [hyp 1 ⟨zero_le_one, le_rfl⟩, hFp 1 ⟨zero_le_one, le_rfl⟩, hx1,
         tent_far hw (by rw [abs_of_pos (by linarith [ht0.2])]; exact hw1)]
       ring
-    · have : ∫ t, prim y t ^ 2 ∂μ1 = lam ^ 2 * J := by
+    · have : ∫ t, prim y t ^ 2 ∂vol01 = lam ^ 2 * J := by
         rw [← integral_const_mul]
         refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
         rw [hyp t (Ioo_subset_Icc_self ht)]; ring
@@ -539,10 +539,10 @@ lemma isNowhereDense_BsetS (k : ℕ) : IsNowhereDense (BsetS n k) := by
   exact hyB (show (⟨y, hy⟩ : SN n) ∈ BsetS n k from interior_subset (hball hyb))
 
 /-- `ρ` has a profile `K` that is `C¹` on `[0, 1]` and vanishes at the walls. -/
-def C1Dens (ρ : Pot → ℝ) : Prop :=
+def C1Dens (ρ : C01 → ℝ) : Prop :=
   ∃ K K' : ℝ → ℝ, ContinuousOn K' (Icc 0 1) ∧
     (∀ t ∈ Icc (0 : ℝ) 1, HasDerivWithinAt K (K' t) (Icc 0 1) t) ∧ K 0 = 0 ∧ K 1 = 0 ∧
-    ρ = fun u => ∫ t, ext u t * K t ∂μ1
+    ρ = fun u => ∫ t, iccExt u t * K t ∂vol01
 
 /-- A `C¹` profile has second differences at most `h` for small `h`. -/
 lemma D2_le_of_C1 {K K' : ℝ → ℝ} (hK' : ContinuousOn K' (Icc 0 1))
@@ -597,12 +597,12 @@ lemma mem_BsetS_of_C1Dens (x : SN n) (h : C1Dens (rhoF x)) : ∃ k : ℕ, x ∈ 
   have he := eqOn_of_integral_pot (f := fun t => H10.clamp (prim (x : L2I)) t ^ 2) (g := Kc)
     (hc.pow 2) hKcc fun u => by
       have h1 := congrFun hρ u
-      change ∫ t, ext u t * prim (x : L2I) t ^ 2 ∂μ1 = ∫ t, ext u t * K t ∂μ1 at h1
-      have h2 : ∫ t in Ioo (0 : ℝ) 1, ext u t * H10.clamp (prim (x : L2I)) t ^ 2 =
-          ∫ t, ext u t * prim (x : L2I) t ^ 2 ∂μ1 :=
+      change ∫ t, iccExt u t * prim (x : L2I) t ^ 2 ∂vol01 = ∫ t, iccExt u t * K t ∂vol01 at h1
+      have h2 : ∫ t in Ioo (0 : ℝ) 1, iccExt u t * H10.clamp (prim (x : L2I)) t ^ 2 =
+          ∫ t, iccExt u t * prim (x : L2I) t ^ 2 ∂vol01 :=
         setIntegral_congr_fun measurableSet_Ioo fun t ht => by
           simp only [H10.clamp_eq (Ioo_subset_Icc_self ht)]
-      have h3 : ∫ t in Ioo (0 : ℝ) 1, ext u t * Kc t = ∫ t, ext u t * K t ∂μ1 :=
+      have h3 : ∫ t in Ioo (0 : ℝ) 1, iccExt u t * Kc t = ∫ t, iccExt u t * K t ∂vol01 :=
         setIntegral_congr_fun measurableSet_Ioo fun t ht => by
           simp only [Kc, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]
       rw [h2, h3, h1]

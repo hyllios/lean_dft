@@ -29,7 +29,7 @@ open MeasureTheory Set SturmLiouville Real Filter Topology
 variable {n : ℕ} {w : Cfg n → ℝ} {hw : Continuous w}
 
 /-- **Bosonic `H¹₀` ground states of continuous potentials are nonzero almost everywhere.** -/
-theorem gs_ne_zero_W_bos {v : Pot} {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW .bos n w hw) v Ψ) :
+theorem gs_ne_zero_W_bos {v : C01} {Ψ : Cfg n → ℝ} (hΨ : IsGS (settingW .bos n w hw) v Ψ) :
     ∀ᵐ x ∂μN n, Ψ x ≠ 0 := by
   set u : Cfg n → ℝ := fun x => |Ψ x|
   have hu : IsGS (settingW .bos n w hw) v u := isGS_abs hΨ

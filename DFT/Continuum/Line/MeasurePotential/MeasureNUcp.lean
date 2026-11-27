@@ -111,42 +111,42 @@ theorem log_estimate_core {u : Cfg n → ℝ} (hD : H1W u) (hu0 : ∀ᵐ x ∂μ
 /-! ### Bounds on continuous functions from their integrals -/
 
 lemma le_of_int_nonneg_zero {g : ℝ → ℝ} (hg : Continuous g) (h0 : ∀ t, 0 ≤ g t)
-    (hint : ∫ t, g t ∂μ1 ≤ 0) : ∀ t ∈ Icc (0 : ℝ) 1, g t = 0 := by
-  have hi : Integrable g μ1 := (hg.continuousOn.integrableOn_compact isCompact_Icc).mono_set
+    (hint : ∫ t, g t ∂vol01 ≤ 0) : ∀ t ∈ Icc (0 : ℝ) 1, g t = 0 := by
+  have hi : Integrable g vol01 := (hg.continuousOn.integrableOn_compact isCompact_Icc).mono_set
     Ioo_subset_Icc_self
-  have hz : g =ᵐ[μ1] 0 := (integral_eq_zero_iff_of_nonneg h0 hi).1
+  have hz : g =ᵐ[vol01] 0 := (integral_eq_zero_iff_of_nonneg h0 hi).1
     (le_antisymm hint (integral_nonneg h0))
   have hIoo : EqOn g 0 (Ioo 0 1) := Measure.eqOn_of_ae_eq hz hg.continuousOn
     continuousOn_const (by rw [interior_Ioo]; exact subset_closure)
   exact hIoo.of_subset_closure hg.continuousOn continuousOn_const Ioo_subset_Icc_self
     (by rw [closure_Ioo zero_ne_one])
 
-lemma ext_le_norm (p : Pot) (t : ℝ) : |ext p t| ≤ ‖p‖ := by
-  simpa [SturmLiouville.ext] using p.norm_coe_le_norm _
+lemma ext_le_norm (p : C01) (t : ℝ) : |iccExt p t| ≤ ‖p‖ := by
+  simpa [SturmLiouville.iccExt] using p.norm_coe_le_norm _
 
 /-- A continuous `p` with `∫ v p ≤ M ∫ v` for all `v ≥ 0` is at most `M`. -/
-lemma pot_le_of_int {p : Pot} {M : ℝ}
-    (h : ∀ v : Pot, (∀ t, 0 ≤ v t) → ∫ t, ext v t * ext p t ∂μ1 ≤ M * ∫ t, ext v t ∂μ1) :
+lemma pot_le_of_int {p : C01} {M : ℝ}
+    (h : ∀ v : C01, (∀ t, 0 ≤ v t) → ∫ t, iccExt v t * iccExt p t ∂vol01 ≤ M * ∫ t, iccExt v t ∂vol01) :
     ∀ t, p t ≤ M := by
-  set v : Pot := ⟨fun t => max (p t - M) 0, by fun_prop⟩
+  set v : C01 := ⟨fun t => max (p t - M) 0, by fun_prop⟩
   have hv := h v fun t => le_max_right _ _
-  have hiv : Integrable (ext v) μ1 := (continuous_ext v).integrableOn_Icc.mono_set
+  have hiv : Integrable (iccExt v) vol01 := (continuous_iccExt v).integrableOn_Icc.mono_set
     Ioo_subset_Icc_self
   rw [← integral_const_mul, ← sub_nonpos, ← integral_sub (integrable_ext_mul v p)
     (hiv.const_mul M)] at hv
-  have hz := le_of_int_nonneg_zero (g := fun t => ext v t * ext p t - M * ext v t)
-    (((continuous_ext v).mul (continuous_ext p)).sub (continuous_const.mul (continuous_ext v)))
+  have hz := le_of_int_nonneg_zero (g := fun t => iccExt v t * iccExt p t - M * iccExt v t)
+    (((continuous_iccExt v).mul (continuous_iccExt p)).sub (continuous_const.mul (continuous_iccExt v)))
     (fun t => by
-      have : ext v t * ext p t - M * ext v t = max (ext p t - M) 0 * (ext p t - M) := by
-        simp only [v, SturmLiouville.ext, ContinuousMap.coe_mk]; ring
+      have : iccExt v t * iccExt p t - M * iccExt v t = max (iccExt p t - M) 0 * (iccExt p t - M) := by
+        simp only [v, SturmLiouville.iccExt, ContinuousMap.coe_mk]; ring
       rw [this]
-      rcases le_total (ext p t - M) 0 with h' | h'
+      rcases le_total (iccExt p t - M) 0 with h' | h'
       · rw [max_eq_right h']; simp
       · rw [max_eq_left h']; positivity) hv
   intro t
   have := hz t t.2
-  have e : ext v t * ext p t - M * ext v t = max (p t - M) 0 * (p t - M) := by
-    simp only [v, SturmLiouville.ext, ContinuousMap.coe_mk, projIcc_of_mem _ t.2]; ring
+  have e : iccExt v t * iccExt p t - M * iccExt v t = max (p t - M) 0 * (p t - M) := by
+    simp only [v, SturmLiouville.iccExt, ContinuousMap.coe_mk, projIcc_of_mem _ t.2]; ring
   rw [e] at this
   by_contra hc; push Not at hc
   have : 0 < max (p t - M) 0 * (p t - M) := by
@@ -154,22 +154,22 @@ lemma pot_le_of_int {p : Pot} {M : ℝ}
   linarith
 
 /-- A continuous `p` with `∫ v p ≥ 0` for all `v ≥ 0` is nonnegative. -/
-lemma pot_nonneg_of_int {p : Pot}
-    (h : ∀ v : Pot, (∀ t, 0 ≤ v t) → 0 ≤ ∫ t, ext v t * ext p t ∂μ1) : ∀ t, 0 ≤ p t := by
+lemma pot_nonneg_of_int {p : C01}
+    (h : ∀ v : C01, (∀ t, 0 ≤ v t) → 0 ≤ ∫ t, iccExt v t * iccExt p t ∂vol01) : ∀ t, 0 ≤ p t := by
   have h' := pot_le_of_int (p := -p) (M := 0) fun v hv => by
     have := h v hv
-    have e : ∫ t, ext v t * ext (-p) t ∂μ1 = -∫ t, ext v t * ext p t ∂μ1 := by
-      rw [← integral_neg]; congr 1; funext t; simp [SturmLiouville.ext]
+    have e : ∫ t, iccExt v t * iccExt (-p) t ∂vol01 = -∫ t, iccExt v t * iccExt p t ∂vol01 := by
+      rw [← integral_neg]; congr 1; funext t; simp [SturmLiouville.iccExt]
     rw [e, zero_mul]; linarith
   intro t; have := h' t; simp at this; linarith
 
-lemma integral_LN (v : Pot) : ∫ x, LN n v x ∂μN n = (n + 1) * ∫ t, ext v t ∂μ1 := by
+lemma integral_LN (v : C01) : ∫ x, LN n v x ∂μN n = (n + 1) * ∫ t, iccExt v t ∂vol01 := by
   have := integral_LN_mul (n := n) v (F := fun _ => 1) continuous_const
   simp only [mul_one] at this
   rw [this]
-  have hk : ∀ k : Fin (n + 1), ∫ x, ext v (x k) ∂μN n = ∫ t, ext v t ∂μ1 := fun k => by
-    have e : (fun x : Cfg n => ext v (x k)) = fun x =>
-        ∏ i, (if i = k then ext v else fun _ => (1 : ℝ)) (x i) := by
+  have hk : ∀ k : Fin (n + 1), ∫ x, iccExt v (x k) ∂μN n = ∫ t, iccExt v t ∂vol01 := fun k => by
+    have e : (fun x : Cfg n => iccExt v (x k)) = fun x =>
+        ∏ i, (if i = k then iccExt v else fun _ => (1 : ℝ)) (x i) := by
       funext x
       rw [Finset.prod_eq_single k (fun i _ hi => by simp [hi])
         (fun h => absurd (Finset.mem_univ k) h)]
@@ -182,14 +182,14 @@ lemma integral_LN (v : Pot) : ∫ x, LN n v x ∂μN n = (n + 1) * ∫ t, ext v 
   push_cast; ring
 
 /-- A continuous `p` with the integrals of `F`, `0 ≤ F ≤ M`, has `‖p‖ ≤ N M`. -/
-lemma norm_pot_le_of_int {p : Pot} {F : Cfg n → ℝ} (hFi : Integrable F (μN n)) {M : ℝ}
+lemma norm_pot_le_of_int {p : C01} {F : Cfg n → ℝ} (hFi : Integrable F (μN n)) {M : ℝ}
     (hM : 0 ≤ M) (h0 : ∀ᵐ x ∂μN n, 0 ≤ F x) (h1 : ∀ᵐ x ∂μN n, F x ≤ M)
-    (hint : ∀ v : Pot, ∫ t, ext v t * ext p t ∂μ1 = ∫ x, LN n v x * F x ∂μN n) :
+    (hint : ∀ v : C01, ∫ t, iccExt v t * iccExt p t ∂vol01 = ∫ x, LN n v x * F x ∂μN n) :
     ‖p‖ ≤ (n + 1) * M := by
-  have hLN : ∀ v : Pot, (∀ t, 0 ≤ v t) → ∀ x, 0 ≤ LN n v x := fun v hv x => by
-    change 0 ≤ ∑ k, SturmLiouville.ext v (x k)
+  have hLN : ∀ v : C01, (∀ t, 0 ≤ v t) → ∀ x, 0 ≤ LN n v x := fun v hv x => by
+    change 0 ≤ ∑ k, SturmLiouville.iccExt v (x k)
     exact Finset.sum_nonneg fun k _ => hv _
-  have iL : ∀ v : Pot, Integrable (fun x => LN n v x * F x) (μN n) := fun v => by
+  have iL : ∀ v : C01, Integrable (fun x => LN n v x * F x) (μN n) := fun v => by
     obtain ⟨C, hC⟩ := ae_bound_cont (n := n) (continuous_LN v)
     exact hFi.bdd_mul (continuous_LN v).aestronglyMeasurable hC
   have hupper := pot_le_of_int (p := p) (M := (n + 1) * M) fun v hv => by
@@ -198,7 +198,7 @@ lemma norm_pot_le_of_int {p : Pot} {F : Cfg n → ℝ} (hFi : Integrable F (μN 
           refine integral_mono_ae (iL v) ((integrableN (continuous_LN v)).const_mul M) ?_
           filter_upwards [h1] with x hx
           nlinarith [hLN v hv x]
-      _ = (n + 1) * M * ∫ t, ext v t ∂μ1 := by rw [integral_const_mul, integral_LN]; ring
+      _ = (n + 1) * M * ∫ t, iccExt v t ∂vol01 := by rw [integral_const_mul, integral_LN]; ring
   have hlower := pot_nonneg_of_int (p := p) fun v hv => by
     rw [hint]
     exact integral_nonneg_of_ae (by filter_upwards [h0] with x hx; exact mul_nonneg (hLN v hv x) hx)

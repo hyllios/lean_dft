@@ -287,8 +287,8 @@ of `u φ`. For a symmetric `C¹` cutoff `|η| ≤ 1`, `Σ_k ∫ η² (∂ₖu/(u
 theorem log_estimate_gen {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u : Cfg n → ℝ}
     (hu : u ∈ DomN .bos n) (hu0 : ∀ᵐ x ∂μN n, 0 ≤ u x) {η : Cfg n → ℝ}
     (hη : ContDiff ℝ 1 η) (hηs : ∀ σ x, η (pm σ x) = η x) (hη1 : ∀ᵐ x ∂μN n, |η x| ≤ 1)
-    (E : ℝ) (hEL : ∀ ε > 0, ∃ e : H1E, (∀ u' : Pot, ∫ t, ext u' t * ext (evE e) t ∂μ1 =
-      ∫ x, (∑ k, ext u' (x k)) * (u x * logTest η u ε x) ∂μN n) ∧
+    (E : ℝ) (hEL : ∀ ε > 0, ∃ e : H1E, (∀ u' : C01, ∫ t, iccExt u' t * iccExt (evE e) t ∂vol01 =
+      ∫ x, (∑ k, iccExt u' (x k)) * (u x * logTest η u ε x) ∂μN n) ∧
       kinN2 u (logTest η u ε) + ∫ x, w x * (u x * logTest η u ε x) ∂μN n + v e =
         E * ∫ x, u x * logTest η u ε x ∂μN n) :
     ∃ K, 0 ≤ K ∧ ∀ ε > 0, ∑ k, ∫ x, (η x * (dWN k u x / (u x + ε))) ^ 2 ∂μN n ≤ K := by
@@ -351,8 +351,8 @@ theorem log_estimate_gen {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {u :
     simp only [ch_bos, one_mul] at hx
     simp only [p, ζ, hηs, hx]
   -- the mixed density is the density of `p`
-  have he : ∀ u' : Pot, ∫ t, ext u' t * ext (evE e) t ∂μ1 =
-      ∫ t, ext u' t * ((n + 1) * mF p t) ∂μ1 := fun u' => by
+  have he : ∀ u' : C01, ∫ t, iccExt u' t * iccExt (evE e) t ∂vol01 =
+      ∫ t, iccExt u' t * ((n + 1) * mF p t) ∂vol01 := fun u' => by
     rw [hint u', int_mF (hpL.integrable one_le_two) hpsym]
     refine integral_congr_ae ?_
     filter_upwards [huφ] with x hx

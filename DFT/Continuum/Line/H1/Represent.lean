@@ -31,7 +31,7 @@ variable {n : ℕ}
 
 /-- Fubini for products on the cube. -/
 lemma integral_prod_cube (f : Fin (n + 1) → ℝ → ℝ) :
-    ∫ x, ∏ i, f i (x i) ∂μN n = ∏ i, ∫ t, f i t ∂μ1 := by
+    ∫ x, ∏ i, f i (x i) ∂μN n = ∏ i, ∫ t, f i t ∂vol01 := by
   rw [Sine.muN_eq]
   exact integral_fintype_prod_eq_prod (f := f)
 
@@ -50,18 +50,18 @@ section bos
 
 variable {w : Cfg n → ℝ} {hw : Continuous w} {g : ℝ → ℝ}
 
-lemma integral_LN_mul (v : Pot) {F : Cfg n → ℝ} (hF : Continuous F) :
-    ∫ x, LN n v x * F x ∂μN n = ∑ k, ∫ x, ext v (x k) * F x ∂μN n := by
-  rw [← integral_finsetSum (f := fun k x => ext v (x k) * F x) _ fun k _ => integrableN
-    (((continuous_ext v).comp (continuous_apply k)).mul hF)]
+lemma integral_LN_mul (v : C01) {F : Cfg n → ℝ} (hF : Continuous F) :
+    ∫ x, LN n v x * F x ∂μN n = ∑ k, ∫ x, iccExt v (x k) * F x ∂μN n := by
+  rw [← integral_finsetSum (f := fun k x => iccExt v (x k) * F x) _ fun k _ => integrableN
+    (((continuous_iccExt v).comp (continuous_apply k)).mul hF)]
   refine integral_congr_ae (ae_of_all _ fun x => ?_)
-  change (∑ k, ext v (x k)) * F x = _
+  change (∑ k, iccExt v (x k)) * F x = _
   rw [Finset.sum_mul]
 
 /-- **Bosonic `N`-representability**: `Π g(x_k)` is normalised with density `N g²`. -/
-theorem nrep_bos (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+theorem nrep_bos (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     prodS (n := n) g ∈ Nst (setting .bos n w hw) ∧
-      ∀ v, dens (setting .bos n w hw) (prodS g) v = ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1 := by
+      ∀ v, dens (setting .bos n w hw) (prodS g) v = ∫ t, iccExt v t * ((n + 1) * g t ^ 2) ∂vol01 := by
   have hgc := hg.1.continuous
   have hsq : ∀ x : Cfg n, prodS g x * prodS g x = ∏ i, g (x i) ^ 2 := fun x => by
     simp only [prodS, ← Finset.prod_mul_distrib, sq]
@@ -72,15 +72,15 @@ theorem nrep_bos (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 
     (prodS_mem hg).1.continuous.mul (prodS_mem hg).1.continuous
   change ∫ x, LN n v x * (prodS g x * prodS g x) ∂μN n = _
   rw [integral_LN_mul v hPc]
-  have hk : ∀ k : Fin (n + 1), ∫ x, ext v (x k) * (prodS g x * prodS g x) ∂μN n =
-      ∫ t, ext v t * g t ^ 2 ∂μ1 := fun k => by
-    have e : (fun x : Cfg n => ext v (x k) * (prodS g x * prodS g x)) = fun x =>
-        ∏ i, (if i = k then fun t => ext v t * g t ^ 2 else fun t => g t ^ 2) (x i) := by
+  have hk : ∀ k : Fin (n + 1), ∫ x, iccExt v (x k) * (prodS g x * prodS g x) ∂μN n =
+      ∫ t, iccExt v t * g t ^ 2 ∂vol01 := fun k => by
+    have e : (fun x : Cfg n => iccExt v (x k) * (prodS g x * prodS g x)) = fun x =>
+        ∏ i, (if i = k then fun t => iccExt v t * g t ^ 2 else fun t => g t ^ 2) (x i) := by
       funext x
-      rw [hsq, ← prod_ite_mul k (fun i => ext v (x i)) (fun i => g (x i) ^ 2)]
+      rw [hsq, ← prod_ite_mul k (fun i => iccExt v (x i)) (fun i => g (x i) ^ 2)]
       exact Finset.prod_congr rfl fun i _ => by split_ifs with h <;> simp [h]
     rw [e, integral_prod_cube]
-    simp only [apply_ite (fun f : ℝ → ℝ => ∫ t, f t ∂μ1), hnorm]
+    simp only [apply_ite (fun f : ℝ → ℝ => ∫ t, f t ∂vol01), hnorm]
     rw [Finset.prod_eq_single k (fun i _ hi => ite_eq_right hi)
       (fun h => absurd (Finset.mem_univ k) h), ite_eq_left rfl]
   simp only [hk, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
@@ -119,7 +119,7 @@ lemma integral_W_slater (W : Fin (n + 1) → ℝ → ℝ) (hW : ∀ i, Continuou
     (hφ : ∀ j, Continuous (φ j)) :
     ∫ x, (∏ i, W i (x i)) * (slater φ x * slater φ x) ∂μN n =
       ∑ σ : Equiv.Perm (Fin (n + 1)), ∑ τ : Equiv.Perm (Fin (n + 1)),
-        sgn σ * sgn τ * ∏ i, ∫ t, W i t * (φ (σ i) t * φ (τ i) t) ∂μ1 := by
+        sgn σ * sgn τ * ∏ i, ∫ t, W i t * (φ (σ i) t * φ (τ i) t) ∂vol01 := by
   have e : ∀ x : Cfg n, (∏ i, W i (x i)) * (slater φ x * slater φ x) =
       ∑ σ : Equiv.Perm (Fin (n + 1)), ∑ τ : Equiv.Perm (Fin (n + 1)),
         sgn σ * sgn τ * ∏ i, (W i (x i) * (φ (σ i) (x i) * φ (τ i) (x i))) := fun x => by
@@ -141,13 +141,13 @@ lemma integral_W_slater (W : Fin (n + 1) → ℝ → ℝ) (hW : ∀ i, Continuou
     integral_prod_cube (fun i t => W i t * (φ (σ i) t * φ (τ i) t))]
 
 variable (hφ : ∀ j, Continuous (φ j))
-  (hon : ∀ a b, ∫ t, φ a t * φ b t ∂μ1 = if a = b then 1 else 0)
+  (hon : ∀ a b, ∫ t, φ a t * φ b t ∂vol01 = if a = b then 1 else 0)
 include hφ hon
 
 /-- With one weighted coordinate, only the diagonal `σ = τ` survives. -/
 lemma integral_W1_slater (k : Fin (n + 1)) {V : ℝ → ℝ} (hV : Continuous V) :
     ∫ x, V (x k) * (slater φ x * slater φ x) ∂μN n =
-      ∑ σ : Equiv.Perm (Fin (n + 1)), ∫ t, V t * (φ (σ k) t * φ (σ k) t) ∂μ1 := by
+      ∑ σ : Equiv.Perm (Fin (n + 1)), ∫ t, V t * (φ (σ k) t * φ (σ k) t) ∂vol01 := by
   set W : Fin (n + 1) → ℝ → ℝ := fun i => if i = k then V else fun _ => 1
   have hW : ∀ i, Continuous (W i) := fun i => by
     simp only [W]; split_ifs
@@ -187,24 +187,24 @@ lemma integral_slater_sq :
   exact h
 
 /-- **The density of a Slater determinant**: `∫ (Σ_k v(x_k)) det² = N! Σ_j ∫ v φ_j²`. -/
-lemma integral_LN_slater (v : Pot) :
+lemma integral_LN_slater (v : C01) :
     ∫ x, LN n v x * (slater φ x * slater φ x) ∂μN n =
-      (Nat.factorial (n + 1) : ℝ) * ∫ t, ext v t * ∑ j, φ j t ^ 2 ∂μ1 := by
+      (Nat.factorial (n + 1) : ℝ) * ∫ t, iccExt v t * ∑ j, φ j t ^ 2 ∂vol01 := by
   have hS : Continuous fun x : Cfg n => slater φ x * slater φ x := by
     have : Continuous (slater φ) := by
       rw [show slater φ = fun x => _ from funext (slater_eq_sum φ)]
       exact continuous_finsetSum _ fun σ _ => by fun_prop
     exact this.mul this
   rw [integral_LN_mul v hS]
-  simp only [integral_W1_slater hφ hon _ (continuous_ext v)]
+  simp only [integral_W1_slater hφ hon _ (continuous_iccExt v)]
   rw [Finset.sum_comm]
   have hj : ∀ σ : Equiv.Perm (Fin (n + 1)),
-      ∑ k, ∫ t, ext v t * (φ (σ k) t * φ (σ k) t) ∂μ1 =
-        ∫ t, ext v t * ∑ j, φ j t ^ 2 ∂μ1 := fun σ => by
-    rw [Equiv.sum_comp σ (fun j => ∫ t, ext v t * (φ j t * φ j t) ∂μ1),
-      ← integral_finsetSum (f := fun j t => ext v t * (φ j t * φ j t)) _
+      ∑ k, ∫ t, iccExt v t * (φ (σ k) t * φ (σ k) t) ∂vol01 =
+        ∫ t, iccExt v t * ∑ j, φ j t ^ 2 ∂vol01 := fun σ => by
+    rw [Equiv.sum_comp σ (fun j => ∫ t, iccExt v t * (φ j t * φ j t) ∂vol01),
+      ← integral_finsetSum (f := fun j t => iccExt v t * (φ j t * φ j t)) _
         fun j _ => integrable_of_continuous
-        ((continuous_ext v).mul ((hφ j).mul (hφ j)))]
+        ((continuous_iccExt v).mul ((hφ j).mul (hφ j)))]
     refine integral_congr_ae (ae_of_all _ fun t => ?_)
     simp only [Finset.mul_sum, sq]
   simp only [hj, Finset.sum_const, Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
@@ -322,7 +322,7 @@ lemma integral_eH (N : ℕ) (a b : Hix N) :
 
 section change
 
-variable {g : ℝ → ℝ} (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1)
+variable {g : ℝ → ℝ} (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1)
 
 /-- The normalised cumulative density `F(x) = ∫₀ˣ g²`. -/
 noncomputable def cumF (g : ℝ → ℝ) (x : ℝ) : ℝ := ∫ t in (0 : ℝ)..x, g t ^ 2
@@ -342,10 +342,10 @@ lemma contDiff_cumF : ContDiff ℝ 2 (cumF g) := by
 include hg hnorm in
 /-- **Change of variables**: `∫₀¹ g(x)² h(F(x)) dx = ∫₀¹ h(u) du`. -/
 lemma integral_cumF {h : ℝ → ℝ} (hh : Continuous h) :
-    ∫ t, g t ^ 2 * h (cumF g t) ∂μ1 = ∫ u in (0 : ℝ)..1, h u := by
+    ∫ t, g t ^ 2 * h (cumF g t) ∂vol01 = ∫ u in (0 : ℝ)..1, h u := by
   have h0 : cumF g 0 = 0 := intervalIntegral.integral_same
-  have h1 : cumF g 1 = 1 := by rw [cumF, ← SturmLiouville.integral_mu1, hnorm]
-  rw [SturmLiouville.integral_mu1]
+  have h1 : cumF g 1 = 1 := by rw [cumF, ← SturmLiouville.integral_vol01, hnorm]
+  rw [SturmLiouville.integral_vol01]
   have := intervalIntegral.integral_comp_mul_deriv (a := 0) (b := 1) (f := cumF g)
     (f' := fun x => g x ^ 2) (g := h) (fun x _ => hasDerivAt_cumF hg x)
     (hg.1.continuous.pow 2).continuousOn hh
@@ -363,9 +363,9 @@ variable {w : Cfg n → ℝ} {hw : Continuous w} {g : ℝ → ℝ}
 
 /-- **Fermionic `N`-representability**: every density `N g²` (`g ∈ C²`, `g(0) = g(1) = 0`,
 `∫ g² = 1`) is the density of a normalised antisymmetric state. -/
-theorem nrep_fer (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+theorem nrep_fer (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     ∃ ψ ∈ Nst (setting .fer n w hw),
-      ∀ v, dens (setting .fer n w hw) ψ v = ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1 := by
+      ∀ v, dens (setting .fer n w hw) ψ v = ∫ t, iccExt v t * ((n + 1) * g t ^ 2) ∂vol01 := by
   set N := n + 1
   let e : Fin N ≃ Hix N := (Fintype.equivFinOfCardEq (card_Hix N)).symm
   set φ : Fin N → ℝ → ℝ := fun j x => g x * eH (e j) (cumF g x)
@@ -374,7 +374,7 @@ theorem nrep_fer (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 
     ⟨hg.1.mul (((contDiff_eH (e j)).of_le le_top).comp (contDiff_cumF hg)),
       by simp [φ, hg.2.1], by simp [φ, hg.2.2]⟩
   have hφc : ∀ j, Continuous (φ j) := fun j => (hφD j).1.continuous
-  have hon : ∀ a b, ∫ t, φ a t * φ b t ∂μ1 = if a = b then 1 else 0 := fun a b => by
+  have hon : ∀ a b, ∫ t, φ a t * φ b t ∂vol01 = if a = b then 1 else 0 := fun a b => by
     have := integral_cumF hg hnorm (h := fun u => eH (e a) u * eH (e b) u)
       (((contDiff_eH _).continuous).mul (contDiff_eH _).continuous)
     simp only [integral_eH, e.injective.eq_iff] at this
@@ -411,10 +411,10 @@ end fer
 /-! ### The Lieb functional is finite at every such density -/
 
 /-- The density `v ↦ ∫₀¹ v · N g²`. -/
-noncomputable def rhoG (n : ℕ) (g : ℝ → ℝ) (v : Pot) : ℝ := ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1
+noncomputable def rhoG (n : ℕ) (g : ℝ → ℝ) (v : C01) : ℝ := ∫ t, iccExt v t * ((n + 1) * g t ^ 2) ∂vol01
 
 theorem liebF_ne_top {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w} {g : ℝ → ℝ}
-    (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+    (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂vol01 = 1) :
     liebF (setting τ n w hw) (rhoG n g) ≠ ⊤ := by
   obtain ⟨ψ, hψ, hd⟩ : ∃ ψ ∈ Nst (setting τ n w hw),
       ∀ v, dens (setting τ n w hw) ψ v = rhoG n g v := by

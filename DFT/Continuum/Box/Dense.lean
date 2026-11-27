@@ -35,17 +35,17 @@ namespace Box
 open MeasureTheory Set SturmLiouville
 
 /-- The ground-state energy, as a real number. -/
-noncomputable def gsEr (v : Pot) : ℝ := Q setting v (Classical.choose (exists_isNGS v))
+noncomputable def gsEr (v : C01) : ℝ := Q setting v (Classical.choose (exists_isNGS v))
 
-lemma gsEr_spec (v : Pot) : IsNGS setting v (Classical.choose (exists_isNGS v)) :=
+lemma gsEr_spec (v : C01) : IsNGS setting v (Classical.choose (exists_isNGS v)) :=
   Classical.choose_spec (exists_isNGS v)
 
-lemma gsE_eq (v : Pot) : gsE setting v = ((gsEr v : ℝ) : EReal) := gsE_of_isNGS (gsEr_spec v)
+lemma gsE_eq (v : C01) : gsE setting v = ((gsEr v : ℝ) : EReal) := gsE_of_isNGS (gsEr_spec v)
 
-lemma gsEr_le (v : Pot) {ψ : ℝ → ℝ} (hψ : ψ ∈ Nst setting) : gsEr v ≤ Q setting v ψ :=
+lemma gsEr_le (v : C01) {ψ : ℝ → ℝ} (hψ : ψ ∈ Nst setting) : gsEr v ≤ Q setting v ψ :=
   (gsEr_spec v).2 ψ hψ
 
-lemma gsEr_eq_of_isNGS {v : Pot} {ψ : ℝ → ℝ} (h : IsNGS setting v ψ) : gsEr v = Q setting v ψ :=
+lemma gsEr_eq_of_isNGS {v : C01} {ψ : ℝ → ℝ} (h : IsNGS setting v ψ) : gsEr v = Q setting v ψ :=
   le_antisymm (gsEr_le v h.1) (h.2 _ (gsEr_spec v).1)
 
 section densL
@@ -54,26 +54,26 @@ variable {ψ : ℝ → ℝ}
 
 lemma cont_sq (hψ : ψ ∈ Dom) : Continuous fun t => ψ t ^ 2 := hψ.1.continuous.pow 2
 
-lemma dens_add' (hψ : ψ ∈ Dom) (u w : Pot) :
+lemma dens_add' (hψ : ψ ∈ Dom) (u w : C01) :
     dens setting ψ (u + w) = dens setting ψ u + dens setting ψ w := by
   rw [dens_eq_sq]
   simp only
-  rw [← integral_add (f := fun t => ext u t * ψ t ^ 2) (g := fun t => ext w t * ψ t ^ 2)
-    (integrable_of_continuous ((continuous_ext u).mul (cont_sq hψ)))
-    (integrable_of_continuous ((continuous_ext w).mul (cont_sq hψ)))]
-  congr 1; funext t; simp only [SturmLiouville.ext, ContinuousMap.add_apply]; ring
+  rw [← integral_add (f := fun t => iccExt u t * ψ t ^ 2) (g := fun t => iccExt w t * ψ t ^ 2)
+    (integrable_of_continuous ((continuous_iccExt u).mul (cont_sq hψ)))
+    (integrable_of_continuous ((continuous_iccExt w).mul (cont_sq hψ)))]
+  congr 1; funext t; simp only [SturmLiouville.iccExt, ContinuousMap.add_apply]; ring
 
-lemma dens_smul' (a : ℝ) (u : Pot) : dens setting ψ (a • u) = a * dens setting ψ u := by
+lemma dens_smul' (a : ℝ) (u : C01) : dens setting ψ (a • u) = a * dens setting ψ u := by
   rw [dens_eq_sq]
   simp only
   rw [← integral_const_mul]
-  congr 1; funext t; simp only [SturmLiouville.ext, ContinuousMap.smul_apply, smul_eq_mul]; ring
+  congr 1; funext t; simp only [SturmLiouville.iccExt, ContinuousMap.smul_apply, smul_eq_mul]; ring
 
-lemma abs_dens_le (hψ : ψ ∈ Nst setting) (u : Pot) : |dens setting ψ u| ≤ ‖u‖ := by
+lemma abs_dens_le (hψ : ψ ∈ Nst setting) (u : C01) : |dens setting ψ u| ≤ ‖u‖ := by
   have hD : ψ ∈ Dom := hψ.1
-  have hn : ∫ t, ψ t ^ 2 ∂μ1 = 1 := by rw [← ip_eq_sq]; exact hψ.2
+  have hn : ∫ t, ψ t ^ 2 ∂vol01 = 1 := by rw [← ip_eq_sq]; exact hψ.2
   rw [dens_eq_sq, ← Real.norm_eq_abs]
-  calc ‖∫ t, ext u t * ψ t ^ 2 ∂μ1‖ ≤ ∫ t, ‖u‖ * ψ t ^ 2 ∂μ1 := by
+  calc ‖∫ t, iccExt u t * ψ t ^ 2 ∂vol01‖ ≤ ∫ t, ‖u‖ * ψ t ^ 2 ∂vol01 := by
         refine norm_integral_le_of_norm_le
           (integrable_of_continuous (continuous_const.mul (cont_sq hD)))
           (Filter.Eventually.of_forall fun t => ?_)
@@ -82,19 +82,19 @@ lemma abs_dens_le (hψ : ψ ∈ Nst setting) (u : Pot) : |dens setting ψ u| ≤
     _ = ‖u‖ := by rw [integral_const_mul, hn, mul_one]
 
 /-- The density of a normalised state, as a continuous linear functional of norm `≤ 1`. -/
-noncomputable def densL (hψ : ψ ∈ Nst setting) : StrongDual ℝ Pot :=
+noncomputable def densL (hψ : ψ ∈ Nst setting) : StrongDual ℝ C01 :=
   LinearMap.mkContinuous
     { toFun := dens setting ψ
       map_add' := dens_add' hψ.1
       map_smul' := fun a u => by rw [dens_smul']; rfl }
     1 (fun u => by rw [one_mul, Real.norm_eq_abs]; exact abs_dens_le hψ u)
 
-@[simp] lemma densL_apply (hψ : ψ ∈ Nst setting) (u : Pot) : densL hψ u = dens setting ψ u := rfl
+@[simp] lemma densL_apply (hψ : ψ ∈ Nst setting) (u : C01) : densL hψ u = dens setting ψ u := rfl
 
 lemma norm_densL_le (hψ : ψ ∈ Nst setting) : ‖densL hψ‖ ≤ 1 :=
   LinearMap.mkContinuous_norm_le _ zero_le_one _
 
-lemma Q_shift (hψ : ψ ∈ Dom) (v w : Pot) :
+lemma Q_shift (hψ : ψ ∈ Dom) (v w : C01) :
     Q setting w ψ = Q setting v ψ + dens setting ψ (w - v) := by
   rw [Q_eq, Q_eq, add_assoc, ← dens_add' hψ, add_sub_cancel]
 
@@ -102,13 +102,13 @@ end densL
 
 /-- **Hellmann–Feynman inequality.** The density of a normalised ground state of `v` is a
 supergradient of the ground-state energy at `v`. -/
-theorem supergrad_of_isNGS {v : Pot} {ψ : ℝ → ℝ} (h : IsNGS setting v ψ) (w : Pot) :
+theorem supergrad_of_isNGS {v : C01} {ψ : ℝ → ℝ} (h : IsNGS setting v ψ) (w : C01) :
     gsEr w ≤ gsEr v + densL h.1 (w - v) := by
   rw [densL_apply, gsEr_eq_of_isNGS h, ← Q_shift h.1.1]
   exact gsEr_le w h.1
 
 /-- The ground-state energy is `1`-Lipschitz in the sup norm. -/
-theorem gsEr_lipschitz (v w : Pot) : |gsEr v - gsEr w| ≤ ‖v - w‖ := by
+theorem gsEr_lipschitz (v w : C01) : |gsEr v - gsEr w| ≤ ‖v - w‖ := by
   have h1 := supergrad_of_isNGS (gsEr_spec w) v
   have h2 := supergrad_of_isNGS (gsEr_spec v) w
   have b1 := abs_dens_le (gsEr_spec w).1 (v - w)
@@ -140,7 +140,7 @@ theorem gsEr_concave : ConcaveOn ℝ univ gsEr := by
   exact add_le_add (mul_le_mul_of_nonneg_left hv ha) (mul_le_mul_of_nonneg_left hw hb)
 
 /-- A finite Lieb functional bounds `E - ρ`. -/
-lemma gsEr_sub_le {ρ : Pot → ℝ} {c : ℝ} (hF : liebF setting ρ ≤ (c : EReal)) (v : Pot) :
+lemma gsEr_sub_le {ρ : C01 → ℝ} {c : ℝ} (hF : liebF setting ρ ≤ (c : EReal)) (v : C01) :
     gsEr v - ρ v ≤ c := by
   have := gsE_le_liebF_add (v := v) hF
   rw [gsE_eq, EReal.coe_le_coe_iff] at this
@@ -148,7 +148,7 @@ lemma gsEr_sub_le {ρ : Pot → ℝ} {c : ℝ} (hF : liebF setting ρ ≤ (c : E
 
 /-- At a supergradient `ρ'` of `E` at `v`, `F(ρ') = E(v) - ρ'(v)`: `-v` is a subgradient of the
 Lieb functional at `ρ'`. -/
-theorem liebF_of_supergrad {v : Pot} {ρ' : Pot → ℝ} (hρ' : ∀ w, gsEr w - ρ' w ≤ gsEr v - ρ' v) :
+theorem liebF_of_supergrad {v : C01} {ρ' : C01 → ℝ} (hρ' : ∀ w, gsEr w - ρ' w ≤ gsEr v - ρ' v) :
     liebF setting ρ' = ((gsEr v - ρ' v : ℝ) : EReal) := by
   refine le_antisymm (iSup_le fun w => ?_) ?_
   · rw [gsE_eq, ← EReal.coe_sub, EReal.coe_le_coe_iff]; exact hρ' w
@@ -158,9 +158,9 @@ theorem liebF_of_supergrad {v : Pot} {ρ' : Pot → ℝ} (hρ' : ∀ w, gsEr w -
 /-- **Supergradient densities are dense.** Every density `ρ` (a continuous linear functional on
 `C([0, 1])`) with finite Lieb functional is within any `η > 0`, in the dual norm, of a
 supergradient `ρ'` of the ground-state energy at some potential `v`; then `F(ρ') = E(v) - ρ'(v)`. -/
-theorem dense_supergrad (ρ : StrongDual ℝ Pot) {c : ℝ} (hF : liebF setting ρ ≤ (c : EReal))
+theorem dense_supergrad (ρ : StrongDual ℝ C01) {c : ℝ} (hF : liebF setting ρ ≤ (c : EReal))
     {η : ℝ} (hη : 0 < η) :
-    ∃ (v : Pot) (ρ' : StrongDual ℝ Pot), ‖ρ' - ρ‖ ≤ η ∧ (∀ w, gsEr w ≤ gsEr v + ρ' (w - v)) ∧
+    ∃ (v : C01) (ρ' : StrongDual ℝ C01), ‖ρ' - ρ‖ ≤ η ∧ (∀ w, gsEr w ≤ gsEr v + ρ' (w - v)) ∧
       liebF setting ρ' = ((gsEr v - ρ' v : ℝ) : EReal) := by
   obtain ⟨v, ρ', hn, hs⟩ := exists_supergrad_near gsEr_concave continuous_gsEr.upperSemicontinuous
     ρ ⟨c, by rintro _ ⟨v, rfl⟩; exact gsEr_sub_le hF v⟩ hη
@@ -172,7 +172,7 @@ theorem dense_supergrad (ρ : StrongDual ℝ Pot) {c : ℝ} (hF : liebF setting 
 /-- Every N-representable density (the density of a normalised state) has finite Lieb functional,
 so it is a limit of supergradient densities. -/
 theorem dense_supergrad_of_nst {ψ : ℝ → ℝ} (hψ : ψ ∈ Nst setting) {η : ℝ} (hη : 0 < η) :
-    ∃ (v : Pot) (ρ' : StrongDual ℝ Pot), ‖ρ' - densL hψ‖ ≤ η ∧
+    ∃ (v : C01) (ρ' : StrongDual ℝ C01), ‖ρ' - densL hψ‖ ≤ η ∧
       (∀ w, gsEr w ≤ gsEr v + ρ' (w - v)) ∧ liebF setting ρ' = ((gsEr v - ρ' v : ℝ) : EReal) :=
   dense_supergrad (densL hψ) (liebF_le_h0 hψ) hη
 

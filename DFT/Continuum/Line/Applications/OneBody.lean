@@ -53,7 +53,7 @@ lemma cfg0_eq (x : Cfg 0) : (fun _ => x 0 : Cfg 0) = x :=
 lemma lift_unlift (Φ : Cfg 0 → ℝ) : lift (unlift Φ) = Φ :=
   funext fun x => by simp only [lift, unlift, cfg0_eq]
 
-lemma integral_one (F : ℝ → ℝ) : ∫ x, F (x 0) ∂μN 0 = ∫ t, F t ∂μ1 := by
+lemma integral_one (F : ℝ → ℝ) : ∫ x, F (x 0) ∂μN 0 = ∫ t, F t ∂vol01 := by
   have hc : Cube 0 = (MeasurableEquiv.funUnique (Fin 1) ℝ) ⁻¹' Ioo 0 1 := by
     ext x
     simp only [Set.mem_pi, mem_univ, true_implies, mem_preimage, MeasurableEquiv.funUnique_apply]
@@ -91,24 +91,24 @@ lemma unlift_mem {Φ : Cfg 0 → ℝ} (hΦ : Φ ∈ Dom τ 0) : unlift Φ ∈ St
     hΦ.2.2 _ 0 (Or.inr rfl)⟩
 
 lemma ip_lift (ψ φ : ℝ → ℝ) :
-    ip (μ := μN 0) (lift ψ) (lift φ) = ip (μ := μ1) ψ φ :=
+    ip (μ := μN 0) (lift ψ) (lift φ) = ip (μ := vol01) ψ φ :=
   integral_one fun t => ψ t * φ t
 
-lemma pf_lift (v : Pot) (ψ φ : ℝ → ℝ) :
-    ∫ x, LN 0 v x * (lift ψ x * lift φ x) ∂μN 0 = ∫ t, ext v t * (ψ t * φ t) ∂μ1 := by
+lemma pf_lift (v : C01) (ψ φ : ℝ → ℝ) :
+    ∫ x, LN 0 v x * (lift ψ x * lift φ x) ∂μN 0 = ∫ t, iccExt v t * (ψ t * φ t) ∂vol01 := by
   have : (fun x : Cfg 0 => LN 0 v x * (lift ψ x * lift φ x)) =
-      fun x => ext v (x 0) * (ψ (x 0) * φ (x 0)) := by
+      fun x => iccExt v (x 0) * (ψ (x 0) * φ (x 0)) := by
     funext x; simp [LN, lift]
   rw [this]
-  exact integral_one fun t => ext v t * (ψ t * φ t)
+  exact integral_one fun t => iccExt v t * (ψ t * φ t)
 
-lemma Q_lift {w : Cfg 0 → ℝ} {hw : Continuous w} (hw0 : w = fun _ => 0) (v : Pot)
+lemma Q_lift {w : Cfg 0 → ℝ} {hw : Continuous w} (hw0 : w = fun _ => 0) (v : C01)
     {ψ : ℝ → ℝ} (hψ : ψ ∈ SturmLiouville.Dom) :
     Q (setting τ 0 w hw) v (lift ψ) = Q Box.setting v ψ := by
   subst hw0
   simp only [Q, pf]
   change h0N 0 (fun _ => 0) (lift ψ) (lift ψ) + ∫ x, LN 0 v x * (lift ψ x * lift ψ x) ∂μN 0 =
-    kin ψ ψ + ∫ t, ext v t * (ψ t * ψ t) ∂μ1
+    kin ψ ψ + ∫ t, iccExt v t * (ψ t * ψ t) ∂vol01
   rw [pf_lift]
   simp only [h0N, sum_fin0, zero_mul, integral_zero, add_zero, dk_lift (diff_of_mem hψ), kin]
   rw [integral_one fun t => deriv ψ t * deriv ψ t]
@@ -118,7 +118,7 @@ lemma dens_lift {w : Cfg 0 → ℝ} {hw : Continuous w} (ψ : ℝ → ℝ) :
   funext fun v => pf_lift v ψ ψ
 
 /-- **The lift of a box ground state is an `H¹₀` ground state** (no interaction). -/
-theorem isGS_lift {v : Pot} {φ : ℝ → ℝ} (h : IsGS Box.setting v φ) :
+theorem isGS_lift {v : C01} {φ : ℝ → ℝ} (h : IsGS Box.setting v φ) :
     IsGS (settingW τ 0 (fun _ => 0) continuous_const) v (lift φ) := by
   refine isGS_W_of_isGS ⟨lift_mem h.1, by rw [ip_lift]; exact h.2.1, fun Φ hΦ => ?_⟩
   have hu := unlift_mem hΦ
@@ -129,20 +129,20 @@ theorem isGS_lift {v : Pot} {φ : ℝ → ℝ} (h : IsGS Box.setting v φ) :
 /-! ### The interaction as a one-body potential -/
 
 /-- For one particle, `w` is a potential. -/
-noncomputable def wPot (w : Cfg 0 → ℝ) (hw : Continuous w) : Pot :=
+noncomputable def wPot (w : Cfg 0 → ℝ) (hw : Continuous w) : C01 :=
   ⟨fun t => w fun _ => (t : ℝ), hw.comp (continuous_pi fun _ => continuous_subtype_val)⟩
 
 lemma LN_wPot {w : Cfg 0 → ℝ} (hw : Continuous w) :
     ∀ᵐ x ∂μN 0, LN 0 (wPot w hw) x = w x := by
   filter_upwards [ae_restrict_mem measurableSet_cube] with x hx
   have hx0 : x 0 ∈ Icc (0 : ℝ) 1 := Ioo_subset_Icc_self (hx 0 trivial)
-  simp only [LN, LinearMap.coe_mk, AddHom.coe_mk, sum_fin0, SturmLiouville.ext, wPot,
+  simp only [LN, LinearMap.coe_mk, AddHom.coe_mk, sum_fin0, SturmLiouville.iccExt, wPot,
     ContinuousMap.coe_mk, projIcc_of_mem _ hx0]
   rw [cfg0_eq]
 
 variable {w : Cfg 0 → ℝ} {hw : Continuous w}
 
-lemma Q_shift (v : Pot) {Ψ : Cfg 0 → ℝ} (hΨ : Ψ ∈ DomW τ 0) :
+lemma Q_shift (v : C01) {Ψ : Cfg 0 → ℝ} (hΨ : Ψ ∈ DomW τ 0) :
     Q (settingW τ 0 w hw) v Ψ =
       Q (settingW τ 0 (fun _ => 0) continuous_const) (v + wPot w hw) Ψ := by
   have i1 : Integrable (fun x => LN 0 v x * (Ψ x * Ψ x)) (μN 0) :=
@@ -161,7 +161,7 @@ lemma Q_shift (v : Pot) {Ψ : Cfg 0 → ℝ} (hΨ : Ψ ∈ DomW τ 0) :
   simp only [h0W, zero_mul, integral_zero, add_zero, hw']
   ring
 
-lemma isGS_shift {v : Pot} {Ψ : Cfg 0 → ℝ} :
+lemma isGS_shift {v : C01} {Ψ : Cfg 0 → ℝ} :
     IsGS (settingW τ 0 w hw) v Ψ ↔
       IsGS (settingW τ 0 (fun _ => 0) continuous_const) (v + wPot w hw) Ψ := by
   constructor
@@ -183,7 +183,7 @@ lemma dens_settingW_indep (w w' : Cfg 0 → ℝ) (hw : Continuous w) (hw' : Cont
 
 /-- **Ground-state densities of one particle on `H¹₀` are those of the box**, the interaction
 acting as the potential `wPot w`. -/
-theorem pureDens_one_iff (v : Pot) (ρ : Pot → ℝ) :
+theorem pureDens_one_iff (v : C01) (ρ : C01 → ℝ) :
     PureDens (settingW τ 0 w hw) v ρ ↔ PureDens Box.setting (v + wPot w hw) ρ := by
   constructor
   · rintro ⟨Ψ, hΨ, h1, rfl⟩
@@ -203,7 +203,7 @@ theorem pureDens_one_iff (v : Pot) (ρ : Pot → ℝ) :
     exact ⟨lift φ, isGS_shift.2 (isGS_lift hφ), by rw [ip_lift]; exact h1, dens_lift φ⟩
 
 /-- **`v`-representability of one particle on `H¹₀` equals that in the `C²` box.** -/
-theorem pureVRep_one_iff (ρ : Pot → ℝ) :
+theorem pureVRep_one_iff (ρ : C01 → ℝ) :
     PureVRep (settingW τ 0 w hw) ρ ↔ PureVRep Box.setting ρ :=
   ⟨fun ⟨v, h⟩ => ⟨_, (pureDens_one_iff v ρ).1 h⟩, fun ⟨v, h⟩ =>
     ⟨v - wPot w hw, (pureDens_one_iff _ ρ).2 (by rwa [sub_add_cancel])⟩⟩
@@ -211,14 +211,14 @@ theorem pureVRep_one_iff (ρ : Pot → ℝ) :
 /-- **Exact `v`-representability of one particle on `H¹₀`**, continuous `v` and `w`, pure states
 or ensembles: `ρ(u) = ∫₀¹ u g²` with `g` `C²`, zero at the walls, positive inside, normalised, and
 `g'' = q g` on `(0, 1)` for a continuous `q`. -/
-theorem pureVRep_one_iff_boxRep (ρ : Pot → ℝ) :
+theorem pureVRep_one_iff_boxRep (ρ : C01 → ℝ) :
     PureVRep (settingW τ 0 w hw) ρ ↔
-      ∃ g q, BoxRep g q ∧ ρ = fun u => ∫ t, ext u t * g t ^ 2 ∂μ1 :=
+      ∃ g q, BoxRep g q ∧ ρ = fun u => ∫ t, iccExt u t * g t ^ 2 ∂vol01 :=
   (pureVRep_one_iff ρ).trans (pureVRep_box_iff ρ)
 
-theorem ensVRep_one_iff_boxRep (ρ : Pot → ℝ) :
+theorem ensVRep_one_iff_boxRep (ρ : C01 → ℝ) :
     EnsVRep (settingW τ 0 w hw) ρ ↔
-      ∃ g q, BoxRep g q ∧ ρ = fun u => ∫ t, ext u t * g t ^ 2 ∂μ1 :=
+      ∃ g q, BoxRep g q ∧ ρ = fun u => ∫ t, iccExt u t * g t ^ 2 ∂vol01 :=
   (ensVRep_iff_W_cont ρ).trans (pureVRep_one_iff_boxRep ρ)
 
 /-! ### Smooth counterexamples -/
@@ -226,7 +226,7 @@ theorem ensVRep_one_iff_boxRep (ρ : Pot → ℝ) :
 /-- **A density with an interior zero is not `v`-representable** for one particle on `H¹₀`, even
 if it is smooth. -/
 theorem not_vrep_one_of_zero {f : ℝ → ℝ} (hf : Continuous f) {c : ℝ} (hc : c ∈ Ioo (0 : ℝ) 1)
-    (hfc : f c = 0) : ¬ EnsVRep (settingW τ 0 w hw) fun u => ∫ t, ext u t * f t ∂μ1 := by
+    (hfc : f c = 0) : ¬ EnsVRep (settingW τ 0 w hw) fun u => ∫ t, iccExt u t * f t ∂vol01 := by
   intro h
   obtain ⟨g, q, ⟨hg, hpos, -, -⟩, hρ⟩ := (ensVRep_one_iff_boxRep _).1 h
   have hsq := eqOn_of_integral_pot (f := fun t => g t ^ 2) (g := f)
@@ -243,8 +243,8 @@ noncomputable def sinDens (t : ℝ) : ℝ := sinG t ^ 2
 
 lemma sinG_mem : sinG ∈ SturmLiouville.Dom := ⟨by unfold sinG; fun_prop, by simp [sinG], by simp [sinG]⟩
 
-lemma sinG_norm : ∫ t, sinG t ^ 2 ∂μ1 = 1 := by
-  rw [integral_mu1]
+lemma sinG_norm : ∫ t, sinG t ^ 2 ∂vol01 = 1 := by
+  rw [integral_vol01]
   have e : ∀ t, sinG t ^ 2 = 1 - cos (4 * π * t) := fun t => by
     simp only [sinG, mul_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
     rw [show 4 * π * t = 2 * (2 * π * t) by ring, cos_two_mul, cos_sq']
@@ -268,8 +268,8 @@ lemma sinG_norm : ∫ t, sinG t ^ 2 ∂μ1 = 1 := by
 state of the free particle, but it vanishes at `t = ½` while a ground state has no interior zero. -/
 theorem sinDens_nrep_not_vrep :
     (∃ ψ ∈ Nst (settingW τ 0 w hw), dens (settingW τ 0 w hw) ψ =
-        fun u => ∫ t, ext u t * sinDens t ∂μ1) ∧
-      ¬ EnsVRep (settingW τ 0 w hw) fun u => ∫ t, ext u t * sinDens t ∂μ1 := by
+        fun u => ∫ t, iccExt u t * sinDens t ∂vol01) ∧
+      ¬ EnsVRep (settingW τ 0 w hw) fun u => ∫ t, iccExt u t * sinDens t ∂vol01 := by
   refine ⟨⟨lift sinG, ⟨Dom_le_DomW (lift_mem sinG_mem), ?_⟩, ?_⟩, ?_⟩
   · rw [ip_lift, ip_eq_sq, sinG_norm]
   · rw [dens_lift, dens_eq_sq]; rfl
@@ -284,8 +284,8 @@ theorem sinDens_nrep_not_vrep :
 at the walls. -/
 theorem quartDens_nrep_not_vrep :
     (∃ ψ ∈ Nst (settingW τ 0 w hw), dens (settingW τ 0 w hw) ψ =
-        fun u => ∫ t, ext u t * quartDens t ∂μ1) ∧
-      ¬ EnsVRep (settingW τ 0 w hw) fun u => ∫ t, ext u t * quartDens t ∂μ1 := by
+        fun u => ∫ t, iccExt u t * quartDens t ∂vol01) ∧
+      ¬ EnsVRep (settingW τ 0 w hw) fun u => ∫ t, iccExt u t * quartDens t ∂vol01 := by
   refine ⟨⟨lift quartG, ⟨Dom_le_DomW (lift_mem quartG_mem), ?_⟩, ?_⟩, fun h => ?_⟩
   · rw [ip_lift, ip_eq_sq, quartG_norm]
   · rw [dens_lift, dens_eq_sq]; rfl

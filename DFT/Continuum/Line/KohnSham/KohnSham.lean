@@ -34,16 +34,16 @@ open MeasureTheory Set Box SturmLiouville
 variable {n : ℕ} {τ : Stat}
 
 /-- The Kohn–Sham setting: `N` non-interacting particles on `H¹₀`. -/
-noncomputable abbrev ksS (τ : Stat) (n : ℕ) : Setting (μN n) Pot :=
+noncomputable abbrev ksS (τ : Stat) (n : ℕ) : Setting (μN n) C01 :=
   settingW τ n (fun _ => 0) continuous_const
 
 /-- Kohn–Sham `v`-representability. -/
-def KSRep (τ : Stat) (n : ℕ) (ρ : Pot → ℝ) : Prop := PureVRep (ksS τ n) ρ
+def KSRep (τ : Stat) (n : ℕ) (ρ : C01 → ℝ) : Prop := PureVRep (ksS τ n) ρ
 
 /-! ### Uniqueness of the Kohn–Sham and Hxc potentials -/
 
 /-- Hohenberg–Kohn in terms of densities. -/
-theorem pureDens_hk {w : Cfg n → ℝ} {hw : Continuous w} {v v' : Pot} {ρ : Pot → ℝ}
+theorem pureDens_hk {w : Cfg n → ℝ} {hw : Continuous w} {v v' : C01} {ρ : C01 → ℝ}
     (h : PureDens (settingW τ n w hw) v ρ) (h' : PureDens (settingW τ n w hw) v' ρ) :
     ∃ k : ℝ, v - v' = k • one := by
   obtain ⟨Ψ, hΨ, h1, rfl⟩ := h
@@ -51,12 +51,12 @@ theorem pureDens_hk {w : Cfg n → ℝ} {hw : Continuous w} {v v' : Pot} {ρ : P
   exact (hk_line_W_cont_stat v v').2 Ψ Ψ' hΨ hΨ' (h1.trans h1'.symm) hd.symm
 
 /-- **The Kohn–Sham potential is unique up to a constant.** -/
-theorem ks_unique {vs vs' : Pot} {ρ : Pot → ℝ} (h : PureDens (ksS τ n) vs ρ)
+theorem ks_unique {vs vs' : C01} {ρ : C01 → ℝ} (h : PureDens (ksS τ n) vs ρ)
     (h' : PureDens (ksS τ n) vs' ρ) : ∃ k : ℝ, vs - vs' = k • one :=
   pureDens_hk h h'
 
 /-- **The Hxc potential `v_s - v` is unique up to a constant.** -/
-theorem hxc_unique {w : Cfg n → ℝ} {hw : Continuous w} {v v' vs vs' : Pot} {ρ : Pot → ℝ}
+theorem hxc_unique {w : Cfg n → ℝ} {hw : Continuous w} {v v' vs vs' : C01} {ρ : C01 → ℝ}
     (h : PureDens (settingW τ n w hw) v ρ) (h' : PureDens (settingW τ n w hw) v' ρ)
     (hs : PureDens (ksS τ n) vs ρ) (hs' : PureDens (ksS τ n) vs' ρ) :
     ∃ k : ℝ, (vs - v) - (vs' - v') = k • one := by
@@ -71,13 +71,13 @@ theorem hxc_unique {w : Cfg n → ℝ} {hw : Continuous w} {v v' vs vs' : Pot} {
 /-- **The Kohn–Sham equations for fermions.** For every `v_s` there are orthonormal `C²` orbitals
 `φ_j'' = (v_s - λ_j) φ_j` on `[0, 1]`, vanishing at the walls, such that a density is the density
 of a normalised ground state of `v_s` iff it is `Σ_j φ_j²`. -/
-theorem ksDens_fer (v : Pot) : ∃ (φ : Fin (n + 1) → ℝ → ℝ) (lam : Fin (n + 1) → ℝ),
+theorem ksDens_fer (v : C01) : ∃ (φ : Fin (n + 1) → ℝ → ℝ) (lam : Fin (n + 1) → ℝ),
     (∀ j, φ j ∈ SturmLiouville.Dom) ∧
-    (∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (ext v x - lam j) * φ j x) ∧
-    (∀ j k, ∫ x, φ j x * φ k x ∂μ1 = if j = k then 1 else 0) ∧
-    ∀ ρ, PureDens (ksS .fer n) v ρ ↔ ρ = fun u => ∫ t, ext u t * ∑ j, φ j t ^ 2 ∂μ1 := by
+    (∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (iccExt v x - lam j) * φ j x) ∧
+    (∀ j k, ∫ x, φ j x * φ k x ∂vol01 = if j = k then 1 else 0) ∧
+    ∀ ρ, PureDens (ksS .fer n) v ρ ↔ ρ = fun u => ∫ t, iccExt u t * ∑ j, φ j t ^ 2 ∂vol01 := by
   obtain ⟨φ, lam, Λ, hφ, hode, hon, hle, hbound⟩ := Spectral.exists_orbitals v n
-  have hnorm : ∀ j, ∫ x, φ j x * φ j x ∂μ1 = 1 := fun j => by rw [hon]; simp
+  have hnorm : ∀ j, ∫ x, φ j x * φ j x ∂vol01 = 1 := fun j => by rw [hon]; simp
   have hD := slater_mem hφ
   have hQ := Q_slater hφ hode
   have hpos := ip_slater_pos hφ hon
@@ -98,7 +98,7 @@ theorem ksDens_fer (v : Pot) : ∃ (φ : Fin (n + 1) → ℝ → ℝ) (lam : Fin
     simp only [ip]
     rw [integral_slater_sq hc hon, hcc]
   have hdens : dens (ksS .fer n) (c • slater φ) =
-      fun u => ∫ t, ext u t * ∑ j, φ j t ^ 2 ∂μ1 := by
+      fun u => ∫ t, iccExt u t * ∑ j, φ j t ^ 2 ∂vol01 := by
     funext u
     change ∫ x, LN n u x * ((c • slater φ) x * (c • slater φ) x) ∂μN n = _
     have e : (fun x => LN n u x * ((c • slater φ) x * (c • slater φ) x)) =
@@ -117,14 +117,14 @@ theorem ksDens_fer (v : Pot) : ∃ (φ : Fin (n + 1) → ℝ → ℝ) (lam : Fin
 /-! ### Bosons -/
 
 /-- **The product of a normalised box ground state is a ground state of free bosons.** -/
-theorem prodS_isGS_of {v : Pot} {φ : ℝ → ℝ} (hφ : IsGS Box.setting v φ)
-    (h1 : ∫ t, φ t ^ 2 ∂μ1 = 1) : IsGS (freeS .bos n) v (prodS φ) := by
+theorem prodS_isGS_of {v : C01} {φ : ℝ → ℝ} (hφ : IsGS Box.setting v φ)
+    (h1 : ∫ t, φ t ^ 2 ∂vol01 = 1) : IsGS (freeS .bos n) v (prodS φ) := by
   obtain ⟨ψ, hψ, hE, -, -⟩ := gs_data' v
   set E := Estar v
   have hD := hφ.1
-  have hip1 : ip (μ := μ1) φ φ = 1 := by rw [ip_eq_sq]; exact h1
+  have hip1 : ip (μ := vol01) φ φ = 1 := by rw [ip_eq_sq]; exact h1
   have hpψ := hψ.2.1
-  have hQψ : Q Box.setting v ψ = E * ip (μ := μ1) ψ ψ := by
+  have hQψ : Q Box.setting v ψ = E * ip (μ := vol01) ψ ψ := by
     rw [energy, div_eq_iff hpψ.ne'] at hE; exact hE
   have hQφ : Q Box.setting v φ = E := by
     have a := hφ.2.2 ψ hψ.1
@@ -133,7 +133,7 @@ theorem prodS_isGS_of {v : Pot} {φ : ℝ → ℝ} (hφ : IsGS Box.setting v φ)
     have a' : Q Box.setting v φ ≤ E := le_of_mul_le_mul_right (by linarith) hpψ
     have b' : E ≤ Q Box.setting v φ := le_of_mul_le_mul_right (by linarith) hpψ
     linarith
-  have h1d : ∫ x, (deriv φ x ^ 2 + Wof v E x * φ x ^ 2) ∂μ1 = 0 := by
+  have h1d : ∫ x, (deriv φ x ^ 2 + Wof v E x * φ x ^ 2) ∂vol01 = 0 := by
     rw [← Q_sub_eq v E hD, hQφ, hip1]; ring
   have hΨ : prodS (n := n) φ ∈ DomB n := prodS_mem hD
   have hslices : ∀ k, ∫ x, sk v E k (prodS φ) x ∂μN n = 0 := by
@@ -161,24 +161,24 @@ theorem prodS_isGS_of {v : Pot} {φ : ℝ → ℝ} (hφ : IsGS Box.setting v φ)
   rw [hQΨ]
   nlinarith [mul_le_mul_of_nonneg_left (lower_bound_free v hφ') hposΨ.le]
 
-lemma integral_mul_const_mul (u : Pot) (a : ℝ) (f : ℝ → ℝ) :
-    ∫ t, ext u t * (a * f t) ∂μ1 = a * ∫ t, ext u t * f t ∂μ1 := by
+lemma integral_mul_const_mul (u : C01) (a : ℝ) (f : ℝ → ℝ) :
+    ∫ t, iccExt u t * (a * f t) ∂vol01 = a * ∫ t, iccExt u t * f t ∂vol01 := by
   rw [← integral_const_mul]; congr 1; funext t; ring
 
 /-- The lift of a normalised box ground state to `N` free bosons on `H¹₀`, with its density. -/
-lemma ks_prodS {v : Pot} {φ : ℝ → ℝ} (hφ : IsGS Box.setting v φ) (h1 : ∫ t, φ t ^ 2 ∂μ1 = 1) :
+lemma ks_prodS {v : C01} {φ : ℝ → ℝ} (hφ : IsGS Box.setting v φ) (h1 : ∫ t, φ t ^ 2 ∂vol01 = 1) :
     IsGS (ksS .bos n) v (prodS φ) ∧ ip (μ := μN n) (prodS (n := n) φ) (prodS φ) = 1 ∧
-      dens (ksS .bos n) (prodS φ) = fun u => ∫ t, ext u t * ((n + 1) * φ t ^ 2) ∂μ1 :=
+      dens (ksS .bos n) (prodS φ) = fun u => ∫ t, iccExt u t * ((n + 1) * φ t ^ 2) ∂vol01 :=
   ⟨isGS_W_of_isGS (prodS_isGS_of hφ h1), ip_prodS h1,
     funext fun u => dens_prodS hφ.1.1.continuous h1 u⟩
 
 /-- **The Kohn–Sham density of `N` bosons** is `N φ₀²`, `φ₀` the normalised box ground state. -/
-theorem ksDens_bos (v : Pot) : ∃ φ, IsGS Box.setting v φ ∧ ∫ t, φ t ^ 2 ∂μ1 = 1 ∧
-    ∀ ρ, PureDens (ksS .bos n) v ρ ↔ ρ = fun u => ∫ t, ext u t * ((n + 1) * φ t ^ 2) ∂μ1 := by
+theorem ksDens_bos (v : C01) : ∃ φ, IsGS Box.setting v φ ∧ ∫ t, φ t ^ 2 ∂vol01 = 1 ∧
+    ∀ ρ, PureDens (ksS .bos n) v ρ ↔ ρ = fun u => ∫ t, iccExt u t * ((n + 1) * φ t ^ 2) ∂vol01 := by
   obtain ⟨φ, hφN⟩ := Box.exists_isNGS v
   have hφ : IsGS Box.setting v φ :=
     isGS_of_isNGS (fun φ _ _ => integral_nonneg fun t => mul_self_nonneg _) hφN
-  have h1 : ∫ t, φ t ^ 2 ∂μ1 = 1 := by rw [← ip_eq_sq]; exact hφN.1.2
+  have h1 : ∫ t, φ t ^ 2 ∂vol01 = 1 := by rw [← ip_eq_sq]; exact hφN.1.2
   obtain ⟨hG, hG1, hd⟩ := ks_prodS (n := n) hφ h1
   refine ⟨φ, hφ, h1, fun ρ => ⟨?_, ?_⟩⟩
   · rintro ⟨Ψ, hΨ, hΨ1, rfl⟩
@@ -190,8 +190,8 @@ theorem ksDens_bos (v : Pot) : ∃ φ, IsGS Box.setting v φ ∧ ∫ t, φ t ^ 2
 
 /-- **Bosonic Kohn–Sham `v`-representability, exactly**: `ρ = N g²` with `g` `C²`, zero at the
 walls, positive inside, normalised, and `g'' = q g` on `(0, 1)` for a continuous `q`. -/
-theorem ksRep_bos_iff (ρ : Pot → ℝ) :
-    KSRep .bos n ρ ↔ ∃ g q, BoxRep g q ∧ ρ = fun u => ∫ t, ext u t * ((n + 1) * g t ^ 2) ∂μ1 := by
+theorem ksRep_bos_iff (ρ : C01 → ℝ) :
+    KSRep .bos n ρ ↔ ∃ g q, BoxRep g q ∧ ρ = fun u => ∫ t, iccExt u t * ((n + 1) * g t ^ 2) ∂vol01 := by
   constructor
   · rintro ⟨v, hρ⟩
     obtain ⟨φ, hφ, h1, hiff⟩ := ksDens_bos (n := n) v
@@ -212,13 +212,13 @@ theorem ksRep_bos_iff (ρ : Pot → ℝ) :
 /-! ### The Kohn–Sham decomposition of the energy -/
 
 /-- The non-interacting kinetic functional `T_s = F_{w = 0}`. -/
-noncomputable def Ts (τ : Stat) (n : ℕ) (ρ : Pot → ℝ) : EReal := liebF (ksS τ n) ρ
+noncomputable def Ts (τ : Stat) (n : ℕ) (ρ : C01 → ℝ) : EReal := liebF (ksS τ n) ρ
 
 /-- The Hartree-exchange-correlation energy `E_Hxc = F - T_s`. -/
-noncomputable def EHxc (τ : Stat) (w : Cfg n → ℝ) (hw : Continuous w) (ρ : Pot → ℝ) : EReal :=
+noncomputable def EHxc (τ : Stat) (w : Cfg n → ℝ) (hw : Continuous w) (ρ : C01 → ℝ) : EReal :=
   liebF (settingW τ n w hw) ρ - Ts τ n ρ
 
-lemma isNGS_of_isGS_one {S : Setting (μN n) Pot} {v : Pot} {ψ : Cfg n → ℝ} (h : IsGS S v ψ)
+lemma isNGS_of_isGS_one {S : Setting (μN n) C01} {v : C01} {ψ : Cfg n → ℝ} (h : IsGS S v ψ)
     (h1 : ip (μ := μN n) ψ ψ = 1) : IsNGS S v ψ :=
   ⟨⟨h.1, h1⟩, fun φ hφ => by
     have := h.2.2 φ hφ.1
@@ -227,7 +227,7 @@ lemma isNGS_of_isGS_one {S : Setting (μN n) Pot} {v : Pot} {ψ : Cfg n → ℝ}
 /-- **The Kohn–Sham decomposition.** Let `Ψ` be a normalised ground state of `v` (interaction `w`)
 and `Φ` a normalised Kohn–Sham ground state of `v_s` with the same density `ρ`. Then `T_s(ρ)` is
 the kinetic energy of `Φ`, `E_Hxc(ρ)` is finite, and `E = T_s(ρ) + ∫ v ρ + E_Hxc(ρ)`. -/
-theorem ks_decomposition {w : Cfg n → ℝ} {hw : Continuous w} {v vs : Pot} {Ψ Φ : Cfg n → ℝ}
+theorem ks_decomposition {w : Cfg n → ℝ} {hw : Continuous w} {v vs : C01} {Ψ Φ : Cfg n → ℝ}
     (hΨ : IsGS (settingW τ n w hw) v Ψ) (hΨ1 : ip (μ := μN n) Ψ Ψ = 1)
     (hΦ : IsGS (ksS τ n) vs Φ) (hΦ1 : ip (μ := μN n) Φ Φ = 1)
     (hd : dens (ksS τ n) Φ = dens (settingW τ n w hw) Ψ) :
@@ -250,14 +250,14 @@ lemma wPot_zero : wPot (fun _ => (0 : ℝ)) continuous_const = 0 :=
 
 /-- **Kohn–Sham for one particle**: every interacting ground-state density is a Kohn–Sham density,
 with `v_s = v + w`. -/
-theorem ks_exists_one {w : Cfg 0 → ℝ} {hw : Continuous w} {v : Pot} {ρ : Pot → ℝ}
+theorem ks_exists_one {w : Cfg 0 → ℝ} {hw : Continuous w} {v : C01} {ρ : C01 → ℝ}
     (h : PureDens (settingW τ 0 w hw) v ρ) : PureDens (ksS τ 0) (v + wPot w hw) ρ := by
   have hb := (pureDens_one_iff v ρ).1 h
   refine (pureDens_one_iff (w := fun _ => 0) (hw := continuous_const) _ ρ).2 ?_
   rwa [wPot_zero, add_zero]
 
 /-- Every interacting ground-state density of one particle is Kohn–Sham `v`-representable. -/
-theorem ksRep_of_vrep_one {w : Cfg 0 → ℝ} {hw : Continuous w} {ρ : Pot → ℝ}
+theorem ksRep_of_vrep_one {w : Cfg 0 → ℝ} {hw : Continuous w} {ρ : C01 → ℝ}
     (h : PureVRep (settingW τ 0 w hw) ρ) : KSRep τ 0 ρ :=
   let ⟨_, hv⟩ := h
   ⟨_, ks_exists_one hv⟩

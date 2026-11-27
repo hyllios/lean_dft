@@ -269,8 +269,8 @@ linearly on the diagonals, with the energy of the chamber ground state and a pot
 theorem eq_PhiBY_H {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Ψ : Cfg n → ℝ}
     (hΨ : IsGSNH .fer w v Ψ) {φ : Cfg n → ℝ} (hφ : H1NW φ) (hφs : ∀ σ x, φ (pm σ x) = φ x)
     (hL : ∀ p ∈ pY (n + 1) n, ∃ L, 0 ≤ L ∧ ∀ᵐ x ∂μN n, |φ x| ≤ L * |x p.2 - x p.1|) :
-    ∃ e : H1E, (∀ u' : Pot, ∫ t, ext u' t * ext (evE e) t ∂μ1 =
-        ∫ x, (∑ k, ext u' (x k)) * (PhiBY (n + 1) Ψ x * φ x) ∂μN n) ∧
+    ∃ e : H1E, (∀ u' : C01, ∫ t, iccExt u' t * iccExt (evE e) t ∂vol01 =
+        ∫ x, (∑ k, iccExt u' (x k)) * (PhiBY (n + 1) Ψ x * φ x) ∂μN n) ∧
       kinN2 (PhiBY (n + 1) Ψ) φ + ∫ x, w x * (PhiBY (n + 1) Ψ x * φ x) ∂μN n + v e =
         QNH .fer w v (PhiY (n + 1) Ψ) * ∫ x, PhiBY (n + 1) Ψ x * φ x ∂μN n := by
   have hG := isGSNH_PhiY hΨ

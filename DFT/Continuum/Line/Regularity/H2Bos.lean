@@ -93,7 +93,7 @@ lemma cN_pmI_of_symm {f : Cfg n → ℝ} (hf : ∀ σ, ∀ᵐ x ∂μN n, f (pm 
 variable {w : Cfg n → ℝ} {hw : Continuous w}
 
 /-- **The coefficient equation for bosons.** -/
-theorem coef_EL_bos (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → ℝ}
+theorem coef_EL_bos (hws : ∀ σ x, w (pm σ x) = w x) {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW .bos n w hw) v Ψ) (m : Fin (n + 1) → ℕ) :
     lam m * cN m Ψ + cN m (fun x => (LN n v x + w x) * Ψ x) =
       Q (settingW .bos n w hw) v Ψ / ip (μ := μN n) Ψ Ψ * cN m Ψ := by
@@ -158,7 +158,7 @@ theorem coef_EL_bos (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n �
   exact mul_left_cancel₀ hpos.ne' hel
 
 /-- **`H²` regularity for bosons**: `Σ_m λ_m² c_m² < ∞`. -/
-theorem summable_lam_sq_bos (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → ℝ}
+theorem summable_lam_sq_bos (hws : ∀ σ x, w (pm σ x) = w x) {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW .bos n w hw) v Ψ) :
     Summable fun m => lam m ^ 2 * cN m Ψ ^ 2 := by
   set E := Q (settingW .bos n w hw) v Ψ / ip (μ := μN n) Ψ Ψ
@@ -178,14 +178,14 @@ theorem summable_lam_sq_bos (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : 
 
 variable {τ : Stat}
 
-lemma summable_lam_sq_stat (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → ℝ}
+lemma summable_lam_sq_stat (hws : ∀ σ x, w (pm σ x) = w x) {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW τ n w hw) v Ψ) : Summable fun m => lam m ^ 2 * cN m Ψ ^ 2 := by
   cases τ
   · exact summable_lam_sq_bos hws hΨ
   · exact summable_lam_sq hws hΨ
 
 /-- **The density of an interacting ground state has a `C¹` profile** (bosons or fermions). -/
-theorem gs_dens_C1_stat (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → ℝ}
+theorem gs_dens_C1_stat (hws : ∀ σ x, w (pm σ x) = w x) {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW τ n w hw) v Ψ) : C1Dens (dens (settingW τ n w hw) Ψ) := by
   have hcl := summable_lam_sq_stat hws hΨ
   refine ⟨KS (fun m => cN m Ψ), KD (fun m => cN m Ψ), (continuous_KD hcl).continuousOn,

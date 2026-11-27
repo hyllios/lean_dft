@@ -35,18 +35,18 @@ open MeasureTheory Set Filter Topology CompactEigenbasis
 /-- A continuous function as an element of `L²(0, 1)`. -/
 noncomputable def toHL {g : ℝ → ℝ} (hg : Continuous g) : HL := (memLp_of_continuous hg).toLp
 
-lemma toHL_ae {g : ℝ → ℝ} (hg : Continuous g) : (toHL hg : ℝ → ℝ) =ᵐ[μ1] g :=
+lemma toHL_ae {g : ℝ → ℝ} (hg : Continuous g) : (toHL hg : ℝ → ℝ) =ᵐ[vol01] g :=
   MemLp.coeFn_toLp _
 
 lemma inner_toHL_right (f : HL) {g : ℝ → ℝ} (hg : Continuous g) :
-    inner ℝ f (toHL hg) = ∫ x, (f : ℝ → ℝ) x * g x ∂μ1 := by
+    inner ℝ f (toHL hg) = ∫ x, (f : ℝ → ℝ) x * g x ∂vol01 := by
   rw [L2.inner_def]
   refine integral_congr_ae ?_
   filter_upwards [toHL_ae hg] with x hx
   rw [hx]; simp [mul_comm]
 
 lemma inner_toHL_toHL {a b : ℝ → ℝ} (ha : Continuous a) (hb : Continuous b) :
-    inner ℝ (toHL ha) (toHL hb) = ∫ x, a x * b x ∂μ1 := by
+    inner ℝ (toHL ha) (toHL hb) = ∫ x, a x * b x ∂vol01 := by
   rw [inner_toHL_right]
   refine integral_congr_ae ?_
   filter_upwards [toHL_ae ha] with x hx
@@ -74,7 +74,7 @@ lemma Gop_toHL_src :
 include hWc in
 /-- `⟨ψ, -ψ'' + Wψ⟩ = ∫ ψ'² + ∫ W ψ²` (integration by parts). -/
 lemma inner_src :
-    ∫ x, ψ x * src (W := W) ψ x ∂μ1 = ∫ x, (deriv ψ x ^ 2 + W x * ψ x ^ 2) ∂μ1 := by
+    ∫ x, ψ x * src (W := W) ψ x ∂vol01 = ∫ x, (deriv ψ x ^ 2 + W x * ψ x ^ 2) ∂vol01 := by
   have h2 : ContDiff ℝ 2 ψ := hψ.1
   have hd1 : ∀ t, HasDerivAt ψ (deriv ψ t) t := fun t =>
     ((h2.differentiable (by norm_num)) t).hasDerivAt
@@ -88,7 +88,7 @@ lemma inner_src :
     (fun t _ => hd1 t) (fun t _ => hd2 t) (hc1.intervalIntegrable _ _)
     (hc2.intervalIntegrable _ _)
   rw [hψ.2.1, hψ.2.2, zero_mul, zero_mul, sub_zero, zero_sub] at hibp
-  rw [← integral_unit_mu1, ← integral_unit_mu1]
+  rw [← integral_unit_vol01, ← integral_unit_vol01]
   have e1 : (fun x => ψ x * src (W := W) ψ x) =
       fun x => W x * ψ x ^ 2 - ψ x * deriv (deriv ψ) x := by
     funext x; simp only [src]; ring
@@ -138,7 +138,7 @@ lemma mu_pos (i : Idx hWc) : 0 < mu hWc i :=
   eigenvalue_pos hWc hW0 (eB_ne_zero hWc hW0 i) (mu_ne_zero hWc hW0 i) (Gop_eB hWc hW0 i)
 
 lemma exists_rep (i : Idx hWc) : ∃ e : ℝ → ℝ, e ∈ Dom ∧
-    ((eB hWc hW0 i : HL) : ℝ → ℝ) =ᵐ[μ1] e ∧
+    ((eB hWc hW0 i : HL) : ℝ → ℝ) =ᵐ[vol01] e ∧
       ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv e) x = (W x - (mu hWc i)⁻¹) * e x :=
   eigen_regular hWc hW0 (mu_ne_zero hWc hW0 i) (Gop_eB hWc hW0 i)
 
@@ -148,7 +148,7 @@ noncomputable def rep (i : Idx hWc) : ℝ → ℝ := Classical.choose (exists_re
 lemma rep_mem (i : Idx hWc) : rep hWc hW0 i ∈ Dom :=
   (Classical.choose_spec (exists_rep hWc hW0 i)).1
 
-lemma rep_ae (i : Idx hWc) : ((eB hWc hW0 i : HL) : ℝ → ℝ) =ᵐ[μ1] rep hWc hW0 i :=
+lemma rep_ae (i : Idx hWc) : ((eB hWc hW0 i : HL) : ℝ → ℝ) =ᵐ[vol01] rep hWc hW0 i :=
   (Classical.choose_spec (exists_rep hWc hW0 i)).2.1
 
 lemma rep_ode (i : Idx hWc) : ∀ x ∈ Icc (0 : ℝ) 1,
@@ -156,7 +156,7 @@ lemma rep_ode (i : Idx hWc) : ∀ x ∈ Icc (0 : ℝ) 1,
   (Classical.choose_spec (exists_rep hWc hW0 i)).2.2
 
 lemma inner_eB_toHL (i : Idx hWc) {g : ℝ → ℝ} (hg : Continuous g) :
-    inner ℝ (eB hWc hW0 i) (toHL hg) = ∫ x, rep hWc hW0 i x * g x ∂μ1 := by
+    inner ℝ (eB hWc hW0 i) (toHL hg) = ∫ x, rep hWc hW0 i x * g x ∂vol01 := by
   rw [inner_toHL_right]
   refine integral_congr_ae ?_
   filter_upwards [rep_ae hWc hW0 i] with x hx
@@ -164,7 +164,7 @@ lemma inner_eB_toHL (i : Idx hWc) {g : ℝ → ℝ} (hg : Continuous g) :
 
 /-- The representatives are orthonormal in `L²(0, 1)`. -/
 lemma rep_orthonormal (i j : Idx hWc) :
-    ∫ x, rep hWc hW0 i x * rep hWc hW0 j x ∂μ1 = if i = j then 1 else 0 := by
+    ∫ x, rep hWc hW0 i x * rep hWc hW0 j x ∂vol01 = if i = j then 1 else 0 := by
   have h := orthonormal_iff_ite.1 (eB hWc hW0).orthonormal i j
   rw [L2.inner_def] at h
   rw [← h]
@@ -175,11 +175,11 @@ lemma rep_orthonormal (i j : Idx hWc) :
 /-! ### The expansions -/
 
 /-- The coefficient `⟪eᵢ, ψ⟫ = ∫ eᵢ ψ`. -/
-noncomputable def coef (i : Idx hWc) (ψ : ℝ → ℝ) : ℝ := ∫ x, rep hWc hW0 i x * ψ x ∂μ1
+noncomputable def coef (i : Idx hWc) (ψ : ℝ → ℝ) : ℝ := ∫ x, rep hWc hW0 i x * ψ x ∂vol01
 
 /-- **Parseval**: `∫ ψ² = Σᵢ ⟪eᵢ, ψ⟫²`. -/
 lemma hasSum_sq {ψ : ℝ → ℝ} (hψ : Continuous ψ) :
-    HasSum (fun i => coef hWc hW0 i ψ ^ 2) (∫ x, ψ x * ψ x ∂μ1) := by
+    HasSum (fun i => coef hWc hW0 i ψ ^ 2) (∫ x, ψ x * ψ x ∂vol01) := by
   have h := (eB hWc hW0).hasSum_inner_mul_inner (toHL hψ) (toHL hψ)
   rw [inner_toHL_toHL] at h
   refine h.congr_fun fun i => ?_
@@ -188,7 +188,7 @@ lemma hasSum_sq {ψ : ℝ → ℝ} (hψ : Continuous ψ) :
 /-- **The energy in the eigenbasis**: `∫ ψ'² + ∫ W ψ² = Σᵢ μᵢ⁻¹ ⟪eᵢ, ψ⟫²`. -/
 lemma hasSum_form {ψ : ℝ → ℝ} (hψ : ψ ∈ Dom) :
     HasSum (fun i => (mu hWc i)⁻¹ * coef hWc hW0 i ψ ^ 2)
-      (∫ x, (deriv ψ x ^ 2 + W x * ψ x ^ 2) ∂μ1) := by
+      (∫ x, (deriv ψ x ^ 2 + W x * ψ x ^ 2) ∂vol01) := by
   have hg := continuous_src_dom hWc hψ
   have h := (eB hWc hW0).hasSum_inner_mul_inner (toHL hψ.1.continuous) (toHL hg)
   rw [inner_toHL_toHL, inner_src hWc hψ] at h
@@ -229,7 +229,7 @@ lemma cell_disjoint {N : ℕ} {j k : Fin N} (hjk : j ≠ k) : cell N j ∩ cell 
   have b' : (j : ℕ) < k + 1 := by exact_mod_cast b
   exact hjk (Fin.ext (by omega))
 
-lemma mu1_cell {N : ℕ} (j : Fin N) : μ1 (cell N j) ≠ 0 := by
+lemma vol01_cell {N : ℕ} (j : Fin N) : vol01 (cell N j) ≠ 0 := by
   have hN : (0 : ℝ) < N := by exact_mod_cast j.pos
   change (volume.restrict (Ioo (0 : ℝ) 1)) (cell N j) ≠ 0
   rw [Measure.restrict_apply (measurableSet_cell N j), inter_eq_left.2 (cell_sub j), cell,
@@ -239,23 +239,23 @@ lemma mu1_cell {N : ℕ} (j : Fin N) : μ1 (cell N j) ≠ 0 := by
 
 /-- `N` orthogonal nonzero vectors of `L²(0, 1)`: indicators of disjoint cells. -/
 noncomputable def cellV (N : ℕ) (j : Fin N) : HL :=
-  indicatorConstLp 2 (measurableSet_cell N j) (measure_ne_top μ1 (cell N j)) (1 : ℝ)
+  indicatorConstLp 2 (measurableSet_cell N j) (measure_ne_top vol01 (cell N j)) (1 : ℝ)
 
 lemma linearIndependent_cellV (N : ℕ) : LinearIndependent ℝ (cellV N) := by
   refine linearIndependent_of_ne_zero_of_inner_eq_zero (fun j h => ?_) fun j k hjk => ?_
   · have hn := norm_indicatorConstLp' (p := 2) (c := (1 : ℝ)) (hs := measurableSet_cell N j)
-      (hμs := measure_ne_top μ1 (cell N j)) two_ne_zero (mu1_cell j)
-    have h' : indicatorConstLp 2 (measurableSet_cell N j) (measure_ne_top μ1 (cell N j))
+      (hμs := measure_ne_top vol01 (cell N j)) two_ne_zero (vol01_cell j)
+    have h' : indicatorConstLp 2 (measurableSet_cell N j) (measure_ne_top vol01 (cell N j))
         (1 : ℝ) = 0 := h
     rw [h', norm_zero, norm_one, one_mul] at hn
-    have hpos : 0 < μ1.real (cell N j) :=
-      ENNReal.toReal_pos (mu1_cell j) (measure_ne_top μ1 _)
+    have hpos : 0 < vol01.real (cell N j) :=
+      ENNReal.toReal_pos (vol01_cell j) (measure_ne_top vol01 _)
     have := Real.rpow_pos_of_pos hpos (1 / (2 : ENNReal).toReal)
     linarith
   · change inner ℝ (cellV N j) (cellV N k) = 0
     unfold cellV
     rw [L2.inner_indicatorConstLp_indicatorConstLp (measurableSet_cell N j)
-      (measurableSet_cell N k) (measure_ne_top μ1 _) (measure_ne_top μ1 _), cell_disjoint hjk]
+      (measurableSet_cell N k) (measure_ne_top vol01 _) (measure_ne_top vol01 _), cell_disjoint hjk]
     simp
 
 include hW0 in

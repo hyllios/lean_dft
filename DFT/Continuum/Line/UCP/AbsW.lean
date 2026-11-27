@@ -188,7 +188,7 @@ theorem kinW_abs_le {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW τ n) : kinW (fun x 
     _ = _ := one_mul _
 
 /-- **Perron–Frobenius, first step**: for bosons, `|Ψ|` is a ground state whenever `Ψ` is. -/
-theorem isGS_abs {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot} {Ψ : Cfg n → ℝ}
+theorem isGS_abs {w : Cfg n → ℝ} {hw : Continuous w} {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW .bos n w hw) v Ψ) : IsGS (settingW .bos n w hw) v (fun x => |Ψ x|) := by
   have hD := abs_mem_DomW hΨ.1
   have hip : ip (μ := μN n) (fun x => |Ψ x|) (fun x => |Ψ x|) = ip (μ := μN n) Ψ Ψ := by

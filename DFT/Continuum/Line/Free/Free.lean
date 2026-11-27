@@ -28,7 +28,7 @@ open MeasureTheory Set Filter Topology Box SturmLiouville
 variable {n : ℕ} {τ : Stat}
 
 /-- Particles with no interaction. -/
-noncomputable abbrev freeS (τ : Stat) (n : ℕ) : Setting (μN n) Pot :=
+noncomputable abbrev freeS (τ : Stat) (n : ℕ) : Setting (μN n) C01 :=
   setting τ n (fun _ => 0) continuous_const
 
 /-! ### Slices -/
@@ -57,7 +57,7 @@ lemma deriv_slice {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) (k : Fin (n + 1))
     (t : ℝ) : deriv (fun s => φ (Fin.insertNth k s y)) t = dk k φ (Fin.insertNth k t y) :=
   (hasDerivAt_insertNth (diffF hφ) k y t).deriv
 
-variable (v : Pot)
+variable (v : C01)
 
 /-- The slice energy density along coordinate `k`: `(∂ₖφ)² + (v(xₖ) - E) φ²`. -/
 noncomputable def sk (E : ℝ) (k : Fin (n + 1)) (φ : Cfg n → ℝ) (x : Cfg n) : ℝ :=
@@ -94,7 +94,7 @@ lemma Q_slices (E : ℝ) {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) :
 lemma slice_energy (E : ℝ) (k : Fin (n + 1)) {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) :
     ∫ x, sk v E k φ x ∂μN n = ∫ y in Cube' n,
       (Q Box.setting v (fun t => φ (Fin.insertNth k t y)) -
-        E * ip (μ := μ1) (fun t => φ (Fin.insertNth k t y))
+        E * ip (μ := vol01) (fun t => φ (Fin.insertNth k t y))
           (fun t => φ (Fin.insertNth k t y))) := by
   rw [integral_cube_insertNth (continuous_sk v E k hφ) k]
   refine setIntegral_congr_fun (MeasurableSet.univ_pi fun _ => measurableSet_Ioo) fun y _ => ?_
@@ -111,7 +111,7 @@ theorem lower_bound_free {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) :
     refine integral_nonneg fun y => ?_
     have := hlow _ (slice_mem hφ k y)
     show (0 : ℝ) ≤ Q Box.setting v (fun t => φ (Fin.insertNth k t y)) -
-      Estar v * ip (μ := μ1) (fun t => φ (Fin.insertNth k t y)) (fun t => φ (Fin.insertNth k t y))
+      Estar v * ip (μ := vol01) (fun t => φ (Fin.insertNth k t y)) (fun t => φ (Fin.insertNth k t y))
     linarith
   linarith
 
@@ -160,7 +160,7 @@ theorem prodS_isGS : ∃ Ψ, IsGS (freeS .bos n) v Ψ ∧
   have hΨ : prodS (n := n) ψ ∈ DomB n := prodS_mem hD
   have hψpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < ψ t := fun t ht => by
     rw [hψeq t ⟨by linarith [ht.1], by linarith [ht.2]⟩]; exact star_pos v t ht
-  have h1d : ∫ x, (deriv ψ x ^ 2 + Wof v E x * ψ x ^ 2) ∂μ1 = 0 := by
+  have h1d : ∫ x, (deriv ψ x ^ 2 + Wof v E x * ψ x ^ 2) ∂vol01 = 0 := by
     rw [← Q_sub_eq v E hD, hQ]; ring
   have hslices : ∀ k, ∫ x, sk v E k (prodS ψ) x ∂μN n = 0 := by
     intro k

@@ -30,7 +30,7 @@ open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-! ### Functions represented by `H1E` -/
 
-lemma ae_deriv_prim (f : L2I) : deriv (prim f) =ᵐ[μ1] f := by
+lemma ae_deriv_prim (f : L2I) : deriv (prim f) =ᵐ[vol01] f := by
   have hd := (intervalIntegrable_of_mu1 (integrable_L2I f)
     ⟨zero_le_one, le_rfl⟩).ae_hasDerivAt_integral
   filter_upwards [ae_restrict_of_ae hd, ae_restrict_mem measurableSet_Ioo] with t h ht
@@ -73,32 +73,32 @@ lemma evE_apply (e : H1E) (t : Icc (0 : ℝ) 1) : evE e t = fnE e t := by
   simp only [evE, LinearMap.mkContinuous_apply, LinearMap.coe_mk, AddHom.coe_mk,
     ContinuousMap.add_apply, ContinuousMap.const_apply, primP_apply, fnE]
 
-lemma ext_evE {e : H1E} {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : ext (evE e) t = fnE e t := by
-  rw [SturmLiouville.ext, projIcc_of_mem _ ht, evE_apply]
+lemma ext_evE {e : H1E} {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : iccExt (evE e) t = fnE e t := by
+  rw [SturmLiouville.iccExt, projIcc_of_mem _ ht, evE_apply]
 
 /-! ### Multiplication by continuous functions on `L²` -/
 
-lemma abs_ext_le (P : Pot) (t : ℝ) : |ext P t| ≤ ‖P‖ := by
+lemma abs_ext_le (P : C01) (t : ℝ) : |iccExt P t| ≤ ‖P‖ := by
   rw [← Real.norm_eq_abs]; exact P.norm_coe_le_norm _
 
-lemma memLp_mulL (P : Pot) (f : L2I) : MemLp (fun t => ext P t * (f : ℝ → ℝ) t) 2 μ1 := by
+lemma memLp_mulL (P : C01) (f : L2I) : MemLp (fun t => iccExt P t * (f : ℝ → ℝ) t) 2 vol01 := by
   refine (memLp_two_iff_integrable_sq
-    ((continuous_ext P).aestronglyMeasurable.mul (Lp.aestronglyMeasurable f))).2 ?_
+    ((continuous_iccExt P).aestronglyMeasurable.mul (Lp.aestronglyMeasurable f))).2 ?_
   refine ((integrable_sq_L2I f).const_mul (‖P‖ ^ 2)).mono'
-    (((continuous_ext P).aestronglyMeasurable.mul (Lp.aestronglyMeasurable f)).pow 2)
+    (((continuous_iccExt P).aestronglyMeasurable.mul (Lp.aestronglyMeasurable f)).pow 2)
     (ae_of_all _ fun t => ?_)
-  change ‖(ext P t * (f : ℝ → ℝ) t) ^ 2‖ ≤ _
+  change ‖(iccExt P t * (f : ℝ → ℝ) t) ^ 2‖ ≤ _
   rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _), mul_pow]
   exact mul_le_mul_of_nonneg_right
     (by rw [← sq_abs]; exact pow_le_pow_left₀ (abs_nonneg _) (abs_ext_le P t) 2) (sq_nonneg _)
 
 /-- Multiplication of `f ∈ L²(0, 1)` by a continuous function `P` on `[0, 1]`. -/
-noncomputable def mulL (P : Pot) (f : L2I) : L2I := (memLp_mulL P f).toLp _
+noncomputable def mulL (P : C01) (f : L2I) : L2I := (memLp_mulL P f).toLp _
 
-lemma mulL_ae (P : Pot) (f : L2I) :
-    (mulL P f : ℝ → ℝ) =ᵐ[μ1] fun t => ext P t * (f : ℝ → ℝ) t := MemLp.coeFn_toLp _
+lemma mulL_ae (P : C01) (f : L2I) :
+    (mulL P f : ℝ → ℝ) =ᵐ[vol01] fun t => iccExt P t * (f : ℝ → ℝ) t := MemLp.coeFn_toLp _
 
-lemma norm_mulL_le (P : Pot) (f : L2I) : ‖mulL P f‖ ≤ ‖P‖ * ‖f‖ := by
+lemma norm_mulL_le (P : C01) (f : L2I) : ‖mulL P f‖ ≤ ‖P‖ * ‖f‖ := by
   have h : ‖mulL P f‖ ^ 2 ≤ (‖P‖ * ‖f‖) ^ 2 := by
     rw [norm_sq_L2I, mul_pow, norm_sq_L2I, ← integral_const_mul]
     refine integral_mono_ae ((memLp_two_iff_integrable_sq (Lp.aestronglyMeasurable _)).1
@@ -109,22 +109,22 @@ lemma norm_mulL_le (P : Pot) (f : L2I) : ‖mulL P f‖ ≤ ‖P‖ * ‖f‖ :=
       (by rw [← sq_abs]; exact pow_le_pow_left₀ (abs_nonneg _) (abs_ext_le P t) 2) (sq_nonneg _)
   exact (pow_le_pow_iff_left₀ (norm_nonneg _) (by positivity) two_ne_zero).1 h
 
-lemma inner_mulL (P : Pot) (f β : L2I) : inner ℝ (mulL P f) β = inner ℝ f (mulL P β) := by
+lemma inner_mulL (P : C01) (f β : L2I) : inner ℝ (mulL P f) β = inner ℝ f (mulL P β) := by
   rw [L2.inner_def, L2.inner_def]
   refine integral_congr_ae ?_
   filter_upwards [mulL_ae P f, mulL_ae P β] with t h1 h2
   simp only [Real.inner_apply, h1, h2]; ring
 
-lemma mulL_sub_left (P Q : Pot) (f : L2I) : mulL (P - Q) f = mulL P f - mulL Q f := by
+lemma mulL_sub_left (P Q : C01) (f : L2I) : mulL (P - Q) f = mulL P f - mulL Q f := by
   refine Lp.ext ?_
   filter_upwards [mulL_ae (P - Q) f, mulL_ae P f, mulL_ae Q f, Lp.coeFn_sub (mulL P f) (mulL Q f)]
     with t h1 h2 h3 h4
   rw [h1, h4, Pi.sub_apply, h2, h3]
-  simp only [SturmLiouville.ext, ContinuousMap.sub_apply]; ring
+  simp only [SturmLiouville.iccExt, ContinuousMap.sub_apply]; ring
 
 /-- **Weak continuity of multiplication**: `P_k → P` uniformly and `f_k ⇀ g` (bounded) give
 `P_k f_k ⇀ P g`. -/
-theorem tendsto_inner_mulL {P : ℕ → Pot} {P₀ : Pot} (hP : Tendsto P atTop (𝓝 P₀))
+theorem tendsto_inner_mulL {P : ℕ → C01} {P₀ : C01} (hP : Tendsto P atTop (𝓝 P₀))
     {f : ℕ → L2I} {g : L2I} {R : ℝ} (hR : ∀ k, ‖f k‖ ≤ R)
     (hw : ∀ h : L2I, Tendsto (fun k => inner ℝ (f k) h) atTop (𝓝 (inner ℝ g h))) (β : L2I) :
     Tendsto (fun k => inner ℝ (mulL (P k) (f k)) β) atTop (𝓝 (inner ℝ (mulL P₀ g) β)) := by
@@ -188,7 +188,7 @@ theorem tendsto_v_dE (v : PotH) {e : ℕ → H1E} {e₀ : H1E}
 /-! ### Energy and normalisation on `H1E` -/
 
 /-- `∫ (fnE e)²`. -/
-noncomputable def nrmE (e : H1E) : ℝ := ∫ t, fnE e t ^ 2 ∂μ1
+noncomputable def nrmE (e : H1E) : ℝ := ∫ t, fnE e t ^ 2 ∂vol01
 
 /-- The energy `∫ ψ'² + v(ψ²)` of `ψ = fnE e`. -/
 noncomputable def QE (v : PotH) (e : H1E) : ℝ := ‖e.snd‖ ^ 2 + v (dE e)
@@ -227,11 +227,11 @@ lemma EH_le (v : PotH) {e : H1E} (hn : nrmE e = 1) : EH v ≤ QE v e :=
 /-- Uniform convergence of `evE` makes the normalisation converge. -/
 lemma tendsto_nrmE {e : ℕ → H1E} {e₀ : H1E} (hP : Tendsto (fun k => evE (e k)) atTop (𝓝 (evE e₀)))
     {B : ℝ} (hB : ∀ k, ‖evE (e k)‖ ≤ B) : Tendsto (fun k => nrmE (e k)) atTop (𝓝 (nrmE e₀)) := by
-  have hc : ∀ x : H1E, nrmE x = ∫ t, ext (evE x) t ^ 2 ∂μ1 := fun x =>
+  have hc : ∀ x : H1E, nrmE x = ∫ t, iccExt (evE x) t ^ 2 ∂vol01 := fun x =>
     setIntegral_congr_fun measurableSet_Ioo fun t ht => by rw [ext_evE (Ioo_subset_Icc_self ht)]
   simp only [hc]
   refine tendsto_integral_of_dominated_convergence (fun _ => B ^ 2)
-    (fun k => ((continuous_ext _).pow 2).aestronglyMeasurable) (integrable_const _)
+    (fun k => ((continuous_iccExt _).pow 2).aestronglyMeasurable) (integrable_const _)
     (fun k => ae_of_all _ fun t => ?_) (ae_of_all _ fun t => ?_)
   · rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _), ← sq_abs]
     exact pow_le_pow_left₀ (abs_nonneg _) ((abs_ext_le _ t).trans (hB k)) 2
@@ -318,7 +318,7 @@ theorem exists_minE (v : PotH) : ∃ e : H1E, nrmE e = 1 ∧ QE v e = EH v := by
 
 /-! ### Polarisation -/
 
-lemma mulL_poly (P Q : Pot) (f g : L2I) (s : ℝ) :
+lemma mulL_poly (P Q : C01) (f g : L2I) (s : ℝ) :
     mulL (P + s • Q) (f + s • g) = mulL P f + s • (mulL P g + mulL Q f) + s ^ 2 • mulL Q g := by
   refine Lp.ext ?_
   filter_upwards [mulL_ae (P + s • Q) (f + s • g), mulL_ae P f, mulL_ae P g, mulL_ae Q f,
@@ -329,7 +329,7 @@ lemma mulL_poly (P Q : Pot) (f g : L2I) (s : ℝ) :
     Lp.coeFn_smul (s ^ 2) (mulL Q g)] with t h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul] at *
   rw [h1, h6, h7, h8, h9, h10, h11, h12, h2, h3, h4, h5]
-  simp only [SturmLiouville.ext, ContinuousMap.add_apply, ContinuousMap.smul_apply, smul_eq_mul]
+  simp only [SturmLiouville.iccExt, ContinuousMap.add_apply, ContinuousMap.smul_apply, smul_eq_mul]
   ring
 
 /-- The overlap density `ψ φ` of `ψ = fnE e`, `φ = fnE h`, as an element of `H1E`. -/
@@ -348,18 +348,18 @@ lemma dE_add (e h : H1E) (s : ℝ) :
       Prod.smul_snd, WithLp.add_snd, WithLp.smul_snd, hm]
     module
 
-lemma mulL_smul_smul (P : Pot) (f : L2I) (c : ℝ) : mulL (c • P) (c • f) = c ^ 2 • mulL P f := by
+lemma mulL_smul_smul (P : C01) (f : L2I) (c : ℝ) : mulL (c • P) (c • f) = c ^ 2 • mulL P f := by
   have := mulL_poly 0 P 0 f c
   simp only [zero_add] at this
   rw [this]
   have z1 : mulL 0 0 = 0 := Lp.ext <| by
-    filter_upwards [mulL_ae 0 0, Lp.coeFn_zero ℝ 2 μ1] with t h1 h2
+    filter_upwards [mulL_ae 0 0, Lp.coeFn_zero ℝ 2 vol01] with t h1 h2
     rw [h1, h2]; simp
   have z2 : mulL 0 f = 0 := Lp.ext <| by
-    filter_upwards [mulL_ae 0 f, Lp.coeFn_zero ℝ 2 μ1] with t h1 h2
-    rw [h1, h2]; simp [SturmLiouville.ext]
+    filter_upwards [mulL_ae 0 f, Lp.coeFn_zero ℝ 2 vol01] with t h1 h2
+    rw [h1, h2]; simp [SturmLiouville.iccExt]
   have z3 : mulL P 0 = 0 := Lp.ext <| by
-    filter_upwards [mulL_ae P 0, Lp.coeFn_zero ℝ 2 μ1] with t h1 h2
+    filter_upwards [mulL_ae P 0, Lp.coeFn_zero ℝ 2 vol01] with t h1 h2
     rw [h1, h2]; simp
   rw [z1, z2, z3]; simp
 
@@ -390,18 +390,18 @@ lemma fnE_add_smul (e h : H1E) (s : ℝ) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) 
     prim_add _ _ ht, prim_smul _ _ ht, smul_eq_mul]
   ring
 
-lemma integrable_fnE_mul (e h : H1E) : Integrable (fun t => fnE e t * fnE h t) μ1 :=
+lemma integrable_fnE_mul (e h : H1E) : Integrable (fun t => fnE e t * fnE h t) vol01 :=
   (((continuousOn_fnE e).mul (continuousOn_fnE h)).integrableOn_compact isCompact_Icc).mono_set
     Ioo_subset_Icc_self
 
 lemma nrmE_add (e h : H1E) (s : ℝ) :
-    nrmE (e + s • h) = nrmE e + 2 * s * ∫ t, fnE e t * fnE h t ∂μ1 + s ^ 2 * nrmE h := by
-  have i1 : Integrable (fun t => fnE e t ^ 2) μ1 := (h1N_fnE e).int_sq
-  have i2 : Integrable (fun t => 2 * s * (fnE e t * fnE h t)) μ1 :=
+    nrmE (e + s • h) = nrmE e + 2 * s * ∫ t, fnE e t * fnE h t ∂vol01 + s ^ 2 * nrmE h := by
+  have i1 : Integrable (fun t => fnE e t ^ 2) vol01 := (h1N_fnE e).int_sq
+  have i2 : Integrable (fun t => 2 * s * (fnE e t * fnE h t)) vol01 :=
     (integrable_fnE_mul e h).const_mul _
-  have i3 : Integrable (fun t => s ^ 2 * fnE h t ^ 2) μ1 := (h1N_fnE h).int_sq.const_mul _
+  have i3 : Integrable (fun t => s ^ 2 * fnE h t ^ 2) vol01 := (h1N_fnE h).int_sq.const_mul _
   have : nrmE (e + s • h) = ∫ t, (fnE e t ^ 2 + 2 * s * (fnE e t * fnE h t) +
-      s ^ 2 * fnE h t ^ 2) ∂μ1 :=
+      s ^ 2 * fnE h t ^ 2) ∂vol01 :=
     setIntegral_congr_fun measurableSet_Ioo fun t ht => by
       simp only [fnE_add_smul e h s (Ioo_subset_Icc_self ht)]; ring
   have a1 := integral_add (i1.add i2) i3
@@ -436,9 +436,9 @@ theorem EH_mul_le (v : PotH) (e : H1E) : EH v * nrmE e ≤ QE v e := by
 /-- **Euler–Lagrange on `H1E`**: a normalised minimiser satisfies
 `⟨e', h'⟩ + v(ψ_e ψ_h) = E₀ ∫ ψ_e ψ_h` for every `h`. -/
 theorem euler_lagrangeE {v : PotH} {e : H1E} (hn : nrmE e = 1) (hmin : QE v e = EH v) (h : H1E) :
-    inner ℝ e.snd h.snd + v (dE2 e h) = EH v * ∫ t, fnE e t * fnE h t ∂μ1 := by
+    inner ℝ e.snd h.snd + v (dE2 e h) = EH v * ∫ t, fnE e t * fnE h t ∂vol01 := by
   have key := eq_zero_of_quad (a := inner ℝ e.snd h.snd + v (dE2 e h) -
-      EH v * ∫ t, fnE e t * fnE h t ∂μ1) (c := QE v h - EH v * nrmE h) fun s => by
+      EH v * ∫ t, fnE e t * fnE h t ∂vol01) (c := QE v h - EH v * nrmE h) fun s => by
     have h1 := EH_mul_le v (e + s • h)
     rw [QE_add, nrmE_add, hn, hmin] at h1
     linarith
@@ -452,37 +452,37 @@ noncomputable def QH (v : PotH) {ψ : ℝ → ℝ} (hψ : H1N ψ) : ℝ := kinM 
 /-- `ψ` is a ground state of `-d²/dt² + v` with Neumann walls: a nonzero minimiser of the
 Rayleigh quotient on `H¹(0, 1)`. -/
 def IsGSH (v : PotH) (ψ : ℝ → ℝ) : Prop :=
-  ∃ hψ : H1N ψ, 0 < ∫ t, ψ t ^ 2 ∂μ1 ∧
-    ∀ φ (hφ : H1N φ), QH v hψ * ∫ t, φ t ^ 2 ∂μ1 ≤ QH v hφ * ∫ t, ψ t ^ 2 ∂μ1
+  ∃ hψ : H1N ψ, 0 < ∫ t, ψ t ^ 2 ∂vol01 ∧
+    ∀ φ (hφ : H1N φ), QH v hψ * ∫ t, φ t ^ 2 ∂vol01 ≤ QH v hφ * ∫ t, ψ t ^ 2 ∂vol01
 
 /-- `ρ ∈ C([0, 1])` is the density of a normalised Neumann ground state of an `H⁻¹` potential. -/
-def VRepH (ρ : Pot) : Prop :=
-  ∃ v ψ, IsGSH v ψ ∧ ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧ ∀ t : Icc (0 : ℝ) 1, ρ t = ψ t ^ 2
+def VRepH (ρ : C01) : Prop :=
+  ∃ v ψ, IsGSH v ψ ∧ ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧ ∀ t : Icc (0 : ℝ) 1, ρ t = ψ t ^ 2
 
 lemma QH_eq {v : PotH} {ψ : ℝ → ℝ} (hψ : H1N ψ) : QH v hψ = QE v (toE hψ) := by
   rw [QH, QE, ← sqE_eq_dE, ← norm_dN_sq hψ]; rfl
 
-lemma nrm_eq {ψ : ℝ → ℝ} (hψ : H1N ψ) : ∫ t, ψ t ^ 2 ∂μ1 = nrmE (toE hψ) :=
+lemma nrm_eq {ψ : ℝ → ℝ} (hψ : H1N ψ) : ∫ t, ψ t ^ 2 ∂vol01 = nrmE (toE hψ) :=
   setIntegral_congr_fun measurableSet_Ioo fun t ht => by
     rw [fnE_toE hψ (Ioo_subset_Icc_self ht)]
 
 lemma EH_mul_le_QH (v : PotH) {φ : ℝ → ℝ} (hφ : H1N φ) :
-    EH v * ∫ t, φ t ^ 2 ∂μ1 ≤ QH v hφ := by
+    EH v * ∫ t, φ t ^ 2 ∂vol01 ≤ QH v hφ := by
   rw [QH_eq, nrm_eq]; exact EH_mul_le v _
 
 /-- **Every `H⁻¹` potential has a normalised Neumann ground state**, with energy `EH v`. -/
 theorem exists_isGSH (v : PotH) :
-    ∃ ψ : ℝ → ℝ, ∃ hψ : H1N ψ, IsGSH v ψ ∧ ∫ t, ψ t ^ 2 ∂μ1 = 1 ∧ QH v hψ = EH v := by
+    ∃ ψ : ℝ → ℝ, ∃ hψ : H1N ψ, IsGSH v ψ ∧ ∫ t, ψ t ^ 2 ∂vol01 = 1 ∧ QH v hψ = EH v := by
   obtain ⟨e, hn, hmin⟩ := exists_minE v
   have hψ := h1N_fnE e
-  have hn' : ∫ t, fnE e t ^ 2 ∂μ1 = 1 := hn
+  have hn' : ∫ t, fnE e t ^ 2 ∂vol01 = 1 := hn
   have hQ : QH v hψ = EH v := by rw [QH_eq, toE_fnE, hmin]
   refine ⟨fnE e, hψ, ⟨hψ, by rw [hn']; exact one_pos, fun φ hφ => ?_⟩, hn', hQ⟩
   rw [hn', mul_one, hQ]
   exact EH_mul_le_QH v hφ
 
 /-- A normalised ground state has energy `EH v`. -/
-lemma QH_of_isGSH {v : PotH} {ψ : ℝ → ℝ} (hgs : IsGSH v ψ) (hn : ∫ t, ψ t ^ 2 ∂μ1 = 1) :
+lemma QH_of_isGSH {v : PotH} {ψ : ℝ → ℝ} (hgs : IsGSH v ψ) (hn : ∫ t, ψ t ^ 2 ∂vol01 = 1) :
     QH v hgs.1 = EH v := by
   obtain ⟨φ, hφ, -, hφn, hφQ⟩ := exists_isGSH v
   obtain ⟨hψ, -, hmin⟩ := hgs
@@ -510,7 +510,7 @@ lemma toE_mul_eq_dE2 {ψ φ : ℝ → ℝ} (hψ : H1N ψ) (hφ : H1N φ) :
   ring
 
 lemma inner_dN {ψ φ : ℝ → ℝ} (hψ : H1N ψ) (hφ : H1N φ) :
-    inner ℝ (dN hψ) (dN hφ) = ∫ t, deriv ψ t * deriv φ t ∂μ1 := by
+    inner ℝ (dN hψ) (dN hφ) = ∫ t, deriv ψ t * deriv φ t ∂vol01 := by
   rw [L2.inner_def]
   refine integral_congr_ae ?_
   filter_upwards [dN_ae hψ, dN_ae hφ] with t h1 h2
@@ -518,9 +518,9 @@ lemma inner_dN {ψ φ : ℝ → ℝ} (hψ : H1N ψ) (hφ : H1N φ) :
 
 /-- **The Euler–Lagrange equation**: a normalised Neumann ground state solves
 `-ψ'' + vψ = E₀ψ` weakly: `∫ ψ'φ' + v(ψφ) = E₀ ∫ ψφ` for every `φ ∈ H¹(0, 1)`. -/
-theorem euler_lagrangeH {v : PotH} {ψ : ℝ → ℝ} (hgs : IsGSH v ψ) (hn : ∫ t, ψ t ^ 2 ∂μ1 = 1)
+theorem euler_lagrangeH {v : PotH} {ψ : ℝ → ℝ} (hgs : IsGSH v ψ) (hn : ∫ t, ψ t ^ 2 ∂vol01 = 1)
     {φ : ℝ → ℝ} (hφ : H1N φ) :
-    ∫ t, deriv ψ t * deriv φ t ∂μ1 + v (toE (hgs.1.mul hφ)) = EH v * ∫ t, ψ t * φ t ∂μ1 := by
+    ∫ t, deriv ψ t * deriv φ t ∂vol01 + v (toE (hgs.1.mul hφ)) = EH v * ∫ t, ψ t * φ t ∂vol01 := by
   have hψ := hgs.1
   have hQ := QH_of_isGSH hgs hn
   rw [QH_eq] at hQ

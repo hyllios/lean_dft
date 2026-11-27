@@ -121,9 +121,9 @@ lemma KS_zero : KS c 0 = 0 := by simp [KS, uS_zero]
 lemma KS_one : KS c 1 = 0 := by simp [KS, uS_one]
 
 /-- `a(k', k) = ∫ v s_{k'+1} s_{k+1}`. -/
-noncomputable def aK (v : Pot) (k' k : ℕ) : ℝ := ∫ t, sn (k' + 1) t * (ext v t * sn (k + 1) t) ∂μ1
+noncomputable def aK (v : C01) (k' k : ℕ) : ℝ := ∫ t, sn (k' + 1) t * (iccExt v t * sn (k + 1) t) ∂vol01
 
-lemma integrable_mu1_cont {f : ℝ → ℝ} (hf : Continuous f) : Integrable f μ1 :=
+lemma integrable_mu1_cont {f : ℝ → ℝ} (hf : Continuous f) : Integrable f vol01 :=
   (hf.continuousOn.integrableOn_compact (K := Icc (0 : ℝ) 1) isCompact_Icc).mono_set
     Ioo_subset_Icc_self
 
@@ -276,71 +276,71 @@ theorem continuous_KS : Continuous (KS c) :=
 /-! ### The integral of `v K` -/
 
 /-- `∫ v u_μ² = Σ_{k'} c_{(k',μ)} Σ_k c_{(k,μ)} a(k', k)`. -/
-lemma integral_uS_sq (v : Pot) (μ : Fin n → ℕ) :
-    ∫ t, ext v t * uS c μ t ^ 2 ∂μ1 =
+lemma integral_uS_sq (v : C01) (μ : Fin n → ℕ) :
+    ∫ t, iccExt v t * uS c μ t ^ 2 ∂vol01 =
       ∑' k', cc c k' μ * ∑' k, aK v k' k * cc c k μ := by
-  have hv := continuous_ext v
+  have hv := continuous_iccExt v
   have hu := continuous_uS hcl μ
   have habs := summable_abs_cc hcl μ
   -- the outer sum
-  have hF : ∀ k' : ℕ, Integrable (fun t => cc c k' μ * sn (k' + 1) t * (ext v t * uS c μ t)) μ1 :=
+  have hF : ∀ k' : ℕ, Integrable (fun t => cc c k' μ * sn (k' + 1) t * (iccExt v t * uS c μ t)) vol01 :=
     fun k' => integrable_mu1_cont ((continuous_const.mul (continuous_sn _)).mul
-      ((continuous_ext v).mul (continuous_uS hcl μ)))
-  have hbd : ∀ k' : ℕ, ∫ t, ‖cc c k' μ * sn (k' + 1) t * (ext v t * uS c μ t)‖ ∂μ1 ≤
+      ((continuous_iccExt v).mul (continuous_uS hcl μ)))
+  have hbd : ∀ k' : ℕ, ∫ t, ‖cc c k' μ * sn (k' + 1) t * (iccExt v t * uS c μ t)‖ ∂vol01 ≤
       |cc c k' μ| * (√2 * (‖v‖ * (√2 * S1 c μ))) := fun k' => by
-    have hb : ∀ t, ‖cc c k' μ * sn (k' + 1) t * (ext v t * uS c μ t)‖ ≤
+    have hb : ∀ t, ‖cc c k' μ * sn (k' + 1) t * (iccExt v t * uS c μ t)‖ ≤
         |cc c k' μ| * (√2 * (‖v‖ * (√2 * S1 c μ))) := fun t => by
       have a1 := abs_sn_le (k' + 1) t
       have a2 := abs_ext_le v t
       have a3 := abs_uS_le hcl μ t
       rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_mul]
-      calc |cc c k' μ| * |sn (k' + 1) t| * (|ext v t| * |uS c μ t|)
+      calc |cc c k' μ| * |sn (k' + 1) t| * (|iccExt v t| * |uS c μ t|)
           ≤ |cc c k' μ| * √2 * (‖v‖ * (√2 * S1 c μ)) := by gcongr
         _ = _ := by ring
-    calc _ ≤ ∫ t, |cc c k' μ| * (√2 * (‖v‖ * (√2 * S1 c μ))) ∂μ1 :=
+    calc _ ≤ ∫ t, |cc c k' μ| * (√2 * (‖v‖ * (√2 * S1 c μ))) ∂vol01 :=
           integral_mono_of_nonneg (ae_of_all _ fun t => norm_nonneg _) (integrable_const _)
             (ae_of_all _ hb)
       _ = _ := by simp
-  have hsum : Summable fun k' : ℕ => ∫ t, ‖cc c k' μ * sn (k' + 1) t * (ext v t * uS c μ t)‖ ∂μ1 :=
+  have hsum : Summable fun k' : ℕ => ∫ t, ‖cc c k' μ * sn (k' + 1) t * (iccExt v t * uS c μ t)‖ ∂vol01 :=
     Summable.of_nonneg_of_le (fun _ => integral_nonneg fun _ => norm_nonneg _) hbd
       (habs.mul_right _)
-  have h1 : ∫ t, ext v t * uS c μ t ^ 2 ∂μ1 =
-      ∑' k', ∫ t, cc c k' μ * sn (k' + 1) t * (ext v t * uS c μ t) ∂μ1 := by
+  have h1 : ∫ t, iccExt v t * uS c μ t ^ 2 ∂vol01 =
+      ∑' k', ∫ t, cc c k' μ * sn (k' + 1) t * (iccExt v t * uS c μ t) ∂vol01 := by
     rw [integral_tsum_of_summable_integral_norm hF hsum]
     refine integral_congr_ae (ae_of_all _ fun t => ?_)
     simp only
     rw [tsum_mul_right]
-    change ext v t * uS c μ t ^ 2 = uS c μ t * (ext v t * uS c μ t)
+    change iccExt v t * uS c μ t ^ 2 = uS c μ t * (iccExt v t * uS c μ t)
     ring
   rw [h1]
   refine tsum_congr fun k' => ?_
   -- the inner sum
   have hG : ∀ k : ℕ,
-      Integrable (fun t => cc c k μ * (sn (k' + 1) t * (ext v t * sn (k + 1) t))) μ1 :=
+      Integrable (fun t => cc c k μ * (sn (k' + 1) t * (iccExt v t * sn (k + 1) t))) vol01 :=
     fun k => integrable_mu1_cont (continuous_const.mul ((continuous_sn _).mul
-      ((continuous_ext v).mul (continuous_sn _))))
-  have hbd2 : ∀ k : ℕ, ∫ t, ‖cc c k μ * (sn (k' + 1) t * (ext v t * sn (k + 1) t))‖ ∂μ1 ≤
+      ((continuous_iccExt v).mul (continuous_sn _))))
+  have hbd2 : ∀ k : ℕ, ∫ t, ‖cc c k μ * (sn (k' + 1) t * (iccExt v t * sn (k + 1) t))‖ ∂vol01 ≤
       |cc c k μ| * (√2 * (‖v‖ * √2)) := fun k => by
-    have hb : ∀ t, ‖cc c k μ * (sn (k' + 1) t * (ext v t * sn (k + 1) t))‖ ≤
+    have hb : ∀ t, ‖cc c k μ * (sn (k' + 1) t * (iccExt v t * sn (k + 1) t))‖ ≤
         |cc c k μ| * (√2 * (‖v‖ * √2)) := fun t => by
       have a1 := abs_sn_le (k' + 1) t
       have a2 := abs_ext_le v t
       have a3 := abs_sn_le (k + 1) t
       rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_mul]
-      calc |cc c k μ| * (|sn (k' + 1) t| * (|ext v t| * |sn (k + 1) t|))
+      calc |cc c k μ| * (|sn (k' + 1) t| * (|iccExt v t| * |sn (k + 1) t|))
           ≤ |cc c k μ| * (√2 * (‖v‖ * √2)) := by gcongr
         _ = _ := by ring
-    calc _ ≤ ∫ t, |cc c k μ| * (√2 * (‖v‖ * √2)) ∂μ1 :=
+    calc _ ≤ ∫ t, |cc c k μ| * (√2 * (‖v‖ * √2)) ∂vol01 :=
           integral_mono_of_nonneg (ae_of_all _ fun t => norm_nonneg _) (integrable_const _)
             (ae_of_all _ hb)
       _ = _ := by simp
   have hsum2 : Summable fun k : ℕ =>
-      ∫ t, ‖cc c k μ * (sn (k' + 1) t * (ext v t * sn (k + 1) t))‖ ∂μ1 :=
+      ∫ t, ‖cc c k μ * (sn (k' + 1) t * (iccExt v t * sn (k + 1) t))‖ ∂vol01 :=
     Summable.of_nonneg_of_le (fun _ => integral_nonneg fun _ => norm_nonneg _) hbd2
       (habs.mul_right _)
   have h2 := integral_tsum_of_summable_integral_norm hG hsum2
-  have e1 : ∫ t, cc c k' μ * sn (k' + 1) t * (ext v t * uS c μ t) ∂μ1 =
-      cc c k' μ * ∫ t, ∑' k, cc c k μ * (sn (k' + 1) t * (ext v t * sn (k + 1) t)) ∂μ1 := by
+  have e1 : ∫ t, cc c k' μ * sn (k' + 1) t * (iccExt v t * uS c μ t) ∂vol01 =
+      cc c k' μ * ∫ t, ∑' k, cc c k μ * (sn (k' + 1) t * (iccExt v t * sn (k + 1) t)) ∂vol01 := by
     rw [← integral_const_mul]
     refine integral_congr_ae (ae_of_all _ fun t => ?_)
     simp only [uS, ← tsum_mul_left]
@@ -351,25 +351,25 @@ lemma integral_uS_sq (v : Pot) (μ : Fin n → ℕ) :
   rw [integral_const_mul, aK]; ring
 
 /-- `∫ v K = N Σ_μ Σ_{k'} c_{(k',μ)} Σ_k c_{(k,μ)} a(k', k)`. -/
-theorem integral_KS (v : Pot) :
-    ∫ t, ext v t * KS c t ∂μ1 =
+theorem integral_KS (v : C01) :
+    ∫ t, iccExt v t * KS c t ∂vol01 =
       (n + 1) * ∑' μ, ∑' k', cc c k' μ * ∑' k, aK v k' k * cc c k μ := by
-  have hF : ∀ μ : Fin n → ℕ, Integrable (fun t => ext v t * uS c μ t ^ 2) μ1 :=
-    fun μ => integrable_mu1_cont ((continuous_ext v).mul ((continuous_uS hcl μ).pow 2))
-  have hbd : ∀ μ : Fin n → ℕ, ∫ t, ‖ext v t * uS c μ t ^ 2‖ ∂μ1 ≤ ‖v‖ * (2 * (Z2 * A4 c μ)) :=
+  have hF : ∀ μ : Fin n → ℕ, Integrable (fun t => iccExt v t * uS c μ t ^ 2) vol01 :=
+    fun μ => integrable_mu1_cont ((continuous_iccExt v).mul ((continuous_uS hcl μ).pow 2))
+  have hbd : ∀ μ : Fin n → ℕ, ∫ t, ‖iccExt v t * uS c μ t ^ 2‖ ∂vol01 ≤ ‖v‖ * (2 * (Z2 * A4 c μ)) :=
     fun μ => by
-      have hb : ∀ t, ‖ext v t * uS c μ t ^ 2‖ ≤ ‖v‖ * (2 * (Z2 * A4 c μ)) := fun t => by
+      have hb : ∀ t, ‖iccExt v t * uS c μ t ^ 2‖ ≤ ‖v‖ * (2 * (Z2 * A4 c μ)) := fun t => by
         rw [norm_mul, Real.norm_eq_abs]
         exact mul_le_mul (abs_ext_le v t) (bound_KS hcl μ t) (norm_nonneg _) (norm_nonneg _)
-      calc _ ≤ ∫ t, ‖v‖ * (2 * (Z2 * A4 c μ)) ∂μ1 :=
+      calc _ ≤ ∫ t, ‖v‖ * (2 * (Z2 * A4 c μ)) ∂vol01 :=
             integral_mono_of_nonneg (ae_of_all _ fun t => norm_nonneg _) (integrable_const _)
               (ae_of_all _ hb)
         _ = _ := by simp
-  have hsum : Summable fun μ : Fin n → ℕ => ∫ t, ‖ext v t * uS c μ t ^ 2‖ ∂μ1 :=
+  have hsum : Summable fun μ : Fin n → ℕ => ∫ t, ‖iccExt v t * uS c μ t ^ 2‖ ∂vol01 :=
     Summable.of_nonneg_of_le (fun _ => integral_nonneg fun _ => norm_nonneg _) hbd
       (((summable_bound hcl).mul_left 2).mul_left _)
   have h := integral_tsum_of_summable_integral_norm hF hsum
-  have e : ∫ t, ext v t * KS c t ∂μ1 = (n + 1) * ∫ t, ∑' μ, ext v t * uS c μ t ^ 2 ∂μ1 := by
+  have e : ∫ t, iccExt v t * KS c t ∂vol01 = (n + 1) * ∫ t, ∑' μ, iccExt v t * uS c μ t ^ 2 ∂vol01 := by
     rw [← integral_const_mul]
     refine integral_congr_ae (ae_of_all _ fun t => ?_)
     simp only [KS]

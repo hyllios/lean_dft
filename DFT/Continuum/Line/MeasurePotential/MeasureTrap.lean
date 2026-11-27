@@ -103,13 +103,13 @@ lemma integral_piece {φ : ℝ → ℝ} (hφ : H10 φ) {a b k : ℝ} (ha : 0 ≤
 
 /-- **`∫ g'φ' = 3φ(⅓) + 3φ(⅔)`** for `φ ∈ H¹₀`. -/
 theorem integral_dtrap {φ : ℝ → ℝ} (hφ : H10 φ) :
-    ∫ t, deriv trapG t * deriv φ t ∂μ1 = 3 * φ (1 / 3) + 3 * φ (2 / 3) := by
+    ∫ t, deriv trapG t * deriv φ t ∂vol01 = 3 * φ (1 / 3) + 3 * φ (2 / 3) := by
   have hi : IntervalIntegrable (fun t => deriv trapG t * deriv φ t) volume 0 1 :=
     (intervalIntegrable_iff_integrableOn_Ioo_of_le zero_le_one).2 (integrable_dd h10_trapG hφ)
   have hii : ∀ {a b : ℝ}, 0 ≤ a → a ≤ b → b ≤ 1 →
       IntervalIntegrable (fun t => deriv trapG t * deriv φ t) volume a b := fun ha hab hb =>
     hi.mono_set (by rw [uIcc01, uIcc_of_le hab]; exact Icc_subset_Icc ha hb)
-  rw [integral_mu1, ← intervalIntegral.integral_add_adjacent_intervals
+  rw [integral_vol01, ← intervalIntegral.integral_add_adjacent_intervals
       (hii le_rfl (by norm_num) (by norm_num) : IntervalIntegrable _ _ 0 (1 / 3))
       (hii (by norm_num) (by norm_num) le_rfl : IntervalIntegrable _ _ (1 / 3) 1),
     ← intervalIntegral.integral_add_adjacent_intervals
@@ -127,8 +127,8 @@ noncomputable def nuTrap : PotM :=
 
 /-- **The trapezoid is a ground state of `-d²/dt² - 3δ_{1/3} - 3δ_{2/3}`**, with energy `0`. -/
 theorem trap_isGSM : IsGSM nuTrap trapG ∧ EM nuTrap = 0 := by
-  have hw : ∀ φ (hφ : H10 φ), ∫ t, deriv trapG t * deriv φ t ∂μ1 + nuTrap (mulP h10_trapG hφ) =
-      0 * ∫ t, trapG t * φ t ∂μ1 := fun φ hφ => by
+  have hw : ∀ φ (hφ : H10 φ), ∫ t, deriv trapG t * deriv φ t ∂vol01 + nuTrap (mulP h10_trapG hφ) =
+      0 * ∫ t, trapG t * φ t ∂vol01 := fun φ hφ => by
     rw [integral_dtrap hφ, zero_mul]
     simp only [nuTrap, sub_apply, smul_apply, deltaM, ContinuousMap.evalCLM_apply, mulP_apply]
     rw [trapG_left (by norm_num), trapG_mid (by norm_num) (by norm_num)]
@@ -145,15 +145,15 @@ lemma IsGSM.const_mul {ν : PotM} {ψ : ℝ → ℝ} (h : IsGSM ν ψ) {c : ℝ}
   rw [QM_smul ν hψ c, norm2_smul]
   have := hmin φ hφ
   have hc2 : 0 ≤ c ^ 2 := sq_nonneg c
-  calc c ^ 2 * QM ν hψ * ∫ t, φ t ^ 2 ∂μ1 = c ^ 2 * (QM ν hψ * ∫ t, φ t ^ 2 ∂μ1) := by ring
-    _ ≤ c ^ 2 * (QM ν hφ * ∫ t, ψ t ^ 2 ∂μ1) := mul_le_mul_of_nonneg_left this hc2
-    _ = QM ν hφ * (c ^ 2 * ∫ t, ψ t ^ 2 ∂μ1) := by ring
+  calc c ^ 2 * QM ν hψ * ∫ t, φ t ^ 2 ∂vol01 = c ^ 2 * (QM ν hψ * ∫ t, φ t ^ 2 ∂vol01) := by ring
+    _ ≤ c ^ 2 * (QM ν hφ * ∫ t, ψ t ^ 2 ∂vol01) := mul_le_mul_of_nonneg_left this hc2
+    _ = QM ν hφ * (c ^ 2 * ∫ t, ψ t ^ 2 ∂vol01) := by ring
 
-lemma integral_trapG_sq_pos : 0 < ∫ t, trapG t ^ 2 ∂μ1 :=
+lemma integral_trapG_sq_pos : 0 < ∫ t, trapG t ^ 2 ∂vol01 :=
   integral_sq_pos h10_trapG fun _ ht => trapG_pos ht
 
-lemma integral_trapG_sq_le : ∫ t, trapG t ^ 2 ∂μ1 ≤ 1 := by
-  calc ∫ t, trapG t ^ 2 ∂μ1 ≤ ∫ _t, (1 : ℝ) ∂μ1 := by
+lemma integral_trapG_sq_le : ∫ t, trapG t ^ 2 ∂vol01 ≤ 1 := by
+  calc ∫ t, trapG t ^ 2 ∂vol01 ≤ ∫ _t, (1 : ℝ) ∂vol01 := by
         refine integral_mono_of_nonneg (ae_of_all _ fun t => sq_nonneg _) (integrable_const _) ?_
         filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
         have h0 := (trapG_pos ht).le
@@ -162,9 +162,9 @@ lemma integral_trapG_sq_le : ∫ t, trapG t ^ 2 ∂μ1 ≤ 1 := by
     _ = 1 := by simp
 
 /-- `c` with `∫ (c trapG)² = N`. -/
-noncomputable def cTrap (n : ℕ) : ℝ := √((n + 1) / ∫ t, trapG t ^ 2 ∂μ1)
+noncomputable def cTrap (n : ℕ) : ℝ := √((n + 1) / ∫ t, trapG t ^ 2 ∂vol01)
 
-lemma cTrap_sq (n : ℕ) : cTrap n ^ 2 = (n + 1) / ∫ t, trapG t ^ 2 ∂μ1 :=
+lemma cTrap_sq (n : ℕ) : cTrap n ^ 2 = (n + 1) / ∫ t, trapG t ^ 2 ∂vol01 :=
   Real.sq_sqrt (by have := integral_trapG_sq_pos; positivity)
 
 lemma cTrap_ne (n : ℕ) : cTrap n ≠ 0 := by
@@ -172,11 +172,11 @@ lemma cTrap_ne (n : ℕ) : cTrap n ≠ 0 := by
   have := cTrap_sq n
   rw [h] at this
   have hI := integral_trapG_sq_pos
-  have : (0 : ℝ) < (n + 1) / ∫ t, trapG t ^ 2 ∂μ1 := by positivity
+  have : (0 : ℝ) < (n + 1) / ∫ t, trapG t ^ 2 ∂vol01 := by positivity
   linarith
 
 /-- The normalised plateau density for one particle. -/
-noncomputable def trapP : Pot := sqP (h10_trapG.const_mul (cTrap 0))
+noncomputable def trapP : C01 := sqP (h10_trapG.const_mul (cTrap 0))
 
 /-- **The plateau density is `v`-representable with a measure potential**
 (`-3δ_{1/3} - 3δ_{2/3}`). -/
@@ -188,7 +188,7 @@ theorem trap_vrepM : VRepM trapP := by
 /-! ### Not `v`-representable with continuous potentials -/
 
 /-- The plateau density `ρ = (c trapG)²` for `N = n + 1` particles. -/
-noncomputable def rhoTrap (n : ℕ) (v : Pot) : ℝ := ∫ t, ext v t * (cTrap n * trapG t) ^ 2 ∂μ1
+noncomputable def rhoTrap (n : ℕ) (v : C01) : ℝ := ∫ t, iccExt v t * (cTrap n * trapG t) ^ 2 ∂vol01
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 

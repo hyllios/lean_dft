@@ -63,7 +63,7 @@ lemma h1W_smd (m : Fin (n + 1) → ℕ) : H1W (smd (d := n + 1) m) :=
 variable {w : Cfg n → ℝ} {hw : Continuous w}
 
 /-- **The coefficient equation** `λ_m c_m + ⟨s_m, VΨ⟩ = E c_m` for a fermionic ground state. -/
-theorem coef_EL (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → ℝ}
+theorem coef_EL (hws : ∀ σ x, w (pm σ x) = w x) {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW .fer n w hw) v Ψ) (m : Fin (n + 1) → ℕ) :
     lam m * cN m Ψ + cN m (fun x => (LN n v x + w x) * Ψ x) =
       Q (settingW .fer n w hw) v Ψ / ip (μ := μN n) Ψ Ψ * cN m Ψ := by
@@ -90,7 +90,7 @@ theorem coef_EL (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → �
   linarith
 
 /-- **`H²` regularity**: `Σ_m λ_m² c_m² < ∞` for a fermionic ground state. -/
-theorem summable_lam_sq (hws : ∀ σ x, w (pm σ x) = w x) {v : Pot} {Ψ : Cfg n → ℝ}
+theorem summable_lam_sq (hws : ∀ σ x, w (pm σ x) = w x) {v : C01} {Ψ : Cfg n → ℝ}
     (hΨ : IsGS (settingW .fer n w hw) v Ψ) :
     Summable fun m => lam m ^ 2 * cN m Ψ ^ 2 := by
   set E := Q (settingW .fer n w hw) v Ψ / ip (μ := μN n) Ψ Ψ

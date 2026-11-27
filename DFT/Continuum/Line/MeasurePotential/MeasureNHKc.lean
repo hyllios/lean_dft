@@ -31,23 +31,23 @@ open MeasureTheory Set Box SturmLiouville Real Filter Topology
 variable {n : ℕ} {w : Cfg n → ℝ}
 
 /-- A continuous potential `v` as a functional: `h ↦ ∫ v h`. -/
-noncomputable def vCLM (v : Pot) : PotM :=
+noncomputable def vCLM (v : C01) : PotM :=
   LinearMap.mkContinuous
-    { toFun := fun h => ∫ t, ext v t * ext h t ∂μ1
+    { toFun := fun h => ∫ t, iccExt v t * iccExt h t ∂vol01
       map_add' := fun h h' => by
         have := int_ext_add_smul v h h' 1 1
         simpa using this
       map_smul' := fun c h => by simpa using int_ext_smul v h c }
     ‖v‖ fun h => by
       simp only [LinearMap.coe_mk, AddHom.coe_mk]
-      have hb : ∀ (r : Pot) (x : ℝ), |ext r x| ≤ ‖r‖ := fun r x => ext_le_norm r x
-      calc ‖∫ t, ext v t * ext h t ∂μ1‖ ≤ ‖v‖ * ‖h‖ * μ1.real univ :=
+      have hb : ∀ (r : C01) (x : ℝ), |iccExt r x| ≤ ‖r‖ := fun r x => ext_le_norm r x
+      calc ‖∫ t, iccExt v t * iccExt h t ∂vol01‖ ≤ ‖v‖ * ‖h‖ * vol01.real univ :=
             norm_integral_le_of_norm_le_const (ae_of_all _ fun t => by
               rw [Real.norm_eq_abs, abs_mul]
               exact mul_le_mul (hb v t) (hb h t) (abs_nonneg _) (norm_nonneg _))
         _ = ‖v‖ * ‖h‖ := by simp
 
-lemma vCLM_apply (v h : Pot) : vCLM v h = ∫ t, ext v t * ext h t ∂μ1 := rfl
+lemma vCLM_apply (v h : C01) : vCLM v h = ∫ t, iccExt v t * iccExt h t ∂vol01 := rfl
 
 lemma gsN_ne_zero (hw : Continuous w) {τ : Stat} {ν : PotM} {Φ : Cfg n → ℝ}
     (h : IsGSN τ w ν Φ) : ∀ᵐ x ∂μN n, Φ x ≠ 0 := by
@@ -57,7 +57,7 @@ lemma gsN_ne_zero (hw : Continuous w) {τ : Stat} {ν : PotM} {Φ : Cfg n → �
 
 /-- **Rigidity along continuous directions**: if `Φ` is a ground state of both `ν` and
 `ν + v dx`, with `v` continuous, then `v` is constant. -/
-theorem hk_cont_dir (hw : Continuous w) {τ : Stat} {ν : PotM} {v : Pot} {Φ : Cfg n → ℝ}
+theorem hk_cont_dir (hw : Continuous w) {τ : Stat} {ν : PotM} {v : C01} {Φ : Cfg n → ℝ}
     (h : IsGSN τ w ν Φ) (h' : IsGSN τ w (ν + vCLM v) Φ) : ∃ k : ℝ, v = k • one := by
   set c := QMN τ w (ν + vCLM v) Φ - QMN τ w ν Φ
   have hsep : ∀ Ψ ∈ DomW τ n,
@@ -87,7 +87,7 @@ theorem hk_cont_dir (hw : Continuous w) {τ : Stat} {ν : PotM} {v : Pot} {Φ : 
 /-- **Hohenberg–Kohn within `ν + C([0, 1])`**: if `ν` and `ν + v dx` (`v` continuous) have
 normalised ground states with the same density, for interacting bosons or fermions, then `v` is
 constant. -/
-theorem hk_cont_pert (hw : Continuous w) {τ : Stat} {ν : PotM} {v : Pot} {Φ Φ' : Cfg n → ℝ}
+theorem hk_cont_pert (hw : Continuous w) {τ : Stat} {ν : PotM} {v : C01} {Φ Φ' : Cfg n → ℝ}
     (h : IsGSN τ w ν Φ) (h' : IsGSN τ w (ν + vCLM v) Φ') (hρ : rhoHat τ Φ = rhoHat τ Φ') :
     ∃ k : ℝ, v = k • one :=
   hk_cont_dir hw h (isGSN_of_same_dens h h' hρ).1

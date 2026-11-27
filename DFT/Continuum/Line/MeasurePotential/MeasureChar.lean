@@ -45,18 +45,18 @@ lemma Gρ_smul (r : NNReal) (μ : Measure ℝ) (ψ : ℝ → ℝ) (t : ℝ) :
 /-- **Fubini backwards**: `g' = c + G₊ - G₋` a.e. gives the weak equation with `E = 0`. -/
 theorem weak_of_deriv {μp μm : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] {g : ℝ → ℝ} (hg : H10 g)
     (hgc : Continuous g) {c : ℝ}
-    (hd : deriv g =ᵐ[μ1] fun t => c + Gρ μp g t - Gρ μm g t) (φ : ℝ → ℝ) (hφ : H10 φ) :
-    ∫ t, deriv g t * deriv φ t ∂μ1 + nuOf μp μm (mulP hg hφ) = 0 * ∫ t, g t * φ t ∂μ1 := by
+    (hd : deriv g =ᵐ[vol01] fun t => c + Gρ μp g t - Gρ μm g t) (φ : ℝ → ℝ) (hφ : H10 φ) :
+    ∫ t, deriv g t * deriv φ t ∂vol01 + nuOf μp μm (mulP hg hφ) = 0 * ∫ t, g t * φ t ∂vol01 := by
   have i0 := integrable_deriv_mu1 hφ
   have i1 := integrable_dG μp hgc hφ
   have i2 := integrable_dG μm hgc hφ
-  have hφ0 : ∫ t, deriv φ t ∂μ1 = 0 := by
-    rw [integral_mu1, (hφ.1).integral_deriv_eq_sub, hφ.2.2.1, hφ.2.1, sub_zero]
-  have e : ∫ t, deriv g t * deriv φ t ∂μ1 =
-      c * ∫ t, deriv φ t ∂μ1 + ∫ t, deriv φ t * Gρ μp g t ∂μ1 -
-        ∫ t, deriv φ t * Gρ μm g t ∂μ1 := by
-    have ic : Integrable (fun t => c * deriv φ t) μ1 := i0.const_mul c
-    have icp : Integrable (fun t => c * deriv φ t + deriv φ t * Gρ μp g t) μ1 := ic.add i1
+  have hφ0 : ∫ t, deriv φ t ∂vol01 = 0 := by
+    rw [integral_vol01, (hφ.1).integral_deriv_eq_sub, hφ.2.2.1, hφ.2.1, sub_zero]
+  have e : ∫ t, deriv g t * deriv φ t ∂vol01 =
+      c * ∫ t, deriv φ t ∂vol01 + ∫ t, deriv φ t * Gρ μp g t ∂vol01 -
+        ∫ t, deriv φ t * Gρ μm g t ∂vol01 := by
+    have ic : Integrable (fun t => c * deriv φ t) vol01 := i0.const_mul c
+    have icp : Integrable (fun t => c * deriv φ t + deriv φ t * Gρ μp g t) vol01 := ic.add i1
     rw [integral_congr_ae (hd.mono fun t ht => by
       simp only [ht]
       exact (show (c + Gρ μp g t - Gρ μm g t) * deriv φ t = c * deriv φ t +
@@ -69,32 +69,32 @@ theorem weak_of_deriv {μp μm : Measure ℝ} [IsMeas01 μp] [IsMeas01 μm] {g :
 /-- **Measure-`v`-representability, explicitly**: `ρ` is the ground-state density of a measure
 potential iff `ρ = g²`, `g ∈ H¹₀` continuous, normalised, positive on `(0, 1)`, with
 `g'(t) = c + ∫_{x<t} g dμ₊ - ∫_{x<t} g dμ₋` a.e. for finite measures `μ±` on `[0, 1]`. -/
-theorem vrepMeas_iff_explicit (ρ : Pot) : VRepMeas ρ ↔
-    ∃ g : ℝ → ℝ, H10 g ∧ Continuous g ∧ ∫ t, g t ^ 2 ∂μ1 = 1 ∧
+theorem vrepMeas_iff_explicit (ρ : C01) : VRepMeas ρ ↔
+    ∃ g : ℝ → ℝ, H10 g ∧ Continuous g ∧ ∫ t, g t ^ 2 ∂vol01 = 1 ∧
       (∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) ∧ (∀ t : Icc (0 : ℝ) 1, ρ t = g t ^ 2) ∧
       ∃ (μp μm : Measure ℝ) (_ : IsMeas01 μp) (_ : IsMeas01 μm) (c : ℝ),
-        deriv g =ᵐ[μ1] fun t => c + Gρ μp g t - Gρ μm g t := by
+        deriv g =ᵐ[vol01] fun t => c + Gρ μp g t - Gρ μm g t := by
   constructor
   · intro h
     obtain ⟨g, hg, hn, hpos, hρ, μp, μm, _, _, E, hE⟩ := (vrepMeas_iff ρ).1 h
     obtain ⟨gc, hgc, hgcc, hval⟩ : ∃ gc : ℝ → ℝ, H10 gc ∧ Continuous gc ∧
         ∀ t ∈ Icc (0 : ℝ) 1, gc t = g t :=
       ⟨_, H10.clamp_H10 hg, H10.continuous_clamp hg, fun t ht => H10.clamp_eq ht⟩
-    have hder : deriv gc =ᵐ[μ1] deriv g := by
+    have hder : deriv gc =ᵐ[vol01] deriv g := by
       filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
       have : gc =ᶠ[𝓝 t] g := Filter.eventuallyEq_of_mem (isOpen_Ioo.mem_nhds ht)
         fun s hs => hval s (Ioo_subset_Icc_self hs)
       exact this.deriv_eq
-    have hint : ∀ f : ℝ → ℝ → ℝ, ∫ t, f t (gc t) ∂μ1 = ∫ t, f t (g t) ∂μ1 := fun f =>
+    have hint : ∀ f : ℝ → ℝ → ℝ, ∫ t, f t (gc t) ∂vol01 = ∫ t, f t (g t) ∂vol01 := fun f =>
       setIntegral_congr_fun measurableSet_Ioo fun t ht => by
         simp only [hval t (Ioo_subset_Icc_self ht)]
     -- the weak equation for the continuous representative
-    have hEc : ∀ φ (hφ : H10 φ), ∫ t, deriv gc t * deriv φ t ∂μ1 + nuOf μp μm (mulP hgc hφ) =
-        E * ∫ t, gc t * φ t ∂μ1 := fun φ hφ => by
+    have hEc : ∀ φ (hφ : H10 φ), ∫ t, deriv gc t * deriv φ t ∂vol01 + nuOf μp μm (mulP hgc hφ) =
+        E * ∫ t, gc t * φ t ∂vol01 := fun φ hφ => by
       have hm : mulP hgc hφ = mulP hg hφ := by ext t; rw [mulP_apply, mulP_apply, hval t t.2]
-      have h1 : ∫ t, deriv gc t * deriv φ t ∂μ1 = ∫ t, deriv g t * deriv φ t ∂μ1 :=
+      have h1 : ∫ t, deriv gc t * deriv φ t ∂vol01 = ∫ t, deriv g t * deriv φ t ∂vol01 :=
         integral_congr_ae (hder.mono fun t ht => by simp only [ht])
-      have h2 : ∫ t, gc t * φ t ∂μ1 = ∫ t, g t * φ t ∂μ1 :=
+      have h2 : ∫ t, gc t * φ t ∂vol01 = ∫ t, g t * φ t ∂vol01 :=
         setIntegral_congr_fun measurableSet_Ioo fun t ht => by
           simp only [hval t (Ioo_subset_Icc_self ht)]
       rw [hm, h1, h2]; exact hE φ hφ
@@ -102,7 +102,7 @@ theorem vrepMeas_iff_explicit (ρ : Pot) : VRepMeas ρ ↔
     refine ⟨gc, hgc, hgcc, by rw [hint fun _ y => y ^ 2]; exact hn,
       fun t ht => by rw [hval t (Ioo_subset_Icc_self ht)]; exact hpos t ht,
       fun t => by rw [hρ t, hval t t.2],
-      μp + (max (-E) 0).toNNReal • μ1, μm + (max E 0).toNNReal • μ1, inferInstance, inferInstance,
+      μp + (max (-E) 0).toNNReal • vol01, μm + (max E 0).toNNReal • vol01, inferInstance, inferInstance,
       c, hR.mono fun t ht => ?_⟩
     rw [ht, Rψ]
     beta_reduce
