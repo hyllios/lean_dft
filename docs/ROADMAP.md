@@ -88,7 +88,8 @@ this section keeps only pointers.
   Tier 3: Kato's theorem (1957) for N-electron Coulomb eigenfunctions. Needs elliptic regularity, integration on spheres
   (E6, A4++) and the Coulomb domain (E3): research scale, possibly with Physlib.
 
-- A7 ⬜ Sturm oscillation theorem (requested by Miguel 2026-11-27; statements not yet drafted): in 1D the eigenvalues
+- A7 ⬜ Sturm oscillation theorem (requested by Miguel 2026-11-27; Tier 1 and 2 statements drafted in
+  `blueprint/src/chapters/sturm.tex`, pending approval): in 1D the eigenvalues
   are simple and the n-th eigenfunction (counting from 0) has exactly n nodes. Specific to 1D: in higher dimensions
   only Courant's upper bound holds. Three tiers.
   Tier 1 (finite-dimensional warm-up, `ForMathlib`/`QM/Finite`): a real symmetric tridiagonal (Jacobi) matrix with
@@ -266,7 +267,7 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 4. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
 5. **A6** Kato cusp, Tiers 1–2.
 6. **D4** unified functional-theory framework: statements approved; stages 1 → 2 → 3.
-7. **A7** Sturm oscillation: Tier 1 (Jacobi matrices) first, then Tier 2 (Prüfer angle); statements to draft.
+7. **A7** Sturm oscillation: Tier 1 (Jacobi matrices) first, then Tier 2 (Prüfer angle); statements drafted, pending approval.
 8. Speculative (2026-11-26): **B3+** done (2026-11-27); **F3** numerics first; **B5** Borland–Dennis
    after a literature check for an elementary proof of the inequality, then Schilling's pinning.
 9. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.

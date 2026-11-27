@@ -1,0 +1,159 @@
+\chapter{Sturm oscillation}
+\label{chap:sturm}
+
+% ROADMAP A7. All statements in this chapter are (statement pending approval), docs/AGENTS.md §4.
+% No \lean{} references yet; the planned Lean names are given in comments.
+
+In one dimension the eigenvalues of a Schrödinger operator are simple and the $n$-th eigenfunction (counting from
+$0$) has exactly $n$ nodes. This is specific to 1D: in higher dimensions only Courant's upper bound survives. We prove
+it first for Jacobi matrices (the open lattice chain), where it is pure linear algebra, and then for
+$-y''+Wy=Ey$ on $[0,1]$ with Dirichlet walls.
+
+\section{Jacobi matrices}
+
+% Lean: ForMathlib/LinearAlgebra/Matrix/Jacobi.lean, namespace Matrix.
+
+\begin{definition}[Jacobi matrix]
+  \label{def:jacobi}
+  (statement pending approval)
+  % Lean: Matrix.IsJacobi (J : Matrix (Fin n) (Fin n) ℝ) : Prop
+  A real $n\times n$ matrix $J$ is a \emph{Jacobi matrix} if it is symmetric, tridiagonal ($J_{ij}=0$ for
+  $|i-j|\ge2$) and its off-diagonal entries are negative: $J_{i,i+1}<0$ for $1\le i<n$.
+\end{definition}
+
+The sign convention is that of the lattice Hamiltonian $H=\operatorname{diag}(v)-tA$ with $t>0$: with it the ground
+state has no sign change. (Positive off-diagonal entries are reduced to this case by $x_i\mapsto(-1)^ix_i$.)
+
+\begin{definition}[Sign changes]
+  \label{def:sign_changes}
+  (statement pending approval)
+  % Lean: signChanges (x : Fin n → ℝ) : ℕ, via List.ofFn, dropping zeros.
+  For $x\in\mathbb R^n$, $S(x)$ is the number of sign changes in the sequence $x_1,\dots,x_n$ after its zero entries
+  are deleted, i.e.\ the number of adjacent pairs of the remaining sequence with negative product.
+\end{definition}
+
+\begin{theorem}[Simple spectrum and the ends of eigenvectors]
+  \label{thm:jacobi_simple}
+  (statement pending approval)
+  % Lean: Matrix.IsJacobi.card_roots_charpoly : J.charpoly.roots.toFinset.card = n,
+  %       Matrix.IsJacobi.eigenvector_unique (J v = λ v, J w = λ w, v ≠ 0 → ∃ c, w = c • v),
+  %       Matrix.IsJacobi.eigenvector_first_ne_zero, Matrix.IsJacobi.eigenvector_last_ne_zero,
+  %       Matrix.IsJacobi.eigenvector_zero_interior (x i = 0 → x (i-1) * x (i+1) < 0).
+  \uses{def:jacobi}
+  Let $J$ be an $n\times n$ Jacobi matrix. Then $J$ has $n$ distinct real eigenvalues, every eigenspace is
+  one-dimensional, and every eigenvector $x\ne0$ satisfies $x_1\ne0$, $x_n\ne0$, and $x_{i-1}x_{i+1}<0$ whenever
+  $x_i=0$ ($1<i<n$).
+\end{theorem}
+\begin{proof}
+  Row $i$ of $Jx=\lambda x$ is the three-term recurrence
+  $J_{i,i+1}x_{i+1}=(\lambda-J_{ii})x_i-J_{i,i-1}x_{i-1}$ with $J_{i,i+1}\ne0$, so $x$ is determined by $x_1$:
+  $x_1=0$ forces $x=0$, and the eigenspace is at most one-dimensional. Reading the recurrence from the other end
+  gives $x_n\ne0$. If $x_i=0$ with $1<i<n$, row $i$ reads $J_{i,i-1}x_{i-1}+J_{i,i+1}x_{i+1}=0$ with both coefficients
+  negative, and $x_{i-1},x_{i+1}$ are not both zero (else $x=0$), so they have opposite signs. $J$ is symmetric, hence
+  diagonalizable with $n$ eigenvalues counted with multiplicity; all multiplicities are $1$.
+\end{proof}
+
+\begin{theorem}[Oscillation theorem for Jacobi matrices; Gantmacher--Krein]
+  \label{thm:jacobi_oscillation}
+  (statement pending approval)
+  % Lean: Matrix.IsJacobi.signChanges_eigenvector :
+  %   J *ᵥ x = λ • x → x ≠ 0 →
+  %     signChanges x = (J.charpoly.roots.toFinset.filter (· < λ)).card
+  \uses{thm:jacobi_simple, def:sign_changes}
+  Let $J$ be a Jacobi matrix with eigenvalues $\lambda_0<\lambda_1<\dots<\lambda_{n-1}$. If $Jx=\lambda_kx$, $x\ne0$, then
+  $S(x)=k$. In particular the ground state ($k=0$) can be chosen with all entries positive.
+\end{theorem}
+\begin{proof}
+  Write $a_i=J_{ii}$, $b_i=-J_{i,i+1}>0$, and let $q_k(\lambda)=\det(J_{[k]}-\lambda)$ with $J_{[k]}$ the leading
+  $k\times k$ block ($q_0=1$). Expanding along the last row, $q_{k+1}=(a_{k+1}-\lambda)q_k-b_k^2q_{k-1}$, while row $k$
+  of $Jx=\lambda x$ reads $b_kx_{k+1}=(a_k-\lambda)x_k-b_{k-1}x_{k-1}$. Hence for $x_1=1$ the eigenvector is
+  $x_{k+1}=q_k(\lambda)/(b_1\cdots b_k)$, and $\operatorname{sign}x_{k+1}=\operatorname{sign}q_k(\lambda)
+  =(-1)^{N_k(\lambda)}$ where $N_k(\lambda)$ is the number of eigenvalues of $J_{[k]}$ below $\lambda$ (when $q_k(\lambda)\ne0$).
+  Each $J_{[k]}$ is again a Jacobi matrix, and by Cauchy interlacing (strict, by Theorem~\ref{thm:jacobi_simple} applied
+  to the blocks) $N_{k+1}(\lambda)-N_k(\lambda)\in\{0,1\}$; a sign change between consecutive nonzero entries of
+  $(q_0,\dots,q_{n-1})$ happens exactly when $N$ increases, with zeros handled by the last clause of
+  Theorem~\ref{thm:jacobi_simple}. So $S(x)=N_{n-1}(\lambda_k)$, and strict interlacing of the spectra of $J_{[n-1]}$ and
+  $J$ gives $N_{n-1}(\lambda_k)=k$.
+\end{proof}
+
+\begin{corollary}[Nodes on the open chain]
+  \label{cor:chain_nodes}
+  (statement pending approval)
+  % Lean: DFT/Lattice/Basic/Chain.lean: DFT.isJacobi_ham_pathGraph (0 < t → (ham (pathGraph n) t v).IsJacobi),
+  %       then the two theorems above for ham (pathGraph n) t v.
+  \uses{thm:jacobi_oscillation}
+  For $t>0$ and any $v$, the single-particle Hamiltonian $H(v)=\operatorname{diag}(v)-tA$ of the open chain of $n$ sites
+  is a Jacobi matrix. Hence its eigenvalues are simple, the ground state is strictly positive, and the $k$-th
+  eigenvector has exactly $k$ sign changes.
+\end{corollary}
+
+\section{The Sturm--Liouville problem on $[0,1]$}
+
+% Lean: ForMathlib/Analysis/SturmLiouville/{Prufer,Oscillation}.lean, namespace SturmLiouville.
+% Reuses Solve (shooting solution), Sturm (first zero, comparison), Expand/Eigen (existence of eigenpairs).
+
+Fix $W\in C([0,1])$ (\texttt{C01}, extended to $\mathbb R$ by \texttt{iccExt}).
+
+\begin{definition}[Dirichlet eigenpair]
+  \label{def:dirichlet_eigen}
+  (statement pending approval)
+  % Lean: SturmLiouville.IsDirichletEigen (W : C01) (E : ℝ) (y : ℝ → ℝ) : Prop :=
+  %   y ∈ Dom ∧ (∃ t ∈ Ioo 0 1, y t ≠ 0) ∧ ∀ t ∈ Icc 0 1, -deriv (deriv y) t + iccExt W t * y t = E * y t
+  $(E,y)$ is a \emph{Dirichlet eigenpair} of $-d^2/dx^2+W$ if $y\in C^2$, $y(0)=y(1)=0$, $y\not\equiv0$ on $(0,1)$,
+  and $-y''+Wy=Ey$ on $[0,1]$. $E$ is then a \emph{Dirichlet eigenvalue}.
+\end{definition}
+
+\begin{theorem}[Simplicity]
+  \label{thm:sl_simple}
+  (statement pending approval)
+  % Lean: SturmLiouville.IsDirichletEigen.eq_smul (two eigenfunctions for the same E: ∃ c, ∀ t ∈ Icc 0 1, z t = c * y t),
+  %       SturmLiouville.IsDirichletEigen.deriv_ne_zero (y t = 0 → t ∈ Icc 0 1 → deriv y t ≠ 0).
+  \uses{def:dirichlet_eigen}
+  Every Dirichlet eigenvalue is simple: if $(E,y)$ and $(E,z)$ are eigenpairs, then $z=cy$ on $[0,1]$. Every zero of
+  an eigenfunction in $[0,1]$ is simple: $y(t)=0\Rightarrow y'(t)\ne0$.
+\end{theorem}
+\begin{proof}
+  $y(t)=y'(t)=0$ forces $y\equiv0$ by uniqueness for the linear ODE (\texttt{sol\_eq\_zero\_of\_eq\_zero}). For simplicity,
+  $z-\frac{z'(0)}{y'(0)}y$ solves the equation with zero Cauchy data at $0$.
+\end{proof}
+
+\begin{theorem}[Sturm oscillation theorem]
+  \label{thm:sl_oscillation}
+  (statement pending approval)
+  % Lean: SturmLiouville.exists_eigenvalues_oscillation (W : C01) :
+  %   ∃ E : ℕ → ℝ, StrictMono E ∧ Tendsto E atTop atTop ∧
+  %     (∀ e, (∃ y, IsDirichletEigen W e y) ↔ ∃ n, e = E n) ∧
+  %     ∀ n y, IsDirichletEigen W (E n) y → {t ∈ Ioo (0 : ℝ) 1 | y t = 0}.encard = n
+  \uses{thm:sl_simple}
+  The Dirichlet eigenvalues of $-d^2/dx^2+W$ form a strictly increasing sequence $E_0<E_1<\cdots\to\infty$, and every
+  eigenfunction of $E_n$ has exactly $n$ zeros in $(0,1)$.
+\end{theorem}
+\begin{proof}
+  Prüfer angle: for $E\in\mathbb R$ let $y_E$ be the shooting solution, $y_E(0)=0$, $y_E'(0)=1$, and write
+  $y_E=r\sin\theta$, $y_E'=r\cos\theta$ with $r>0$, $\theta(0;E)=0$, $\theta$ continuous in $t$. Then
+  $\theta'=\cos^2\theta+(E-W)\sin^2\theta$, so $\theta$ increases through every multiple of $\pi$ (where $\theta'=1$):
+  the zeros of $y_E$ in $(0,1]$ are exactly the times where $\theta\in\pi\mathbb Z_{>0}$, and their number in $(0,1)$ is
+  $\lceil\theta(1;E)/\pi\rceil-1$. By comparison for the first-order equation, $\theta(1;E)$ is continuous and strictly
+  increasing in $E$; it tends to $0$ as $E\to-\infty$ (for $E<\min W$ the solution has no zero,
+  \texttt{pos\_of\_nonneg}) and to $\infty$ as $E\to\infty$ (\texttt{exists\_zero\_of\_le} after rescaling). $E$ is an
+  eigenvalue iff $y_E(1)=0$ iff $\theta(1;E)\in\pi\mathbb Z_{>0}$, so the eigenvalues are the $E_n$ with
+  $\theta(1;E_n)=(n+1)\pi$, and $y_{E_n}$ has $n$ zeros in $(0,1)$. By Theorem~\ref{thm:sl_simple} every eigenfunction of
+  $E_n$ is a multiple of $y_{E_n}$.
+\end{proof}
+
+\begin{theorem}[Interlacing of zeros]
+  \label{thm:sl_interlace}
+  (statement pending approval)
+  % Lean: SturmLiouville.zeros_interlace : IsDirichletEigen W (E n) y → IsDirichletEigen W (E (n+1)) z →
+  %   a < b → a, b ∈ {0, 1} ∪ zeros of y in [0,1] → ∃ t ∈ Ioo a b, z t = 0
+  \uses{thm:sl_oscillation}
+  With $E_n$ as in Theorem~\ref{thm:sl_oscillation}, let $y$ be an eigenfunction of $E_n$ and $z$ one of $E_{n+1}$.
+  Between two consecutive zeros of $y$ in $[0,1]$ (the walls included) lies a zero of $z$.
+\end{theorem}
+\begin{proof}
+  Sturm comparison: on an interval $(a,b)$ with $y>0$, $y(a)=y(b)=0$, if $z$ had no zero the Wronskian identity
+  $[y'z-yz']_a^b=(E_{n+1}-E_n)\int_a^byz$ gives a contradiction of signs.
+\end{proof}
+
+Courant's nodal theorem (the $n$-th eigenfunction has at most $n+1$ nodal domains, by the variational principle on
+$H^1_0$) is the part that survives in higher dimensions; it is optional (Tier 3 of ROADMAP A7) and not drafted here.
