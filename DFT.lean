@@ -98,10 +98,12 @@ import DFT.Continuum.Line.Neumann.Suff
 import DFT.Continuum.Line.Neumann.Ucp
 import DFT.Continuum.Line.Neumann.Weak
 import DFT.Continuum.Line.Neumann.Young
+import DFT.Continuum.Line.NeumannKS.Aufbau
 import DFT.Continuum.Line.NeumannKS.Diff
 import DFT.Continuum.Line.NeumannKS.Exact
 import DFT.Continuum.Line.NeumannKS.Hartree
 import DFT.Continuum.Line.NeumannKS.Inverse
+import DFT.Continuum.Line.NeumannKS.Kinetic
 import DFT.Continuum.Line.NeumannKS.Lieb
 import DFT.Continuum.Line.Regularity.DensC1
 import DFT.Continuum.Line.Regularity.DensSeries

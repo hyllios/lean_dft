@@ -962,3 +962,16 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   **hasDerivAt_xcNH** (v_KS = v + v_H + v_xc). Refactor: `Neumann/Suff` exposes norm_le_of_lower,
   le_gsEH_of_tendsto, LocRepNH, gsEH_sub_le_of_rep; `Neumann/Rep` exposes locRepNH_of_pos. Phase 2 (later):
   F_0 = T_KS via Slater determinants, Aufbau (Corso Lemma 6.2, Thm 2.15) — needs the one-body Neumann eigenbasis.
+- D5 phase 2 DONE (2026-11-27), CORSO LEMMA 6.2 AND THEOREM 2.15 (Slater determinants, Aufbau).
+  P1 `ForMathlib/Analysis/InnerProductSpace/FormEigenbasis` (**exists_formEigenbasis**: Lax–Milgram
+  resolvent of a semibounded form with compact domain, CompactEigenbasis, ℕ-enumeration via
+  `ForMathlib/Order/FiniteSublevel`, variational bound). P2 `Neumann/Spec` (**exists_neuOrbitals**:
+  Neumann orbitals for H⁻¹ potentials; JE : H¹ → L² compact, injective, dense). P3 `Neumann/Slices`
+  (slices of C² states as a continuous map into H1E; kinN, ρ (Bochner integral in H1E), v(ρ), occupations
+  through slices), `Core/Pauli` generalised to continuous antisymmetric functions, `Neumann/Slater`
+  (exact kinetic energy N!·Σ‖e_j'‖² and density Σ e_j² of Slater determinants of H¹ orbitals; product
+  states), `Neumann/Free` (lower bounds via cosine truncations; **gs_free_fer** with the gap
+  λ_{N-1} < λ_N, **gs_free_bos**). P4–P5 `NeumannKS/Kinetic` (**tksNH_attained**, tksNH_eq_liebNH,
+  hasDerivAt_tksNH; **liebNH_bos_free**: F₀ = ∫((√ρ)')² for bosons). P6 `NeumannKS/Lieb`
+  (**exists_levy_min**). P7 `NeumannKS/Aufbau` (**ks_aufbau**). Also: modules renamed so that file
+  names never repeat their folder (246811d).

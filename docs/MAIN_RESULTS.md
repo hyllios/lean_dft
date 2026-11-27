@@ -22,6 +22,11 @@ result is now in the blueprint, and CI runs the blueprint check with `--strict`.
 | `DFT.Continuum.Line.hasDerivAt_liebNH` | yes |
 | `DFT.Continuum.Line.hasDerivAt_xcNH` | yes |
 | `DFT.Continuum.Line.ks_exact` | yes |
+| `DFT.Continuum.Line.gs_free_fer` | yes |
+| `DFT.Continuum.Line.ks_aufbau` | yes |
+| `DFT.Continuum.Line.tksNH_attained` | yes |
+| `DFT.Continuum.Line.liebNH_bos_free` | yes |
+| `DFT.Continuum.Line.exists_neuOrbitals` | yes |
 | `DFT.Continuum.Spectral.exists_orbitals` | yes |
 | `DFT.Continuum.subgrad_unique` | yes |
 | `DFT.dimH_image_le_of_pointwise_lipschitz` | yes |

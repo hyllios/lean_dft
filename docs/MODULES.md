@@ -169,7 +169,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-215 modules, 57621 lines.
+217 modules, 57966 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -330,11 +330,13 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `DFT.Continuum.Line.NeumannKS.Aufbau` | 121 | The exact Kohn–Sham scheme and the Aufbau principle with Neumann walls (Corso's Theorem 2.15) |
 | `DFT.Continuum.Line.NeumannKS.Diff` | 93 | Differentiability of the Lieb functional with Neumann walls (Corso's Lemma 6.1) |
 | `DFT.Continuum.Line.NeumannKS.Exact` | 60 | The exact Kohn–Sham potential with Neumann walls |
 | `DFT.Continuum.Line.NeumannKS.Hartree` | 144 | Hartree and exchange-correlation for pair interactions (Neumann walls) |
 | `DFT.Continuum.Line.NeumannKS.Inverse` | 133 | Continuity of the inverse map `ρ ↦ v_ρ` with Neumann walls |
-| `DFT.Continuum.Line.NeumannKS.Lieb` | 105 | The Lieb and Levy–Lieb functionals with Neumann walls |
+| `DFT.Continuum.Line.NeumannKS.Kinetic` | 156 | The Kohn–Sham kinetic energy with Neumann walls (Corso's Lemma 6.2) |
+| `DFT.Continuum.Line.NeumannKS.Lieb` | 173 | The Lieb and Levy–Lieb functionals with Neumann walls |
 
 ### `DFT/Continuum/Line/Regularity/`
 
@@ -546,4 +548,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 75511 lines of Lean.
+Total: 75856 lines of Lean.

@@ -1846,7 +1846,7 @@ The Slater-determinant form of $F_0$ for fermions ($F_0=T_{\rm KS}$, Corso's Lem
 
 % Statements in this section approved by Miguel 2026-11-27 (ROADMAP D5 phase 2).
 % Planned Lean: ForMathlib/Analysis/InnerProductSpace/FormEigenbasis.lean (P1, abstract);
-%   DFT/Continuum/Line/Neumann/{Spec,Slices,Slater,Free}.lean (P2–P3); DFT/Continuum/Line/NeumannKS/{Slater,Aufbau}.lean (P5–P7).
+%   DFT/Continuum/Line/Neumann/{Spec,Slices,Slater,Free}.lean (P2–P3); DFT/Continuum/Line/NeumannKS/{Lieb,Kinetic,Aufbau}.lean (P4–P7).
 
 For $v\in H^{-1}$ let $q_v(f)=\int_0^1f'^2+v(f^2)$ on $H^1(0,1)$, the form of the one-body Neumann operator $h_v=-d^2/dx^2+v$.
 By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-C_v\int f^2$.
@@ -1907,9 +1907,8 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Kohn--Sham kinetic energy; Corso's Lemma 6.2]
   \label{thm:neu_tks}
-  % Lean: Slater: tksNH ρ : EReal := ⨅ over Slater determinants Φ of n+1 L²-orthonormal H¹ orbitals with rhoE .fer Φ = ρ, kinN Φ;
-  %   tksNH_eq_liebNH (ρ ∈ D_N → tksNH ρ = liebNH .fer 0 ρ), tksNH_attained (unique minimiser: the Slater determinant of
-  %   the N lowest orbitals of v_s(ρ)), hasDerivAt_tksNH.
+  \lean{DFT.Continuum.Line.IsOrthoE, DFT.Continuum.Line.tksNH, DFT.Continuum.Line.intEN_zero, DFT.Continuum.Line.liebNH_le_tksNH, DFT.Continuum.Line.tksNH_attained, DFT.Continuum.Line.tksNH_eq_liebNH, DFT.Continuum.Line.hasDerivAt_tksNH}
+  \leanok
   \uses{thm:neu_free, thm:neu_lieb_eq, thm:neu_lieb_diff}
   Let $T_{\rm KS}(\rho)=\inf\{T(\Phi):\Phi=\varphi_0\wedge\dots\wedge\varphi_{N-1},\ \varphi_j\in H^1\text{ orthonormal},\ \rho_\Phi=\rho\}$.
   For fermions and $\rho\in\mathcal D_N$, $T_{\rm KS}(\rho)=F_0(\rho)$; the infimum is attained exactly by the Slater determinant
@@ -1917,6 +1916,7 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
   $\mathrm dT_{\rm KS}(\rho)=-v_s(\rho)$.
 \end{theorem}
 \begin{proof}
+  \leanok
   $T_{\rm KS}\ge F^{\rm LL}_0=F_0$ on $\mathcal D_N$ (Slater determinants are states; Theorem~\ref{thm:neu_lieb_eq}). The ground
   state of $v_s(\rho)$ is the Slater determinant of Theorem~\ref{thm:neu_free}, which has density $\rho$ and attains $F_0(\rho)$.
   Uniqueness and differentiability follow from Theorems~\ref{thm:neu_lieb_eq} and~\ref{thm:neu_lieb_diff}.
@@ -1924,18 +1924,21 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{corollary}[Bosons: the non-interacting functional is von Weizsäcker]
   \label{cor:neu_weizsacker}
-  % Lean: Slater: liebNH_bos_free_eq (ρ ∈ D_N → liebNH .bos 0 ρ = ∫ ((√ρ)')²).
+  \lean{DFT.Continuum.Line.const_sign_of_ne_zero, DFT.Continuum.Line.liebNH_bos_free}
+  \leanok
   \uses{thm:neu_free, thm:neu_lieb_eq}
   For bosons and $\rho\in\mathcal D_N$, $F_0(\rho)=\int_0^1\bigl((\sqrt\rho)'\bigr)^2$, attained by $(\sqrt{\rho/N})^{\otimes N}$.
 \end{corollary}
 
 \begin{lemma}[The constrained search is attained]
   \label{lem:neu_levy_attained}
-  % Lean: Slater: exists_levyNH_min (levyNH τ w ρ ≠ ⊤ → ∃ Φ admissible with intEN w Φ = levyNH τ w ρ).
+  \lean{DFT.Continuum.Line.rhoE_eq_of_forall_pot, DFT.Continuum.Line.exists_levy_min, DFT.Continuum.Line.levyNH_eq_of_min}
+  \leanok
   \uses{thm:neu_chf}
   If some normalised Neumann state has density $\rho$, the infimum in $F^{\rm LL}_w(\rho)$ is attained.
 \end{lemma}
 \begin{proof}
+  \leanok
   A minimising sequence has bounded kinetic energy; by \texttt{compact\_states} a subsequence converges to a state with
   lower semicontinuous $T$, convergent $\int w\Phi^2$, and $u(\rho_{\Phi_k})\to u(\rho_\Phi)$ for every $u\in H^{-1}$, so
   $\rho_\Phi=\rho$.
@@ -1943,9 +1946,8 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Exact Kohn--Sham and the Aufbau principle; Corso's Theorem 2.15]
   \label{thm:neu_aufbau}
-  % Lean: Aufbau: ksEnergy Φ := kinN Φ + E_Hxc^LL(ρ_Φ) + v(ρ_Φ) with E_Hxc^LL := levyNH .fer w - tksNH;
-  %   ks_aufbau : the minimum of ksEnergy over Slater determinants is E_w(v), attained exactly (up to sign) by the Slater
-  %   determinant of the N lowest orbitals of h_{v_KS}, v_KS = v + v_Hxc(ρ_0), whose density is ρ_0.
+  \lean{DFT.Continuum.Line.hxcLL, DFT.Continuum.Line.ksEnergy, DFT.Continuum.Line.tksNH_toReal_le, DFT.Continuum.Line.levy_slater, DFT.Continuum.Line.ks_aufbau}
+  \leanok
   \uses{thm:neu_tks, lem:neu_levy_attained, thm:neu_ks, thm:neu_nondeg}
   Fermions, continuous $w$, $v\in H^{-1}$, $\rho_0$ the ground-state density of $T+w+v$. Let
   $E_{\rm Hxc}(\rho)=F^{\rm LL}_w(\rho)-T_{\rm KS}(\rho)$ and, for Slater determinants $\Phi$,
@@ -1954,6 +1956,7 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
   its density is $\rho_0$.
 \end{theorem}
 \begin{proof}
+  \leanok
   $\mathcal E_{\rm KS}(\Phi)\ge F^{\rm LL}_w(\rho_\Phi)+v(\rho_\Phi)\ge E_w(v)$ since $T(\Phi)\ge T_{\rm KS}(\rho_\Phi)$. Equality
   forces a minimiser of $F^{\rm LL}_w(\rho_\Phi)$ (Lemma~\ref{lem:neu_levy_attained}) to be a ground state of $v$, so
   $\rho_\Phi=\rho_0$ (nondegeneracy), and $T(\Phi)=T_{\rm KS}(\rho_0)$, so $\Phi$ is the Slater determinant of
