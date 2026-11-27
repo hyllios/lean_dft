@@ -216,8 +216,10 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
 - D5 🟡 Exact Kohn–Sham with Neumann walls and `H⁻¹` potentials (Corso's Theorem 2.12; chosen by Miguel 2026-11-27).
   Phase 1 ✅ (2026-11-27, `DFT/Continuum/Line/NeumannKS`; statements approved the same day): Lieb = Levy–Lieb on `D_N`,
   weak-* continuity of the inverse map `ρ ↦ v_ρ`, Gateaux differentiability of the Lieb functional (`dF = -v_ρ`), the
-  exact KS potential `v + v_Hxc`, Hartree split for pair interactions. Later: `F_0 = T_KS` via Slater determinants and
-  the Aufbau principle (Corso Lemma 6.2, Theorem 2.15), which need the one-body Neumann eigenbasis.
+  exact KS potential `v + v_Hxc`, Hartree split for pair interactions.
+  Phase 2 ⬜ (statements drafted 2026-11-27, pending approval; blueprint, continuum chapter, last section): abstract
+  form eigenbasis (ForMathlib), Neumann orbitals for `H⁻¹` potentials, non-interacting ground states (Slater /
+  product), `T_KS = F_0` (Corso Lemma 6.2), bosonic `F_0` = von Weizsäcker, Levy minimisers exist, Aufbau (Corso Thm 2.15).
 
 ### Track E: continuum operator theory (contributions to Physlib / Mathlib)
 - E1 ⬜ Spectral theorem for unbounded self-adjoint operators (multiplication-operator form), functional calculus: **coordinate
