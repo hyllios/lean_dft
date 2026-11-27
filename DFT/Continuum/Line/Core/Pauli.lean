@@ -8,7 +8,7 @@ import DFT.Continuum.Line.Core.Strong
 /-!
 # The Pauli principle for one orbital
 
-Let `Φ` be an antisymmetric state of `n + 1` particles on `[0, 1]` and `f` a normalised orbital,
+Let `Φ` be a continuous, pointwise antisymmetric function of `n + 1` particles on `[0, 1]` and `f` a normalised orbital,
 `∫₀¹ f² = 1`. Projecting particle `k` on `f` gives `Pₖ Φ (x) = f(xₖ) Gₖ(x)`, with
 `Gₖ(x) = ∫ f(t) Φ(x with xₖ = t) dt`. The occupation of `f` is at most one:
 
@@ -76,7 +76,9 @@ lemma integrable_prod_mu1 {F : ℝ → ℝ → ℝ} (hF : Continuous (Function.u
 
 section pauli
 
-variable {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomF n) {f : ℝ → ℝ} (hf : Continuous f)
+variable {Φ : Cfg n → ℝ} (hΦc : Continuous Φ)
+  (hΦa : ∀ (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n), Φ (pm σ x) = sgn σ * Φ x)
+  {f : ℝ → ℝ} (hf : Continuous f)
 
 /-- `Gₖ(x) = ∫ f(t) Φ(x with xₖ = t) dt`. -/
 noncomputable def gK (Φ : Cfg n → ℝ) (f : ℝ → ℝ) (k : Fin (n + 1)) : Cfg n → ℝ :=
@@ -86,12 +88,12 @@ lemma gK_apply (k : Fin (n + 1)) (x : Cfg n) :
     gK Φ f k x = ∫ t, f t * Φ (Function.update x k t) ∂vol01 := by
   simp only [gK, avgK, Function.update_self]
 
-include hΦ hf
+include hΦc hΦa hf
 
 lemma continuous_gK (k : Fin (n + 1)) : Continuous (gK Φ f k) :=
-  continuous_avgK k ((hf.comp (continuous_apply k)).mul hΦ.1.continuous)
+  continuous_avgK k ((hf.comp (continuous_apply k)).mul hΦc)
 
-omit hΦ hf in
+omit hΦc hΦa hf in
 lemma gK_update (k : Fin (n + 1)) (x : Cfg n) (s : ℝ) :
     gK Φ f k (Function.update x k s) = gK Φ f k x := avgK_update k _ x s
 
@@ -100,13 +102,13 @@ noncomputable def pK (Φ : Cfg n → ℝ) (f : ℝ → ℝ) (k : Fin (n + 1)) (x
   f (x k) * gK Φ f k x
 
 lemma continuous_pK (k : Fin (n + 1)) : Continuous (pK Φ f k) :=
-  (hf.comp (continuous_apply k)).mul (continuous_gK hΦ hf k)
+  (hf.comp (continuous_apply k)).mul (continuous_gK hΦc hΦa hf k)
 
 /-- `⟨Φ, Pₖ Φ⟩ = ∫ Gₖ²`. -/
 lemma inner_pK (k : Fin (n + 1)) :
     ∫ x, Φ x * pK Φ f k x ∂μN n = ∫ x, gK Φ f k x * gK Φ f k x ∂μN n := by
   rw [← integral_avgK k (H := fun x => Φ x * pK Φ f k x)
-    (hΦ.1.continuous.mul (continuous_pK hΦ hf k))]
+    (hΦc.mul (continuous_pK hΦc hΦa hf k))]
   congr 1; funext x
   simp only [avgK, pK, Function.update_self, gK_update]
   rw [gK_apply k x, ← integral_mul_const]
@@ -115,7 +117,7 @@ lemma inner_pK (k : Fin (n + 1)) :
 lemma pK_pK_self (hf1 : ∫ t, f t * f t ∂vol01 = 1) (k : Fin (n + 1)) :
     ∫ x, pK Φ f k x * pK Φ f k x ∂μN n = ∫ x, gK Φ f k x * gK Φ f k x ∂μN n := by
   rw [← integral_avgK k (H := fun x => pK Φ f k x * pK Φ f k x)
-    ((continuous_pK hΦ hf k).mul (continuous_pK hΦ hf k))]
+    ((continuous_pK hΦc hΦa hf k).mul (continuous_pK hΦc hΦa hf k))]
   congr 1; funext x
   simp only [avgK, pK, Function.update_self, gK_update]
   have : (fun t => f t * gK Φ f k x * (f t * gK Φ f k x)) =
@@ -132,7 +134,7 @@ lemma double_zero {k l : Fin (n + 1)} (hkl : k ≠ l) (x : Cfg n) :
     exact ((continuous_const : Continuous fun _ : ℝ × ℝ => x).update k continuous_fst).update l
       continuous_snd
   have hFc : Continuous (Function.uncurry F) :=
-    ((hf.comp continuous_fst).mul (hf.comp continuous_snd)).mul (hΦ.1.continuous.comp hu)
+    ((hf.comp continuous_fst).mul (hf.comp continuous_snd)).mul (hΦc.comp hu)
   -- exchanging `s` and `t` flips the sign
   have hswap : ∀ t s, F s t = -F t s := by
     intro t s
@@ -147,7 +149,7 @@ lemma double_zero {k l : Fin (n + 1)} (hkl : k ≠ l) (x : Cfg n) :
           simp [Function.update_of_ne hkl]
         · rw [Equiv.swap_apply_of_ne_of_ne hik hil]
           simp [Function.update_of_ne hik, Function.update_of_ne hil]
-    have h := anti hΦ (Equiv.swap k l) (u s t)
+    have h := hΦa (Equiv.swap k l) (u s t)
     rw [hpm, sgn_swap hkl] at h
     simp only [F, h]; ring
   have hJ : ∫ t, f t * gK Φ f l (Function.update x k t) ∂vol01 = ∫ t, ∫ s, F t s ∂vol01 ∂vol01 := by
@@ -169,21 +171,21 @@ lemma double_zero {k l : Fin (n + 1)} (hkl : k ≠ l) (x : Cfg n) :
 lemma pK_pK_ne {k l : Fin (n + 1)} (hkl : k ≠ l) :
     ∫ x, pK Φ f k x * pK Φ f l x ∂μN n = 0 := by
   rw [← integral_avgK k (H := fun x => pK Φ f k x * pK Φ f l x)
-    ((continuous_pK hΦ hf k).mul (continuous_pK hΦ hf l))]
+    ((continuous_pK hΦc hΦa hf k).mul (continuous_pK hΦc hΦa hf l))]
   refine integral_eq_zero_of_ae (ae_of_all _ fun x => ?_)
   simp only [avgK, pK, Function.update_self, gK_update, Function.update_of_ne hkl.symm,
     Pi.zero_apply]
   have : (fun t => f t * gK Φ f k x * (f (x l) * gK Φ f l (Function.update x k t))) =
       fun t => (gK Φ f k x * f (x l)) * (f t * gK Φ f l (Function.update x k t)) := by
     funext t; ring
-  rw [this, integral_const_mul, double_zero hΦ hf hkl x, mul_zero]
+  rw [this, integral_const_mul, double_zero hΦc hΦa hf hkl x, mul_zero]
 
 /-- **The Pauli principle**: an orbital is occupied at most once,
 `Σₖ ⟨Φ, Pₖ Φ⟩ ≤ ⟨Φ, Φ⟩`. -/
 theorem pauli (hf1 : ∫ t, f t * f t ∂vol01 = 1) :
     ∑ k, ∫ x, Φ x * pK Φ f k x ∂μN n ≤ ∫ x, Φ x * Φ x ∂μN n := by
-  have hc := hΦ.1.continuous
-  have hP := continuous_pK hΦ hf
+  have hc := hΦc
+  have hP := continuous_pK hΦc hΦa hf
   have hA : Continuous fun x => ∑ k, pK Φ f k x := continuous_finsetSum _ fun k _ => hP k
   have h0 : 0 ≤ ∫ x, (Φ x - ∑ k, pK Φ f k x) ^ 2 ∂μN n :=
     integral_nonneg fun x => sq_nonneg _
@@ -215,9 +217,9 @@ theorem pauli (hf1 : ∫ t, f t * f t ∂vol01 = 1) :
     intro k
     rw [integral_finsetSum (f := fun l x => pK Φ f k x * pK Φ f l x) _
         fun l _ => integrableN ((hP k).mul (hP l)),
-      Finset.sum_eq_single k (fun l _ hlk => pK_pK_ne hΦ hf (Ne.symm hlk))
+      Finset.sum_eq_single k (fun l _ hlk => pK_pK_ne hΦc hΦa hf (Ne.symm hlk))
         (fun h => absurd (Finset.mem_univ k) h),
-      pK_pK_self hΦ hf hf1, inner_pK hΦ hf]
+      pK_pK_self hΦc hΦa hf hf1, inner_pK hΦc hΦa hf]
   simp only [hdiag] at h0
   linarith
 

@@ -284,7 +284,7 @@ lemma slice_bound (k : Fin (n + 1)) :
     Λ * ∫ x, Φ x * Φ x ∂μN n - ∑ j, (Λ - lam j) * ∫ x, Φ x * pK Φ (φ j) k x ∂μN n ≤
       ∫ x, sk v 0 k Φ x ∂μN n := by
   have hc := hΦ.1.continuous
-  have hP : ∀ j, Continuous (pK Φ (φ j) k) := fun j => continuous_pK hΦ (hφ j).1.continuous k
+  have hP : ∀ j, Continuous (pK Φ (φ j) k) := fun j => continuous_pK hΦ.1.continuous (anti hΦ) (hφ j).1.continuous k
   set H : Cfg n → ℝ := fun x => sk v 0 k Φ x - Λ * (Φ x * Φ x) +
     ∑ j, (Λ - lam j) * (Φ x * pK Φ (φ j) k x)
   have hHc : Continuous H := (((continuous_sk v 0 k hΦ).sub (continuous_const.mul (hc.mul hc))).add
@@ -359,7 +359,7 @@ theorem lower_bound_fer (hle : ∀ j, lam j ≤ Λ) (hnorm : ∀ j, ∫ x, φ j 
   rw [Finset.sum_sub_distrib, Finset.sum_comm] at hsum
   have hpauli : ∀ j, (Λ - lam j) * ∑ k, ∫ x, Φ x * pK Φ (φ j) k x ∂μN n ≤
       (Λ - lam j) * ∫ x, Φ x * Φ x ∂μN n := fun j =>
-    mul_le_mul_of_nonneg_left (pauli hΦ (hφ j).1.continuous (hnorm j)) (sub_nonneg.2 (hle j))
+    mul_le_mul_of_nonneg_left (pauli hΦ.1.continuous (anti hΦ) (hφ j).1.continuous (hnorm j)) (sub_nonneg.2 (hle j))
   have hp := Finset.sum_le_sum fun j (_ : j ∈ Finset.univ) => hpauli j
   simp only [← Finset.mul_sum] at hsum
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at hsum
