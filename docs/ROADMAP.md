@@ -213,8 +213,8 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
   - Out of scope for now: the moment-map description of Lie-algebra scopes (§VIII) and the generalized Pauli
     constraints, which need Kirwan/Atiyah–Guillemin–Sternberg convexity.
 
-- D5 ⬜ Exact Kohn–Sham with Neumann walls and `H⁻¹` potentials (Corso's Theorem 2.12; chosen by Miguel 2026-11-27).
-  Statements drafted, pending approval (blueprint, continuum chapter, last section): Lieb = Levy–Lieb on `D_N`,
+- D5 🟡 Exact Kohn–Sham with Neumann walls and `H⁻¹` potentials (Corso's Theorem 2.12; chosen by Miguel 2026-11-27).
+  Phase 1 ✅ (2026-11-27, `DFT/Continuum/Line/NeumannKS`; statements approved the same day): Lieb = Levy–Lieb on `D_N`,
   weak-* continuity of the inverse map `ρ ↦ v_ρ`, Gateaux differentiability of the Lieb functional (`dF = -v_ρ`), the
   exact KS potential `v + v_Hxc`, Hartree split for pair interactions. Later: `F_0 = T_KS` via Slater determinants and
   the Aufbau principle (Corso Lemma 6.2, Theorem 2.15), which need the one-body Neumann eigenbasis.

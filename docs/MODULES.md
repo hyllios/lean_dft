@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-22 modules, 4339 lines.
+23 modules, 4386 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -19,6 +19,12 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `ForMathlib.Analysis.PoissonKernel` | 107 | The Poisson kernel of the upper half-plane is an approximate identity |
+
+### `ForMathlib/Analysis/Calculus/Deriv/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `ForMathlib.Analysis.Calculus.Deriv.Sandwich` | 43 | Derivatives from two-sided linear bounds |
 
 ### `ForMathlib/Analysis/Convex/`
 
@@ -50,7 +56,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
-| `ForMathlib.Analysis.SturmLiouville.Basic` | 111 | The Dirichlet problem on `[0, 1]`: basic definitions |
+| `ForMathlib.Analysis.SturmLiouville.Basic` | 115 | The Dirichlet problem on `[0, 1]`: basic definitions |
 | `ForMathlib.Analysis.SturmLiouville.Eigen` | 198 | Eigenvectors of the Green operator are classical eigenfunctions |
 | `ForMathlib.Analysis.SturmLiouville.Expand` | 312 | The energy in the eigenbasis |
 | `ForMathlib.Analysis.SturmLiouville.Extend` | 78 | Regularity of ODE solutions and cutoff extension |
@@ -156,7 +162,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-206 modules, 55826 lines.
+211 modules, 56395 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -197,7 +203,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `DFT.Continuum.Line.Core.Basic` | 486 | `N` particles on a line |
 | `DFT.Continuum.Line.Core.Chamber` | 152 | Orderings and collisions |
-| `DFT.Continuum.Line.Core.Pauli` | 223 | The Pauli principle for one orbital |
+| `DFT.Continuum.Line.Core.Pauli` | 226 | The Pauli principle for one orbital |
 | `DFT.Continuum.Line.Core.Strong` | 142 | Calculus for `C²` states on the cube |
 
 ### `DFT/Continuum/Line/Free/`
@@ -302,12 +308,22 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Continuum.Line.Neumann.NeuNGS` | 406 | `N` particles with Neumann walls in an `H⁻¹` potential |
 | `DFT.Continuum.Line.Neumann.NeuPos` | 858 | Ground-state densities with Neumann walls are positive on `[0, 1]` |
 | `DFT.Continuum.Line.Neumann.NeuPot` | 317 | Neumann walls and `H⁻¹` potentials: one particle, the form bound |
-| `DFT.Continuum.Line.Neumann.NeuRep` | 539 | Local `N`-representability with Neumann walls |
+| `DFT.Continuum.Line.Neumann.NeuRep` | 548 | Local `N`-representability with Neumann walls |
 | `DFT.Continuum.Line.Neumann.NeuSeries` | 415 | Cosine series and the kinetic energy with Neumann walls |
-| `DFT.Continuum.Line.Neumann.NeuSuff` | 235 | Sufficiency: `v`-representability from local `N`-representability |
+| `DFT.Continuum.Line.Neumann.NeuSuff` | 257 | Sufficiency: `v`-representability from local `N`-representability |
 | `DFT.Continuum.Line.Neumann.NeuUcp` | 522 | Unique continuation for bosonic Neumann ground states of `H⁻¹` potentials |
 | `DFT.Continuum.Line.Neumann.NeuWeak` | 206 | The `N`-particle state space with Neumann walls |
 | `DFT.Continuum.Line.Neumann.NeuYoung` | 301 | The fermionic chamber state with Neumann walls |
+
+### `DFT/Continuum/Line/NeumannKS/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `DFT.Continuum.Line.NeumannKS.Diff` | 93 | Differentiability of the Lieb functional with Neumann walls (Corso's Lemma 6.1) |
+| `DFT.Continuum.Line.NeumannKS.Hartree` | 144 | Hartree and exchange-correlation for pair interactions (Neumann walls) |
+| `DFT.Continuum.Line.NeumannKS.Inverse` | 133 | Continuity of the inverse map `ρ ↦ v_ρ` with Neumann walls |
+| `DFT.Continuum.Line.NeumannKS.KohnSham` | 60 | The exact Kohn–Sham potential with Neumann walls |
+| `DFT.Continuum.Line.NeumannKS.Lieb` | 105 | The Lieb and Levy–Lieb functionals with Neumann walls |
 
 ### `DFT/Continuum/Line/Regularity/`
 
@@ -519,4 +535,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 73269 lines of Lean.
+Total: 73885 lines of Lean.

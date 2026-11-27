@@ -50,6 +50,9 @@ lemma avgK_update (k : Fin (n + 1)) (H : Cfg n → ℝ) (x : Cfg n) (s : ℝ) :
 lemma mu1_real_univ : vol01.real univ = 1 := by
   simp [measureReal_def, Measure.restrict_apply MeasurableSet.univ]
 
+lemma vol01_prod_real_univ : (vol01.prod vol01).real univ = 1 := by
+  rw [← univ_prod_univ, measureReal_prod_prod, mu1_real_univ, one_mul]
+
 /-- **Averaging over a coordinate does not change the integral.** -/
 lemma integral_avgK (k : Fin (n + 1)) {H : Cfg n → ℝ} (hH : Continuous H) :
     ∫ x, avgK k H x ∂μN n = ∫ x, H x ∂μN n := by

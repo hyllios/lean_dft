@@ -17,7 +17,7 @@ Shared setting for the second-order linear ODE `y'' = W y` on `[0, 1]` with Diri
 * `vol01`: Lebesgue measure on `(0, 1)`.
 * `Dom`: `C²` functions on `ℝ` vanishing at `0` and `1`.
 * `C01`, `iccExt`: continuous functions on `[0, 1]` and their constant extension to `ℝ`
-  (`Set.IccExtend` for a `C01`).
+  (`Set.IccExtend` for a `C01`); `iccExt_add`, `iccExt_smul`.
 * `eq_zero_of_integral`: the fundamental lemma of the calculus of variations on `(0, 1)`.
 * `deriv_eq_zero_of_accPt`: the derivative vanishes at an accumulation point of zeros.
 * `field`, `lipschitz_field`: the vector field `(y, y') ↦ (y', W y)` and its Lipschitz bound.
@@ -49,6 +49,10 @@ abbrev C01 := C(Icc (0 : ℝ) 1, ℝ)
 noncomputable def iccExt (w : C01) (x : ℝ) : ℝ := w (projIcc 0 1 zero_le_one x)
 
 lemma continuous_iccExt (w : C01) : Continuous (iccExt w) := w.continuous.comp continuous_projIcc
+
+lemma iccExt_add (f g : C01) (x : ℝ) : iccExt (f + g) x = iccExt f x + iccExt g x := rfl
+
+lemma iccExt_smul (c : ℝ) (f : C01) (x : ℝ) : iccExt (c • f) x = c * iccExt f x := rfl
 
 lemma integrable_of_continuous {F : ℝ → ℝ} (hF : Continuous F) : Integrable F vol01 :=
   (hF.integrableOn_Icc (a := 0) (b := 1)).mono_set Ioo_subset_Icc_self

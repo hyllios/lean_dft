@@ -951,3 +951,14 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   v − v′ = c·ellE). `Line/MeasureHKend` refactored so that the Tonelli bound and the symmetrised
   fundamental lemma take a marginal bound and a symmetry hypothesis (**integrable_x0_sq_of**,
   **sum_ae_zero_of**, sq_sym_ae_of) and serve both settings. Standard axioms.
+- D5 phase 1 DONE (2026-11-27), CORSO THM 2.12 (exact Kohn–Sham) in `DFT/Continuum/Line/NeumannKS`.
+  `Lieb`: liebNH (sup_v E(v) − v(ρ), EReal), levyNH (constrained search), **liebNH_eq_of_isGSNH**,
+  **levyNH_eq_of_isGSNH**, **levyNH_attained_iff** (minimisers ±Ψ). `Inverse`: **tendsto_vrepNH**
+  (ρ_k → ρ in H¹ ⇒ v_k(δ) → v(δ) on mass-zero δ; subsequence + HK). `Diff`: eventually_vrepNH,
+  **hasDerivAt_liebNH** (dF(ρ) = −v_ρ, two-sided; direct squeeze `hasDerivAt_of_sandwich` in
+  `ForMathlib/Analysis/Calculus/Deriv/Sandwich`, no abstract convex analysis). `KohnSham`: hxcNH = F_w − F_0,
+  **hasDerivAt_hxcNH**, **ks_exact** (v_KS exists, unique up to a constant, v_KS = v + dE_Hxc). `Hartree`:
+  pairW, hartreeB/hartreeBE, **hasFDerivAt_hartreeE** (v_H = ½(B(ρ,·) + B(·,ρ)), u need not be symmetric),
+  **hasDerivAt_xcNH** (v_KS = v + v_H + v_xc). Refactor: `NeuSuff` exposes norm_le_of_lower,
+  le_gsEH_of_tendsto, LocRepNH, gsEH_sub_le_of_rep; `NeuRep` exposes locRepNH_of_pos. Phase 2 (later):
+  F_0 = T_KS via Slater determinants, Aufbau (Corso Lemma 6.2, Thm 2.15) — needs the one-body Neumann eigenbasis.

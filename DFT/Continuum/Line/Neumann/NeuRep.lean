@@ -18,6 +18,8 @@ Slater determinant of the Harriman orbitals `g · e_j(∫₀ˣ g²)` for fermion
 * `sqrtProf`: the profile `g = √(ρ/N)` of a density bounded below, `h1N_sqrtProf`,
   `kinM_sqrtProf_le`.
 * `prodS_memN`, `kinN_prodS`, `rhoE_prodS`: bosons.
+* **`locRepNH_of_pos`**: local `N`-representability around a positive density;
+  `vrepNH_suff`, `vrepNH_iff` (Corso's Theorem 2.3).
 -/
 
 namespace DFT.Continuum.Line
@@ -460,13 +462,12 @@ lemma fnE_add (e e' : H1E) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
   have := congrArg (fun P : C01 => P ⟨t, ht⟩) (map_add evE e e')
   simpa only [ContinuousMap.add_apply, evE_apply] using this
 
-/-- **Sufficiency in Corso's Theorem 2.3**: every `ρ ∈ H¹(0, 1)`, positive on `[0, 1]`, with
-`∫ ρ = N`, is the density of a Neumann ground state of some `v ∈ H⁻¹`, for bosons or fermions
-and any continuous interaction. -/
-theorem vrepNH_suff {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ0 : H1E}
+/-- **Local `N`-representability**: around every `ρ₀ ∈ H¹(0, 1)`, positive on `[0, 1]`, with
+`∫ ρ₀ = N`, the densities of the same mass are densities of normalised Neumann states of bounded
+energy (product states for bosons, Slater determinants of Harriman orbitals for fermions). -/
+theorem locRepNH_of_pos {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ0 : H1E}
     (hpos : ∀ t ∈ Icc (0 : ℝ) 1, 0 < fnE ρ0 t) (hN : ∫ t, fnE ρ0 t ∂vol01 = n + 1) :
-    VRepNH τ n w ρ0 := by
-  refine vrepNH_of_rep hw hN ?_
+    LocRepNH τ n w ρ0 := by
   obtain ⟨tm, htm, hmin⟩ := isCompact_Icc.exists_isMinOn (nonempty_Icc.2 zero_le_one)
     (continuousOn_fnE ρ0)
   set c0 := fnE ρ0 tm
@@ -528,6 +529,14 @@ theorem vrepNH_suff {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ0 : H
     rw [ext_evE htI, sqrtProf_sq hc2 hρc htI]
   · have := abs_int_w_le hB hΦ.1 hn
     linarith [le_abs_self (∫ x, w x * (Φ x * Φ x) ∂μN n)]
+
+/-- **Sufficiency in Corso's Theorem 2.3**: every `ρ ∈ H¹(0, 1)`, positive on `[0, 1]`, with
+`∫ ρ = N`, is the density of a Neumann ground state of some `v ∈ H⁻¹`, for bosons or fermions
+and any continuous interaction. -/
+theorem vrepNH_suff {τ : Stat} {w : Cfg n → ℝ} (hw : Continuous w) {ρ0 : H1E}
+    (hpos : ∀ t ∈ Icc (0 : ℝ) 1, 0 < fnE ρ0 t) (hN : ∫ t, fnE ρ0 t ∂vol01 = n + 1) :
+    VRepNH τ n w ρ0 :=
+  vrepNH_of_rep hw hN (locRepNH_of_pos hw hpos hN)
 
 /-- **Corso's Theorem 2.3** (pure-state `v`-representability with Neumann walls): for bosons or
 fermions and any continuous interaction, `ρ ∈ H¹(0, 1)` is the density of a Neumann ground state

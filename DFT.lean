@@ -94,6 +94,11 @@ import DFT.Continuum.Line.Neumann.NeuSuff
 import DFT.Continuum.Line.Neumann.NeuUcp
 import DFT.Continuum.Line.Neumann.NeuWeak
 import DFT.Continuum.Line.Neumann.NeuYoung
+import DFT.Continuum.Line.NeumannKS.Diff
+import DFT.Continuum.Line.NeumannKS.Hartree
+import DFT.Continuum.Line.NeumannKS.Inverse
+import DFT.Continuum.Line.NeumannKS.KohnSham
+import DFT.Continuum.Line.NeumannKS.Lieb
 import DFT.Continuum.Line.Regularity.DensC1
 import DFT.Continuum.Line.Regularity.DensSeries
 import DFT.Continuum.Line.Regularity.H2

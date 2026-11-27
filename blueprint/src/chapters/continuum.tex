@@ -1683,7 +1683,7 @@ $\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
 
 \begin{theorem}[Corso's Theorem 2.3]
   \label{thm:neu_corso}
-  \lean{DFT.Continuum.Line.intPot, DFT.Continuum.Line.ellE, DFT.Continuum.Line.gsEH_shift, DFT.Continuum.Line.exists_weak_subseq_PotH, DFT.Continuum.Line.vrepNH_of_rep, DFT.Continuum.Line.isWDN_tens, DFT.Continuum.Line.prodS_memN, DFT.Continuum.Line.kinN_prodS, DFT.Continuum.Line.sqrtProf, DFT.Continuum.Line.h1N_sqrtProf, DFT.Continuum.Line.kinM_sqrtProf_le, DFT.Continuum.Line.isWDN_slater, DFT.Continuum.Line.slater_memN, DFT.Continuum.Line.kinN_slater_le, DFT.Continuum.Line.exists_eH_bound, DFT.Continuum.Line.harrimanN, DFT.Continuum.Line.rep_of_prof, DFT.Continuum.Line.vrepNH_suff, DFT.Continuum.Line.vrepNH_iff}
+  \lean{DFT.Continuum.Line.intPot, DFT.Continuum.Line.ellE, DFT.Continuum.Line.gsEH_shift, DFT.Continuum.Line.exists_weak_subseq_PotH, DFT.Continuum.Line.norm_le_of_lower, DFT.Continuum.Line.le_gsEH_of_tendsto, DFT.Continuum.Line.LocRepNH, DFT.Continuum.Line.gsEH_sub_le_of_rep, DFT.Continuum.Line.vrepNH_of_rep, DFT.Continuum.Line.isWDN_tens, DFT.Continuum.Line.prodS_memN, DFT.Continuum.Line.kinN_prodS, DFT.Continuum.Line.sqrtProf, DFT.Continuum.Line.h1N_sqrtProf, DFT.Continuum.Line.kinM_sqrtProf_le, DFT.Continuum.Line.isWDN_slater, DFT.Continuum.Line.slater_memN, DFT.Continuum.Line.kinN_slater_le, DFT.Continuum.Line.exists_eH_bound, DFT.Continuum.Line.harrimanN, DFT.Continuum.Line.rep_of_prof, DFT.Continuum.Line.locRepNH_of_pos, DFT.Continuum.Line.vrepNH_suff, DFT.Continuum.Line.vrepNH_iff}
   \leanok
   \uses{thm:neu_pos, thm:neu_chf}
   For bosons or fermions and every continuous interaction, $\rho\in H^1(0,1)$ is the density of a Neumann ground state of some
@@ -1737,8 +1737,8 @@ $\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
 
 \section{The exact Kohn--Sham scheme with Neumann walls (Corso's Theorem 2.12)}
 
-% Statements in this section: (statement pending approval), docs/AGENTS.md §4. No \lean{} yet.
-% Planned files: DFT/Continuum/Line/Neumann/{NeuLieb,NeuDiff,NeuKS}.lean.
+% Statements in this section approved by Miguel 2026-11-27 (ROADMAP D5).
+% Lean: DFT/Continuum/Line/NeumannKS/{Lieb,Inverse,Diff,KohnSham,Hartree}.lean.
 
 Throughout, $w$ is a continuous interaction, the statistics are bosonic or fermionic, $N=n+1$, and
 $\mathcal D_N=\{\rho\in H^1(0,1):\rho>0\text{ on }[0,1],\ \int\rho=N\}$ is the set of $v$-representable densities
@@ -1748,9 +1748,8 @@ $\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\math
 
 \begin{definition}[Lieb and Levy--Lieb functionals]
   \label{def:neu_lieb}
-  (statement pending approval)
-  % Lean: liebNH τ w ρ : EReal := ⨆ v : PotH, (gsEH τ w v - v ρ : EReal)
-  %       levyNH τ w ρ : EReal := ⨅ Φ ∈ DomN τ n, ∫Φ² = 1, rhoE τ Φ = ρ, (kinN Φ + ∫ w Φ²)
+  \lean{DFT.Continuum.Line.intEN, DFT.Continuum.Line.liebNH, DFT.Continuum.Line.levyNH}
+  \leanok
   For $\rho\in H^1(0,1)$,
   $F_w(\rho)=\sup_{v\in H^{-1}}\bigl(E_w(v)-v(\rho)\bigr)\in(-\infty,+\infty]$ and
   $F^{\rm LL}_w(\rho)=\inf\{T(\Phi)+\int w\Phi^2:\Phi\text{ a normalised Neumann state},\ \rho_\Phi=\rho\}$
@@ -1759,14 +1758,15 @@ $\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\math
 
 \begin{theorem}[Lieb $=$ Levy--Lieb on $\mathcal D_N$]
   \label{thm:neu_lieb_eq}
-  (statement pending approval)
-  % Lean: liebNH_eq_of_isGSNH, levyNH_eq_of_isGSNH, levyNH_attained_iff
+  \lean{DFT.Continuum.Line.QNH_eq_intEN, DFT.Continuum.Line.gsEH_sub_le_intEN, DFT.Continuum.Line.liebNH_le_levyNH, DFT.Continuum.Line.gsEH_sub_rhoE_eq, DFT.Continuum.Line.gsEH_sub_le_of_isGSNH, DFT.Continuum.Line.liebNH_eq_of_isGSNH, DFT.Continuum.Line.levyNH_eq_of_isGSNH, DFT.Continuum.Line.levyNH_attained_iff}
+  \leanok
   \uses{def:neu_lieb, thm:neu_corso, thm:neu_nondeg}
   Let $\rho\in\mathcal D_N$ and let $\Psi$ be the ground state of $v_\rho$. Then
   $F_w(\rho)=F^{\rm LL}_w(\rho)=E_w(v_\rho)-v_\rho(\rho)=T(\Psi)+\int w\Psi^2$, which is finite, and a normalised state
   $\Phi$ with $\rho_\Phi=\rho$ attains $F^{\rm LL}_w(\rho)$ if and only if $\Phi=\pm\Psi$.
 \end{theorem}
 \begin{proof}
+  \leanok
   $F^{\rm LL}_w\ge F_w$ always ($E_w(v)\le T(\Phi)+\int w\Phi^2+v(\rho)$). Taking $v=v_\rho$ in the supremum and $\Psi$ in the
   infimum gives the reverse inequalities. A minimiser $\Phi$ has energy $E_w(v_\rho)$ in $v_\rho$, so it is a ground state,
   equal to $\pm\Psi$ by nondegeneracy.
@@ -1774,14 +1774,14 @@ $\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\math
 
 \begin{theorem}[Continuity of the inverse map]
   \label{thm:neu_inverse_cont}
-  (statement pending approval)
-  % Lean: tendsto_vrep : ρ_k → ρ in H1E, ρ_k, ρ ∈ D_N, IsGSNH τ w (v k) Ψ_k, rhoE Ψ_k = ρ_k, IsGSNH τ w v Ψ,
-  %   rhoE Ψ = ρ → ∀ δ, ellE δ = 0 → Tendsto (fun k => v k δ) atTop (𝓝 (v δ))
+  \lean{DFT.Continuum.Line.gsEH_sub_shift, DFT.Continuum.Line.exists_subseq_tendsto_vrepNH, DFT.Continuum.Line.tendsto_vrepNH}
+  \leanok
   \uses{thm:neu_corso, thm:neu_hk, thm:neu_chf}
   If $\rho_k\to\rho$ in $H^1$ within $\mathcal D_N$, then $v_{\rho_k}(\delta)\to v_\rho(\delta)$ for every $\delta\in X_0$; that is,
   the potentials converge weakly-$*$ modulo constants.
 \end{theorem}
 \begin{proof}
+  \leanok
   Normalise $v_{\rho_k}(\rho)=0$ by a constant shift. Local $N$-representability around $\rho$ (radius $r$, energy bound $M$)
   covers a ball of radius $r/2$ around every $\rho_k$ with $\|\rho_k-\rho\|\le r/2$, so as in the proof of
   Theorem~\ref{thm:neu_corso} the bound $E_w(v)-v(\rho_k)\le M+v(h)$ makes $(v_{\rho_k})$ bounded in $H^{-1}$. Every
@@ -1794,15 +1794,15 @@ $\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\math
 
 \begin{theorem}[Differentiability of the Lieb functional; Corso's Lemma 6.1]
   \label{thm:neu_lieb_diff}
-  (statement pending approval)
-  % Lean: hasDerivAt_liebNH : ρ ∈ D_N → ellE δ = 0 → IsGSNH τ w v Ψ → rhoE τ Ψ = ρ →
-  %   HasDerivAt (fun ε : ℝ => (liebNH τ w (ρ + ε • δ)).toReal) (-v δ) 0
+  \lean{hasDerivAt_of_sandwich, DFT.Continuum.Line.eventually_vrepNH, DFT.Continuum.Line.hasDerivAt_liebNH}
+  \leanok
   \uses{thm:neu_lieb_eq, thm:neu_inverse_cont}
   For $\rho\in\mathcal D_N$ and $\delta\in X_0$, $\varepsilon\mapsto F_w(\rho+\varepsilon\delta)$ is finite near $0$ and
   differentiable at $0$ with derivative $-v_\rho(\delta)$. That is, $F_w$ is Gateaux differentiable on $\mathcal D_N$ and
   $\mathrm dF_w(\rho)=-v_\rho$ modulo constants.
 \end{theorem}
 \begin{proof}
+  \leanok
   $\mathcal D_N$ is relatively open in $N+X_0$ ($H^1\hookrightarrow C$), so $\rho_\varepsilon=\rho+\varepsilon\delta\in\mathcal D_N$
   for small $|\varepsilon|$. From the supremum in $F_w$ with $v=v_\rho$ and with $v=v_{\rho_\varepsilon}$
   (Theorem~\ref{thm:neu_lieb_eq}),
@@ -1812,12 +1812,8 @@ $\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\math
 
 \begin{theorem}[Exact Kohn--Sham potential]
   \label{thm:neu_ks}
-  (statement pending approval)
-  % Lean: hxcNH τ w ρ := (liebNH τ w ρ).toReal - (liebNH τ 0 ρ).toReal;
-  %   hasDerivAt_hxcNH : ... HasDerivAt (fun ε => hxcNH τ w (ρ + ε • δ)) (vs δ - v δ) 0
-  %     where IsGSNH τ w v Ψ, IsGSNH τ 0 vs Ψs, rhoE Ψ = rhoE Ψs = ρ;
-  %   ks_exact : IsGSNH τ w v Ψ → ∃ vs Ψs, IsGSNH τ 0 vs Ψs ∧ rhoE τ Ψs = rhoE τ Ψ ∧
-  %     ∀ δ, ellE δ = 0 → HasDerivAt (fun ε => hxcNH τ w (rhoE τ Ψ + ε • δ)) (vs δ - v δ) 0
+  \lean{DFT.Continuum.Line.hxcNH, DFT.Continuum.Line.hasDerivAt_hxcNH, DFT.Continuum.Line.ks_exact}
+  \leanok
   \uses{thm:neu_lieb_diff}
   Let $E_{\rm Hxc}(\rho)=F_w(\rho)-F_0(\rho)$ on $\mathcal D_N$ ($F_0$: the same statistics, no interaction). Then $E_{\rm Hxc}$ is
   Gateaux differentiable on $\mathcal D_N$ with $v_{\rm Hxc}(\rho):=\mathrm dE_{\rm Hxc}(\rho)=v^{(0)}_\rho-v^{(w)}_\rho$ modulo
@@ -1826,16 +1822,15 @@ $\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\math
   constant.
 \end{theorem}
 \begin{proof}
+  \leanok
   Theorem~\ref{thm:neu_lieb_diff} for $w$ and for $0$; Theorem~\ref{thm:neu_corso} for $w=0$ gives $v^{(0)}_\rho$, and
   Theorem~\ref{thm:neu_hk} for $w=0$ gives its uniqueness.
 \end{proof}
 
 \begin{theorem}[Hartree and exchange-correlation for pair interactions]
   \label{thm:neu_hartree}
-  (statement pending approval)
-  % Lean: pairW u x := ∑ i < j, u (x i) (x j); hartreeE u ρ := ½ ∫∫ u ρ ρ;
-  %   hasFDerivAt_hartreeE (Fréchet on H1E, derivative δ ↦ ∫∫ u ρ δ for symmetric u);
-  %   xcNH τ u ρ := hxcNH τ (pairW u) ρ - hartreeE u ρ, hasDerivAt_xcNH.
+  \lean{DFT.Continuum.Line.sqExt, DFT.Continuum.Line.continuous_sqExt, DFT.Continuum.Line.abs_sqExt_le, DFT.Continuum.Line.pairW, DFT.Continuum.Line.continuous_pairW, DFT.Continuum.Line.hartreeInt, DFT.Continuum.Line.integrable_hartreeInt, SturmLiouville.iccExt_add, SturmLiouville.iccExt_smul, DFT.Continuum.Line.vol01_prod_real_univ, DFT.Continuum.Line.hartreeB, DFT.Continuum.Line.hartreeB_apply, DFT.Continuum.Line.hartreeBE, DFT.Continuum.Line.hartreeE, DFT.Continuum.Line.hartreePot, DFT.Continuum.Line.hasFDerivAt_hartreeE, DFT.Continuum.Line.xcNH, DFT.Continuum.Line.hasDerivAt_xcNH}
+  \leanok
   \uses{thm:neu_ks}
   Let $w(x)=\sum_{i<j}u(x_i,x_j)$ with $u$ continuous and symmetric. The Hartree energy
   $E_{\rm H}(\rho)=\tfrac12\iint u(s,t)\rho(s)\rho(t)$ is Fréchet differentiable on $H^1(0,1)$ with

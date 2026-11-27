@@ -19,6 +19,9 @@ result is now in the blueprint, and CI runs the blueprint check with `--strict`.
 | `DFT.Continuum.Box.lieb_box` | yes |
 | `DFT.Continuum.hk_of_ucp` | yes |
 | `DFT.Continuum.lattice_hk_of_hstar` | yes |
+| `DFT.Continuum.Line.hasDerivAt_liebNH` | yes |
+| `DFT.Continuum.Line.hasDerivAt_xcNH` | yes |
+| `DFT.Continuum.Line.ks_exact` | yes |
 | `DFT.Continuum.Spectral.exists_orbitals` | yes |
 | `DFT.Continuum.subgrad_unique` | yes |
 | `DFT.dimH_image_le_of_pointwise_lipschitz` | yes |

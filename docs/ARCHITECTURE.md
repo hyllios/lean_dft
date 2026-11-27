@@ -48,6 +48,7 @@ aliases (`AGENTS.md` §5). Some earlier moves still carry `DFT.…` names (e.g. 
    the H¹₀ theory in the order it is built (representability, ground states, unique continuation, exchange-symmetry sectors,
    HK theorems, specific systems, Kohn–Sham and v-representability, regularity of densities)
 7. `Line/MeasurePotential`, `Line/Neumann`: measure potentials; Neumann walls and H⁻¹ potentials
+8. `Line/NeumannKS`: the exact Kohn–Sham scheme with Neumann walls (Lieb functional, its differentiability, E_Hxc, E_xc)
 
 The order follows the true dependencies (constants used by proofs), not only the import lines. When a file needs
 something from a folder further down this list, the thing it needs is in the wrong place: move it down, or move the
