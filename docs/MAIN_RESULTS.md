@@ -9,6 +9,8 @@ The declarations listed here are the main results of the repository. Rules (`AGE
 **Status (2026-11-25): seeded automatically** from the declarations named in the README section "Main results".
 2026-11-26: `DFT.generic_hk_hubbard` removed by Miguel (it is a corollary of `DFT.generic_hk_spin`). Every listed
 result is now in the blueprint, and CI runs the blueprint check with `--strict`.
+2026-11-27: `DFT.ks_potential_exists` and `DFT.ks_potential_exists_interior` generalised by Miguel's approval: the
+hypotheses `0 < N < M` were dropped (no longer used since the proof goes through the scope framework).
 
 | Declaration | In blueprint |
 |---|---|

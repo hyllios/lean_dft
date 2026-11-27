@@ -252,8 +252,7 @@ theorem v_representable_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M))
 `vs`. -/
 theorem ks_potential_exists_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M))
     [DecidableRel G.Adj] (t : ℝ)
-    (_hN0 : 0 < N) (_hNM : N < M) {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
-        (hsum : ∑ i, ρ i = N) :
+    {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1) (hsum : ∑ i, ρ i = N) :
     ∃ vs : Fin M → ℝ, ∃ Γ ∈ Ens (H0F G t (0 : Conf M N → ℝ)) occF vs, ensDens occF Γ = ρ :=
   v_representable_interior G t 0 hρ hsum
 
