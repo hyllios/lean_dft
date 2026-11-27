@@ -1843,7 +1843,7 @@ The Slater-determinant form of $F_0$ for fermions ($F_0=T_{\rm KS}$, Corso's Lem
 
 \section{Slater determinants and the Aufbau principle with Neumann walls (Corso's Lemma 6.2 and Theorem 2.15)}
 
-% Statements in this section: (statement pending approval), docs/AGENTS.md §4. ROADMAP D5 phase 2.
+% Statements in this section approved by Miguel 2026-11-27 (ROADMAP D5 phase 2).
 % Planned Lean: ForMathlib/Analysis/InnerProductSpace/FormEigenbasis.lean (P1, abstract);
 %   DFT/Continuum/Line/Neumann/{NeuSpec,NeuFree}.lean (P2–P4); DFT/Continuum/Line/NeumannKS/{Slater,Aufbau}.lean (P5–P7).
 
@@ -1852,7 +1852,6 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Eigenbasis of a semibounded form with compact domain; abstract]
   \label{thm:form_eigenbasis}
-  (statement pending approval)
   % Lean: ForMathlib, FormEigenbasis: V ⊆ H Hilbert spaces, the inclusion compact with dense range, q a continuous
   %   symmetric bilinear form on V with q(f,f) ≥ c‖f‖²_V - C‖f‖²_H. Then there are a Hilbert basis (e_k) of H with
   %   e_k ∈ V, and λ_k nondecreasing, λ_k → ∞, with q(e_k, g) = λ_k ⟨e_k, g⟩_H for all g ∈ V.
@@ -1870,7 +1869,6 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Neumann orbitals for $H^{-1}$ potentials]
   \label{thm:neu_orbitals}
-  (statement pending approval)
   % Lean: NeuSpec: exists_neuOrbitals (v : PotH) : ∃ (φ : ℕ → H1E) (λ : ℕ → ℝ), Monotone λ ∧ Tendsto λ atTop atTop ∧
   %   L²-orthonormal, complete in L²(0,1), ∀ g, ∫ φ_k' g' + v(φ_k g) = λ_k ∫ φ_k g.
   \uses{thm:form_eigenbasis, thm:neu_form_bound}
@@ -1888,7 +1886,6 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Non-interacting ground states with Neumann walls]
   \label{thm:neu_free}
-  (statement pending approval)
   % Lean: NeuFree: gsEH_free_fer : gsEH .fer 0 v = Σ_{j ≤ n} λ_j, isGSNH_slater_free (the Slater determinant of
   %   φ_0..φ_n is a ground state), lam_lt_lam_succ (λ_n < λ_{n+1}); bosons: gsEH_free_bos = (n+1) λ_0, isGSNH_prod_free.
   \uses{thm:neu_orbitals, thm:neu_nondeg, thm:neu_gs_N}
@@ -1907,7 +1904,6 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Kohn--Sham kinetic energy; Corso's Lemma 6.2]
   \label{thm:neu_tks}
-  (statement pending approval)
   % Lean: Slater: tksNH ρ : EReal := ⨅ over Slater determinants Φ of n+1 L²-orthonormal H¹ orbitals with rhoE .fer Φ = ρ, kinN Φ;
   %   tksNH_eq_liebNH (ρ ∈ D_N → tksNH ρ = liebNH .fer 0 ρ), tksNH_attained (unique minimiser: the Slater determinant of
   %   the N lowest orbitals of v_s(ρ)), hasDerivAt_tksNH.
@@ -1925,7 +1921,6 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{corollary}[Bosons: the non-interacting functional is von Weizsäcker]
   \label{cor:neu_weizsacker}
-  (statement pending approval)
   % Lean: Slater: liebNH_bos_free_eq (ρ ∈ D_N → liebNH .bos 0 ρ = ∫ ((√ρ)')²).
   \uses{thm:neu_free, thm:neu_lieb_eq}
   For bosons and $\rho\in\mathcal D_N$, $F_0(\rho)=\int_0^1\bigl((\sqrt\rho)'\bigr)^2$, attained by $(\sqrt{\rho/N})^{\otimes N}$.
@@ -1933,7 +1928,6 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{lemma}[The constrained search is attained]
   \label{lem:neu_levy_attained}
-  (statement pending approval)
   % Lean: Slater: exists_levyNH_min (levyNH τ w ρ ≠ ⊤ → ∃ Φ admissible with intEN w Φ = levyNH τ w ρ).
   \uses{thm:neu_chf}
   If some normalised Neumann state has density $\rho$, the infimum in $F^{\rm LL}_w(\rho)$ is attained.
@@ -1946,7 +1940,6 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Exact Kohn--Sham and the Aufbau principle; Corso's Theorem 2.15]
   \label{thm:neu_aufbau}
-  (statement pending approval)
   % Lean: Aufbau: ksEnergy Φ := kinN Φ + E_Hxc^LL(ρ_Φ) + v(ρ_Φ) with E_Hxc^LL := levyNH .fer w - tksNH;
   %   ks_aufbau : the minimum of ksEnergy over Slater determinants is E_w(v), attained exactly (up to sign) by the Slater
   %   determinant of the N lowest orbitals of h_{v_KS}, v_KS = v + v_Hxc(ρ_0), whose density is ρ_0.
