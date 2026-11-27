@@ -1734,3 +1734,114 @@ $\beta=1_{[0,x]}$, and every finite signed measure is such a potential.
   $(e/\rho)\rho$, so $D(e)=\int ed$ with $d=-R/\rho\in L^1$. Symmetric test states $\chi\Phi$ and the fundamental lemma give
   $\sum_kd(x_k)\Phi^2=0$, unique continuation gives $\sum_kd(x_k)=0$ a.e., and product test functions give $d=0$.
 \end{proof}
+
+\section{The exact Kohn--Sham scheme with Neumann walls (Corso's Theorem 2.12)}
+
+% Statements in this section: (statement pending approval), docs/AGENTS.md §4. No \lean{} yet.
+% Planned files: DFT/Continuum/Line/Neumann/{NeuLieb,NeuDiff,NeuKS}.lean.
+
+Throughout, $w$ is a continuous interaction, the statistics are bosonic or fermionic, $N=n+1$, and
+$\mathcal D_N=\{\rho\in H^1(0,1):\rho>0\text{ on }[0,1],\ \int\rho=N\}$ is the set of $v$-representable densities
+(Theorem~\ref{thm:neu_corso}). For $\rho\in\mathcal D_N$ let $v_\rho\in H^{-1}$ be a potential with ground-state density
+$\rho$; by Theorem~\ref{thm:neu_hk} it is unique up to a constant, so $v_\rho(\delta)$ is well defined for every
+$\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\mathcal D_N$.
+
+\begin{definition}[Lieb and Levy--Lieb functionals]
+  \label{def:neu_lieb}
+  (statement pending approval)
+  % Lean: liebNH τ w ρ : EReal := ⨆ v : PotH, (gsEH τ w v - v ρ : EReal)
+  %       levyNH τ w ρ : EReal := ⨅ Φ ∈ DomN τ n, ∫Φ² = 1, rhoE τ Φ = ρ, (kinN Φ + ∫ w Φ²)
+  For $\rho\in H^1(0,1)$,
+  $F_w(\rho)=\sup_{v\in H^{-1}}\bigl(E_w(v)-v(\rho)\bigr)\in(-\infty,+\infty]$ and
+  $F^{\rm LL}_w(\rho)=\inf\{T(\Phi)+\int w\Phi^2:\Phi\text{ a normalised Neumann state},\ \rho_\Phi=\rho\}$
+  (with $\inf\emptyset=+\infty$).
+\end{definition}
+
+\begin{theorem}[Lieb $=$ Levy--Lieb on $\mathcal D_N$]
+  \label{thm:neu_lieb_eq}
+  (statement pending approval)
+  % Lean: liebNH_eq_of_isGSNH, levyNH_eq_of_isGSNH, levyNH_attained_iff
+  \uses{def:neu_lieb, thm:neu_corso, thm:neu_nondeg}
+  Let $\rho\in\mathcal D_N$ and let $\Psi$ be the ground state of $v_\rho$. Then
+  $F_w(\rho)=F^{\rm LL}_w(\rho)=E_w(v_\rho)-v_\rho(\rho)=T(\Psi)+\int w\Psi^2$, which is finite, and a normalised state
+  $\Phi$ with $\rho_\Phi=\rho$ attains $F^{\rm LL}_w(\rho)$ if and only if $\Phi=\pm\Psi$.
+\end{theorem}
+\begin{proof}
+  $F^{\rm LL}_w\ge F_w$ always ($E_w(v)\le T(\Phi)+\int w\Phi^2+v(\rho)$). Taking $v=v_\rho$ in the supremum and $\Psi$ in the
+  infimum gives the reverse inequalities. A minimiser $\Phi$ has energy $E_w(v_\rho)$ in $v_\rho$, so it is a ground state,
+  equal to $\pm\Psi$ by nondegeneracy.
+\end{proof}
+
+\begin{theorem}[Continuity of the inverse map]
+  \label{thm:neu_inverse_cont}
+  (statement pending approval)
+  % Lean: tendsto_vrep : ρ_k → ρ in H1E, ρ_k, ρ ∈ D_N, IsGSNH τ w (v k) Ψ_k, rhoE Ψ_k = ρ_k, IsGSNH τ w v Ψ,
+  %   rhoE Ψ = ρ → ∀ δ, ellE δ = 0 → Tendsto (fun k => v k δ) atTop (𝓝 (v δ))
+  \uses{thm:neu_corso, thm:neu_hk, thm:neu_chf}
+  If $\rho_k\to\rho$ in $H^1$ within $\mathcal D_N$, then $v_{\rho_k}(\delta)\to v_\rho(\delta)$ for every $\delta\in X_0$; that is,
+  the potentials converge weakly-$*$ modulo constants.
+\end{theorem}
+\begin{proof}
+  Normalise $v_{\rho_k}(\rho)=0$ by a constant shift. Local $N$-representability around $\rho$ (radius $r$, energy bound $M$)
+  covers a ball of radius $r/2$ around every $\rho_k$ with $\|\rho_k-\rho\|\le r/2$, so as in the proof of
+  Theorem~\ref{thm:neu_corso} the bound $E_w(v)-v(\rho_k)\le M+v(h)$ makes $(v_{\rho_k})$ bounded in $H^{-1}$. Every
+  subsequence has a weakly-$*$ convergent subsequence, $v_{\rho_k}\rightharpoonup v^*$. Pass to the limit in
+  $E_w(v')-v'(\rho_k)\le E_w(v_{\rho_k})-v_{\rho_k}(\rho_k)$: the left side converges, $v_{\rho_k}(\rho_k)\to v^*(\rho)$
+  (bounded times strongly convergent), and $\limsup E_w(v_{\rho_k})\le E_w(v^*)$ since $E_w$ is an infimum of weakly
+  continuous affine maps. So $\rho$ is a supergradient of $E_w$ at $v^*$, hence its ground-state density
+  (Theorem~\ref{thm:neu_chf}), and $v^*=v_\rho+c$ by Theorem~\ref{thm:neu_hk}. The limit does not depend on the subsequence.
+\end{proof}
+
+\begin{theorem}[Differentiability of the Lieb functional; Corso's Lemma 6.1]
+  \label{thm:neu_lieb_diff}
+  (statement pending approval)
+  % Lean: hasDerivAt_liebNH : ρ ∈ D_N → ellE δ = 0 → IsGSNH τ w v Ψ → rhoE τ Ψ = ρ →
+  %   HasDerivAt (fun ε : ℝ => (liebNH τ w (ρ + ε • δ)).toReal) (-v δ) 0
+  \uses{thm:neu_lieb_eq, thm:neu_inverse_cont}
+  For $\rho\in\mathcal D_N$ and $\delta\in X_0$, $\varepsilon\mapsto F_w(\rho+\varepsilon\delta)$ is finite near $0$ and
+  differentiable at $0$ with derivative $-v_\rho(\delta)$. That is, $F_w$ is Gateaux differentiable on $\mathcal D_N$ and
+  $\mathrm dF_w(\rho)=-v_\rho$ modulo constants.
+\end{theorem}
+\begin{proof}
+  $\mathcal D_N$ is relatively open in $N+X_0$ ($H^1\hookrightarrow C$), so $\rho_\varepsilon=\rho+\varepsilon\delta\in\mathcal D_N$
+  for small $|\varepsilon|$. From the supremum in $F_w$ with $v=v_\rho$ and with $v=v_{\rho_\varepsilon}$
+  (Theorem~\ref{thm:neu_lieb_eq}),
+  $-\varepsilon v_\rho(\delta)\le F_w(\rho_\varepsilon)-F_w(\rho)\le-\varepsilon v_{\rho_\varepsilon}(\delta)$, and
+  $v_{\rho_\varepsilon}(\delta)\to v_\rho(\delta)$ by Theorem~\ref{thm:neu_inverse_cont}.
+\end{proof}
+
+\begin{theorem}[Exact Kohn--Sham potential]
+  \label{thm:neu_ks}
+  (statement pending approval)
+  % Lean: hxcNH τ w ρ := (liebNH τ w ρ).toReal - (liebNH τ 0 ρ).toReal;
+  %   hasDerivAt_hxcNH : ... HasDerivAt (fun ε => hxcNH τ w (ρ + ε • δ)) (vs δ - v δ) 0
+  %     where IsGSNH τ w v Ψ, IsGSNH τ 0 vs Ψs, rhoE Ψ = rhoE Ψs = ρ;
+  %   ks_exact : IsGSNH τ w v Ψ → ∃ vs Ψs, IsGSNH τ 0 vs Ψs ∧ rhoE τ Ψs = rhoE τ Ψ ∧
+  %     ∀ δ, ellE δ = 0 → HasDerivAt (fun ε => hxcNH τ w (rhoE τ Ψ + ε • δ)) (vs δ - v δ) 0
+  \uses{thm:neu_lieb_diff}
+  Let $E_{\rm Hxc}(\rho)=F_w(\rho)-F_0(\rho)$ on $\mathcal D_N$ ($F_0$: the same statistics, no interaction). Then $E_{\rm Hxc}$ is
+  Gateaux differentiable on $\mathcal D_N$ with $v_{\rm Hxc}(\rho):=\mathrm dE_{\rm Hxc}(\rho)=v^{(0)}_\rho-v^{(w)}_\rho$ modulo
+  constants. Consequently, if $\rho$ is the ground-state density of $T+w+v$, then $\rho$ is the ground-state density of the
+  non-interacting $T+v_{\rm KS}$ with $v_{\rm KS}=v+v_{\rm Hxc}(\rho)$, and $v_{\rm KS}$ is the only such potential up to a
+  constant.
+\end{theorem}
+\begin{proof}
+  Theorem~\ref{thm:neu_lieb_diff} for $w$ and for $0$; Theorem~\ref{thm:neu_corso} for $w=0$ gives $v^{(0)}_\rho$, and
+  Theorem~\ref{thm:neu_hk} for $w=0$ gives its uniqueness.
+\end{proof}
+
+\begin{theorem}[Hartree and exchange-correlation for pair interactions]
+  \label{thm:neu_hartree}
+  (statement pending approval)
+  % Lean: pairW u x := ∑ i < j, u (x i) (x j); hartreeE u ρ := ½ ∫∫ u ρ ρ;
+  %   hasFDerivAt_hartreeE (Fréchet on H1E, derivative δ ↦ ∫∫ u ρ δ for symmetric u);
+  %   xcNH τ u ρ := hxcNH τ (pairW u) ρ - hartreeE u ρ, hasDerivAt_xcNH.
+  \uses{thm:neu_ks}
+  Let $w(x)=\sum_{i<j}u(x_i,x_j)$ with $u$ continuous and symmetric. The Hartree energy
+  $E_{\rm H}(\rho)=\tfrac12\iint u(s,t)\rho(s)\rho(t)$ is Fréchet differentiable on $H^1(0,1)$ with
+  $\mathrm dE_{\rm H}(\rho)(\delta)=\iint u\,\rho\otimes\delta$, so $E_{\rm xc}=F_w-F_0-E_{\rm H}$ is Gateaux differentiable on
+  $\mathcal D_N$ and $v_{\rm KS}=v+v_{\rm H}(\rho)+v_{\rm xc}(\rho)$.
+\end{theorem}
+
+The Slater-determinant form of $F_0$ for fermions ($F_0=T_{\rm KS}$, Corso's Lemma~6.2) and the Aufbau principle
+(Theorem~2.15) need the eigenfunctions of the one-body Neumann operator with an $H^{-1}$ potential; they are a later step.
