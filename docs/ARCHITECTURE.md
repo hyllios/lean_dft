@@ -27,8 +27,9 @@ aliases (`AGENTS.md` §5). Some earlier moves still carry `DFT.…` names (e.g. 
 The abstract theory of finite-dimensional functional theories (after Wang–Liebert–Penz–Schilling): a Hermitian `H₀` and
 observables `B_i` on `𝕜^d`, densities `ρ_i = ⟨B_i⟩`, the ranges `B_p`, `B_e`, the functionals `F_p`, `F_e`, duality,
 Hohenberg–Kohn and representability. It imports no other `DFT` folder; concrete theories (`Lattice`, …) import it and
-state themselves as instances (`Lattice/KohnSham/Duality`: `latticeScope`).
-Internal order: `Basic` → `Ranges` → `Functionals` → `Duality` → `Representability`; `HK` needs only `Basic`.
+state themselves as instances (`Lattice/KohnSham/Duality`: `latticeScope`; `Lattice/RDMFT/Scope`: `rdmftScope`).
+Internal order: `Basic` → `Ranges` → `Functionals` → `Duality` → `Representability`; `HK` needs only `Basic`;
+`Abelian` and `SpinChain` (the spin-chain instance, which has no folder of its own) need `Ranges`.
 
 ## `DFT/Lattice`: folder order (each folder may only import folders above it in this list)
 

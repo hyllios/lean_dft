@@ -54,8 +54,20 @@ pairing is the dot product.
 
 \begin{theorem}[Abelian ranges]\label{thm:scope-ranges-abelian}
   \uses{thm:scope-ranges}
+  \lean{DFT.Scope.Bp_eq_Be_of_abelian, DFT.Scope.densPure_eq_sum, Matrix.exists_jointEigenbasis,
+    Matrix.re_star_dotProduct_mulVec_eq_sum}
+  \leanok
   If the scope is abelian, $B_p=B_e$ is the convex hull of the finitely many joint-eigenvalue densities.
 \end{theorem}
+
+\begin{proof}
+  \leanok
+  The commuting $B_i$ have a joint orthonormal eigenbasis $b_k$ with joint eigenvalues $\lambda_k\in\mathbb R^m$ (collected from the
+  nonzero joint eigenspaces, which are finitely many). Then $\rho_\psi=\sum_k|\langle b_k,\psi\rangle|^2\lambda_k$, so
+  $B_p\subseteq\operatorname{conv}\{\lambda_k\}$. For a mixed state $\Gamma=\sum_jp_j|u_j\rangle\langle u_j|$ put
+  $q_k=\sum_jp_j|\langle b_k,u_j\rangle|^2$; the pure state $\sum_k\sqrt{q_k}\,b_k$ has density $\sum_kq_k\lambda_k=\rho_\Gamma$, so
+  $B_e\subseteq B_p$. Hence $B_p=B_e$ is convex and contains the $\lambda_k=\rho_{b_k}$.
+\end{proof}
 
 \begin{theorem}[Constrained-search functionals]\label{thm:scope-functionals}
   \uses{def:scope-functionals, thm:scope-ranges}
@@ -125,9 +137,22 @@ pairing is the dot product.
 
 \begin{theorem}[Further instances]\label{thm:scope-instances}
   \uses{thm:scope-ranges, thm:scope-functionals, thm:coleman}
-  RDMFT ($\iota$ onto all one-body operators): $B_e=\{0\le\gamma\le1,\operatorname{tr}\gamma=N\}$ (Coleman). Spin chains ($\iota(e_i)=Z_i$):
+  \lean{DFT.Lattice.RDMFT.rdmftScope, DFT.Lattice.RDMFT.coords, DFT.Lattice.RDMFT.rdmftScope_densPure,
+    DFT.Lattice.RDMFT.rdmftScope_Be, DFT.Scope.spinScope, DFT.Scope.spinScope_Bp, DFT.Scope.spinScope_Be}
+  \leanok
+  RDMFT ($N$ fermions on $M$ modes, $\iota$ onto all one-body operators, in the real basis
+  $\tfrac12(c_i^\dagger c_j+c_j^\dagger c_i)$, $-\tfrac i2(c_i^\dagger c_j-c_j^\dagger c_i)$ whose expectation values are $\operatorname{Re}\gamma_{ij}$,
+  $\operatorname{Im}\gamma_{ij}$): $B_e=\{0\le\gamma\le1,\operatorname{tr}\gamma=N\}$ (Coleman). Spin chains ($\iota(e_i)=Z_i$):
   $B_p=B_e=[-1,1]^m$.
 \end{theorem}
+
+\begin{proof}
+  \leanok
+  RDMFT: a state of the $N$-particle sector, extended by zero, is an $N$-particle Fock state with the same expectation values, and
+  every $N$-particle Fock state is of this form; the spectral decomposition of $\Gamma$ gives an $N$-particle ensemble with
+  $\rho_\Gamma=\gamma$, and Coleman's theorem gives both inclusions. Spin chains: $\langle Z_i\rangle\in[-1,1]$, and the product state with
+  $|\psi_\sigma|^2=\prod_i\tfrac12(1+\sigma_i\rho_i)$ has $\langle Z_i\rangle=\rho_i$; the cube is convex, so $B_e=\operatorname{conv}B_p=B_p$.
+\end{proof}
 
 \section{Representability by eigenstates (stage 2)}
 

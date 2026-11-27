@@ -991,3 +991,10 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   Lattice instance in `Lattice/KohnSham/Duality`: latticeScope, latticeScope_E, latticeScope_Bp/Be (= DensDomain),
   **lieb_eq_Fe**; lieb_convexOn re-derived from convexOn_Fe. Open: Bp_eq_Be_of_abelian, RDMFT and spin-chain
   instances, stages 2–3.
+- D4 stage 1 COMPLETE (2026-11-27). `Scope/Abelian`: **Bp_eq_Be_of_abelian** (B_p = B_e = conv of the joint-eigenvalue
+  densities; joint orthonormal eigenbasis from the nonzero joint eigenspaces, `ForMathlib/Analysis/Matrix/JointEigenbasis`:
+  exists_jointEigenbasis, re_star_dotProduct_mulVec_eq_sum). `Scope/SpinChain`: spinScope (Z_i observables),
+  spinScope_Bp, spinScope_Be (= [-1,1]^m; product states). `Lattice/RDMFT/Scope`: rdmftScope on `Conf M N` with the real
+  basis ½(c_i†c_j + c_j†c_i), -(i/2)(c_i†c_j - c_j†c_i); rdmftScope_densPure (density = coords of γ of the state extended
+  by zero to Fock space, extF), **rdmftScope_Be** (Coleman set, via `coleman` in both directions; restrF/extF_restrF for
+  N-particle Fock states).

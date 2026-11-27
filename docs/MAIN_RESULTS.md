@@ -35,6 +35,8 @@ result is now in the blueprint, and CI runs the blueprint check with `--strict`.
 | `DFT.Scope.strong_hk` | yes |
 | `DFT.Scope.isCritical_iff_det` | yes |
 | `DFT.lieb_eq_Fe` | yes |
+| `DFT.Scope.Bp_eq_Be_of_abelian` | yes |
+| `DFT.Lattice.RDMFT.rdmftScope_Be` | yes |
 | `DFT.Continuum.subgrad_unique` | yes |
 | `DFT.dimH_image_le_of_pointwise_lipschitz` | yes |
 | `DFT.dimH_nonUVDens_lattice_fermions_w` | yes |

@@ -185,6 +185,7 @@ import DFT.Lattice.RDMFT.DensityRep
 import DFT.Lattice.RDMFT.FockRDM
 import DFT.Lattice.RDMFT.Generic
 import DFT.Lattice.RDMFT.KohnSham
+import DFT.Lattice.RDMFT.Scope
 import DFT.Lattice.RDMFT.Stabilizer
 import DFT.Lattice.RDMFT.Witness
 import DFT.Lattice.Spin.Field
@@ -215,9 +216,11 @@ import DFT.Lattice.TDDFT.Prop9General
 import DFT.Lattice.TDDFT.SharedGround
 import DFT.Lattice.TDDFT.Spin
 import DFT.Lattice.TDDFT.TwoElectron
+import DFT.Scope.Abelian
 import DFT.Scope.Basic
 import DFT.Scope.Duality
 import DFT.Scope.Functionals
 import DFT.Scope.HK
 import DFT.Scope.Ranges
 import DFT.Scope.Representability
+import DFT.Scope.SpinChain

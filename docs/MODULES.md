@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-29 modules, 5188 lines.
+30 modules, 5276 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -46,6 +46,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `ForMathlib.Analysis.Matrix.JointEigenbasis` | 88 | Joint orthonormal eigenbases of commuting Hermitian matrices |
 | `ForMathlib.Analysis.Matrix.RealGram` | 67 | The real Gram determinant of vectors in `𝕜ⁿ` |
 | `ForMathlib.Analysis.Matrix.Spectrum` | 119 | Rank-one spectral decompositions and Rayleigh minimisers of Hermitian matrices |
 
@@ -183,7 +184,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-223 modules, 58954 lines.
+226 modules, 59382 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -516,6 +517,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.RDMFT.FockRDM` | 77 | The lattice one-body reduced density matrix is `⟨Ψ, c_i† c_j Ψ⟩` |
 | `DFT.Lattice.RDMFT.Generic` | 121 | Interacting ground states are generically not Slater determinants (conditional) |
 | `DFT.Lattice.RDMFT.KohnSham` | 470 | No Kohn–Sham scheme for RDMFT |
+| `DFT.Lattice.RDMFT.Scope` | 204 | RDMFT as a scope |
 | `DFT.Lattice.RDMFT.Stabilizer` | 149 | The one-body stabilizer decides the RDMFT Hohenberg–Kohn theorem |
 | `DFT.Lattice.RDMFT.Witness` | 249 | An unconditional instance: two fermions on four sites with pair hopping |
 
@@ -566,11 +568,13 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `DFT.Scope.Abelian` | 102 | The ranges of an abelian scope |
 | `DFT.Scope.Basic` | 313 | Scopes: the common structure of finite-dimensional functional theories |
 | `DFT.Scope.Duality` | 118 | Lieb duality for a scope |
 | `DFT.Scope.Functionals` | 153 | The constrained-search functionals of a scope |
 | `DFT.Scope.HK` | 154 | Critical states and the Hohenberg–Kohn theorems for a scope |
 | `DFT.Scope.Ranges` | 72 | The pure and the ensemble ranges of a scope |
 | `DFT.Scope.Representability` | 96 | Ensemble `v`-representability for a scope |
+| `DFT.Scope.SpinChain` | 122 | Spin chains as a scope |
 
-Total: 77246 lines of Lean.
+Total: 77762 lines of Lean.

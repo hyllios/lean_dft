@@ -7,6 +7,7 @@ import ForMathlib.Analysis.Convex.Iteration
 import ForMathlib.Analysis.Convex.MoreauYosida
 import ForMathlib.Analysis.InnerProductSpace.CompactEigenbasis
 import ForMathlib.Analysis.InnerProductSpace.FormEigenbasis
+import ForMathlib.Analysis.Matrix.JointEigenbasis
 import ForMathlib.Analysis.Matrix.RealGram
 import ForMathlib.Analysis.Matrix.Spectrum
 import ForMathlib.Analysis.ODE.Linear
