@@ -79,6 +79,7 @@ import DFT.Continuum.Line.Neumann.Dens
 import DFT.Continuum.Line.Neumann.DensD
 import DFT.Continuum.Line.Neumann.EL
 import DFT.Continuum.Line.Neumann.Fer
+import DFT.Continuum.Line.Neumann.Free
 import DFT.Continuum.Line.Neumann.GS
 import DFT.Continuum.Line.Neumann.HKa
 import DFT.Continuum.Line.Neumann.HKb
@@ -90,6 +91,7 @@ import DFT.Continuum.Line.Neumann.Pos
 import DFT.Continuum.Line.Neumann.Pot
 import DFT.Continuum.Line.Neumann.Rep
 import DFT.Continuum.Line.Neumann.Series
+import DFT.Continuum.Line.Neumann.Slices
 import DFT.Continuum.Line.Neumann.Spec
 import DFT.Continuum.Line.Neumann.Suff
 import DFT.Continuum.Line.Neumann.Ucp
