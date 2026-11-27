@@ -24,6 +24,8 @@ For `ρ ∈ H¹(0, 1)`, with Neumann walls, `H⁻¹` potentials and a continuous
   equal `T(Ψ) + ∫ w Ψ²`.
 * **`levyNH_attained_iff`**: a normalised state with density `ρ` attains the constrained search iff
   it is `±Ψ` almost everywhere.
+* **`exists_levy_min`**, `levyNH_eq_of_min`: whenever some normalised state has density `ρ`, the
+  constrained search has a minimiser (compactness, `compact_states`).
 -/
 
 namespace DFT.Continuum.Line
@@ -101,5 +103,71 @@ theorem levyNH_attained_iff (hw : Continuous w) {v : PotH} {Ψ Φ : Cfg n → �
     · simp only [intEN, kinN_congr (h1NW_of_mem hΦ) h, hint h]
     · rw [intEN, intEN, kinN_congr (h1NW_of_mem hΦ) h, kinN_smul (h1NW_of_mem hΨ.1), hint h]
       simp
+
+/-! ### The constrained search is attained -/
+
+lemma rhoE_eq_of_forall_pot {ρ ρ' : H1E} (h : ∀ u : PotH, u ρ = u ρ') : ρ = ρ' := by
+  have h1 := h (InnerProductSpace.toDual ℝ H1E (ρ - ρ'))
+  rw [InnerProductSpace.toDual_apply_apply, InnerProductSpace.toDual_apply_apply] at h1
+  have h2 : inner ℝ (ρ - ρ') (ρ - ρ') = (0 : ℝ) := by rw [inner_sub_right, h1, sub_self]
+  exact sub_eq_zero.1 (inner_self_eq_zero.1 h2)
+
+/-- **The constrained search is attained**: if some normalised Neumann state has density `ρ`, one
+of them minimises `T + ∫ w Φ²` among them. -/
+theorem exists_levy_min (hw : Continuous w) {ρ : H1E} {Φ₀ : Cfg n → ℝ} (hΦ₀ : Φ₀ ∈ DomN τ n)
+    (hn₀ : ∫ x, Φ₀ x ^ 2 ∂μN n = 1) (hρ₀ : rhoE τ Φ₀ = ρ) :
+    ∃ Ψ ∈ DomN τ n, ∫ x, Ψ x ^ 2 ∂μN n = 1 ∧ rhoE τ Ψ = ρ ∧
+      ∀ Φ ∈ DomN τ n, ∫ x, Φ x ^ 2 ∂μN n = 1 → rhoE τ Φ = ρ → intEN w Ψ ≤ intEN w Φ := by
+  set S : Set ℝ := {e | ∃ Φ ∈ DomN τ n, ∫ x, Φ x ^ 2 ∂μN n = 1 ∧ rhoE τ Φ = ρ ∧ intEN w Φ = e}
+  have hne : S.Nonempty := ⟨_, Φ₀, hΦ₀, hn₀, hρ₀, rfl⟩
+  have hbdd : BddBelow S := ⟨gsEH τ w 0, fun e ⟨Φ, hΦ, hn, _, he⟩ => by
+    rw [← he]; have := gsEH_sub_le_intEN hw (0 : PotH) hΦ hn
+    simpa using this⟩
+  set m := sInf S
+  have hseq : ∀ j : ℕ, ∃ Φ ∈ DomN τ n, ∫ x, Φ x ^ 2 ∂μN n = 1 ∧ rhoE τ Φ = ρ ∧
+      intEN w Φ < m + 1 / ((j : ℝ) + 1) := fun j => by
+    obtain ⟨_, ⟨Φ, hΦ, hn, hρ, rfl⟩, hlt⟩ := exists_lt_of_csInf_lt hne
+      (lt_add_of_pos_right m (by positivity : (0 : ℝ) < 1 / ((j : ℝ) + 1)))
+    exact ⟨Φ, hΦ, hn, hρ, hlt⟩
+  choose Φ hΦ hn hρ hlt using hseq
+  have hge : ∀ j, m ≤ intEN w (Φ j) := fun j => csInf_le hbdd ⟨Φ j, hΦ j, hn j, hρ j, rfl⟩
+  have hlim : Tendsto (fun j => intEN w (Φ j)) atTop (𝓝 m) := by
+    refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds ?_ hge fun j => (hlt j).le
+    simpa using (tendsto_const_nhds (x := m)).add tendsto_one_div_add_atTop_nhds_zero_nat
+  obtain ⟨B, hB⟩ := ae_bound_cont (n := n) hw
+  have hW : ∀ j, |∫ x, w x * (Φ j x * Φ j x) ∂μN n| ≤ B := fun j => abs_int_w_le hB (hΦ j).1 (hn j)
+  have hkin : ∀ j, kinN (Φ j) ≤ m + 1 + B := fun j => by
+    have h1 := hlt j
+    have h2 : 1 / ((j : ℝ) + 1) ≤ 1 := by
+      rw [div_le_one (by positivity)]; linarith [(Nat.cast_nonneg j : (0 : ℝ) ≤ j)]
+    simp only [intEN] at h1
+    linarith [(abs_le.1 (hW j)).1]
+  obtain ⟨Ψ, χ, hχ, hΨ, hnΨ, hlsc, hWt, hu⟩ := compact_states hw hΦ hn hkin
+  -- the density is preserved
+  have hρΨ : rhoE τ Ψ = ρ := rhoE_eq_of_forall_pot fun u => by
+    have h := hu u
+    simp only [hρ] at h
+    exact tendsto_nhds_unique h tendsto_const_nhds
+  refine ⟨Ψ, hΨ, hnΨ, hρΨ, fun Φ' hΦ' hn' hρ' => ?_⟩
+  have hmΦ : m ≤ intEN w Φ' := csInf_le hbdd ⟨Φ', hΦ', hn', hρ', rfl⟩
+  -- lower semicontinuity: `T(Ψ) ≤ m - W(Ψ)`
+  set WΨ := ∫ x, w x * (Ψ x * Ψ x) ∂μN n
+  have hT : kinN Ψ ≤ m - WΨ := hlsc _ fun ε hε => by
+    have h1 := (hlim.comp hχ.tendsto_atTop).sub hWt
+    have h2 : ∀ᶠ k in atTop, intEN w (Φ (χ k)) - ∫ x, w x * (Φ (χ k) x * Φ (χ k) x) ∂μN n <
+        m - WΨ + ε := (tendsto_order.1 h1).2 _ (by linarith)
+    filter_upwards [h2] with k hk
+    simp only [intEN] at hk
+    linarith
+  simp only [intEN] at hmΦ ⊢
+  linarith
+
+/-- At a minimiser, the Levy–Lieb functional takes its value. -/
+lemma levyNH_eq_of_min {ρ : H1E} {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomN τ n)
+    (hn : ∫ x, Ψ x ^ 2 ∂μN n = 1) (hρ : rhoE τ Ψ = ρ)
+    (hmin : ∀ Φ ∈ DomN τ n, ∫ x, Φ x ^ 2 ∂μN n = 1 → rhoE τ Φ = ρ → intEN w Ψ ≤ intEN w Φ) :
+    levyNH τ w ρ = (intEN w Ψ : EReal) :=
+  le_antisymm (iInf₂_le Ψ ⟨hΨ, hn, hρ⟩)
+    (le_iInf₂ fun Φ ⟨hΦ, hnΦ, hρΦ⟩ => EReal.coe_le_coe_iff.2 (hmin Φ hΦ hnΦ hρΦ))
 
 end DFT.Continuum.Line
