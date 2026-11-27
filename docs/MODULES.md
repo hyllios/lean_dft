@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-23 modules, 4386 lines.
+25 modules, 4786 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -39,6 +39,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `ForMathlib.Analysis.InnerProductSpace.CompactEigenbasis` | 148 | An eigenbasis for a compact symmetric injective operator |
+| `ForMathlib.Analysis.InnerProductSpace.FormEigenbasis` | 301 | The eigenbasis of a semibounded form with compact domain |
 
 ### `ForMathlib/Analysis/ODE/`
 
@@ -78,6 +79,12 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `ForMathlib.MeasureTheory.ZeroSetDim` | 259 | Hausdorff dimension of zero sets of polynomials |
+
+### `ForMathlib/Order/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `ForMathlib.Order.FiniteSublevel` | 99 | Enumerating a function with finite sublevel sets |
 
 ### `ForMathlib/Topology/Instances/`
 
@@ -162,7 +169,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-211 modules, 56395 lines.
+212 modules, 56620 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -310,6 +317,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Continuum.Line.Neumann.NeuPot` | 317 | Neumann walls and `H⁻¹` potentials: one particle, the form bound |
 | `DFT.Continuum.Line.Neumann.NeuRep` | 548 | Local `N`-representability with Neumann walls |
 | `DFT.Continuum.Line.Neumann.NeuSeries` | 415 | Cosine series and the kinetic energy with Neumann walls |
+| `DFT.Continuum.Line.Neumann.NeuSpec` | 225 | Neumann orbitals for `H⁻¹` potentials |
 | `DFT.Continuum.Line.Neumann.NeuSuff` | 257 | Sufficiency: `v`-representability from local `N`-representability |
 | `DFT.Continuum.Line.Neumann.NeuUcp` | 522 | Unique continuation for bosonic Neumann ground states of `H⁻¹` potentials |
 | `DFT.Continuum.Line.Neumann.NeuWeak` | 206 | The `N`-particle state space with Neumann walls |
@@ -535,4 +543,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 73885 lines of Lean.
+Total: 74510 lines of Lean.

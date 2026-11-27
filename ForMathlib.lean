@@ -5,6 +5,7 @@ import ForMathlib.Analysis.Convex.Ekeland
 import ForMathlib.Analysis.Convex.Iteration
 import ForMathlib.Analysis.Convex.MoreauYosida
 import ForMathlib.Analysis.InnerProductSpace.CompactEigenbasis
+import ForMathlib.Analysis.InnerProductSpace.FormEigenbasis
 import ForMathlib.Analysis.ODE.Linear
 import ForMathlib.Analysis.PoissonKernel
 import ForMathlib.Analysis.Sobolev.Weak
@@ -20,4 +21,5 @@ import ForMathlib.Analysis.SturmLiouville.Solve
 import ForMathlib.Analysis.SturmLiouville.Sturm
 import ForMathlib.LinearAlgebra.Matrix.CauchyBinet
 import ForMathlib.MeasureTheory.ZeroSetDim
+import ForMathlib.Order.FiniteSublevel
 import ForMathlib.Topology.Instances.UnitaryGroup

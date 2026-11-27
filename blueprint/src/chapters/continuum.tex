@@ -1852,15 +1852,15 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Eigenbasis of a semibounded form with compact domain; abstract]
   \label{thm:form_eigenbasis}
-  % Lean: ForMathlib, FormEigenbasis: V ⊆ H Hilbert spaces, the inclusion compact with dense range, q a continuous
-  %   symmetric bilinear form on V with q(f,f) ≥ c‖f‖²_V - C‖f‖²_H. Then there are a Hilbert basis (e_k) of H with
-  %   e_k ∈ V, and λ_k nondecreasing, λ_k → ∞, with q(e_k, g) = λ_k ⟨e_k, g⟩_H for all g ∈ V.
+  \lean{exists_equiv_nat_monotone, FormEigenbasis.pullInner, FormEigenbasis.shiftForm, FormEigenbasis.isCoercive_shiftForm, FormEigenbasis.solve, FormEigenbasis.resolv, FormEigenbasis.inner_resolv, FormEigenbasis.isCompactOperator_resolv, FormEigenbasis.resolv_injective, exists_formEigenbasis}
+  \leanok
   Let $V\hookrightarrow H$ be real Hilbert spaces with a compact inclusion of dense range, and let $q$ be a bounded symmetric
   bilinear form on $V$ with $q(f,f)\ge c\|f\|_V^2-C\|f\|_H^2$, $c>0$. Then $H$ has a Hilbert basis $(e_k)_{k\in\mathbb N}$ of
   elements of $V$ and there are $\lambda_0\le\lambda_1\le\dots\to\infty$ with $q(e_k,g)=\lambda_k\langle e_k,g\rangle_H$ for all
   $g\in V$.
 \end{theorem}
 \begin{proof}
+  \leanok
   $q+C\langle\cdot,\cdot\rangle_H$ is an inner product on $V$ equivalent to $\|\cdot\|_V$. By Riesz, $f\in H$ defines
   $Kf\in V$ with $q(Kf,g)+C\langle Kf,g\rangle=\langle f,g\rangle$; as an operator on $H$, $K$ is symmetric, positive, injective
   (dense range of $V$) and compact (compact inclusion). The eigenbasis of $K$ (\texttt{CompactEigenbasis}), ordered by
@@ -1869,8 +1869,8 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Neumann orbitals for $H^{-1}$ potentials]
   \label{thm:neu_orbitals}
-  % Lean: NeuSpec: exists_neuOrbitals (v : PotH) : ∃ (φ : ℕ → H1E) (λ : ℕ → ℝ), Monotone λ ∧ Tendsto λ atTop atTop ∧
-  %   L²-orthonormal, complete in L²(0,1), ∀ g, ∫ φ_k' g' + v(φ_k g) = λ_k ∫ φ_k g.
+  \lean{DFT.Continuum.Line.bcfE, DFT.Continuum.Line.JE, DFT.Continuum.Line.JE_ae, DFT.Continuum.Line.norm_JE_sq, DFT.Continuum.Line.inner_JE, DFT.Continuum.Line.isCompactOperator_bcfE, DFT.Continuum.Line.isCompactOperator_JE, DFT.Continuum.Line.JE_injective, DFT.Continuum.Line.cnE, DFT.Continuum.Line.JE_cnE, DFT.Continuum.Line.denseRange_JE, DFT.Continuum.Line.not_finiteDimensional_HL, DFT.Continuum.Line.dE2_self, DFT.Continuum.Line.qvE, DFT.Continuum.Line.qvE_self, DFT.Continuum.Line.qvE_symm, DFT.Continuum.Line.qvE_coercive, DFT.Continuum.Line.exists_neuOrbitals}
+  \leanok
   \uses{thm:form_eigenbasis, thm:neu_form_bound}
   For every $v\in H^{-1}$ there are $\varphi_k\in H^1(0,1)$, orthonormal and complete in $L^2(0,1)$, and
   $\lambda_0\le\lambda_1\le\dots\to\infty$, with $\int\varphi_k'g'+v(\varphi_kg)=\lambda_k\int\varphi_kg$ for every $g\in H^1(0,1)$.
@@ -1878,6 +1878,7 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
   $q_v(\psi)\ge\sum_{j<N}\lambda_j\langle\varphi_j,\psi\rangle^2+\lambda_N\bigl(\|\psi\|^2-\sum_{j<N}\langle\varphi_j,\psi\rangle^2\bigr)$.
 \end{theorem}
 \begin{proof}
+  \leanok
   Theorem~\ref{thm:form_eigenbasis} with $V=H^1$, $H=L^2$ (compact inclusion: bounded sets of $H^1$ are equicontinuous and
   bounded, Arzelà--Ascoli; density: cosine basis), $q(f,g)=\int f'g'+v(fg)$. The bound is Parseval in the eigenbasis, which
   needs $q_v(\psi)=\sum_k\lambda_k\langle\varphi_k,\psi\rangle^2$ for $\psi\in H^1$ (expansion of the form, as in the Dirichlet

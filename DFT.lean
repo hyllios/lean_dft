@@ -90,6 +90,7 @@ import DFT.Continuum.Line.Neumann.NeuPos
 import DFT.Continuum.Line.Neumann.NeuPot
 import DFT.Continuum.Line.Neumann.NeuRep
 import DFT.Continuum.Line.Neumann.NeuSeries
+import DFT.Continuum.Line.Neumann.NeuSpec
 import DFT.Continuum.Line.Neumann.NeuSuff
 import DFT.Continuum.Line.Neumann.NeuUcp
 import DFT.Continuum.Line.Neumann.NeuWeak
