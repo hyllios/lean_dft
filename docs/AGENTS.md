@@ -63,7 +63,7 @@ Status of the gates (update when a report-only gate becomes enforcing):
 
 - Mathlib naming conventions.
 - **Rename only when it clearly makes a lot of sense** (a genuinely opaque name, a wrong namespace). No cosmetic renames.
-  A renamed declaration keeps a `@[deprecated (since := "YYYY-MM-DD")] alias` to the old name.
+  No `@[deprecated]` aliases: a rename or move updates every call site in the same commit.
 
 ## 6. Versions
 

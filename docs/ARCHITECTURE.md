@@ -17,8 +17,10 @@ ForMathlib  ←  QM  ←  DFT
 | `QM` | Generic quantum mechanics and many-body theory, not specific to DFT: ground states in finite dimensions, configurations and Slater determinants, the spin algebra; later Fock space, Green's functions, linear response. Basic QM (expectation values, variances, uncertainty, unbounded operators) comes from Physlib (`QM/Basic.lean`). | Mathlib, Physlib, ForMathlib | Physlib (via PhyslibAlpha) |
 | `DFT` | Density-functional theory: lattice (`DFT/Lattice`) and continuum (`DFT/Continuum`). | all of the above | — |
 
-Files moved into `ForMathlib`/`QM` from `DFT` keep their declaration names (`DFT.…`) until they are actually
-upstreamed. New `ForMathlib` code uses the Mathlib namespace of the object it is about.
+Code moved into `ForMathlib`/`QM` from `DFT` takes the namespace of the object it is about (Mathlib's where one
+exists, e.g. `SturmLiouville`, `CompactEigenbasis`); call sites are updated in the same commit, without deprecation
+aliases (`AGENTS.md` §5). Some earlier moves still carry `DFT.…` names (e.g. `ForMathlib/Analysis/Convex`,
+`QM/ManyBody`); they are renamed when touched or upstreamed.
 
 ## `DFT/Lattice`: folder order (each folder may only import folders above it in this list)
 
