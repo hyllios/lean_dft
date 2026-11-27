@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import Mathlib.Analysis.ODE.ExistUnique
-import DFT.Continuum.Box.Extend
-import DFT.Continuum.Spectral.Operator
+import ForMathlib.Analysis.SturmLiouville.Extend
+import ForMathlib.Analysis.SturmLiouville.Operator
 
 /-!
 # Eigenvectors of the Green operator are classical eigenfunctions
@@ -23,9 +23,9 @@ of the shooting solution, which is `C²` and extends to `ℝ`. Integrating `e'' 
 * `eigenvalue_pos`: eigenvalues of `G` are positive.
 -/
 
-namespace DFT.Continuum.Spectral
+namespace SturmLiouville
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology
 
 variable {W : ℝ → ℝ} (hWc : Continuous W) (hW0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ W t)
 
@@ -40,7 +40,7 @@ lemma Gk_congr {f g : ℝ → ℝ} (h : f =ᵐ[μ1] g) (x : ℝ) : Gk hWc f x = 
 include hW0 in
 /-- **Eigenvectors are classical eigenfunctions.** -/
 theorem eigen_regular {f : HL} {μ : ℝ} (hμ : μ ≠ 0) (hf : Gop hWc f = μ • f) :
-    ∃ e : ℝ → ℝ, e ∈ Box.Dom ∧ (f : ℝ → ℝ) =ᵐ[μ1] e ∧
+    ∃ e : ℝ → ℝ, e ∈ Dom ∧ (f : ℝ → ℝ) =ᵐ[μ1] e ∧
       ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv e) x = (W x - μ⁻¹) * e x := by
   set lam := μ⁻¹
   have hfi := integrable_HL f
@@ -195,4 +195,4 @@ theorem eigenvalue_pos {f : HL} (hf0 : f ≠ 0) {μ : ℝ} (hμ : μ ≠ 0) (hf 
     linarith
   exact inv_pos.1 hlam
 
-end DFT.Continuum.Spectral
+end SturmLiouville

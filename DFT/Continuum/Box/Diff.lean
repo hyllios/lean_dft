@@ -33,7 +33,7 @@ namespace Continuum
 
 namespace Box
 
-open MeasureTheory Set Filter Topology
+open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The (unnormalised) shooting ground state of `v`. -/
 noncomputable def fsh (v : Pot) (s : ℝ) : ℝ := (sol v (Estar v) s).1
@@ -128,7 +128,7 @@ theorem fsh_close (v : Pot) : ∃ C, 0 ≤ C ∧ ∀ v' : Pot, ‖v' - v‖ ≤ 
     intro t _
     have h1 := abs_ext_le (v' - v) t
     have hx : Wof v' E' t - Wof v E t = ext (v' - v) t - (E' - E) := by
-      simp only [Wof, ext, ContinuousMap.sub_apply]; ring
+      simp only [Wof, SturmLiouville.ext, ContinuousMap.sub_apply]; ring
     rw [hx]
     calc |ext (v' - v) t - (E' - E)| ≤ |ext (v' - v) t| + |E' - E| := abs_sub _ _
       _ ≤ _ := by linarith

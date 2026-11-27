@@ -21,7 +21,7 @@ vanishing on a set of positive measure, contradicting unique continuation (`gsN_
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {w : Cfg n → ℝ}
 
@@ -54,7 +54,7 @@ lemma rhoHat2_eq_zero (hw : Continuous w) {τ : Stat} {Φ Ψ : Cfg n → ℝ} (h
     (hΨ : Ψ ∈ DomW τ n) (h : ∀ x, Φ x * Ψ x = 0) : rhoHat2 τ Φ Ψ = 0 :=
   pot_eq_of_integral fun v => by
     rw [int_rhoHat2 hw hΦ hΨ]
-    simp [pf, h, Box.ext]
+    simp [pf, h, SturmLiouville.ext]
 
 /-- **Given unique continuation, the density of a ground state of a measure potential is positive
 on `(0, 1)`.** -/

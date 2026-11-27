@@ -24,7 +24,7 @@ continuous symmetric `X`). This is step (C) of the general interacting Hohenberg
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ}
 
@@ -78,11 +78,11 @@ noncomputable def fP {f : ℝ → ℝ} (hf : Continuous f) : Pot :=
 
 lemma ext_fP {f : ℝ → ℝ} (hf : Continuous f) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     ext (fP hf) t = f t := by
-  simp [Box.ext, fP, projIcc_of_mem _ ht]
+  simp [SturmLiouville.ext, fP, projIcc_of_mem _ ht]
 
 lemma ext_TXP {X : Cfg n → ℝ} (hX : Continuous X) {f : ℝ → ℝ} (hf : Continuous f) {t : ℝ}
     (ht : t ∈ Icc (0 : ℝ) 1) : ext (TXP hX hf) t = TX X f t := by
-  simp [Box.ext, TXP, projIcc_of_mem _ ht]
+  simp [SturmLiouville.ext, TXP, projIcc_of_mem _ ht]
 
 lemma ae_cube_x0 : ∀ᵐ x ∂μN n, x 0 ∈ Icc (0 : ℝ) 1 := by
   filter_upwards [ae_cube] with x hx
@@ -116,7 +116,7 @@ theorem rhoHat2_FF (hw : Continuous w) {X : Cfg n → ℝ} (hX : X ∈ DomW τ n
   have hR1 : ∫ t, ext v t * ext (fP hfc * rhoHat τ X) t ∂μ1 =
       (n + 1) * ∫ x, ext v (x 0) * (f (x 0) * (X x * X x)) ∂μN n := by
     have e : ∀ t, ext v t * ext (fP hfc * rhoHat τ X) t = ext (v * fP hfc) t * ext (rhoHat τ X) t :=
-      fun t => by simp only [Box.ext, ContinuousMap.mul_apply]; ring
+      fun t => by simp only [SturmLiouville.ext, ContinuousMap.mul_apply]; ring
     simp only [e]
     rw [int_rhoHat hw hX]
     change ∫ x, LN n (v * fP hfc) x * (X x * X x) ∂μN n = _
@@ -131,7 +131,7 @@ theorem rhoHat2_FF (hw : Continuous w) {X : Cfg n → ℝ} (hX : X ∈ DomW τ n
     congr 1
     refine integral_congr_ae ?_
     filter_upwards [ae_cube_x0] with x hx
-    simp only [Box.ext, ContinuousMap.mul_apply] at *
+    simp only [SturmLiouville.ext, ContinuousMap.mul_apply] at *
     rw [show (fP hfc) (projIcc 0 1 zero_le_one (x 0)) = f (x 0) by
       simp [fP, projIcc_of_mem _ hx]]
     ring
@@ -192,7 +192,7 @@ theorem rhoHat_eq_marg (hw : Continuous w) {X : Cfg n → ℝ} (hX : X ∈ DomW 
     rw [← integral_const_mul]
     refine setIntegral_congr_fun measurableSet_Ioo fun s hs => ?_
     have hsI := Ioo_subset_Icc_self hs
-    simp only [Box.ext, projIcc_of_mem _ hsI, p, ContinuousMap.coe_mk, Fin.cons_zero]
+    simp only [SturmLiouville.ext, projIcc_of_mem _ hsI, p, ContinuousMap.coe_mk, Fin.cons_zero]
     rw [← integral_const_mul, ← integral_const_mul, ← integral_const_mul]
     congr 1; funext y; ring
   rw [hp]; rfl

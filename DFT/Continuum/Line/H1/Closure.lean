@@ -21,7 +21,7 @@ sine coefficients as `f`, so `g = f` a.e. by completeness of the sines.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine Spectral
+open MeasureTheory Set SturmLiouville Real Filter Topology Sine Spectral
 
 /-! ### The cosines -/
 

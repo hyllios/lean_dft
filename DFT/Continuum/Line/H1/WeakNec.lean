@@ -25,7 +25,7 @@ normalised `H¹₀` state of `N` bosons or fermions iff `ρ(v) = ∫₀¹ v g²`
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine Spectral
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine Spectral
 
 variable {n : ℕ} {τ : Stat}
 
@@ -358,6 +358,6 @@ theorem lieb_characterisation {w : Cfg n → ℝ} {hw : Continuous w} (ρ : Pot 
     refine ⟨ψ, hψ, funext fun v => ?_⟩
     rw [hd v]
     congr 1; funext t
-    linear_combination (Box.ext v t * g t ^ 2) * hc2
+    linear_combination (SturmLiouville.ext v t * g t ^ 2) * hc2
 
 end DFT.Continuum.Line

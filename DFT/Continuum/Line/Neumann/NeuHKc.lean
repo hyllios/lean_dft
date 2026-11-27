@@ -21,7 +21,7 @@ whose pair densities `R_X` form an `L¹` Cauchy sequence. For `N = 1` it holds w
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n m : ℕ} {τ : Stat}
 
@@ -838,7 +838,7 @@ theorem D_eq_zero_of_gs {w : Cfg n → ℝ} (hw : Continuous w) {v : PotH} {Φ :
 lemma ellE_rhoE2 {A B : Cfg n → ℝ} (hA : A ∈ DomN τ n) (hB : B ∈ DomN τ n) :
     ellE (rhoE2 τ A B) = (n + 1) * ∫ x, A x * B x ∂μN n := by
   have h := int_rhoE2 hA hB 1
-  have e1 : ∀ t, ext (1 : Pot) t = 1 := fun t => by simp [Box.ext]
+  have e1 : ∀ t, ext (1 : Pot) t = 1 := fun t => by simp [SturmLiouville.ext]
   simp only [e1, one_mul, pfN, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
     nsmul_eq_mul, mul_one] at h
   rw [integral_const_mul] at h

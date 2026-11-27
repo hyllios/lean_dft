@@ -22,7 +22,7 @@ For states antisymmetric within the first `a` particles and within the last `N -
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Sine
+open MeasureTheory Set SturmLiouville Real Sine
 
 variable {n : ℕ} {a : ℕ}
 

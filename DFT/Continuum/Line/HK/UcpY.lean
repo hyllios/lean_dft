@@ -26,7 +26,7 @@ constancy of the zero set spreads through the convex chamber (`null_or_conull_of
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Metric
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Metric
 
 variable {n : ℕ} {a : ℕ}
 

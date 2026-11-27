@@ -24,7 +24,7 @@ Neumann walls. For a fermionic Neumann state `Ψ` let `u = 1_R |Ψ|`, `Φ = Σ_�
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 

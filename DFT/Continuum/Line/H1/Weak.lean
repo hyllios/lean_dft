@@ -37,7 +37,7 @@ the boundary term of the integration by parts is `∫_{walls} Φ φ`. Equivalent
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {τ : Stat}
 

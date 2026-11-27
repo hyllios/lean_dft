@@ -23,7 +23,7 @@ under exchanges between the two groups.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Sine
+open MeasureTheory Set SturmLiouville Real Sine
 
 variable {n : ℕ}
 

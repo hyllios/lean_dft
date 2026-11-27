@@ -26,7 +26,7 @@ estimate, obtained by testing the weak Schrödinger equation with `η²/(u + ε)
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {τ : Stat}
 

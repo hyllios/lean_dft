@@ -22,7 +22,7 @@ Slater determinant of the Harriman orbitals `g · e_j(∫₀ˣ g²)` for fermion
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 

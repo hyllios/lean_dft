@@ -23,7 +23,7 @@ with energy `0`. Its square has kinks at `⅓` and `⅔`.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-- The trapezoid `min(3t, 1, 3(1 - t))`. -/
 noncomputable def trapG (t : ℝ) : ℝ := min (3 * t) (min 1 (3 * (1 - t)))

@@ -23,7 +23,7 @@ one-particle ground state (energy `E₀`, from `Continuum/Box/Ground`). Then
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology Box SturmLiouville
 
 variable {n : ℕ} {τ : Stat}
 
@@ -49,7 +49,7 @@ lemma contDiff_insertNth (k : Fin (n + 1)) (y : Fin n → ℝ) {m : WithTop ℕ�
 
 /-- A slice of a state is a one-particle state. -/
 lemma slice_mem {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) (k : Fin (n + 1)) (y : Fin n → ℝ) :
-    (fun t => φ (Fin.insertNth k t y)) ∈ Box.Dom :=
+    (fun t => φ (Fin.insertNth k t y)) ∈ SturmLiouville.Dom :=
   ⟨hφ.1.comp (contDiff_insertNth k y), hφ.2.2 _ k (Or.inl (by simp)),
     hφ.2.2 _ k (Or.inr (by simp))⟩
 
@@ -120,7 +120,7 @@ theorem lower_bound_free {φ : Cfg n → ℝ} (hφ : φ ∈ Dom τ n) :
 /-- The product state `ψ(x₀) ⋯ ψ(xₙ)`. -/
 noncomputable def prodS (ψ : ℝ → ℝ) (x : Cfg n) : ℝ := ∏ k, ψ (x k)
 
-lemma prodS_mem {ψ : ℝ → ℝ} (hψ : ψ ∈ Box.Dom) : prodS (n := n) ψ ∈ DomB n :=
+lemma prodS_mem {ψ : ℝ → ℝ} (hψ : ψ ∈ SturmLiouville.Dom) : prodS (n := n) ψ ∈ DomB n :=
   ⟨contDiff_prod fun k _ => hψ.1.comp
       (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin (n + 1) => ℝ) k).contDiff,
     fun σ x => by
@@ -169,7 +169,7 @@ theorem prodS_isGS : ∃ Ψ, IsGS (freeS .bos n) v Ψ ∧
     set c := ∏ j, ψ (y j)
     have hs : (fun t => prodS ψ (Fin.insertNth k t y : Cfg n)) = fun t => ψ t * c := by
       funext t; exact prodS_insertNth ψ k t y
-    have hsm : (fun t => ψ t * c) ∈ Box.Dom := hs ▸ slice_mem hΨ k y
+    have hsm : (fun t => ψ t * c) ∈ SturmLiouville.Dom := hs ▸ slice_mem hΨ k y
     simp only [Pi.zero_apply]
     rw [hs, Q_sub_eq v E hsm]
     have : ∀ x, deriv (fun t => ψ t * c) x ^ 2 + Wof v E x * (ψ x * c) ^ 2 =

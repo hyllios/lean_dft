@@ -18,7 +18,7 @@ import DFT.Continuum.Line.Applications.HardCoreW
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box
+open MeasureTheory Set Box SturmLiouville
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 
@@ -51,7 +51,7 @@ orthonormal `C²` orbitals `φ_j` (the lowest eigenfunctions of `-d²/dx² + v`)
 `A · det φ_j(x_i)` is the ground state of `N` hard-core bosons with no further interaction. Its
 modulus is `|det φ_j(x_i)|`, its norm is `N!`, its density is `N!` times the free-fermion density
 `Σ_j φ_j²`, and every other ground state is a multiple of it. -/
-theorem tonks_girardeau_W (v : Pot) : ∃ φ : Fin (n + 1) → ℝ → ℝ, (∀ j, φ j ∈ Box.Dom) ∧
+theorem tonks_girardeau_W (v : Pot) : ∃ φ : Fin (n + 1) → ℝ → ℝ, (∀ j, φ j ∈ SturmLiouville.Dom) ∧
     (∀ a b, ∫ t, φ a t * φ b t ∂μ1 = if a = b then 1 else 0) ∧
     IsGS (settingHCW n (fun _ => 0) continuous_const) v (mulA (slater φ)) ∧
     (∀ x, |mulA (slater φ) x| = |slater φ x|) ∧

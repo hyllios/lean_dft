@@ -26,7 +26,7 @@ States are parametrised by `e ∈ H1E = ℝ × L²` through `fnE e = e.1 + ∫�
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-! ### Functions represented by `H1E` -/
 
@@ -74,7 +74,7 @@ lemma evE_apply (e : H1E) (t : Icc (0 : ℝ) 1) : evE e t = fnE e t := by
     ContinuousMap.add_apply, ContinuousMap.const_apply, primP_apply, fnE]
 
 lemma ext_evE {e : H1E} {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : ext (evE e) t = fnE e t := by
-  rw [Box.ext, projIcc_of_mem _ ht, evE_apply]
+  rw [SturmLiouville.ext, projIcc_of_mem _ ht, evE_apply]
 
 /-! ### Multiplication by continuous functions on `L²` -/
 
@@ -120,7 +120,7 @@ lemma mulL_sub_left (P Q : Pot) (f : L2I) : mulL (P - Q) f = mulL P f - mulL Q f
   filter_upwards [mulL_ae (P - Q) f, mulL_ae P f, mulL_ae Q f, Lp.coeFn_sub (mulL P f) (mulL Q f)]
     with t h1 h2 h3 h4
   rw [h1, h4, Pi.sub_apply, h2, h3]
-  simp only [Box.ext, ContinuousMap.sub_apply]; ring
+  simp only [SturmLiouville.ext, ContinuousMap.sub_apply]; ring
 
 /-- **Weak continuity of multiplication**: `P_k → P` uniformly and `f_k ⇀ g` (bounded) give
 `P_k f_k ⇀ P g`. -/
@@ -329,7 +329,7 @@ lemma mulL_poly (P Q : Pot) (f g : L2I) (s : ℝ) :
     Lp.coeFn_smul (s ^ 2) (mulL Q g)] with t h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul] at *
   rw [h1, h6, h7, h8, h9, h10, h11, h12, h2, h3, h4, h5]
-  simp only [Box.ext, ContinuousMap.add_apply, ContinuousMap.smul_apply, smul_eq_mul]
+  simp only [SturmLiouville.ext, ContinuousMap.add_apply, ContinuousMap.smul_apply, smul_eq_mul]
   ring
 
 /-- The overlap density `ψ φ` of `ψ = fnE e`, `φ = fnE h`, as an element of `H1E`. -/
@@ -357,7 +357,7 @@ lemma mulL_smul_smul (P : Pot) (f : L2I) (c : ℝ) : mulL (c • P) (c • f) = 
     rw [h1, h2]; simp
   have z2 : mulL 0 f = 0 := Lp.ext <| by
     filter_upwards [mulL_ae 0 f, Lp.coeFn_zero ℝ 2 μ1] with t h1 h2
-    rw [h1, h2]; simp [Box.ext]
+    rw [h1, h2]; simp [SturmLiouville.ext]
   have z3 : mulL P 0 = 0 := Lp.ext <| by
     filter_upwards [mulL_ae P 0, Lp.coeFn_zero ℝ 2 μ1] with t h1 h2
     rw [h1, h2]; simp

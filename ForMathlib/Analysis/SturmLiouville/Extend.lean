@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import DFT.Continuum.Box.Basic
+import ForMathlib.Analysis.SturmLiouville.Basic
 
 /-!
 # Regularity of ODE solutions and cutoff extension
@@ -15,11 +15,7 @@ import DFT.Continuum.Box.Basic
   function on all of `ℝ` (multiply by a smooth cutoff).
 -/
 
-namespace DFT
-
-namespace Continuum
-
-namespace Box
+namespace SturmLiouville
 
 open Set Filter Topology Metric
 
@@ -79,8 +75,4 @@ theorem exists_contDiff_ext {ψ : ℝ → ℝ} (hψ : ContDiffOn ℝ 2 ψ (Ioo (
       exact ⟨by linarith [hx.1], by linarith [hx.2]⟩
     simp [h1]
 
-end Box
-
-end Continuum
-
-end DFT
+end SturmLiouville

@@ -22,7 +22,7 @@ norm of the derivative of `p`, the input of Moser's estimate for `H⁻¹` potent
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 
@@ -54,7 +54,7 @@ noncomputable def potOf (χ : ℝ → ℝ) (hχ : Continuous χ) : Pot :=
 
 lemma ext_potOf {χ : ℝ → ℝ} (hχ : Continuous χ) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     ext (potOf χ hχ) t = χ t := by
-  simp [Box.ext, potOf, projIcc_of_mem _ ht]
+  simp [SturmLiouville.ext, potOf, projIcc_of_mem _ ht]
 
 lemma integrable_ext_mul_of {f : ℝ → ℝ} (hf : Integrable f μ1) (u : Pot) :
     Integrable (fun t => ext u t * f t) μ1 :=

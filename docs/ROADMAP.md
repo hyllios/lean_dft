@@ -95,13 +95,13 @@ this section keeps only pointers.
   negative off-diagonal entries has simple eigenvalues, and its n-th eigenvector has no zero entry at either end and
   exactly n sign changes (Gantmacher–Krein). Proof via Sturm sequences of the leading principal minors (interlacing).
   Also gives the nodal structure of the lattice chain in `DFT/Lattice`.
-  Tier 2 (continuum, `DFT/Continuum/Spectral/`): `-ψ'' + Wψ = Eψ` on `[0, 1]`, Dirichlet, `W` continuous.
+  Tier 2 (continuum, `ForMathlib/Analysis/SturmLiouville/`): `-ψ'' + Wψ = Eψ` on `[0, 1]`, Dirichlet, `W` continuous.
   Simplicity (Wronskian); the ground state has no interior zero; Sturm comparison between consecutive eigenfunctions
-  (zeros interlace); the n-th eigenfunction of the Green-operator expansion (`Spectral/Expand`, `Spectral/Eigen`) has
+  (zeros interlace); the n-th eigenfunction of the Green-operator expansion (`SturmLiouville/Expand`, `SturmLiouville/Eigen`) has
   exactly n zeros in `(0, 1)`, all simple. Route: Prüfer angle `θ(t; E)`, `y = r sin θ`, `y' = r cos θ`, strictly
-  increasing in `E`, with the eigenvalues exactly where `θ(1; E) = (n+1)π`. Reuses the shooting solution (`Box/Solve`)
-  and the Sturm-type facts already proved in `Box/Sturm` (`exists_zero_of_le` is a Sturm comparison).
-  Needs: continuous dependence of the shooting solution on `E` (check `Box/Solve`, `Box/Extend`).
+  increasing in `E`, with the eigenvalues exactly where `θ(1; E) = (n+1)π`. Reuses the shooting solution (`SturmLiouville/Solve`)
+  and the Sturm-type facts already proved in `SturmLiouville/Sturm` (`exists_zero_of_le` is a Sturm comparison).
+  Needs: continuous dependence of the shooting solution on `E` (check `SturmLiouville/Solve`, `SturmLiouville/Extend`).
   Tier 3 (optional): Courant's nodal theorem (at most n+1 nodal domains, variational) on `H¹₀(0, 1)`, as the part
   that survives in higher dimensions.
 

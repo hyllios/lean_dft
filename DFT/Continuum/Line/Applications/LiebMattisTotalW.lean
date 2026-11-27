@@ -24,7 +24,7 @@ components and total spin `S = a - N/2`. For continuous `v` and continuous relab
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 

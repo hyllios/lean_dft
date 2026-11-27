@@ -21,7 +21,7 @@ uniformly bounded `Σ λ^{5/4} c²`, and their densities converge pointwise.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine
+open MeasureTheory Set SturmLiouville Real Filter Topology Sine
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ}
 

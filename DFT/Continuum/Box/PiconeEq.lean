@@ -28,7 +28,7 @@ namespace Continuum
 
 namespace Box
 
-open MeasureTheory Set Filter Topology
+open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- **Picone identity on an interior interval.** -/
 lemma picone_interior_eq {W : ℝ → ℝ} (hW : Continuous W) {ψ ψ' : ℝ → ℝ}

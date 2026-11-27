@@ -26,7 +26,7 @@ with Neumann walls, in potentials from the dual of `H¹(0, 1)`.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Interval
+open MeasureTheory Set SturmLiouville Real Filter Topology Interval
 
 /-! ### `H¹(0, 1)` -/
 

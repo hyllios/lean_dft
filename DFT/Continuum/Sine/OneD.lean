@@ -3,7 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Spectral.Expand
+import ForMathlib.Analysis.SturmLiouville.Expand
 
 /-!
 # The sine basis of `L²(0, 1)`
@@ -23,7 +23,7 @@ therefore orthogonal to every eigenvector, hence zero.
 
 namespace DFT.Continuum.Sine
 
-open MeasureTheory Set Filter Topology Box Real
+open MeasureTheory Set Filter Topology SturmLiouville Real
 
 /-- The sine `√2 sin(πkx)`. -/
 noncomputable def sn (k : ℕ) (x : ℝ) : ℝ := √2 * Real.sin (π * k * x)
@@ -115,31 +115,31 @@ lemma eq_sin_of_ode {g : ℝ → ℝ} (hg : ContDiff ℝ 2 g) {ω : ℝ} (hω : 
 /-! ### Completeness -/
 
 lemma inner_eB_HL {W : ℝ → ℝ} (hWc : Continuous W) (hW0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ W t)
-    (i : Spectral.Idx hWc) (f : Spectral.HL) :
-    inner ℝ (Spectral.eB hWc hW0 i) f = ∫ x, Spectral.rep hWc hW0 i x * f x ∂μ1 := by
+    (i : SturmLiouville.Idx hWc) (f : SturmLiouville.HL) :
+    inner ℝ (SturmLiouville.eB hWc hW0 i) f = ∫ x, SturmLiouville.rep hWc hW0 i x * f x ∂μ1 := by
   rw [L2.inner_def]
   refine integral_congr_ae ?_
-  filter_upwards [Spectral.rep_ae hWc hW0 i] with x hx
+  filter_upwards [SturmLiouville.rep_ae hWc hW0 i] with x hx
   rw [hx]; simp [mul_comm]
 
 /-- **The sines are complete in `L²(0, 1)`.** -/
-theorem sn_complete (f : Spectral.HL) (h : ∀ k : ℕ, 0 < k → ∫ x, sn k x * f x ∂μ1 = 0) :
+theorem sn_complete (f : SturmLiouville.HL) (h : ∀ k : ℕ, 0 < k → ∫ x, sn k x * f x ∂μ1 = 0) :
     f = 0 := by
   set W : ℝ → ℝ := fun _ => 0
   have hWc : Continuous W := continuous_const
   have hW0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ W t := fun _ _ => le_rfl
-  set b := Spectral.eB hWc hW0
+  set b := SturmLiouville.eB hWc hW0
   have horth : ∀ i, inner ℝ (b i) f = 0 := by
     intro i
     rw [inner_eB_HL]
-    set g := Spectral.rep hWc hW0 i
-    have hgD : g ∈ Box.Dom := Spectral.rep_mem hWc hW0 i
-    have hμ := Spectral.mu_pos hWc hW0 i
-    set ω := √((Spectral.mu hWc i)⁻¹)
+    set g := SturmLiouville.rep hWc hW0 i
+    have hgD : g ∈ SturmLiouville.Dom := SturmLiouville.rep_mem hWc hW0 i
+    have hμ := SturmLiouville.mu_pos hWc hW0 i
+    set ω := √((SturmLiouville.mu hWc i)⁻¹)
     have hω : 0 < ω := Real.sqrt_pos.2 (inv_pos.2 hμ)
-    have hω2 : ω ^ 2 = (Spectral.mu hWc i)⁻¹ := Real.sq_sqrt (inv_pos.2 hμ).le
+    have hω2 : ω ^ 2 = (SturmLiouville.mu hWc i)⁻¹ := Real.sq_sqrt (inv_pos.2 hμ).le
     have hsin := eq_sin_of_ode hgD.1 hω hgD.2.1 fun x hx => by
-      rw [Spectral.rep_ode hWc hW0 i x hx, hω2]; simp [W, g]
+      rw [SturmLiouville.rep_ode hWc hW0 i x hx, hω2]; simp [W, g]
     -- either `g'(0) = 0` and `g = 0`, or `sin ω = 0`
     have hzero : ∀ x ∈ Ioo (0 : ℝ) 1, g x = 0 ∨ ∃ k : ℕ, 0 < k ∧
         ∀ y ∈ Ioo (0 : ℝ) 1, g y = deriv g 0 / ω / √2 * sn k y := by
@@ -183,45 +183,45 @@ theorem sn_complete (f : Spectral.HL) (h : ∀ k : ℕ, 0 < k → ∫ x, sn k x 
 
 /-! ### The sine Hilbert basis and Parseval -/
 
-lemma sn_orthonormal_succ : Orthonormal ℝ fun k : ℕ => Spectral.toHL (continuous_sn (k + 1)) := by
+lemma sn_orthonormal_succ : Orthonormal ℝ fun k : ℕ => SturmLiouville.toHL (continuous_sn (k + 1)) := by
   rw [orthonormal_iff_ite]
   intro k l
-  rw [Spectral.inner_toHL_toHL, sn_orthonormal (Nat.succ_pos k) (Nat.succ_pos l)]
+  rw [SturmLiouville.inner_toHL_toHL, sn_orthonormal (Nat.succ_pos k) (Nat.succ_pos l)]
   exact if_congr (by omega) rfl rfl
 
 lemma sn_span_orthogonal :
-    (Submodule.span ℝ (Set.range fun k : ℕ => Spectral.toHL (continuous_sn (k + 1))))ᗮ = ⊥ := by
+    (Submodule.span ℝ (Set.range fun k : ℕ => SturmLiouville.toHL (continuous_sn (k + 1))))ᗮ = ⊥ := by
   rw [Submodule.eq_bot_iff]
   intro f hf
   refine sn_complete f fun k hk => ?_
   obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
   have h := Submodule.inner_right_of_mem_orthogonal
     (Submodule.subset_span (Set.mem_range_self (f := fun k : ℕ =>
-      Spectral.toHL (continuous_sn (k + 1))) k')) hf
-  rw [real_inner_comm, Spectral.inner_toHL_right] at h
+      SturmLiouville.toHL (continuous_sn (k + 1))) k')) hf
+  rw [real_inner_comm, SturmLiouville.inner_toHL_right] at h
   rw [← h]
   exact integral_congr_ae (ae_of_all _ fun x => mul_comm _ _)
 
 /-- **The sine Hilbert basis** `(√2 sin(π(k+1)x))ₖ` of `L²(0, 1)`. -/
-noncomputable def sb : HilbertBasis ℕ ℝ Spectral.HL :=
+noncomputable def sb : HilbertBasis ℕ ℝ SturmLiouville.HL :=
   HilbertBasis.mkOfOrthogonalEqBot sn_orthonormal_succ sn_span_orthogonal
 
-lemma sb_apply (k : ℕ) : sb k = Spectral.toHL (continuous_sn (k + 1)) := by
+lemma sb_apply (k : ℕ) : sb k = SturmLiouville.toHL (continuous_sn (k + 1)) := by
   rw [sb, HilbertBasis.coe_mkOfOrthogonalEqBot]
 
 /-- **Parseval** for a continuous function, in `ℝ≥0∞`. -/
 theorem parseval1 {g : ℝ → ℝ} (hg : Continuous g) :
     ∑' k : ℕ, ENNReal.ofReal ((∫ x, sn (k + 1) x * g x ∂μ1) ^ 2) =
       ∫⁻ x, ENNReal.ofReal (g x ^ 2) ∂μ1 := by
-  have h := sb.hasSum_inner_mul_inner (Spectral.toHL hg) (Spectral.toHL hg)
-  simp only [sb_apply, Spectral.inner_toHL_toHL] at h
+  have h := sb.hasSum_inner_mul_inner (SturmLiouville.toHL hg) (SturmLiouville.toHL hg)
+  simp only [sb_apply, SturmLiouville.inner_toHL_toHL] at h
   have e : ∀ k, (∫ x, g x * sn (k + 1) x ∂μ1) * ∫ x, sn (k + 1) x * g x ∂μ1 =
       (∫ x, sn (k + 1) x * g x ∂μ1) ^ 2 := fun k => by
     rw [sq]; congr 1; exact integral_congr_ae (ae_of_all _ fun x => mul_comm _ _)
   simp only [e] at h
   rw [← ENNReal.ofReal_tsum_of_nonneg (fun k => sq_nonneg _) h.summable, h.tsum_eq,
     ofReal_integral_eq_lintegral_ofReal (f := fun x => g x * g x)
-      (Box.integrable_of_continuous (hg.mul hg)) (ae_of_all _ fun x => mul_self_nonneg _)]
+      (SturmLiouville.integrable_of_continuous (hg.mul hg)) (ae_of_all _ fun x => mul_self_nonneg _)]
   simp only [sq]
 
 end DFT.Continuum.Sine

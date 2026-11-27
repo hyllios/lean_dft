@@ -23,7 +23,7 @@ the role the sines play for Dirichlet walls.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine Spectral
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine Spectral
 
 /-! ### One dimension -/
 
@@ -127,7 +127,7 @@ theorem parsevalC1 {g : ℝ → ℝ} (hg : Continuous g) :
   simp only [e] at h
   rw [← ENNReal.ofReal_tsum_of_nonneg (fun k => sq_nonneg _) h.summable, h.tsum_eq,
     ofReal_integral_eq_lintegral_ofReal (f := fun x => g x * g x)
-      (Box.integrable_of_continuous (hg.mul hg)) (ae_of_all _ fun x => mul_self_nonneg _)]
+      (SturmLiouville.integrable_of_continuous (hg.mul hg)) (ae_of_all _ fun x => mul_self_nonneg _)]
   simp only [sq]
 
 /-! ### Products on the cube -/

@@ -25,7 +25,7 @@ the walls because `G(0) = 0`). Along a subsequence `P_M → Φ` a.e. (`exists_ae
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine
+open MeasureTheory Set SturmLiouville Real Filter Topology Sine
 
 variable {n : ℕ} {τ : Stat}
 

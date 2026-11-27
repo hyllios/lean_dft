@@ -22,7 +22,7 @@ equation. Here the condition is made explicit, without test functions: `g''/g` i
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 instance (μ ν : Measure ℝ) [IsMeas01 μ] [IsMeas01 ν] : IsMeas01 (μ + ν) where
   compl_zero := by

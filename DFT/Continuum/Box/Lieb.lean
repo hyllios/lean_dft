@@ -24,7 +24,7 @@ namespace Continuum
 
 namespace Box
 
-open MeasureTheory Set
+open MeasureTheory Set SturmLiouville
 
 lemma kin_nonneg (φ : ℝ → ℝ) : 0 ≤ setting.h0 φ φ :=
   integral_nonneg fun x => mul_self_nonneg (deriv φ x)

@@ -24,7 +24,7 @@ bounds `‖p‖` (`norm_pot_le_of_int`), and Moser's estimate holds on balls in 
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Metric
+open MeasureTheory Set SturmLiouville Real Filter Topology Metric
 
 variable {n : ℕ} {w : Cfg n → ℝ}
 

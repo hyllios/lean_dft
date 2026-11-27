@@ -24,7 +24,7 @@ that vanishes on an interval is therefore never a ground-state density, although
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real
+open MeasureTheory Set SturmLiouville Real
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 
@@ -146,14 +146,14 @@ theorem nrep_not_vrep :
   have hu0 : ∀ t, 0 ≤ u t := fun t => le_max_right _ _
   have hc : (3 / 4 : ℝ) ∈ Ioo (0 : ℝ) 1 := by norm_num
   have hpos : 0 < ext u (3 / 4) := by
-    simp only [Box.ext, u, ContinuousMap.coe_mk]
+    simp only [SturmLiouville.ext, u, ContinuousMap.coe_mk]
     rw [projIcc_of_mem _ (by norm_num : (3 / 4 : ℝ) ∈ Icc (0 : ℝ) 1)]
     norm_num
   have hρ : rhoHalf n u = 0 := by
     refine setIntegral_eq_zero_of_forall_eq_zero fun t ht => ?_
     rcases le_or_gt t (1 / 2) with h | h
     · have : ext u t = 0 := by
-        simp only [Box.ext, u, ContinuousMap.coe_mk]
+        simp only [SturmLiouville.ext, u, ContinuousMap.coe_mk]
         rw [projIcc_of_mem _ ⟨ht.1.le, ht.2.le⟩]
         exact max_eq_right (by linarith)
       rw [this, zero_mul]

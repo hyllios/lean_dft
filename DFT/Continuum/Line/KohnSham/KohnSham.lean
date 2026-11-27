@@ -29,7 +29,7 @@ Kohn–Sham `v`-representable (`KSRep`) if it is the density of a ground state o
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box
+open MeasureTheory Set Box SturmLiouville
 
 variable {n : ℕ} {τ : Stat}
 
@@ -72,7 +72,7 @@ theorem hxc_unique {w : Cfg n → ℝ} {hw : Continuous w} {v v' vs vs' : Pot} {
 `φ_j'' = (v_s - λ_j) φ_j` on `[0, 1]`, vanishing at the walls, such that a density is the density
 of a normalised ground state of `v_s` iff it is `Σ_j φ_j²`. -/
 theorem ksDens_fer (v : Pot) : ∃ (φ : Fin (n + 1) → ℝ → ℝ) (lam : Fin (n + 1) → ℝ),
-    (∀ j, φ j ∈ Box.Dom) ∧
+    (∀ j, φ j ∈ SturmLiouville.Dom) ∧
     (∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (ext v x - lam j) * φ j x) ∧
     (∀ j k, ∫ x, φ j x * φ k x ∂μ1 = if j = k then 1 else 0) ∧
     ∀ ρ, PureDens (ksS .fer n) v ρ ↔ ρ = fun u => ∫ t, ext u t * ∑ j, φ j t ^ 2 ∂μ1 := by
@@ -143,7 +143,7 @@ theorem prodS_isGS_of {v : Pot} {φ : ℝ → ℝ} (hφ : IsGS Box.setting v φ)
     set c := ∏ j, φ (y j)
     have hs : (fun t => prodS φ (Fin.insertNth k t y : Cfg n)) = fun t => φ t * c := by
       funext t; exact prodS_insertNth φ k t y
-    have hsm : (fun t => φ t * c) ∈ Box.Dom := hs ▸ slice_mem hΨ k y
+    have hsm : (fun t => φ t * c) ∈ SturmLiouville.Dom := hs ▸ slice_mem hΨ k y
     simp only [Pi.zero_apply]
     rw [hs, Q_sub_eq v E hsm]
     have : ∀ x, deriv (fun t => φ t * c) x ^ 2 + Wof v E x * (φ x * c) ^ 2 =

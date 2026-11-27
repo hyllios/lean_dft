@@ -6,7 +6,7 @@ Authors: Miguel A. L. Marques
 import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
 import Mathlib.Analysis.Normed.Operator.Compact.Basic
 import Mathlib.MeasureTheory.Function.L2Space
-import DFT.Continuum.Spectral.Kernel
+import ForMathlib.Analysis.SturmLiouville.Kernel
 
 /-!
 # The Green operator on `L²(0, 1)`: compact and symmetric
@@ -23,9 +23,9 @@ ball to a bounded equicontinuous family (the kernel is uniformly continuous), so
 * `Gop_symm`: symmetry.
 -/
 
-namespace DFT.Continuum.Spectral
+namespace SturmLiouville
 
-open MeasureTheory Set Filter Topology Box Metric BoundedContinuousFunction
+open MeasureTheory Set Filter Topology Metric BoundedContinuousFunction
 
 /-- The Hilbert space `L²(0, 1)`. -/
 noncomputable abbrev HL := Lp ℝ 2 μ1
@@ -240,4 +240,4 @@ theorem Gop_symm (f g : HL) : inner ℝ (Gop hWc f) g = inner ℝ f (Gop hWc g) 
 /-- `Gop` as a symmetric linear map. -/
 theorem isSymmetric_Gop : (Gop hWc : HL →ₗ[ℝ] HL).IsSymmetric := fun f g => Gop_symm hWc f g
 
-end DFT.Continuum.Spectral
+end SturmLiouville

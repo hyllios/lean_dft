@@ -28,7 +28,7 @@ For one particle with walls at `0` and `1`:
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-- Measure potentials: continuous linear functionals on `C([0, 1])` (finite signed measures). -/
 abbrev PotM : Type := StrongDual ℝ Pot

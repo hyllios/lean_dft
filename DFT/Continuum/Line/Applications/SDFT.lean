@@ -31,7 +31,7 @@ equivalent to `(ρ↑, ρ↓)`, the density functional on pairs `(v↑, v↓)`.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {a : ℕ}
 
@@ -39,31 +39,31 @@ variable {n : ℕ} {a : ℕ}
 
 /-- `Σ_{k < a} v↑(x_k) + Σ_{k ≥ a} v↓(x_k)`. -/
 noncomputable def LS (a : ℕ) : Pot × Pot →ₗ[ℝ] (Cfg n → ℝ) where
-  toFun p := fun x => ∑ k : Fin (n + 1), Box.ext (if (k : ℕ) < a then p.1 else p.2) (x k)
+  toFun p := fun x => ∑ k : Fin (n + 1), SturmLiouville.ext (if (k : ℕ) < a then p.1 else p.2) (x k)
   map_add' p q := by
     funext x
     simp only [Pi.add_apply, ← Finset.sum_add_distrib, Prod.fst_add, Prod.snd_add]
     refine Finset.sum_congr rfl fun k _ => ?_
-    split_ifs <;> simp [Box.ext]
+    split_ifs <;> simp [SturmLiouville.ext]
   map_smul' r p := by
     funext x
     simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply, Finset.mul_sum, Prod.smul_fst,
       Prod.smul_snd]
     refine Finset.sum_congr rfl fun k _ => ?_
-    split_ifs <;> simp [Box.ext]
+    split_ifs <;> simp [SturmLiouville.ext]
 
 lemma LS_apply (p : Pot × Pot) (x : Cfg n) :
-    LS a p x = ∑ k : Fin (n + 1), Box.ext (if (k : ℕ) < a then p.1 else p.2) (x k) := rfl
+    LS a p x = ∑ k : Fin (n + 1), SturmLiouville.ext (if (k : ℕ) < a then p.1 else p.2) (x k) := rfl
 
 lemma continuous_LS (p : Pot × Pot) : Continuous (LS (n := n) a p) :=
   show Continuous fun x : Cfg n => ∑ k : Fin (n + 1),
-      Box.ext (if (k : ℕ) < a then p.1 else p.2) (x k) from
+      SturmLiouville.ext (if (k : ℕ) < a then p.1 else p.2) (x k) from
     continuous_finsetSum _ fun k _ => (continuous_ext _).comp (continuous_apply k)
 
 lemma LS_pm (p : Pot × Pot) {σ : Equiv.Perm (Fin (n + 1))} (hσ : YG a σ) (x : Cfg n) :
     LS a p (pm σ x) = LS a p x := by
   simp only [LS_apply, pm_apply]
-  rw [← Equiv.sum_comp σ (fun k => Box.ext (if (k : ℕ) < a then p.1 else p.2) (x k))]
+  rw [← Equiv.sum_comp σ (fun k => SturmLiouville.ext (if (k : ℕ) < a then p.1 else p.2) (x k))]
   refine Finset.sum_congr rfl fun k _ => ?_
   simp only [hσ k]
 
@@ -177,15 +177,15 @@ end setting
 /-! ### Rigidity for two species -/
 
 /-- A continuous potential with `ext v` constant on `(0, 1)` is a constant. -/
-lemma const_of_ext_eq {v : Pot} {c : ℝ} (h : ∀ t ∈ Ioo (0 : ℝ) 1, Box.ext v t = c) :
+lemma const_of_ext_eq {v : Pot} {c : ℝ} (h : ∀ t ∈ Ioo (0 : ℝ) 1, SturmLiouville.ext v t = c) :
     ∃ k : ℝ, v = k • one := by
-  have hC : EqOn (Box.ext v) (fun _ => c) (Icc 0 1) :=
+  have hC : EqOn (SturmLiouville.ext v) (fun _ => c) (Icc 0 1) :=
     EqOn.of_subset_closure h (continuous_ext v).continuousOn continuousOn_const
       Ioo_subset_Icc_self (by rw [closure_Ioo zero_ne_one])
   refine ⟨c, ?_⟩
   ext t
   have := hC t.2
-  simp only [Box.ext, projIcc_val] at this
+  simp only [SturmLiouville.ext, projIcc_val] at this
   simp [one, this]
 
 /-- **Rigidity for two species.** If `Σ_{k<a} v↑(x_k) + Σ_{k≥a} v↓(x_k)` is a.e. constant on the
@@ -198,8 +198,8 @@ theorem rigid_two {p : Pot × Pot} {c : ℝ} (h : LS (n := n) a p =ᵐ[μN n] fu
   have hx0 : x0 ∈ Cube n := fun _ _ => ⟨by norm_num, by norm_num⟩
   -- moving one particle `k0` inside the cube
   have key : ∀ k0 : Fin (n + 1), ∀ t ∈ Ioo (0 : ℝ) 1,
-      Box.ext (if (k0 : ℕ) < a then p.1 else p.2) t =
-        Box.ext (if (k0 : ℕ) < a then p.1 else p.2) (1 / 2) := by
+      SturmLiouville.ext (if (k0 : ℕ) < a then p.1 else p.2) t =
+        SturmLiouville.ext (if (k0 : ℕ) < a then p.1 else p.2) (1 / 2) := by
     intro k0 t ht
     have hxt : Function.update x0 k0 t ∈ Cube n := fun j _ => by
       by_cases hj : j = k0
@@ -209,8 +209,8 @@ theorem rigid_two {p : Pot × Pot} {c : ℝ} (h : LS (n := n) a p =ᵐ[μN n] fu
     have h2 := hO hx0
     simp only at h1 h2
     have hd : LS a p (Function.update x0 k0 t) - LS a p x0 =
-        Box.ext (if (k0 : ℕ) < a then p.1 else p.2) t -
-          Box.ext (if (k0 : ℕ) < a then p.1 else p.2) (1 / 2) := by
+        SturmLiouville.ext (if (k0 : ℕ) < a then p.1 else p.2) t -
+          SturmLiouville.ext (if (k0 : ℕ) < a then p.1 else p.2) (1 / 2) := by
       rw [LS_apply, LS_apply, ← Finset.sum_sub_distrib, Finset.sum_eq_single k0]
       · simp [x0]
       · intro k _ hk; simp [Function.update_of_ne hk]

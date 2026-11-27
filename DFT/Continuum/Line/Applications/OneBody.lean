@@ -31,7 +31,7 @@ the lift of the `C²` box ground state is one, so the exact `C²` characterisati
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {τ : Stat}
 
@@ -75,7 +75,7 @@ lemma dk_lift {ψ : ℝ → ℝ} (hψ : Differentiable ℝ ψ) (x : Cfg 0) :
 lemma ch_one (τ : Stat) : ch τ (1 : Equiv.Perm (Fin 1)) = 1 := by
   cases τ <;> simp [sgn]
 
-lemma lift_mem {ψ : ℝ → ℝ} (hψ : ψ ∈ Box.Dom) : lift ψ ∈ Dom τ 0 := by
+lemma lift_mem {ψ : ℝ → ℝ} (hψ : ψ ∈ SturmLiouville.Dom) : lift ψ ∈ Dom τ 0 := by
   refine ⟨hψ.1.comp (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin (0 + 1) => ℝ) 0).contDiff,
     fun σ x => ?_, fun x k hk => ?_⟩
   · rw [Subsingleton.elim (α := Equiv.Perm (Fin 1)) σ 1, ch_one]
@@ -86,7 +86,7 @@ lemma lift_mem {ψ : ℝ → ℝ} (hψ : ψ ∈ Box.Dom) : lift ψ ∈ Dom τ 0 
     · exact hψ.2.1
     · exact hψ.2.2
 
-lemma unlift_mem {Φ : Cfg 0 → ℝ} (hΦ : Φ ∈ Dom τ 0) : unlift Φ ∈ Box.Dom :=
+lemma unlift_mem {Φ : Cfg 0 → ℝ} (hΦ : Φ ∈ Dom τ 0) : unlift Φ ∈ SturmLiouville.Dom :=
   ⟨hΦ.1.comp (contDiff_pi.2 fun _ => contDiff_id), hΦ.2.2 _ 0 (Or.inl rfl),
     hΦ.2.2 _ 0 (Or.inr rfl)⟩
 
@@ -103,7 +103,7 @@ lemma pf_lift (v : Pot) (ψ φ : ℝ → ℝ) :
   exact integral_one fun t => ext v t * (ψ t * φ t)
 
 lemma Q_lift {w : Cfg 0 → ℝ} {hw : Continuous w} (hw0 : w = fun _ => 0) (v : Pot)
-    {ψ : ℝ → ℝ} (hψ : ψ ∈ Box.Dom) :
+    {ψ : ℝ → ℝ} (hψ : ψ ∈ SturmLiouville.Dom) :
     Q (setting τ 0 w hw) v (lift ψ) = Q Box.setting v ψ := by
   subst hw0
   simp only [Q, pf]
@@ -136,7 +136,7 @@ lemma LN_wPot {w : Cfg 0 → ℝ} (hw : Continuous w) :
     ∀ᵐ x ∂μN 0, LN 0 (wPot w hw) x = w x := by
   filter_upwards [ae_restrict_mem measurableSet_cube] with x hx
   have hx0 : x 0 ∈ Icc (0 : ℝ) 1 := Ioo_subset_Icc_self (hx 0 trivial)
-  simp only [LN, LinearMap.coe_mk, AddHom.coe_mk, sum_fin0, Box.ext, wPot,
+  simp only [LN, LinearMap.coe_mk, AddHom.coe_mk, sum_fin0, SturmLiouville.ext, wPot,
     ContinuousMap.coe_mk, projIcc_of_mem _ hx0]
   rw [cfg0_eq]
 
@@ -241,7 +241,7 @@ noncomputable def sinG (t : ℝ) : ℝ := √2 * sin (2 * π * t)
 /-- `ρ = 2 sin²(2πt)`: smooth and normalised, zero at `t = ½`. -/
 noncomputable def sinDens (t : ℝ) : ℝ := sinG t ^ 2
 
-lemma sinG_mem : sinG ∈ Box.Dom := ⟨by unfold sinG; fun_prop, by simp [sinG], by simp [sinG]⟩
+lemma sinG_mem : sinG ∈ SturmLiouville.Dom := ⟨by unfold sinG; fun_prop, by simp [sinG], by simp [sinG]⟩
 
 lemma sinG_norm : ∫ t, sinG t ^ 2 ∂μ1 = 1 := by
   rw [integral_mu1]

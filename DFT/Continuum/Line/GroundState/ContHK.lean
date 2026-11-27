@@ -25,7 +25,7 @@ Results:
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box
+open MeasureTheory Set Box SturmLiouville
 
 variable {n : ℕ} {τ : Stat}
 

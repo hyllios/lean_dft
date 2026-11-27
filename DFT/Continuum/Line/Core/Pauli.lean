@@ -25,7 +25,7 @@ Each `Pₖ` is a projection and `⟨Pₖ Φ, Pₗ Φ⟩ = 0` for `k ≠ l`, beca
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology Box SturmLiouville
 
 variable {n : ℕ}
 

@@ -28,7 +28,7 @@ walls (which `g` cannot see, since `g(0) = g(1) = 0`).
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 /-! ### A Lipschitz cutoff -/
 
@@ -86,12 +86,12 @@ walls, when `g ∈ H¹₀` is positive on `(0, 1)`. -/
 theorem dense_mulP {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t ∈ Ioo (0 : ℝ) 1, 0 < g t) (h : Pot)
     (h0 : h ⟨0, le_rfl, zero_le_one⟩ = 0) (h1 : h ⟨1, zero_le_one, le_rfl⟩ = 0) {ε : ℝ}
     (hε : 0 < ε) : ∃ φ : ℝ → ℝ, ∃ hφ : H10 φ, ‖mulP hg hφ - h‖ ≤ 2 * ε := by
-  set H := Box.ext h
+  set H := SturmLiouville.ext h
   have hHc : Continuous H := continuous_ext h
   have hH0 : H 0 = 0 := by
-    simp only [H, Box.ext]; rw [projIcc_left]; exact h0
+    simp only [H, SturmLiouville.ext]; rw [projIcc_left]; exact h0
   have hH1 : H 1 = 0 := by
-    simp only [H, Box.ext]; rw [projIcc_right]; exact h1
+    simp only [H, SturmLiouville.ext]; rw [projIcc_right]; exact h1
   -- `|h| < ε` near the walls
   obtain ⟨δ0, hδ0, hb0⟩ := Metric.continuousAt_iff.1 hHc.continuousAt ε hε
   obtain ⟨δ1, hδ1, hb1⟩ := Metric.continuousAt_iff.1 (hHc.continuousAt (x := 1)) ε hε
@@ -130,7 +130,7 @@ theorem dense_mulP {g : ℝ → ℝ} (hg : H10 g) (hpos : ∀ t ∈ Ioo (0 : ℝ
     (lipschitz_cutF ha).continuous (by simpa using p.contDiff_aeval (𝕜 := ℝ) 1)
   refine ⟨_, hφ, (ContinuousMap.norm_le _ (by positivity)).2 fun t => ?_⟩
   have htI : (t : ℝ) ∈ Icc (0 : ℝ) 1 := t.2
-  have hHt : h t = H t := by simp [H, Box.ext, projIcc_of_mem _ htI]
+  have hHt : h t = H t := by simp [H, SturmLiouville.ext, projIcc_of_mem _ htI]
   simp only [ContinuousMap.sub_apply, mulP_apply, Real.norm_eq_abs, hHt]
   have hgt : |g t| ≤ G' := (by simpa using hG t htI : |g t| ≤ G).trans (le_max_left _ _)
   by_cases hout : (t : ℝ) ≤ a ∨ 1 - a ≤ t

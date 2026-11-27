@@ -17,7 +17,7 @@ import DFT.Continuum.Line.Symmetry.SpinStates
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine Function
+open MeasureTheory Set SturmLiouville Real Filter Topology Sine Function
 
 variable {n : ℕ}
 

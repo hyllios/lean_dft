@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-12 modules, 2353 lines.
+22 modules, 4338 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -45,6 +45,21 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `ForMathlib.Analysis.Sobolev.Weak` | 296 | Weak derivatives in the plane |
+
+### `ForMathlib/Analysis/SturmLiouville/`
+
+| Module | Lines | Content |
+|---|---|---|
+| `ForMathlib.Analysis.SturmLiouville.Basic` | 110 | The Dirichlet problem on `[0, 1]`: basic definitions |
+| `ForMathlib.Analysis.SturmLiouville.Eigen` | 198 | Eigenvectors of the Green operator are classical eigenfunctions |
+| `ForMathlib.Analysis.SturmLiouville.Expand` | 312 | The energy in the eigenbasis |
+| `ForMathlib.Analysis.SturmLiouville.Extend` | 78 | Regularity of ODE solutions and cutoff extension |
+| `ForMathlib.Analysis.SturmLiouville.Green` | 259 | The Green function of `-d²/dx² + W` on `[0, 1]` |
+| `ForMathlib.Analysis.SturmLiouville.Injective` | 132 | The Green operator is injective |
+| `ForMathlib.Analysis.SturmLiouville.Kernel` | 177 | The Green kernel |
+| `ForMathlib.Analysis.SturmLiouville.Operator` | 243 | The Green operator on `L²(0, 1)`: compact and symmetric |
+| `ForMathlib.Analysis.SturmLiouville.Solve` | 251 | Solving `y'' = W y` on `[0, 1]` |
+| `ForMathlib.Analysis.SturmLiouville.Sturm` | 225 | Sturm-type facts for the shooting solution on `[0, 1]` |
 
 ### `ForMathlib/LinearAlgebra/Matrix/`
 
@@ -141,22 +156,19 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-214 modules, 57789 lines.
+206 modules, 55830 lines.
 
 ### `DFT/Continuum/Box/`
 
 | Module | Lines | Content |
 |---|---|---|
-| `DFT.Continuum.Box.Basic` | 337 | An unconditional continuum Hohenberg–Kohn theorem: one particle in a box |
+| `DFT.Continuum.Box.Basic` | 257 | An unconditional continuum Hohenberg–Kohn theorem: one particle in a box |
 | `DFT.Continuum.Box.Dense` | 183 | Supergradient densities are dense (one particle in a box) |
 | `DFT.Continuum.Box.Diff` | 246 | v-representable densities are dense (one particle in a box) |
-| `DFT.Continuum.Box.Extend` | 86 | Regularity of ODE solutions and cutoff extension |
 | `DFT.Continuum.Box.Ground` | 388 | Ground states in the box exist |
 | `DFT.Continuum.Box.Lieb` | 68 | The Lieb functional for one particle in a box |
 | `DFT.Continuum.Box.Picone` | 248 | The Picone inequality in the box |
 | `DFT.Continuum.Box.PiconeEq` | 310 | The equality case of the Picone inequality |
-| `DFT.Continuum.Box.Solve` | 259 | Solving the Schrödinger equation in the box |
-| `DFT.Continuum.Box.Sturm` | 233 | Sturm-type facts for the shooting solution in the box |
 | `DFT.Continuum.Box.VRep` | 337 | `v`-representable densities of one particle in a box, exactly |
 
 ### `DFT/Continuum/General/`
@@ -350,12 +362,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
-| `DFT.Continuum.Spectral.Eigen` | 198 | Eigenvectors of the Green operator are classical eigenfunctions |
-| `DFT.Continuum.Spectral.Expand` | 379 | The energy in the eigenbasis |
-| `DFT.Continuum.Spectral.Green` | 259 | The Green function of `-d²/dx² + W` on `[0, 1]` |
-| `DFT.Continuum.Spectral.Injective` | 132 | The Green operator is injective |
-| `DFT.Continuum.Spectral.Kernel` | 177 | The Green kernel |
-| `DFT.Continuum.Spectral.Operator` | 243 | The Green operator on `L²(0, 1)`: compact and symmetric |
+| `DFT.Continuum.Spectral.Orbitals` | 87 | Orthonormal eigenfunctions and the one-particle bound in the box |
 
 ### `DFT/Lattice/`
 
@@ -512,4 +519,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 73246 lines of Lean.
+Total: 73272 lines of Lean.

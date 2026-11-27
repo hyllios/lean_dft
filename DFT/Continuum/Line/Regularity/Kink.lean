@@ -22,7 +22,7 @@ tent is Lipschitz and vanishes at the walls.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-- **A kink rules out a `C¹` profile.** -/
 theorem not_C1Dens_of_kink {f : ℝ → ℝ} (hf : Continuous f) {t0 δ : ℝ} (ht0 : t0 ∈ Ioo (0 : ℝ) 1)

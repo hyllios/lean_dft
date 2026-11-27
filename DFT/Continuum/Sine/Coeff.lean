@@ -26,7 +26,7 @@ Parseval for the pair `(-Δφ, φ)`. Relabelling the particles relabels the coef
 
 namespace DFT.Continuum.Sine
 
-open MeasureTheory Set Filter Topology Box Line Real
+open MeasureTheory Set Filter Topology Box SturmLiouville Line Real
 
 variable {n : ℕ}
 

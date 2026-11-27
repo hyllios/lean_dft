@@ -41,7 +41,7 @@ unbounded, so it is not `v`-representable (`quartDens_not_vrep`).
 
 namespace DFT.Continuum.Box
 
-open MeasureTheory Set Filter Topology
+open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The conditions on `g = √ρ` for `ρ` to be a ground-state density in the box. -/
 def BoxRep (g : ℝ → ℝ) (q : Pot) : Prop :=

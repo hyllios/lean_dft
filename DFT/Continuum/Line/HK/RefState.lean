@@ -27,7 +27,7 @@ Orbitals are tent functions `h_k` with disjoint supports `I_0 < I_1 < ⋯` insid
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 

@@ -118,7 +118,7 @@ end general
 
 namespace Line
 
-open Box
+open SturmLiouville
 
 variable {n : ℕ} {w : Cfg n → ℝ} {hw : Continuous w} {v : Pot}
 

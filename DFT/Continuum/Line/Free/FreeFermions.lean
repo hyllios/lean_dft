@@ -5,13 +5,13 @@ Authors: Miguel A. L. Marques
 -/
 import DFT.Continuum.Line.Core.Pauli
 import DFT.Continuum.Line.Free.Free
-import DFT.Continuum.Spectral.Expand
+import DFT.Continuum.Spectral.Orbitals
 
 /-!
 # Free fermions on a line: ground states exist
 
 For `n + 1` non-interacting fermions on `[0, 1]` with a continuous potential `v`, take the
-`n + 1` lowest one-particle eigenfunctions `φⱼ` (energies `λⱼ`, `Continuum/Spectral/Expand`).
+`n + 1` lowest one-particle eigenfunctions `φⱼ` (energies `λⱼ`, `SturmLiouville/Expand`).
 The Slater determinant `Φ(x) = det [φⱼ(xᵢ)]` is an `(n + 1)`-fermion ground state with energy
 `Σⱼ λⱼ`.
 
@@ -27,7 +27,7 @@ The Slater determinant `Φ(x) = det [φⱼ(xᵢ)]` is an `(n + 1)`-fermion groun
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology Box SturmLiouville
 
 variable {n : ℕ}
 
@@ -107,7 +107,7 @@ lemma updateRow_slM (x : Cfg n) (k : Fin (n + 1)) (t : ℝ) (r : Fin (n + 1) →
 /-- The cofactors along row `k`. -/
 noncomputable def cof (x : Cfg n) (k j : Fin (n + 1)) : ℝ := (slM φ x).adjugate j k
 
-variable {φ} (hφ : ∀ j, φ j ∈ Box.Dom)
+variable {φ} (hφ : ∀ j, φ j ∈ SturmLiouville.Dom)
 include hφ
 
 lemma slater_mem : slater φ ∈ DomF n := by
@@ -198,7 +198,7 @@ end slater
 
 section energy
 
-variable {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, φ j ∈ Box.Dom) {v : Pot} {lam : Fin (n + 1) → ℝ}
+variable {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, φ j ∈ SturmLiouville.Dom) {v : Pot} {lam : Fin (n + 1) → ℝ}
   (hode : ∀ j, ∀ x ∈ Icc (0 : ℝ) 1, deriv (deriv (φ j)) x = (ext v x - lam j) * φ j x)
 include hφ hode
 
@@ -238,7 +238,7 @@ lemma integral_pos_of_pt {F : Cfg n → ℝ} (hF : Continuous F) (h0 : ∀ x, 0 
   exact (hF.isOpen_support.inter isOpen_cube).measure_pos volume ⟨x0, hpos.ne', hx0⟩
 
 /-- **The Slater determinant of orthonormal orbitals is not zero.** -/
-lemma ip_slater_pos {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, φ j ∈ Box.Dom)
+lemma ip_slater_pos {φ : Fin (n + 1) → ℝ → ℝ} (hφ : ∀ j, φ j ∈ SturmLiouville.Dom)
     (hon : ∀ j k, ∫ x, φ j x * φ k x ∂μ1 = if j = k then 1 else 0) :
     0 < ip (μ := μN n) (slater φ) (slater φ) := by
   have hind : ∀ a : Fin (n + 1) → ℝ, (∀ t ∈ Ioo (0 : ℝ) 1, ∑ j, a j * φ j t = 0) → a = 0 := by
@@ -268,14 +268,14 @@ variable {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomF n)
 
 include hΦ in
 lemma slice_update_mem (k : Fin (n + 1)) (x : Cfg n) :
-    (fun t => Φ (Function.update x k t)) ∈ Box.Dom := by
+    (fun t => Φ (Function.update x k t)) ∈ SturmLiouville.Dom := by
   have h := slice_mem hΦ k (Fin.removeNth k x)
   simp only [Fin.insertNth_removeNth] at h
   exact h
 
 variable (v : Pot) {φ : Fin (n + 1) → ℝ → ℝ} {lam : Fin (n + 1) → ℝ} {Λ : ℝ}
-  (hφ : ∀ j, φ j ∈ Box.Dom)
-  (hbound : ∀ ψ ∈ Box.Dom, Λ * ip (μ := μ1) ψ ψ -
+  (hφ : ∀ j, φ j ∈ SturmLiouville.Dom)
+  (hbound : ∀ ψ ∈ SturmLiouville.Dom, Λ * ip (μ := μ1) ψ ψ -
     ∑ j, (Λ - lam j) * (∫ x, φ j x * ψ x ∂μ1) ^ 2 ≤ Q Box.setting v ψ)
 include hΦ hφ hbound
 
@@ -293,7 +293,7 @@ lemma slice_bound (k : Fin (n + 1)) :
   have havg : ∀ x, 0 ≤ avgK k H x := by
     intro x
     set ψ : ℝ → ℝ := fun t => Φ (Function.update x k t)
-    have hψ : ψ ∈ Box.Dom := slice_update_mem hΦ k x
+    have hψ : ψ ∈ SturmLiouville.Dom := slice_update_mem hΦ k x
     have hψc := hψ.1.continuous
     have hG : ∀ j, gK Φ (φ j) k x = ∫ t, φ j t * ψ t ∂μ1 := fun j => gK_apply k x
     have hpt : ∀ t, H (Function.update x k t) = (deriv ψ t ^ 2 + Wof v 0 t * ψ t ^ 2) -

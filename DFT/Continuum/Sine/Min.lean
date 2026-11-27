@@ -23,7 +23,7 @@ energy is lower semicontinuous.
 
 namespace DFT.Continuum.Sine
 
-open MeasureTheory Set Filter Topology Box Line Real
+open MeasureTheory Set Filter Topology Box SturmLiouville Line Real
 open scoped ENNReal
 
 variable {n : ℕ}

@@ -22,7 +22,7 @@ apply the induction hypothesis to each slice, exchange the sum and the integral 
 
 namespace DFT.Continuum.Sine
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The product of `d` copies of Lebesgue measure on `(0, 1)`. -/
 noncomputable abbrev piM (d : ℕ) : Measure (Fin d → ℝ) := Measure.pi fun _ => μ1

@@ -22,7 +22,7 @@ with `∫ g'² ≤ T(Φ)` (**`sqrt_dens_H1N`**), the Neumann version of Hoffmann
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine Spectral
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine Spectral
 
 variable {n : ℕ} {τ : Stat}
 

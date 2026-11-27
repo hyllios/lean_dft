@@ -23,7 +23,7 @@ has the integrals of `ρ_Φ`, so it is `ρ̂_Φ` (`rhoHat_unique`), and `ν(ρ̂
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine
 
 variable {n : ℕ}
 
@@ -97,7 +97,7 @@ lemma tendsto_int_pot (v : Pot) {p : ℕ → Pot} {q : Pot} (h : Tendsto p atTop
     Tendsto (fun j => ∫ t, ext v t * ext (p j) t ∂μ1) atTop (𝓝 (∫ t, ext v t * ext q t ∂μ1)) := by
   rw [tendsto_iff_norm_sub_tendsto_zero] at h ⊢
   have hb : ∀ (r : Pot) (x : ℝ), |ext r x| ≤ ‖r‖ := fun r x => by
-    simpa [Box.ext] using r.norm_coe_le_norm _
+    simpa [SturmLiouville.ext] using r.norm_coe_le_norm _
   refine squeeze_zero (fun _ => norm_nonneg _) (fun j => ?_) (by simpa using h.const_mul ‖v‖)
   have i1 : Integrable (fun t => ext v t * ext (p j) t) μ1 :=
     Integrable.of_bound ((continuous_ext v).mul (continuous_ext _)).aestronglyMeasurable
@@ -228,7 +228,7 @@ theorem exists_isGSN (τ : Stat) {w : Cfg n → ℝ} (hw : Continuous w) (ν : P
         (𝓝 (∫ t, ext v t * rhoN Ψ t ∂μ1)) := by
       have hL1' := hL1.comp hψ.tendsto_atTop
       rw [tendsto_iff_norm_sub_tendsto_zero]
-      have hb : ∀ x, |ext v x| ≤ ‖v‖ := fun x => by simpa [Box.ext] using v.norm_coe_le_norm _
+      have hb : ∀ x, |ext v x| ≤ ‖v‖ := fun x => by simpa [SturmLiouville.ext] using v.norm_coe_le_norm _
       refine squeeze_zero (fun _ => norm_nonneg _) (fun k => ?_)
         (by simpa using (hL1'.const_mul ((n + 1) * ‖v‖)))
       have hρi : ∀ (P : Cfg n → ℝ), MemLp P 2 (μN n) →

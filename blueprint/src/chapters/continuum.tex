@@ -65,7 +65,7 @@ $0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\
 
 \begin{lemma}[The box setting]
   \label{lem:box_setting}
-  \lean{DFT.Continuum.Box.μ1, DFT.Continuum.Box.Dom, DFT.Continuum.Box.mem_Dom, DFT.Continuum.Box.Pot, DFT.Continuum.Box.ext, DFT.Continuum.Box.continuous_ext, DFT.Continuum.Box.Lbox, DFT.Continuum.Box.integrable_of_continuous, DFT.Continuum.Box.kin, DFT.Continuum.Box.two_ge_one, DFT.Continuum.Box.diff_of_mem, DFT.Continuum.Box.cont_deriv_of_mem, DFT.Continuum.Box.setting, DFT.Continuum.Box.eq_zero_of_integral, DFT.Continuum.Box.sep_box, DFT.Continuum.Box.one, DFT.Continuum.Box.rigidL_box}
+  \lean{SturmLiouville.μ1, SturmLiouville.Dom, SturmLiouville.mem_Dom, SturmLiouville.Pot, SturmLiouville.ext, SturmLiouville.continuous_ext, DFT.Continuum.Box.Lbox, SturmLiouville.integrable_of_continuous, DFT.Continuum.Box.kin, SturmLiouville.two_ge_one, SturmLiouville.diff_of_mem, SturmLiouville.cont_deriv_of_mem, DFT.Continuum.Box.setting, SturmLiouville.eq_zero_of_integral, DFT.Continuum.Box.sep_box, DFT.Continuum.Box.one, DFT.Continuum.Box.rigidL_box}
   \leanok
   \uses{def:continuum_setting}
   The box is a setting in which separation (fundamental lemma of the calculus of variations, with smooth test
@@ -90,7 +90,7 @@ $0$ and $1$, and continuous potentials on $[0,1]$. Every hypothesis of Theorem~\
 
 \begin{theorem}[Unique continuation in the box]
   \label{thm:box_ucp}
-  \lean{DFT.Continuum.Box.deriv_eq_zero_of_accPt, DFT.Continuum.Box.field, DFT.Continuum.Box.lipschitz_field, DFT.Continuum.Box.eq_zero_of_accPt, DFT.Continuum.Box.ucp_of_isGS}
+  \lean{SturmLiouville.deriv_eq_zero_of_accPt, SturmLiouville.field, SturmLiouville.lipschitz_field, DFT.Continuum.Box.eq_zero_of_accPt, DFT.Continuum.Box.ucp_of_isGS}
   \leanok
   \uses{lem:box_ode}
   A ground state vanishes only on a null set.
@@ -123,7 +123,7 @@ $\psi''=(v-E)\psi$, $\psi(0)=0$, $\psi'(0)=1$, and take the largest $E$ for whic
 
 \begin{lemma}[The shooting solution]
   \label{lem:box_solve}
-  \lean{DFT.Continuum.Box.lipschitz_field', DFT.Continuum.Box.exists_bound_W, DFT.Continuum.Box.cl, DFT.Continuum.Box.cl_lip, DFT.Continuum.Box.cl_abs_le, DFT.Continuum.Box.cl_abs_le_R, DFT.Continuum.Box.cl_eq, DFT.Continuum.Box.clamp, DFT.Continuum.Box.lipschitz_clamp, DFT.Continuum.Box.tfield, DFT.Continuum.Box.norm_tfield_le_R, DFT.Continuum.Box.norm_tfield_le, DFT.Continuum.Box.lipschitz_tfield, DFT.Continuum.Box.exists_sol, DFT.Continuum.Box.sol_eq_zero_of_eq_zero, DFT.Continuum.Box.sol_dist_le}
+  \lean{SturmLiouville.lipschitz_field', SturmLiouville.exists_bound_W, SturmLiouville.cl, SturmLiouville.cl_lip, SturmLiouville.cl_abs_le, SturmLiouville.cl_abs_le_R, SturmLiouville.cl_eq, SturmLiouville.clamp, SturmLiouville.lipschitz_clamp, SturmLiouville.tfield, SturmLiouville.norm_tfield_le_R, SturmLiouville.norm_tfield_le, SturmLiouville.lipschitz_tfield, SturmLiouville.exists_sol, SturmLiouville.sol_eq_zero_of_eq_zero, SturmLiouville.sol_dist_le}
   \leanok
   For continuous $W$, $\psi''=W\psi$ with $\psi(0)=0$, $\psi'(0)=1$ has a solution on $(-1,2)$; a solution with
   $(\psi,\psi')(z)=0$ vanishes identically; and solutions depend continuously on $W$ (a Gr\"onwall bound).
@@ -136,7 +136,7 @@ $\psi''=(v-E)\psi$, $\psi(0)=0$, $\psi'(0)=1$, and take the largest $E$ for whic
 
 \begin{lemma}[Comparison]
   \label{lem:box_sturm}
-  \lean{DFT.Continuum.Box.hasDerivAt_fst_of, DFT.Continuum.Box.hasDerivAt_snd_of, DFT.Continuum.Box.continuousOn_of_hd, DFT.Continuum.Box.pos_near_zero, DFT.Continuum.Box.exists_zero_of_nonpos, DFT.Continuum.Box.exists_first_zero, DFT.Continuum.Box.pos_of_nonneg, DFT.Continuum.Box.exists_zero_of_le}
+  \lean{SturmLiouville.hasDerivAt_fst_of, SturmLiouville.hasDerivAt_snd_of, SturmLiouville.continuousOn_of_hd, SturmLiouville.pos_near_zero, SturmLiouville.exists_zero_of_nonpos, SturmLiouville.exists_first_zero, SturmLiouville.pos_of_nonneg, SturmLiouville.exists_zero_of_le}
   \leanok
   If $W\ge0$ on $[0,1]$, the solution is positive on $(0,1]$; if $W\le-16$, it has a zero in $(0,1)$.
 \end{lemma}
@@ -161,7 +161,7 @@ $\psi''=(v-E)\psi$, $\psi(0)=0$, $\psi'(0)=1$, and take the largest $E$ for whic
 
 \begin{lemma}[Regularity and extension]
   \label{lem:box_extend}
-  \lean{DFT.Continuum.Box.two_eq_one_add_one, DFT.Continuum.Box.one_eq_zero_add_one, DFT.Continuum.Box.contDiffOn_sol, DFT.Continuum.Box.exists_contDiff_ext}
+  \lean{SturmLiouville.two_eq_one_add_one, SturmLiouville.one_eq_zero_add_one, SturmLiouville.contDiffOn_sol, SturmLiouville.exists_contDiff_ext}
   \leanok
   The solution is $C^2$ on $(-1,2)$, and agrees on $(-\frac12,\frac32)$ with a $C^2$ function on $\mathbb R$.
 \end{lemma}
@@ -265,7 +265,7 @@ the lowest eigenvalue. The spectrum comes instead from the Green operator, which
 
 \begin{lemma}[The Green function]
   \label{lem:spec_green}
-  \lean{DFT.Continuum.Spectral.solL, DFT.Continuum.Spectral.solL_zero, DFT.Continuum.Spectral.solL_deriv, DFT.Continuum.Spectral.Wr, DFT.Continuum.Spectral.continuous_Wr, DFT.Continuum.Spectral.solR, DFT.Continuum.Spectral.solR_zero, DFT.Continuum.Spectral.solR_deriv, DFT.Continuum.Spectral.uS, DFT.Continuum.Spectral.duS, DFT.Continuum.Spectral.wS, DFT.Continuum.Spectral.dwS, DFT.Continuum.Spectral.mem_reflect, DFT.Continuum.Spectral.hasDerivAt_uS, DFT.Continuum.Spectral.hasDerivAt_duS, DFT.Continuum.Spectral.hasDerivAt_wS, DFT.Continuum.Spectral.hasDerivAt_dwS, DFT.Continuum.Spectral.uS_zero, DFT.Continuum.Spectral.duS_zero, DFT.Continuum.Spectral.wS_one, DFT.Continuum.Spectral.dwS_one, DFT.Continuum.Spectral.uS_pos, DFT.Continuum.Spectral.wS_pos, DFT.Continuum.Spectral.wronskian_const, DFT.Continuum.Spectral.omega_pos, DFT.Continuum.Spectral.Gf, DFT.Continuum.Spectral.dGf, DFT.Continuum.Spectral.continuousOn_uS, DFT.Continuum.Spectral.continuousOn_wS, DFT.Continuum.Spectral.Icc_sub_Ioo, DFT.Continuum.Spectral.hasDerivAt_intL, DFT.Continuum.Spectral.hasDerivAt_intR, DFT.Continuum.Spectral.hasDerivAt_Gf, DFT.Continuum.Spectral.hasDerivAt_dGf, DFT.Continuum.Spectral.Gf_zero, DFT.Continuum.Spectral.Gf_one, DFT.Continuum.Spectral.eq_zero_of_dirichlet, DFT.Continuum.Spectral.eq_Gf, DFT.Continuum.Spectral.Kg, DFT.Continuum.Spectral.Kg_symm, DFT.Continuum.Spectral.Icc_sub_Ioo', DFT.Continuum.Spectral.continuousOn_Kg, DFT.Continuum.Spectral.exists_Kg_bound, DFT.Continuum.Spectral.Kg_unif, DFT.Continuum.Spectral.Gk, DFT.Continuum.Spectral.ae_mem_Icc, DFT.Continuum.Spectral.aestronglyMeasurable_Kg, DFT.Continuum.Spectral.integrable_Kg_mul, DFT.Continuum.Spectral.exists_Gk_bound, DFT.Continuum.Spectral.Gk_equicont, DFT.Continuum.Spectral.continuousOn_Gk, DFT.Continuum.Spectral.Gk_eq_Gf}
+  \lean{SturmLiouville.solL, SturmLiouville.solL_zero, SturmLiouville.solL_deriv, SturmLiouville.Wr, SturmLiouville.continuous_Wr, SturmLiouville.solR, SturmLiouville.solR_zero, SturmLiouville.solR_deriv, SturmLiouville.uS, SturmLiouville.duS, SturmLiouville.wS, SturmLiouville.dwS, SturmLiouville.mem_reflect, SturmLiouville.hasDerivAt_uS, SturmLiouville.hasDerivAt_duS, SturmLiouville.hasDerivAt_wS, SturmLiouville.hasDerivAt_dwS, SturmLiouville.uS_zero, SturmLiouville.duS_zero, SturmLiouville.wS_one, SturmLiouville.dwS_one, SturmLiouville.uS_pos, SturmLiouville.wS_pos, SturmLiouville.wronskian_const, SturmLiouville.omega_pos, SturmLiouville.Gf, SturmLiouville.dGf, SturmLiouville.continuousOn_uS, SturmLiouville.continuousOn_wS, SturmLiouville.Icc_sub_Ioo, SturmLiouville.hasDerivAt_intL, SturmLiouville.hasDerivAt_intR, SturmLiouville.hasDerivAt_Gf, SturmLiouville.hasDerivAt_dGf, SturmLiouville.Gf_zero, SturmLiouville.Gf_one, SturmLiouville.eq_zero_of_dirichlet, SturmLiouville.eq_Gf, SturmLiouville.Kg, SturmLiouville.Kg_symm, SturmLiouville.Icc_sub_Ioo', SturmLiouville.continuousOn_Kg, SturmLiouville.exists_Kg_bound, SturmLiouville.Kg_unif, SturmLiouville.Gk, SturmLiouville.ae_mem_Icc, SturmLiouville.aestronglyMeasurable_Kg, SturmLiouville.integrable_Kg_mul, SturmLiouville.exists_Gk_bound, SturmLiouville.Gk_equicont, SturmLiouville.continuousOn_Gk, SturmLiouville.Gk_eq_Gf}
   \leanok
   \uses{thm:box_exists}
   Let $W\ge0$ be continuous on $[0,1]$, let $u$ solve $u''=Wu$ with $u(0)=0$, $u'(0)=1$, and let $w$ solve it with
@@ -282,7 +282,7 @@ the lowest eigenvalue. The spectrum comes instead from the Green operator, which
 
 \begin{lemma}[The Green operator on $L^2(0,1)$]
   \label{lem:spec_operator}
-  \lean{DFT.Continuum.Spectral.HL, DFT.Continuum.Spectral.mu1_univ, DFT.Continuum.Spectral.measureUnivNNReal_mu1, DFT.Continuum.Spectral.integrable_HL, DFT.Continuum.Spectral.Ksl, DFT.Continuum.Spectral.Ksl_ae, DFT.Continuum.Spectral.norm_Ksl_sub_le, DFT.Continuum.Spectral.continuous_Ksl, DFT.Continuum.Spectral.norm_Ksl_le, DFT.Continuum.Spectral.Gk_eq_inner, DFT.Continuum.Spectral.Bop, DFT.Continuum.Spectral.Bop_apply, DFT.Continuum.Spectral.memLp_comp_projIcc, DFT.Continuum.Spectral.Jop, DFT.Continuum.Spectral.Gop, DFT.Continuum.Spectral.Gop_ae, DFT.Continuum.Spectral.isCompactOperator_Bop, DFT.Continuum.Spectral.isCompactOperator_Gop, DFT.Continuum.Spectral.prod_mu1, DFT.Continuum.Spectral.integrable_kernel_prod, DFT.Continuum.Spectral.inner_Gop, DFT.Continuum.Spectral.Gop_symm, DFT.Continuum.Spectral.isSymmetric_Gop, DFT.Continuum.Spectral.test_out, DFT.Continuum.Spectral.test_c2, DFT.Continuum.Spectral.src, DFT.Continuum.Spectral.continuous_src, DFT.Continuum.Spectral.Gk_test, DFT.Continuum.Spectral.memLp_of_continuous, DFT.Continuum.Spectral.Gop_injective}
+  \lean{SturmLiouville.HL, SturmLiouville.mu1_univ, SturmLiouville.measureUnivNNReal_mu1, SturmLiouville.integrable_HL, SturmLiouville.Ksl, SturmLiouville.Ksl_ae, SturmLiouville.norm_Ksl_sub_le, SturmLiouville.continuous_Ksl, SturmLiouville.norm_Ksl_le, SturmLiouville.Gk_eq_inner, SturmLiouville.Bop, SturmLiouville.Bop_apply, SturmLiouville.memLp_comp_projIcc, SturmLiouville.Jop, SturmLiouville.Gop, SturmLiouville.Gop_ae, SturmLiouville.isCompactOperator_Bop, SturmLiouville.isCompactOperator_Gop, SturmLiouville.prod_mu1, SturmLiouville.integrable_kernel_prod, SturmLiouville.inner_Gop, SturmLiouville.Gop_symm, SturmLiouville.isSymmetric_Gop, SturmLiouville.test_out, SturmLiouville.test_c2, SturmLiouville.src, SturmLiouville.continuous_src, SturmLiouville.Gk_test, SturmLiouville.memLp_of_continuous, SturmLiouville.Gop_injective}
   \leanok
   \uses{lem:spec_green}
   The Green operator is a compact, symmetric and injective operator on $L^2(0,1)$.
@@ -297,7 +297,7 @@ the lowest eigenvalue. The spectrum comes instead from the Green operator, which
 
 \begin{lemma}[Eigenvectors are classical and the eigenbasis]
   \label{lem:spec_basis}
-  \lean{DFT.Continuum.Spectral.continuous_Gk_proj, DFT.Continuum.Spectral.Gk_congr, DFT.Continuum.Spectral.eigen_regular, DFT.Continuum.Spectral.integral_unit_mu1, DFT.Continuum.Spectral.eigenvalue_pos, DFT.Continuum.Spectral.EVal, DFT.Continuum.Spectral.eval_ne_zero, DFT.Continuum.Spectral.instFDEigen, DFT.Continuum.Spectral.EIdx, DFT.Continuum.Spectral.eigOB, DFT.Continuum.Spectral.eigVec, DFT.Continuum.Spectral.eigVec_apply, DFT.Continuum.Spectral.orthonormal_eigVec, DFT.Continuum.Spectral.span_eigVec_orthogonal, DFT.Continuum.Spectral.eigenBasis, DFT.Continuum.Spectral.eigenBasis_coe, DFT.Continuum.Spectral.finite_ge}
+  \lean{SturmLiouville.continuous_Gk_proj, SturmLiouville.Gk_congr, SturmLiouville.eigen_regular, SturmLiouville.integral_unit_mu1, SturmLiouville.eigenvalue_pos, CompactEigenbasis.EVal, CompactEigenbasis.eval_ne_zero, CompactEigenbasis.instFDEigen, CompactEigenbasis.EIdx, CompactEigenbasis.eigOB, CompactEigenbasis.eigVec, CompactEigenbasis.eigVec_apply, CompactEigenbasis.orthonormal_eigVec, CompactEigenbasis.span_eigVec_orthogonal, CompactEigenbasis.eigenBasis, CompactEigenbasis.eigenBasis_coe, CompactEigenbasis.finite_ge}
   \leanok
   \uses{lem:spec_operator}
   If $Gf=\mu f$ with $\mu\neq0$, then $f$ agrees almost everywhere with a $C^2$ function $e$ vanishing at the walls
@@ -316,7 +316,7 @@ the lowest eigenvalue. The spectrum comes instead from the Green operator, which
 
 \begin{lemma}[The one-particle bound]
   \label{lem:spec_bound}
-  \lean{DFT.Continuum.Spectral.toHL, DFT.Continuum.Spectral.toHL_ae, DFT.Continuum.Spectral.inner_toHL_right, DFT.Continuum.Spectral.inner_toHL_toHL, DFT.Continuum.Spectral.dom_c2, DFT.Continuum.Spectral.continuous_src_dom, DFT.Continuum.Spectral.Gk_src, DFT.Continuum.Spectral.Gop_toHL_src, DFT.Continuum.Spectral.inner_src, DFT.Continuum.Spectral.Idx, DFT.Continuum.Spectral.eB, DFT.Continuum.Spectral.mu, DFT.Continuum.Spectral.Gop_eB, DFT.Continuum.Spectral.mu_ne_zero, DFT.Continuum.Spectral.eB_ne_zero, DFT.Continuum.Spectral.mu_pos, DFT.Continuum.Spectral.exists_rep, DFT.Continuum.Spectral.rep, DFT.Continuum.Spectral.rep_mem, DFT.Continuum.Spectral.rep_ae, DFT.Continuum.Spectral.rep_ode, DFT.Continuum.Spectral.inner_eB_toHL, DFT.Continuum.Spectral.rep_orthonormal, DFT.Continuum.Spectral.coef, DFT.Continuum.Spectral.hasSum_sq, DFT.Continuum.Spectral.hasSum_form, DFT.Continuum.Spectral.cell, DFT.Continuum.Spectral.cell_sub, DFT.Continuum.Spectral.measurableSet_cell, DFT.Continuum.Spectral.cell_disjoint, DFT.Continuum.Spectral.mu1_cell, DFT.Continuum.Spectral.cellV, DFT.Continuum.Spectral.linearIndependent_cellV, DFT.Continuum.Spectral.exists_injective_idx, DFT.Continuum.Spectral.exists_top, DFT.Continuum.Spectral.exists_orbitals}
+  \lean{SturmLiouville.toHL, SturmLiouville.toHL_ae, SturmLiouville.inner_toHL_right, SturmLiouville.inner_toHL_toHL, SturmLiouville.dom_c2, SturmLiouville.continuous_src_dom, SturmLiouville.Gk_src, SturmLiouville.Gop_toHL_src, SturmLiouville.inner_src, SturmLiouville.Idx, SturmLiouville.eB, SturmLiouville.mu, SturmLiouville.Gop_eB, SturmLiouville.mu_ne_zero, SturmLiouville.eB_ne_zero, SturmLiouville.mu_pos, SturmLiouville.exists_rep, SturmLiouville.rep, SturmLiouville.rep_mem, SturmLiouville.rep_ae, SturmLiouville.rep_ode, SturmLiouville.inner_eB_toHL, SturmLiouville.rep_orthonormal, SturmLiouville.coef, SturmLiouville.hasSum_sq, SturmLiouville.hasSum_form, SturmLiouville.cell, SturmLiouville.cell_sub, SturmLiouville.measurableSet_cell, SturmLiouville.cell_disjoint, SturmLiouville.mu1_cell, SturmLiouville.cellV, SturmLiouville.linearIndependent_cellV, SturmLiouville.exists_injective_idx, SturmLiouville.exists_top, DFT.Continuum.Spectral.exists_orbitals}
   \leanok
   \uses{lem:spec_basis}
   For every continuous potential $v$ on $[0,1]$ and $N=n+1$ there are $C^2$ functions $\varphi_0,\dots,\varphi_n$,

@@ -24,7 +24,7 @@ of the particles and vanish on the walls. The kinetic energy is `∫ |∇ψ|²`.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology Box SturmLiouville
 
 variable {n : ℕ}
 
@@ -163,7 +163,7 @@ end DFT.Continuum.Sine
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology Box SturmLiouville
 
 variable {n : ℕ}
 
@@ -239,20 +239,20 @@ lemma fderiv_eq_zero_of_dk {u : Cfg n → ℝ} {x : Cfg n} (h : ∀ k, dk k u x 
 
 /-- The coupling `Σₖ v(xₖ)`. -/
 noncomputable def LN (n : ℕ) : Pot →ₗ[ℝ] (Cfg n → ℝ) where
-  toFun v := fun x => ∑ k, Box.ext v (x k)
+  toFun v := fun x => ∑ k, SturmLiouville.ext v (x k)
   map_add' a b := by
-    funext x; simp only [Box.ext, ContinuousMap.add_apply, Pi.add_apply, Finset.sum_add_distrib]
+    funext x; simp only [SturmLiouville.ext, ContinuousMap.add_apply, Pi.add_apply, Finset.sum_add_distrib]
   map_smul' r a := by
-    funext x; simp only [Box.ext, ContinuousMap.smul_apply, smul_eq_mul, RingHom.id_apply,
+    funext x; simp only [SturmLiouville.ext, ContinuousMap.smul_apply, smul_eq_mul, RingHom.id_apply,
       Pi.smul_apply, Finset.mul_sum]
 
 lemma continuous_LN (v : Pot) : Continuous (LN n v) :=
-  show Continuous fun x : Cfg n => ∑ k, Box.ext v (x k) from
+  show Continuous fun x : Cfg n => ∑ k, SturmLiouville.ext v (x k) from
     continuous_finsetSum _ fun k _ => (continuous_ext v).comp (continuous_apply k)
 
 lemma LN_pm (v : Pot) (σ : Equiv.Perm (Fin (n + 1))) (x : Cfg n) : LN n v (pm σ x) = LN n v x := by
   simp only [LN, LinearMap.coe_mk, AddHom.coe_mk, pm_apply]
-  exact Equiv.sum_comp σ (fun k => Box.ext v (x k))
+  exact Equiv.sum_comp σ (fun k => SturmLiouville.ext v (x k))
 
 /-- The energy form without potential: kinetic energy plus interaction `w`. -/
 noncomputable def h0N (n : ℕ) (w : Cfg n → ℝ) (ψ φ : Cfg n → ℝ) : ℝ :=
@@ -422,7 +422,7 @@ theorem rigidL_line (w : Cfg n → ℝ) (hw : Continuous w) : RigidL (setting τ
   have hO : EqOn (LN n v) (fun _ => c) (Cube n) :=
     Measure.eqOn_open_of_ae_eq h isOpen_cube (continuous_LN v).continuousOn continuousOn_const
   have hN : (0 : ℝ) < n + 1 := by positivity
-  have h1 : ∀ t ∈ Ioo (0 : ℝ) 1, Box.ext v t = c / (n + 1) := by
+  have h1 : ∀ t ∈ Ioo (0 : ℝ) 1, SturmLiouville.ext v t = c / (n + 1) := by
     intro t ht
     have := hO (show (fun _ => t : Cfg n) ∈ Cube n from fun _ _ => ht)
     simp only [LN, LinearMap.coe_mk, AddHom.coe_mk, Finset.sum_const, Finset.card_univ,
@@ -430,13 +430,13 @@ theorem rigidL_line (w : Cfg n → ℝ) (hw : Continuous w) : RigidL (setting τ
     rw [eq_div_iff hN.ne']
     push_cast at this
     linarith
-  have hC : EqOn (Box.ext v) (fun _ => c / (n + 1)) (Icc 0 1) :=
+  have hC : EqOn (SturmLiouville.ext v) (fun _ => c / (n + 1)) (Icc 0 1) :=
     EqOn.of_subset_closure h1 (continuous_ext v).continuousOn continuousOn_const
       Ioo_subset_Icc_self (by rw [closure_Ioo zero_ne_one])
   refine ⟨c / (n + 1), ?_⟩
   ext t
   have := hC t.2
-  simp only [Box.ext, projIcc_val] at this
+  simp only [SturmLiouville.ext, projIcc_val] at this
   simp [one, this]
 
 /-! ### Densities -/

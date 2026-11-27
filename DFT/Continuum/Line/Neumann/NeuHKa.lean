@@ -18,7 +18,7 @@ import DFT.Continuum.Line.Neumann.NeuEL
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine
 
 variable {n : ℕ} {τ : Stat}
 

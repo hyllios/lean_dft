@@ -566,7 +566,7 @@ Recommended order: N5, then N6 (or N1/N2 first as quick wins).
 - N6 Sine plan: done 2026-11-21 (S1–S7, unconditional HK and Lieb for interacting particles on a line).
 
 ## Cleanup (2026-11-23)
-- Duplicates: one `Box.integral_mu1` (was three copies), `sgn_mul_self'` removed, unused
+- Duplicates: one `SturmLiouville.integral_mu1` (was three copies), `sgn_mul_self'` removed, unused
   `ladder_Sp`/`ladder_Sm` removed, kernel-bound copies of `Kc_add`/`Bf_sub_left/right` and the
   Sine/Min wrappers removed (callers use `kBd_of_kernel`), `Gk_test` derived from `Gk_src`.
 - Fermion UCP chain retired: fermions are Young symmetry with a = N (`DomW_fer_eq`,

@@ -22,7 +22,7 @@ every continuous potential: `exists_min_cont`.
 
 namespace DFT.Continuum.Sine
 
-open MeasureTheory Set Filter Topology Box Line Real
+open MeasureTheory Set Filter Topology SturmLiouville Line Real
 
 variable {n : ℕ}
 

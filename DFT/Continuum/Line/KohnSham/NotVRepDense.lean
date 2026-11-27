@@ -25,7 +25,7 @@ are dense; with `w = 0` the same for Kohn–Sham.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 
@@ -157,14 +157,14 @@ theorem exists_nonvrep_near {g : ℝ → ℝ} (hg : H10 g) (hN : ∫ t, g t ^ 2 
     have hu0 : ∀ t, 0 ≤ u0 t := fun t => le_max_right _ _
     have hc0 : (1 - ε / 2 : ℝ) ∈ Ioo (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
     have hpos : 0 < ext u0 (1 - ε / 2) := by
-      simp only [Box.ext, u0, ContinuousMap.coe_mk]
+      simp only [SturmLiouville.ext, u0, ContinuousMap.coe_mk]
       rw [projIcc_of_mem _ (Ioo_subset_Icc_self hc0)]
       exact lt_max_of_lt_left (by linarith)
     refine not_ensVRep_of_dens_zero hu0 hc0 hpos ?_
     refine setIntegral_eq_zero_of_forall_eq_zero fun t ht => ?_
     rcases le_or_gt t (1 - ε) with h1 | h1
     · have : ext u0 t = 0 := by
-        simp only [Box.ext, u0, ContinuousMap.coe_mk]
+        simp only [SturmLiouville.ext, u0, ContinuousMap.coe_mk]
         rw [projIcc_of_mem _ (Ioo_subset_Icc_self ht)]
         exact max_eq_right (by linarith)
       rw [this, zero_mul]

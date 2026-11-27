@@ -21,7 +21,7 @@ the sector `S_z = a - N/2`), with continuous `v` and continuous `w`:
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {a : ℕ}
 

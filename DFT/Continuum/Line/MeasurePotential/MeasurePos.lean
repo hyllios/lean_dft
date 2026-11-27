@@ -22,7 +22,7 @@ Euler–Lagrange equation of `ψ₀` with `g`: `(E - E₀) ∫ g ψ₀ = 0`, and
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 /-! ### `|ψ|` -/
 

@@ -21,7 +21,7 @@ potentials (`log_estimate_gen`) applies with the cutoff `η = η_a · Π_{i≠j}
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Metric
+open MeasureTheory Set SturmLiouville Real Filter Topology Metric
 
 variable {n : ℕ}
 

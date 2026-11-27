@@ -3,10 +3,10 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Box.Extend
+import ForMathlib.Analysis.SturmLiouville.Extend
 import DFT.Continuum.Box.Picone
-import DFT.Continuum.Box.Solve
-import DFT.Continuum.Box.Sturm
+import ForMathlib.Analysis.SturmLiouville.Solve
+import ForMathlib.Analysis.SturmLiouville.Sturm
 
 /-!
 # Ground states in the box exist
@@ -15,8 +15,8 @@ For every continuous potential `v` on `[0, 1]` the box Hamiltonian has a ground 
 form domain, so `hk_box` holds without assuming ground states.
 
 Shooting: for each energy `E`, `sol v E` solves `ψ'' = (v - E) ψ`, `ψ(0) = 0`, `ψ'(0) = 1`
-(`Continuum/Box/Solve`). It stays positive on `(0, 1]` for `E ≤ -‖v‖` and has a zero in `(0, 1)` for
-`E ≥ ‖v‖ + 16` (`Continuum/Box/Sturm`). At `E* = sup {E | ψ_E > 0 on (0, 1]}`, by continuous
+(`SturmLiouville/Solve`). It stays positive on `(0, 1]` for `E ≤ -‖v‖` and has a zero in `(0, 1)` for
+`E ≥ ‖v‖ + 16` (`SturmLiouville/Sturm`). At `E* = sup {E | ψ_E > 0 on (0, 1]}`, by continuous
 dependence on `E`:
 
 * `star_nonneg`, `star_pos`: `ψ_{E*} ≥ 0` on `[0, 1]` and `> 0` on `(0, 1)` (an interior zero
@@ -26,14 +26,14 @@ dependence on `E`:
 
 The Picone inequality (`Continuum/Box/Picone`) then shows that no state has lower energy than `E*`,
 and a
-cutoff (`Continuum/Box/Extend`) makes `ψ_{E*}` a `C²` function on `ℝ`.
+cutoff (`SturmLiouville/Extend`) makes `ψ_{E*}` a `C²` function on `ℝ`.
 
 * `exists_isGS`: every continuous potential has a ground state.
 * `hk_box_complete`: **Hohenberg–Kohn for one particle in a box, unconditional.**
 -/
 namespace DFT.Continuum.Box
 
-open MeasureTheory Set Filter Topology
+open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- The coefficient `v - E`. -/
 noncomputable def Wof (v : Pot) (E : ℝ) : ℝ → ℝ := fun x => ext v x - E
@@ -54,7 +54,7 @@ lemma sol_deriv (v : Pot) (E : ℝ) :
 
 lemma abs_ext_le (v : Pot) (x : ℝ) : |ext v x| ≤ ‖v‖ := by
   have := v.norm_coe_le_norm (projIcc 0 1 zero_le_one x)
-  simpa [ext, Real.norm_eq_abs] using this
+  simpa [SturmLiouville.ext, Real.norm_eq_abs] using this
 
 lemma Icc01_sub : Icc (0 : ℝ) 1 ⊆ Ioo (-1) 2 := fun t ht => ⟨by linarith [ht.1], by linarith [ht.2]⟩
 

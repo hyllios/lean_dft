@@ -31,7 +31,7 @@ The proof:
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-- The second difference `F(t + h) - 2 F(t) + F(t - h)`. -/
 def D2 (F : ℝ → ℝ) (t h : ℝ) : ℝ := F (t + h) - 2 * F t + F (t - h)

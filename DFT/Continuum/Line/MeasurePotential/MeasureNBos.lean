@@ -27,7 +27,7 @@ For `w = 0` the `N`-particle problem in a measure potential reduces to one parti
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 
@@ -85,7 +85,7 @@ lemma rhoHat_prodS (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂μ1
   change ∫ x, LN n v x * (prodS g x * prodS g x) ∂μN n = _ at h1
   rw [← h1, h2]
   refine setIntegral_congr_fun measurableSet_Ioo fun t ht => ?_
-  simp [Box.ext, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]
+  simp [SturmLiouville.ext, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]
 
 lemma QMN_prodS (ν : PotM) (hg : H10 g) (hgc : Continuous g) (hn : ∫ t, g t ^ 2 ∂μ1 = 1) :
     QMN .bos 0 ν (prodS (n := n) g) = (n + 1) * QM ν hg := by
@@ -180,7 +180,7 @@ lemma intCLM_dirac {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     @intCLM (Measure.dirac t) (isMeas01_dirac ht).toIsFiniteMeasure = deltaM ⟨t, ht⟩ := by
   ext h
   rw [intCLM_apply, integral_dirac]
-  simp [Box.ext, projIcc_of_mem _ ht, deltaM]
+  simp [SturmLiouville.ext, projIcc_of_mem _ ht, deltaM]
 
 /-- **The plateau density is the ground-state density of `N` non-interacting bosons** in a
 measure potential (`-3δ_{1/3} - 3δ_{2/3}`). -/
@@ -196,7 +196,7 @@ theorem trap_vrepMeasN : VRepMeasN .bos n 0 (((n : ℝ) + 1) • trapP) := by
     simp only [nuOf, sub_apply, intCLM_apply, integral_zero_measure, zero_sub, μm, nuTrap]
     rw [integral_add_measure (integrable_ext _ h) (integrable_ext _ h),
       integral_smul_nnreal_measure, integral_smul_nnreal_measure, integral_dirac, integral_dirac,
-      Box.ext, Box.ext, projIcc_of_mem _ h13, projIcc_of_mem _ h23]
+      SturmLiouville.ext, SturmLiouville.ext, projIcc_of_mem _ h13, projIcc_of_mem _ h23]
     simp only [NNReal.smul_def, smul_eq_mul, deltaM, smul_apply, ContinuousMap.evalCLM_apply,
       NNReal.coe_ofNat]
     ring

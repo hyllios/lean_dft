@@ -29,7 +29,7 @@ positive measure, contradicting unique continuation.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 
@@ -72,7 +72,7 @@ noncomputable def bumpP (t0 δ : ℝ) : Pot :=
   ⟨fun t => bumpF t0 δ t, (continuous_bumpF t0 δ).comp continuous_subtype_val⟩
 
 lemma ext_bumpP {t0 δ t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : ext (bumpP t0 δ) t = bumpF t0 δ t := by
-  simp [Box.ext, bumpP, projIcc_of_mem _ ht]
+  simp [SturmLiouville.ext, bumpP, projIcc_of_mem _ ht]
 
 lemma ext_bumpP_nonneg (t0 δ t : ℝ) : 0 ≤ ext (bumpP t0 δ) t := bumpF_nonneg _ _ _
 

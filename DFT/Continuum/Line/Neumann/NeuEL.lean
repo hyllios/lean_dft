@@ -21,7 +21,7 @@ import DFT.Continuum.Line.Neumann.NeuNGS
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ}
 
@@ -132,11 +132,11 @@ lemma rhoE_smul {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomN τ n) (c : ℝ) :
   have h0 : rhoE τ (0 : Cfg n → ℝ) = 0 := by
     refine eq_of_int fun u => ?_
     rw [int_rhoE (zero_mem _)]
-    simp [pfN, Box.ext]
+    simp [pfN, SturmLiouville.ext]
   have h2 : rhoE2 τ (0 : Cfg n → ℝ) Ψ = 0 := by
     refine eq_of_int fun u => ?_
     rw [int_rhoE2 (zero_mem _) hΨ]
-    simp [pfN, Box.ext]
+    simp [pfN, SturmLiouville.ext]
   rw [zero_add, h0, h2] at h
   simpa using h
 
@@ -150,7 +150,7 @@ lemma rhoE_null {χ : Cfg n → ℝ} (hχ : χ ∈ DomN τ n) (h0 : ∫ x, χ x 
   rw [int_rhoE hχ, pfN]
   rw [integral_congr_ae (hzz.mono fun x hx => by simp only [hx, Pi.zero_apply, mul_zero] :
     (fun x => (∑ k, ext u (x k)) * (χ x * χ x)) =ᵐ[μN n] fun _ => (0 : ℝ))]
-  simp [Box.ext]
+  simp [SturmLiouville.ext]
 
 /-! ### The kinetic form -/
 

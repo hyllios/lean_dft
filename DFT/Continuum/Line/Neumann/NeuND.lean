@@ -22,7 +22,7 @@ ground state is unique up to sign (**`gsNH_unique`**), so its density is unique
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {v : PotH}
 

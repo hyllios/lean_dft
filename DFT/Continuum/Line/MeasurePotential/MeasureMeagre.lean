@@ -21,7 +21,7 @@ sets `BsetL L 0` (`Line/MeagreC1`).
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-- **A measure-`v`-representable one-particle density is the square of a Lipschitz function.** -/
 theorem lipschitz_of_vrepMeas {ρ : Pot} (h : VRepMeas ρ) :

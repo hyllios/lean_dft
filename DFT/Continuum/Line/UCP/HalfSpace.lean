@@ -19,7 +19,7 @@ import DFT.Continuum.Line.UCP.LogEst
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 

@@ -3,7 +3,7 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Spectral.Green
+import ForMathlib.Analysis.SturmLiouville.Green
 
 /-!
 # The Green kernel
@@ -23,9 +23,9 @@ compactness.
 * `continuousOn_Gk`: `Gk f` is continuous on `[0, 1]` for integrable `f`.
 -/
 
-namespace DFT.Continuum.Spectral
+namespace SturmLiouville
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology
 
 variable {W : ℝ → ℝ} (hWc : Continuous W)
 
@@ -174,4 +174,4 @@ lemma Gk_eq_Gf {f : ℝ → ℝ} (hf : Continuous f) {x : ℝ} (hx : x ∈ Icc (
   rw [e1, e2, Gf]
   ring
 
-end DFT.Continuum.Spectral
+end SturmLiouville

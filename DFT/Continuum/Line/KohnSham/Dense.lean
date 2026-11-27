@@ -32,7 +32,7 @@ ground state of `v`, which is unique, so the densities converge.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w}
 
@@ -119,8 +119,8 @@ lemma gsE_eqW (v : Pot) : gsE (settingW τ n w hw) v = ((gsErW τ n w hw v : ℝ
   gsE_of_isNGS (gsErW_spec v)
 
 lemma abs_LN_le (u : Pot) (x : Cfg n) : |LN n u x| ≤ ((n : ℝ) + 1) * ‖u‖ := by
-  change |∑ k, Box.ext u (x k)| ≤ _
-  calc |∑ k, Box.ext u (x k)| ≤ ∑ k : Fin (n + 1), |Box.ext u (x k)| :=
+  change |∑ k, SturmLiouville.ext u (x k)| ≤ _
+  calc |∑ k, SturmLiouville.ext u (x k)| ≤ ∑ k : Fin (n + 1), |SturmLiouville.ext u (x k)| :=
         Finset.abs_sum_le_sum_abs _ _
     _ ≤ ∑ _k : Fin (n + 1), ‖u‖ := Finset.sum_le_sum fun k _ => abs_ext_le u _
     _ = _ := by simp

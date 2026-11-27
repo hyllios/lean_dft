@@ -32,7 +32,7 @@ namespace Continuum
 
 namespace Box
 
-open MeasureTheory Set
+open MeasureTheory Set SturmLiouville
 
 /-- The ground-state energy, as a real number. -/
 noncomputable def gsEr (v : Pot) : ℝ := Q setting v (Classical.choose (exists_isNGS v))
@@ -61,13 +61,13 @@ lemma dens_add' (hψ : ψ ∈ Dom) (u w : Pot) :
   rw [← integral_add (f := fun t => ext u t * ψ t ^ 2) (g := fun t => ext w t * ψ t ^ 2)
     (integrable_of_continuous ((continuous_ext u).mul (cont_sq hψ)))
     (integrable_of_continuous ((continuous_ext w).mul (cont_sq hψ)))]
-  congr 1; funext t; simp only [ext, ContinuousMap.add_apply]; ring
+  congr 1; funext t; simp only [SturmLiouville.ext, ContinuousMap.add_apply]; ring
 
 lemma dens_smul' (a : ℝ) (u : Pot) : dens setting ψ (a • u) = a * dens setting ψ u := by
   rw [dens_eq_sq]
   simp only
   rw [← integral_const_mul]
-  congr 1; funext t; simp only [ext, ContinuousMap.smul_apply, smul_eq_mul]; ring
+  congr 1; funext t; simp only [SturmLiouville.ext, ContinuousMap.smul_apply, smul_eq_mul]; ring
 
 lemma abs_dens_le (hψ : ψ ∈ Nst setting) (u : Pot) : |dens setting ψ u| ≤ ‖u‖ := by
   have hD : ψ ∈ Dom := hψ.1

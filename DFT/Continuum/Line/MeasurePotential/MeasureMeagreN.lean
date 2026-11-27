@@ -21,7 +21,7 @@ densities are only `1/2`-Hölder.)
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 /-- Second differences of `ρ_f` at most `L h^{5/8}` for `h ≤ 1`. -/
 def BsetH (L : ℝ) : Set L2I :=

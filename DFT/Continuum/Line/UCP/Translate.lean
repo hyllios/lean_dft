@@ -27,7 +27,7 @@ translation differences of `F` by the local `L²` norm of `H`.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 open scoped ContDiff
 
 variable {n : ℕ}

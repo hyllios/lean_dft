@@ -28,7 +28,7 @@ Here the potential is a signed measure `ν = μ₊ - μ₋`, with `μ±` finite 
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-! ### Measure potentials -/
 
@@ -42,14 +42,14 @@ instance : IsMeas01 (volume.restrict (Icc (0 : ℝ) 1)) where
 lemma IsMeas01.ae_mem (ρ : Measure ℝ) [IsMeas01 ρ] : ∀ᵐ x ∂ρ, x ∈ Icc (0 : ℝ) 1 :=
   measure_eq_zero_iff_ae_notMem.1 (IsMeas01.compl_zero (ρ := ρ)) |>.mono fun _ h => not_not.1 h
 
-lemma integrable_ext (ρ : Measure ℝ) [IsFiniteMeasure ρ] (h : Pot) : Integrable (Box.ext h) ρ :=
+lemma integrable_ext (ρ : Measure ℝ) [IsFiniteMeasure ρ] (h : Pot) : Integrable (SturmLiouville.ext h) ρ :=
   Integrable.of_bound (continuous_ext h).aestronglyMeasurable ‖h‖
-    (ae_of_all _ fun x => by simpa [Box.ext] using h.norm_coe_le_norm _)
+    (ae_of_all _ fun x => by simpa [SturmLiouville.ext] using h.norm_coe_le_norm _)
 
 /-- `h ↦ ∫ h dρ` on `C([0, 1])`. -/
 noncomputable def intCLM (ρ : Measure ℝ) [IsFiniteMeasure ρ] : PotM :=
   LinearMap.mkContinuous
-    { toFun := fun h => ∫ x, Box.ext h x ∂ρ
+    { toFun := fun h => ∫ x, SturmLiouville.ext h x ∂ρ
       map_add' := fun h h' => by
         rw [← integral_add (integrable_ext ρ h) (integrable_ext ρ h')]; rfl
       map_smul' := fun c h => by
@@ -58,10 +58,10 @@ noncomputable def intCLM (ρ : Measure ℝ) [IsFiniteMeasure ρ] : PotM :=
       simp only [LinearMap.coe_mk, AddHom.coe_mk]
       rw [mul_comm]
       exact norm_integral_le_of_norm_le_const
-        (ae_of_all _ fun x => by simpa [Box.ext] using h.norm_coe_le_norm _)
+        (ae_of_all _ fun x => by simpa [SturmLiouville.ext] using h.norm_coe_le_norm _)
 
 lemma intCLM_apply (ρ : Measure ℝ) [IsFiniteMeasure ρ] (h : Pot) :
-    intCLM ρ h = ∫ x, Box.ext h x ∂ρ := rfl
+    intCLM ρ h = ∫ x, SturmLiouville.ext h x ∂ρ := rfl
 
 /-- The measure potential `μ₊ - μ₋`. -/
 noncomputable def nuOf (μp μm : Measure ℝ) [IsFiniteMeasure μp] [IsFiniteMeasure μm] : PotM :=
@@ -71,7 +71,7 @@ lemma intCLM_mulP (ρ : Measure ℝ) [IsMeas01 ρ] {ψ φ : ℝ → ℝ} (hψ : 
     intCLM ρ (mulP hψ hφ) = ∫ x, ψ x * φ x ∂ρ := by
   rw [intCLM_apply]
   refine integral_congr_ae ((IsMeas01.ae_mem ρ).mono fun x hx => ?_)
-  rw [Box.ext, projIcc_of_mem _ hx, mulP_apply]
+  rw [SturmLiouville.ext, projIcc_of_mem _ hx, mulP_apply]
 
 /-! ### Fubini -/
 

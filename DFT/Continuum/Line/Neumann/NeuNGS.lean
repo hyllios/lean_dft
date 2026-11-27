@@ -26,7 +26,7 @@ with `∫ g'² ≤ T(Φ)` (`sqrt_dens_H1N`), so `ρ_Φ = g²` is an element of `
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine
 
 variable {n : ℕ}
 
@@ -176,7 +176,7 @@ lemma tendsto_int_rhoN (u : Pot) {P : ℕ → Cfg n → ℝ} {Ψ : Cfg n → ℝ
     Tendsto (fun k => ∫ t, ext u t * rhoN (P k) t ∂μ1) atTop
       (𝓝 (∫ t, ext u t * rhoN Ψ t ∂μ1)) := by
   rw [tendsto_iff_norm_sub_tendsto_zero]
-  have hb : ∀ x, |ext u x| ≤ ‖u‖ := fun x => by simpa [Box.ext] using u.norm_coe_le_norm _
+  have hb : ∀ x, |ext u x| ≤ ‖u‖ := fun x => by simpa [SturmLiouville.ext] using u.norm_coe_le_norm _
   refine squeeze_zero (fun _ => norm_nonneg _) (fun k => ?_)
     (by simpa using (hL1.const_mul ((n + 1) * ‖u‖)))
   have hρi : ∀ (Q : Cfg n → ℝ), MemLp Q 2 (μN n) →

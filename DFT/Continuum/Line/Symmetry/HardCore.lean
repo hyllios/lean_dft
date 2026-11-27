@@ -26,7 +26,7 @@ preserves `|ψ|²` and the gradient almost everywhere. Hard-core bosons are buil
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology SturmLiouville
 
 variable {n : ℕ}
 

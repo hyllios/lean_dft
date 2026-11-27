@@ -22,7 +22,7 @@ splitting of `YG (a + 2)` along particle `a + 1` gives
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 

@@ -22,7 +22,7 @@ condition `Bset k` for `h ≤ 1/(k+1)`. Its interior is empty: a tent of width `
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-! ### The perturbation estimate -/
 

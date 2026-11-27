@@ -24,7 +24,7 @@ is a complete metric space, and `f ↦ ρ_f = (∫₀ᵗ f)²` maps it onto the 
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 /-- `L²(0, 1)`. -/
 abbrev L2I : Type := Lp ℝ 2 μ1

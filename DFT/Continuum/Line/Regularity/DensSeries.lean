@@ -25,7 +25,7 @@ If `Σ_m λ_m² c_m² < ∞` (`H²`), then `K` is `C¹` on `ℝ`, with derivativ
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine
 
 variable {n : ℕ}
 

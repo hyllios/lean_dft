@@ -23,23 +23,23 @@ density.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 
 /-! ### Continuous functions on `[0, 1]` are determined by their integrals -/
 
 lemma pot_eq_of_integral {p q : Pot}
-    (h : ∀ v : Pot, ∫ t, Box.ext v t * Box.ext p t ∂μ1 = ∫ t, Box.ext v t * Box.ext q t ∂μ1) :
+    (h : ∀ v : Pot, ∫ t, SturmLiouville.ext v t * SturmLiouville.ext p t ∂μ1 = ∫ t, SturmLiouville.ext v t * SturmLiouville.ext q t ∂μ1) :
     p = q := by
-  have hIoo : EqOn (Box.ext p) (Box.ext q) (Ioo 0 1) := eqOn_of_integral_pot (continuous_ext p)
+  have hIoo : EqOn (SturmLiouville.ext p) (SturmLiouville.ext q) (Ioo 0 1) := eqOn_of_integral_pot (continuous_ext p)
     (continuous_ext q) fun u => h u
-  have hIcc : EqOn (Box.ext p) (Box.ext q) (Icc 0 1) :=
+  have hIcc : EqOn (SturmLiouville.ext p) (SturmLiouville.ext q) (Icc 0 1) :=
     hIoo.of_subset_closure (continuous_ext p).continuousOn (continuous_ext q).continuousOn
       Ioo_subset_Icc_self (by rw [closure_Ioo zero_ne_one])
   ext t
   have := hIcc t.2
-  simpa [Box.ext, projIcc_of_mem _ t.2] using this
+  simpa [SturmLiouville.ext, projIcc_of_mem _ t.2] using this
 
 /-! ### The continuous density -/
 
@@ -75,22 +75,22 @@ variable {τ}
 lemma rhoHat_apply (Φ : Cfg n → ℝ) (t : Icc (0 : ℝ) 1) : rhoHat τ Φ t = gN τ Φ t ^ 2 := rfl
 
 lemma ext_rhoHat {Φ : Cfg n → ℝ} {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
-    Box.ext (rhoHat τ Φ) t = gN τ Φ t ^ 2 := by
-  simp [Box.ext, projIcc_of_mem _ ht, rhoHat_apply]
+    SturmLiouville.ext (rhoHat τ Φ) t = gN τ Φ t ^ 2 := by
+  simp [SturmLiouville.ext, projIcc_of_mem _ ht, rhoHat_apply]
 
 lemma ae_ext_rhoHat {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) :
-    ∀ᵐ t ∂μ1, Box.ext (rhoHat τ Φ) t = rhoN Φ t := by
+    ∀ᵐ t ∂μ1, SturmLiouville.ext (rhoHat τ Φ) t = rhoN Φ t := by
   filter_upwards [(gN_spec h).2.1, ae_restrict_mem measurableSet_Ioo] with t h1 ht
   rw [ext_rhoHat (Ioo_subset_Icc_self ht), h1]
 
 /-- `ρ̂_Φ` has the integrals of the density. -/
 lemma rhoHat_spec {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) (v : Pot) :
-    ∫ t, Box.ext v t * Box.ext (rhoHat τ Φ) t ∂μ1 = ∫ t, Box.ext v t * rhoN Φ t ∂μ1 :=
+    ∫ t, SturmLiouville.ext v t * SturmLiouville.ext (rhoHat τ Φ) t ∂μ1 = ∫ t, SturmLiouville.ext v t * rhoN Φ t ∂μ1 :=
   integral_congr_ae ((ae_ext_rhoHat h).mono fun t ht => by simp only [ht])
 
 /-- `ρ̂_Φ` is the only continuous function with the integrals of the density. -/
 lemma rhoHat_unique {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n) {p : Pot}
-    (hp : ∀ v : Pot, ∫ t, Box.ext v t * Box.ext p t ∂μ1 = ∫ t, Box.ext v t * rhoN Φ t ∂μ1) :
+    (hp : ∀ v : Pot, ∫ t, SturmLiouville.ext v t * SturmLiouville.ext p t ∂μ1 = ∫ t, SturmLiouville.ext v t * rhoN Φ t ∂μ1) :
     rhoHat τ Φ = p :=
   pot_eq_of_integral fun v => by rw [rhoHat_spec h, hp]
 

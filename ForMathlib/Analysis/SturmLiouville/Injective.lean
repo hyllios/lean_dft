@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
-import DFT.Continuum.Spectral.Operator
+import ForMathlib.Analysis.SturmLiouville.Operator
 
 /-!
 # The Green operator is injective
@@ -17,9 +17,9 @@ and `f = 0` by the fundamental lemma of the calculus of variations.
 * `Gop_injective`: `G f = 0 → f = 0`.
 -/
 
-namespace DFT.Continuum.Spectral
+namespace SturmLiouville
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology
 
 variable {W : ℝ → ℝ} (hWc : Continuous W) (hW0 : ∀ t ∈ Icc (0 : ℝ) 1, 0 ≤ W t)
 
@@ -28,7 +28,7 @@ noncomputable def src (φ : ℝ → ℝ) (x : ℝ) : ℝ := -deriv (deriv φ) x 
 
 section dom
 
-variable {ψ : ℝ → ℝ} (hψ : ψ ∈ Box.Dom)
+variable {ψ : ℝ → ℝ} (hψ : ψ ∈ Dom)
 include hψ
 
 lemma dom_c2 : ContDiff ℝ 1 (deriv ψ) := (contDiff_succ_iff_deriv.1 hψ.1).2.2
@@ -129,4 +129,4 @@ theorem Gop_injective {f : HL} (hf : Gop hWc f = 0) : f = 0 := by
   rw [Lp.eq_zero_iff_ae_eq_zero]
   exact (ae_restrict_iff' measurableSet_Ioo).2 hae
 
-end DFT.Continuum.Spectral
+end SturmLiouville

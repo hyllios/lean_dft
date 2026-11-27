@@ -25,7 +25,7 @@ the Lieb functional is finite at every such density.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real
+open MeasureTheory Set Box SturmLiouville Real
 
 variable {n : ℕ}
 
@@ -59,7 +59,7 @@ lemma integral_LN_mul (v : Pot) {F : Cfg n → ℝ} (hF : Continuous F) :
   rw [Finset.sum_mul]
 
 /-- **Bosonic `N`-representability**: `Π g(x_k)` is normalised with density `N g²`. -/
-theorem nrep_bos (hg : g ∈ Box.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+theorem nrep_bos (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
     prodS (n := n) g ∈ Nst (setting .bos n w hw) ∧
       ∀ v, dens (setting .bos n w hw) (prodS g) v = ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1 := by
   have hgc := hg.1.continuous
@@ -322,7 +322,7 @@ lemma integral_eH (N : ℕ) (a b : Hix N) :
 
 section change
 
-variable {g : ℝ → ℝ} (hg : g ∈ Box.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1)
+variable {g : ℝ → ℝ} (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1)
 
 /-- The normalised cumulative density `F(x) = ∫₀ˣ g²`. -/
 noncomputable def cumF (g : ℝ → ℝ) (x : ℝ) : ℝ := ∫ t in (0 : ℝ)..x, g t ^ 2
@@ -344,8 +344,8 @@ include hg hnorm in
 lemma integral_cumF {h : ℝ → ℝ} (hh : Continuous h) :
     ∫ t, g t ^ 2 * h (cumF g t) ∂μ1 = ∫ u in (0 : ℝ)..1, h u := by
   have h0 : cumF g 0 = 0 := intervalIntegral.integral_same
-  have h1 : cumF g 1 = 1 := by rw [cumF, ← Box.integral_mu1, hnorm]
-  rw [Box.integral_mu1]
+  have h1 : cumF g 1 = 1 := by rw [cumF, ← SturmLiouville.integral_mu1, hnorm]
+  rw [SturmLiouville.integral_mu1]
   have := intervalIntegral.integral_comp_mul_deriv (a := 0) (b := 1) (f := cumF g)
     (f' := fun x => g x ^ 2) (g := h) (fun x _ => hasDerivAt_cumF hg x)
     (hg.1.continuous.pow 2).continuousOn hh
@@ -363,14 +363,14 @@ variable {w : Cfg n → ℝ} {hw : Continuous w} {g : ℝ → ℝ}
 
 /-- **Fermionic `N`-representability**: every density `N g²` (`g ∈ C²`, `g(0) = g(1) = 0`,
 `∫ g² = 1`) is the density of a normalised antisymmetric state. -/
-theorem nrep_fer (hg : g ∈ Box.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+theorem nrep_fer (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
     ∃ ψ ∈ Nst (setting .fer n w hw),
       ∀ v, dens (setting .fer n w hw) ψ v = ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1 := by
   set N := n + 1
   let e : Fin N ≃ Hix N := (Fintype.equivFinOfCardEq (card_Hix N)).symm
   set φ : Fin N → ℝ → ℝ := fun j x => g x * eH (e j) (cumF g x)
   have hgc := hg.1.continuous
-  have hφD : ∀ j, φ j ∈ Box.Dom := fun j =>
+  have hφD : ∀ j, φ j ∈ SturmLiouville.Dom := fun j =>
     ⟨hg.1.mul (((contDiff_eH (e j)).of_le le_top).comp (contDiff_cumF hg)),
       by simp [φ, hg.2.1], by simp [φ, hg.2.2]⟩
   have hφc : ∀ j, Continuous (φ j) := fun j => (hφD j).1.continuous
@@ -414,7 +414,7 @@ end fer
 noncomputable def rhoG (n : ℕ) (g : ℝ → ℝ) (v : Pot) : ℝ := ∫ t, ext v t * ((n + 1) * g t ^ 2) ∂μ1
 
 theorem liebF_ne_top {τ : Stat} {w : Cfg n → ℝ} {hw : Continuous w} {g : ℝ → ℝ}
-    (hg : g ∈ Box.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
+    (hg : g ∈ SturmLiouville.Dom) (hnorm : ∫ t, g t ^ 2 ∂μ1 = 1) :
     liebF (setting τ n w hw) (rhoG n g) ≠ ⊤ := by
   obtain ⟨ψ, hψ, hd⟩ : ∃ ψ ∈ Nst (setting τ n w hw),
       ∀ v, dens (setting τ n w hw) ψ v = rhoG n g v := by

@@ -31,7 +31,7 @@ everywhere by unique continuation.
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Metric
+open MeasureTheory Set SturmLiouville Real Filter Topology Metric
 
 variable {n : ℕ}
 

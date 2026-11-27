@@ -21,7 +21,7 @@ distance `≥ √2 δ`, which compactness forbids for infinitely many of them.
 * `finite_ge`: `{i | δ ≤ μᵢ}` is finite for `δ > 0`.
 -/
 
-namespace DFT.Continuum.Spectral
+namespace CompactEigenbasis
 
 open Module End Submodule Filter Topology Metric
 
@@ -145,4 +145,4 @@ theorem finite_ge {δ : ℝ} (hδ : 0 < δ) : {i : EIdx T | δ ≤ (i.1 : ℝ)}.
     pow_lt_pow_left₀ hlt dist_nonneg two_ne_zero
   nlinarith
 
-end DFT.Continuum.Spectral
+end CompactEigenbasis

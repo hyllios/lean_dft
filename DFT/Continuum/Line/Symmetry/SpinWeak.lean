@@ -26,7 +26,7 @@ symmetry).
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology Sine Function
+open MeasureTheory Set Box SturmLiouville Real Filter Topology Sine Function
 
 variable {n : ℕ} {a : ℕ}
 

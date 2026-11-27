@@ -3,8 +3,8 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Box.Solve
-import DFT.Continuum.Box.Sturm
+import ForMathlib.Analysis.SturmLiouville.Solve
+import ForMathlib.Analysis.SturmLiouville.Sturm
 
 /-!
 # The Green function of `-d²/dx² + W` on `[0, 1]`
@@ -26,9 +26,9 @@ one-particle Hamiltonian.
 * `eq_zero_of_dirichlet`: uniqueness, a solution of `y'' = W y` vanishing at both walls is zero.
 -/
 
-namespace DFT.Continuum.Spectral
+namespace SturmLiouville
 
-open MeasureTheory Set Filter Topology Box
+open MeasureTheory Set Filter Topology
 
 variable {W : ℝ → ℝ} (hWc : Continuous W)
 
@@ -256,4 +256,4 @@ theorem eq_Gf {f : ℝ → ℝ} (hf : Continuous f) {y dy : ℝ → ℝ}
   intro t ht
   linarith [hz t ht]
 
-end DFT.Continuum.Spectral
+end SturmLiouville

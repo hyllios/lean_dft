@@ -22,7 +22,7 @@ inside every sub-cube `[a, 1 - a]ᴺ` is null or conull in the cube (`null_or_co
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 open scoped ContDiff ENNReal
 
 variable {n : ℕ}

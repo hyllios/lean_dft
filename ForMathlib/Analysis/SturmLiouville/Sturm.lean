@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import Mathlib.Analysis.Real.Pi.Bounds
-import DFT.Continuum.Box.Basic
+import ForMathlib.Analysis.SturmLiouville.Basic
 
 /-!
-# Sturm-type facts for the shooting solution in the box
+# Sturm-type facts for the shooting solution on `[0, 1]`
 
 Let `α = (y, y')` solve `y'' = W y` on `(-1, 2)` with `y(0) = 0`, `y'(0) = 1`.
 
@@ -19,11 +19,7 @@ Let `α = (y, y')` solve `y'' = W y` on `(-1, 2)` with `y(0) = 0`, `y'(0) = 1`.
   with `sin 4t` through the Wronskian).
 -/
 
-namespace DFT
-
-namespace Continuum
-
-namespace Box
+namespace SturmLiouville
 
 open Set Filter Topology
 
@@ -226,8 +222,4 @@ theorem exists_zero_of_le (h0 : α 0 = (0, 1))
 
 end sturm
 
-end Box
-
-end Continuum
-
-end DFT
+end SturmLiouville

@@ -26,7 +26,7 @@ namespace Continuum
 
 namespace Box
 
-open MeasureTheory Set Filter Topology
+open MeasureTheory Set Filter Topology SturmLiouville
 
 /-- A function bounded by `K a` near `0⁺` tends to `0` there. -/
 lemma tendsto_zero_of_abs_le_mul {f : ℝ → ℝ} {K δ : ℝ} (hδ : 0 < δ)

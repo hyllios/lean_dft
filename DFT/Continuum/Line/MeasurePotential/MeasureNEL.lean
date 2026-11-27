@@ -19,7 +19,7 @@ import DFT.Continuum.Line.MeasurePotential.MeasureN
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ}
 
@@ -30,7 +30,7 @@ lemma int_rhoHat (hw : Continuous w) {Φ : Cfg n → ℝ} (h : Φ ∈ DomW τ n)
 
 lemma integrable_ext_mul (v p : Pot) : Integrable (fun t => ext v t * ext p t) μ1 := by
   have hb : ∀ (r : Pot) (x : ℝ), |ext r x| ≤ ‖r‖ := fun r x => by
-    simpa [Box.ext] using r.norm_coe_le_norm _
+    simpa [SturmLiouville.ext] using r.norm_coe_le_norm _
   exact Integrable.of_bound ((continuous_ext v).mul (continuous_ext _)).aestronglyMeasurable
     (‖v‖ * ‖p‖) (ae_of_all _ fun t => by
       rw [Real.norm_eq_abs, abs_mul]; exact mul_le_mul (hb v t) (hb _ t) (abs_nonneg _)
@@ -43,7 +43,7 @@ lemma int_ext_add_smul (v p q : Pot) (a b : ℝ) :
   rw [← integral_const_mul, ← integral_const_mul, ← integral_add
     ((integrable_ext_mul v p).const_mul a) ((integrable_ext_mul v q).const_mul b)]
   congr 1; funext t
-  simp only [Box.ext, ContinuousMap.add_apply, ContinuousMap.smul_apply, smul_eq_mul]; ring
+  simp only [SturmLiouville.ext, ContinuousMap.add_apply, ContinuousMap.smul_apply, smul_eq_mul]; ring
 
 variable (τ) in
 /-- The mixed continuous density `ρ̂(Φ, Ψ) = (ρ̂(Φ + Ψ) - ρ̂(Φ - Ψ)) / 4`. -/
@@ -87,7 +87,7 @@ lemma QMN_expand (hw : Continuous w) (ν : PotM) {Φ Ψ : Cfg n → ℝ} (hΦ : 
 lemma int_ext_smul (v p : Pot) (a : ℝ) :
     ∫ t, ext v t * ext (a • p) t ∂μ1 = a * ∫ t, ext v t * ext p t ∂μ1 := by
   rw [← integral_const_mul]; congr 1; funext t
-  simp only [Box.ext, ContinuousMap.smul_apply, smul_eq_mul]; ring
+  simp only [SturmLiouville.ext, ContinuousMap.smul_apply, smul_eq_mul]; ring
 
 lemma rhoHat_smul (hw : Continuous w) {Ψ : Cfg n → ℝ} (hΨ : Ψ ∈ DomW τ n) (c : ℝ) :
     rhoHat τ (c • Ψ) = c ^ 2 • rhoHat τ Ψ :=
@@ -119,7 +119,7 @@ lemma QMN_null (hw : Continuous w) (ν : PotM) {χ : Cfg n → ℝ} (hχ : χ �
     simp only [pf]
     rw [integral_congr_ae (hzz.mono fun x hx => by simp only [hx, Pi.zero_apply, mul_zero] :
       (fun x => (settingW τ n w hw).L v x * (χ x * χ x)) =ᵐ[μN n] fun _ => (0 : ℝ))]
-    simp [Box.ext]
+    simp [SturmLiouville.ext]
   rw [QMN, hz, map_zero, add_zero]
   exact h0W_null (s := τ.toSym) hw hχ hip
 

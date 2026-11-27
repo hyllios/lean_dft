@@ -29,7 +29,7 @@ every mixed density `ρ̂(Φ, Ψ)` (Euler–Lagrange).
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {τ : Stat} {w : Cfg n → ℝ}
 
@@ -50,14 +50,14 @@ lemma TG_zero {w0 : Cfg 0 → ℝ} (hw : Continuous w0) {Φ : Cfg 0 → ℝ} (h�
   refine pot_eq_of_integral fun v => ?_
   rw [int_rhoHat2 hw hΦ (mem_FF_mul hΦ hf)]
   have e : ∀ t, ext v t * ext (fP hfc * rhoHat τ Φ) t = ext (v * fP hfc) t * ext (rhoHat τ Φ) t :=
-    fun t => by simp only [Box.ext, ContinuousMap.mul_apply]; ring
+    fun t => by simp only [SturmLiouville.ext, ContinuousMap.mul_apply]; ring
   simp only [e]
   rw [int_rhoHat hw hΦ]
   simp only [pf]
   refine integral_congr_ae ?_
   filter_upwards [ae_cube_x0] with x hx
   change LN 0 v x * (Φ x * (FF f x * Φ x)) = LN 0 (v * fP hfc) x * (Φ x * Φ x)
-  simp only [LN, LinearMap.coe_mk, AddHom.coe_mk, FF, Box.ext, ContinuousMap.mul_apply,
+  simp only [LN, LinearMap.coe_mk, AddHom.coe_mk, FF, SturmLiouville.ext, ContinuousMap.mul_apply,
     Fin.sum_univ_succ, Finset.univ_eq_empty, Finset.sum_empty, add_zero]
   rw [show (fP hfc) (projIcc 0 1 zero_le_one (x 0)) = f (x 0) by simp [fP, projIcc_of_mem _ hx]]
   ring
@@ -86,12 +86,12 @@ lemma intCLM_mu1_rhoHat2 (hw : Continuous w) {Φ Ψ : Cfg n → ℝ} (hΦ : Φ �
   set one : Pot := ⟨fun _ => 1, continuous_const⟩
   have h := int_rhoHat2 hw hΦ hΨ one
   have h1 : ∫ t, ext one t * ext (rhoHat2 τ Φ Ψ) t ∂μ1 = intCLM μ1 (rhoHat2 τ Φ Ψ) := by
-    rw [intCLM_apply]; congr 1; funext t; simp [one, Box.ext]
+    rw [intCLM_apply]; congr 1; funext t; simp [one, SturmLiouville.ext]
   rw [h1] at h
   rw [h]
   change ∫ x, LN n one x * (Φ x * Ψ x) ∂μN n = _
   have hL : ∀ x, LN n one x = n + 1 := fun x => by
-    simp [LN, one, Box.ext]
+    simp [LN, one, SturmLiouville.ext]
   simp only [hL]
   rw [integral_const_mul]
 
@@ -246,7 +246,7 @@ lemma rhoHat_pos_gs (hw : Continuous w) {ν : PotM} {Φ : Cfg n → ℝ} (h : Is
   | fer => exact rhoHat_pos_fer hw h ht
 
 lemma fP_ext (h : Pot) : fP (continuous_ext h) = h := by
-  ext t; simp [fP, Box.ext]
+  ext t; simp [fP, SturmLiouville.ext]
 
 /-- `ρ̂ ≥ c > 0` on `[a, 1 - a]`. -/
 lemma exists_rhoHat_ge (hw : Continuous w) {ν : PotM} {Φ : Cfg n → ℝ} (h : IsGSN τ w ν Φ)
@@ -270,13 +270,13 @@ theorem D_eq_integral (hw : Continuous w) {ν : PotM} {Φ : Cfg n → ℝ} (h : 
   have hg : Continuous g := (continuous_ext q).div (hρc.max continuous_const)
     fun t => (lt_max_of_lt_right hc).ne'
   have hq0 : ∀ t ∈ Icc (0 : ℝ) 1, t ∉ Icc a (1 - a) → ext q t = 0 := fun t ht htn => by
-    simp only [Box.ext, projIcc_of_mem _ ht]; exact hq ⟨t, ht⟩ htn
+    simp only [SturmLiouville.ext, projIcc_of_mem _ ht]; exact hq ⟨t, ht⟩ htn
   have hmul : fP hg * rhoHat τ Φ = q := by
     ext t
     have htI := t.2
     simp only [ContinuousMap.mul_apply, fP, ContinuousMap.coe_mk, g]
-    have hρt : ρ t = rhoHat τ Φ t := by simp [ρ, Box.ext, projIcc_of_mem _ htI]
-    have hqt : ext q t = q t := by simp [Box.ext, projIcc_of_mem _ htI]
+    have hρt : ρ t = rhoHat τ Φ t := by simp [ρ, SturmLiouville.ext, projIcc_of_mem _ htI]
+    have hqt : ext q t = q t := by simp [SturmLiouville.ext, projIcc_of_mem _ htI]
     by_cases hin : (t : ℝ) ∈ Icc a (1 - a)
     · rw [max_eq_left (hcle t hin), hqt, hρt, div_mul_cancel₀]
       exact (hc.trans_le (hρt ▸ hcle t hin)).ne'
@@ -555,17 +555,17 @@ lemma rhoHat2_vanish (hw : Continuous w) {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomW
     · simp [hx]
     · have h0 := hsupp x hx
       have hI : x 0 ∈ Icc (0 : ℝ) 1 := ⟨ha.trans h0.1, h0.2.trans (by linarith)⟩
-      simp only [Box.ext, projIcc_of_mem _ hI, v, ContinuousMap.coe_mk, hφ0 _ h0, zero_mul]
+      simp only [SturmLiouville.ext, projIcc_of_mem _ hI, v, ContinuousMap.coe_mk, hφ0 _ h0, zero_mul]
   rw [hz, mul_zero] at hv
   -- `φ p² = 0` on `[0, 1]`
   have hz2 := le_of_int_nonneg_zero (g := fun s => ext v s * ext p s)
     ((continuous_ext v).mul (continuous_ext p)) (fun s => by
-      simp only [Box.ext, v, ContinuousMap.coe_mk]
+      simp only [SturmLiouville.ext, v, ContinuousMap.coe_mk]
       have := hφpos (projIcc 0 1 zero_le_one s)
       have h0 : 0 ≤ φ (projIcc 0 1 zero_le_one s) := by
         simp only [φ]; positivity
       nlinarith [sq_nonneg (p (projIcc 0 1 zero_le_one s))]) hv.le t t.2
-  simp only [Box.ext, projIcc_of_mem _ t.2, v, ContinuousMap.coe_mk] at hz2
+  simp only [SturmLiouville.ext, projIcc_of_mem _ t.2, v, ContinuousMap.coe_mk] at hz2
   have := hφpos t ht
   have : p t * p t = 0 := by
     have h' : φ t * (p t * p t) = 0 := by rw [← mul_assoc]; simpa using hz2
@@ -814,7 +814,7 @@ lemma ext_vanish {q : Pot} {a : ℝ} (ha : 0 < a) (_ha2 : a < 1 / 2)
   have hc := continuous_ext q
   have hS : IsClosed {t | ext q t = 0} := isClosed_eq hc continuous_const
   have hval : ∀ t, t < a ∨ 1 - a < t → ext q t = 0 := fun t ht => by
-    simp only [Box.ext]
+    simp only [SturmLiouville.ext]
     refine hq _ fun hm => ?_
     have h1 := hm.1; have h2 := hm.2
     simp only [Set.coe_projIcc] at h1 h2
@@ -875,7 +875,7 @@ theorem D_vanish (hw : Continuous w) {Φ : Cfg n → ℝ} (h : IsGSN τ w (nuOf 
     by_cases hin : t ∈ Icc a (1 - a)
     · simp only [ea, indicator_of_mem hin, e]; rfl
     · have : ext q' t = 0 := by
-        simp only [Box.ext, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]
+        simp only [SturmLiouville.ext, projIcc_of_mem _ (Ioo_subset_Icc_self ht)]
         exact hq' ⟨t, Ioo_subset_Icc_self ht⟩ hin
       simp [this]
   -- the symmetric tests
@@ -947,8 +947,8 @@ theorem D_vanish_walls (hw : Continuous w) {Φ : Cfg n → ℝ} (h : IsGSN τ w 
   have hε : 0 < ε := by positivity
   set H := ext q
   have hHc : Continuous H := continuous_ext q
-  have hH0 : H 0 = 0 := by simp only [H, Box.ext]; rw [projIcc_left]; exact h0
-  have hH1 : H 1 = 0 := by simp only [H, Box.ext]; rw [projIcc_right]; exact h1
+  have hH0 : H 0 = 0 := by simp only [H, SturmLiouville.ext]; rw [projIcc_left]; exact h0
+  have hH1 : H 1 = 0 := by simp only [H, SturmLiouville.ext]; rw [projIcc_right]; exact h1
   obtain ⟨δ0, hδ0, hb0⟩ := Metric.continuousAt_iff.1 hHc.continuousAt ε hε
   obtain ⟨δ1, hδ1, hb1⟩ := Metric.continuousAt_iff.1 (hHc.continuousAt (x := 1)) ε hε
   set a := min (1 / 4) (min δ0 δ1) / 3
@@ -972,7 +972,7 @@ theorem D_vanish_walls (hw : Continuous w) {Φ : Cfg n → ℝ} (h : IsGSN τ w 
     refine (ContinuousMap.norm_le _ hε.le).2 fun t => ?_
     simp only [qa, ContinuousMap.sub_apply, ContinuousMap.coe_mk, Real.norm_eq_abs]
     have htI := t.2
-    have hqt : q t = H t := by simp [H, Box.ext, projIcc_of_mem _ htI]
+    have hqt : q t = H t := by simp [H, SturmLiouville.ext, projIcc_of_mem _ htI]
     by_cases hmid : 2 * a ≤ (t : ℝ) ∧ (t : ℝ) ≤ 1 - 2 * a
     · rw [cutF_mid ha hmid.1 hmid.2]; simp [hε.le]
     · rw [not_and_or, not_le, not_le] at hmid

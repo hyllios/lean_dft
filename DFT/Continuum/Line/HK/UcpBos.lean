@@ -24,7 +24,7 @@ Hence `UcpW .bos` holds (`ucpW_bos`), with no smoothness assumption; Hohenberg�
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 variable {n : ℕ} {w : Cfg n → ℝ} {hw : Continuous w}
 

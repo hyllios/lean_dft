@@ -3,10 +3,10 @@ Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
-import DFT.Continuum.Box.Basic
+import ForMathlib.Analysis.SturmLiouville.Basic
 
 /-!
-# Solving the Schrödinger equation in the box
+# Solving `y'' = W y` on `[0, 1]`
 
 Global existence, uniqueness and continuous dependence for the linear system
 `(y, y')' = (y', W y)` (the vector field `field W`) on `(-1, 2) ⊇ [0, 1]`, for continuous `W`.
@@ -18,11 +18,7 @@ Global existence, uniqueness and continuous dependence for the linear system
 * `sol_dist_le`: two solutions with the same initial data and nearby `W` stay close on `[0, 1]`.
 -/
 
-namespace DFT
-
-namespace Continuum
-
-namespace Box
+namespace SturmLiouville
 
 open MeasureTheory Set Filter Topology
 
@@ -252,8 +248,4 @@ theorem exists_sol {W : ℝ → ℝ} (hW : Continuous W) :
   simp only [tfield, hc] at this
   exact this
 
-end Box
-
-end Continuum
-
-end DFT
+end SturmLiouville

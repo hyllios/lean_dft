@@ -22,7 +22,7 @@ continuous interaction `w` (no smoothness, no relabelling symmetry of `w`):
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Box
+open MeasureTheory Box SturmLiouville
 
 variable {n : ℕ} {τ : Stat}
 

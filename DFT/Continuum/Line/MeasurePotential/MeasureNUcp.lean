@@ -23,7 +23,7 @@ logarithmic estimate, through a lower bound on `Σ_k ∫ ∂ₖu ∂ₖφ` for t
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set SturmLiouville Real Filter Topology
 
 variable {n : ℕ}
 
@@ -122,7 +122,7 @@ lemma le_of_int_nonneg_zero {g : ℝ → ℝ} (hg : Continuous g) (h0 : ∀ t, 0
     (by rw [closure_Ioo zero_ne_one])
 
 lemma ext_le_norm (p : Pot) (t : ℝ) : |ext p t| ≤ ‖p‖ := by
-  simpa [Box.ext] using p.norm_coe_le_norm _
+  simpa [SturmLiouville.ext] using p.norm_coe_le_norm _
 
 /-- A continuous `p` with `∫ v p ≤ M ∫ v` for all `v ≥ 0` is at most `M`. -/
 lemma pot_le_of_int {p : Pot} {M : ℝ}
@@ -138,7 +138,7 @@ lemma pot_le_of_int {p : Pot} {M : ℝ}
     (((continuous_ext v).mul (continuous_ext p)).sub (continuous_const.mul (continuous_ext v)))
     (fun t => by
       have : ext v t * ext p t - M * ext v t = max (ext p t - M) 0 * (ext p t - M) := by
-        simp only [v, Box.ext, ContinuousMap.coe_mk]; ring
+        simp only [v, SturmLiouville.ext, ContinuousMap.coe_mk]; ring
       rw [this]
       rcases le_total (ext p t - M) 0 with h' | h'
       · rw [max_eq_right h']; simp
@@ -146,7 +146,7 @@ lemma pot_le_of_int {p : Pot} {M : ℝ}
   intro t
   have := hz t t.2
   have e : ext v t * ext p t - M * ext v t = max (p t - M) 0 * (p t - M) := by
-    simp only [v, Box.ext, ContinuousMap.coe_mk, projIcc_of_mem _ t.2]; ring
+    simp only [v, SturmLiouville.ext, ContinuousMap.coe_mk, projIcc_of_mem _ t.2]; ring
   rw [e] at this
   by_contra hc; push Not at hc
   have : 0 < max (p t - M) 0 * (p t - M) := by
@@ -159,7 +159,7 @@ lemma pot_nonneg_of_int {p : Pot}
   have h' := pot_le_of_int (p := -p) (M := 0) fun v hv => by
     have := h v hv
     have e : ∫ t, ext v t * ext (-p) t ∂μ1 = -∫ t, ext v t * ext p t ∂μ1 := by
-      rw [← integral_neg]; congr 1; funext t; simp [Box.ext]
+      rw [← integral_neg]; congr 1; funext t; simp [SturmLiouville.ext]
     rw [e, zero_mul]; linarith
   intro t; have := h' t; simp at this; linarith
 
@@ -187,7 +187,7 @@ lemma norm_pot_le_of_int {p : Pot} {F : Cfg n → ℝ} (hFi : Integrable F (μN 
     (hint : ∀ v : Pot, ∫ t, ext v t * ext p t ∂μ1 = ∫ x, LN n v x * F x ∂μN n) :
     ‖p‖ ≤ (n + 1) * M := by
   have hLN : ∀ v : Pot, (∀ t, 0 ≤ v t) → ∀ x, 0 ≤ LN n v x := fun v hv x => by
-    change 0 ≤ ∑ k, Box.ext v (x k)
+    change 0 ≤ ∑ k, SturmLiouville.ext v (x k)
     exact Finset.sum_nonneg fun k _ => hv _
   have iL : ∀ v : Pot, Integrable (fun x => LN n v x * F x) (μN n) := fun v => by
     obtain ⟨C, hC⟩ := ae_bound_cont (n := n) (continuous_LN v)

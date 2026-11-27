@@ -31,7 +31,7 @@ continuous functional) and are uniformly `½`-Hölder, hence converge uniformly 
 
 namespace DFT.Continuum.Line
 
-open MeasureTheory Set Box Real Filter Topology
+open MeasureTheory Set Box SturmLiouville Real Filter Topology
 
 /-! ### The sup bound and form boundedness -/
 

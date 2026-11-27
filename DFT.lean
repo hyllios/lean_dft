@@ -1,13 +1,10 @@
 import DFT.Continuum.Box.Basic
 import DFT.Continuum.Box.Dense
 import DFT.Continuum.Box.Diff
-import DFT.Continuum.Box.Extend
 import DFT.Continuum.Box.Ground
 import DFT.Continuum.Box.Lieb
 import DFT.Continuum.Box.Picone
 import DFT.Continuum.Box.PiconeEq
-import DFT.Continuum.Box.Solve
-import DFT.Continuum.Box.Sturm
 import DFT.Continuum.Box.VRep
 import DFT.Continuum.General.FromLattice
 import DFT.Continuum.General.HK
@@ -126,12 +123,7 @@ import DFT.Continuum.Sine.Form
 import DFT.Continuum.Sine.Kernel
 import DFT.Continuum.Sine.Min
 import DFT.Continuum.Sine.OneD
-import DFT.Continuum.Spectral.Eigen
-import DFT.Continuum.Spectral.Expand
-import DFT.Continuum.Spectral.Green
-import DFT.Continuum.Spectral.Injective
-import DFT.Continuum.Spectral.Kernel
-import DFT.Continuum.Spectral.Operator
+import DFT.Continuum.Spectral.Orbitals
 import DFT.Lattice.Basic.SingleParticle
 import DFT.Lattice.Basic.Spectral
 import DFT.Lattice.Bridge.FrustratedSquare
