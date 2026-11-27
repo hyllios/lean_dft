@@ -1006,4 +1006,9 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   longer need nonnegative occupations, a fixed particle number or rigidity. MyksodaEnsemble's copy of the separation
   argument removed. v_representable_lattice_fermions, v_representable_interior lost the unused hypotheses 0 < N < M;
   the listed ks_potential_exists(_interior) keep them (unused, `_hN0 _hNM`) pending approval. Net −480 lines.
+- D4 stage 2 DONE (2026-11-27). `Scope/Eigenstates`: **eigenstate_vrep** (every regular value is the density of an
+  eigenstate of some H(v), attaining F_p; no non-redundancy needed: constraints along a basis of a complement of
+  W = {a : ι(a) ∈ ℝ·1}, Fritz John multiplier rule `IsLocalExtrOn.exists_multipliers_of_hasStrictFDerivAt`, and
+  non-criticality rules out a vanishing multiplier of ⟨H₀⟩). reForm, hasStrictFDerivAt_expv (derivative of
+  ψ ↦ Re⟨ψ, Aψ⟩ via the bilinear rule). Also: ks_potential_exists(_interior) lost the hypotheses 0 < N < M (approved).
 

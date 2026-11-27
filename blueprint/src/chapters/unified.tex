@@ -159,9 +159,23 @@ pairing is the dot product.
 
 \begin{theorem}[Eigenstate $v$-representability]\label{thm:scope-eig-vrep}
   \uses{thm:scope-functionals, def:scope-critical}
+  \lean{DFT.Scope.eigenstate_vrep, DFT.Scope.reForm, DFT.Scope.hasStrictFDerivAt_expv,
+    DFT.Scope.re_dotProduct_mulVec_comm, DFT.Scope.expv_pot, DFT.Scope.pot_sum}
+  \leanok
   Every $\rho\in B_r$ is $\rho_\psi$ for a unit vector $\psi$ with $H(v)\psi=\lambda\psi$ for some $v\in V$, $\lambda\in\mathbb R$, and $\psi$ attains
-  $F_p(\rho)$. (To check during the proof: whether non-redundancy is needed.)
+  $F_p(\rho)$. Non-redundancy is not needed.
 \end{theorem}
+
+\begin{proof}
+  \leanok
+  Let $\psi$ minimise $\langle H_0\rangle$ on the fibre over $\rho$. Let $W=\{a:\iota(a)\in\mathbb R\cdot1\}$ and $U$ a complement with basis
+  $b_1,\dots,b_k$. On unit vectors $\rho_\psi\cdot w$ is fixed for $w\in W$, so the constraints $\|\psi\|^2=1$, $\langle\iota(b_j)\rangle=\rho\cdot b_j$
+  cut out the fibre. The Lagrange multiplier rule in Fritz John form gives $(\Lambda,\Lambda_0)\neq0$ with
+  $\Lambda_0H_0\psi+\Lambda_{\mathrm n}\psi+\iota(u)\psi=0$, $u=\sum_j\Lambda_jb_j\in U$ (the derivative of $\langle A\rangle$ is $2\operatorname{Re}\langle A\psi,\cdot\rangle$ for
+  Hermitian $A$). If $\Lambda_0=0$, then $\psi$ is an eigenvector of $\iota(u)$; $\psi$ is not critical, so $\iota(u)\in\mathbb R\cdot1$ and
+  $u\in W\cap U=0$, hence all $\Lambda_j=0$ and then $\Lambda_{\mathrm n}=0$, a contradiction. So $\Lambda_0\neq0$, and $v=u/\Lambda_0$,
+  $\lambda=-\Lambda_{\mathrm n}/\Lambda_0$ work.
+\end{proof}
 
 \begin{theorem}[Continuity of $F_e$]\label{thm:scope-Fe-continuous}
   \uses{thm:scope-functionals}

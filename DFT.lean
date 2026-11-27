@@ -218,6 +218,7 @@ import DFT.Lattice.TDDFT.TwoElectron
 import DFT.Scope.Abelian
 import DFT.Scope.Basic
 import DFT.Scope.Duality
+import DFT.Scope.Eigenstates
 import DFT.Scope.Functionals
 import DFT.Scope.HK
 import DFT.Scope.Ranges
