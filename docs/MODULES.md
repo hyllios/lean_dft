@@ -184,7 +184,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-226 modules, 59382 lines.
+225 modules, 58953 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -488,12 +488,11 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `DFT.Lattice.KohnSham.Aufbau` | 189 | The aufbau principle for non-interacting lattice fermions |
 | `DFT.Lattice.KohnSham.Duality` | 197 | Lieb's functional and convex duality |
-| `DFT.Lattice.KohnSham.Existence` | 44 | Existence of Kohn–Sham potentials for lattice fermions |
+| `DFT.Lattice.KohnSham.Existence` | 43 | Existence of Kohn–Sham potentials for lattice fermions |
 | `DFT.Lattice.KohnSham.Hypersimplex` | 260 | Interior densities are strictly positive mixtures of configurations |
-| `DFT.Lattice.KohnSham.Maximizer` | 310 | A maximiser of `E(v) − v·ρ` |
-| `DFT.Lattice.KohnSham.MyksodaEnsemble` | 94 | The limit densities of the regularized Kohn–Sham scheme are ground-state-ensemble densities |
+| `DFT.Lattice.KohnSham.MyksodaEnsemble` | 58 | The limit densities of the regularized Kohn–Sham scheme are ground-state-ensemble densities |
 | `DFT.Lattice.KohnSham.RegularizedKS` | 214 | The regularised Kohn–Sham iteration on a lattice |
-| `DFT.Lattice.KohnSham.Representability` | 263 | Ensemble v-representability |
+| `DFT.Lattice.KohnSham.Representability` | 110 | Ensemble v-representability |
 | `DFT.Lattice.KohnSham.Uniqueness` | 43 | Generic uniqueness of the Kohn–Sham potential |
 
 ### `DFT/Lattice/PathSum/`
@@ -574,7 +573,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Scope.Functionals` | 153 | The constrained-search functionals of a scope |
 | `DFT.Scope.HK` | 154 | Critical states and the Hohenberg–Kohn theorems for a scope |
 | `DFT.Scope.Ranges` | 72 | The pure and the ensemble ranges of a scope |
-| `DFT.Scope.Representability` | 96 | Ensemble `v`-representability for a scope |
+| `DFT.Scope.Representability` | 167 | Ensemble `v`-representability for a scope |
 | `DFT.Scope.SpinChain` | 122 | Spin chains as a scope |
 
-Total: 77762 lines of Lean.
+Total: 77333 lines of Lean.

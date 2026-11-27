@@ -235,26 +235,26 @@ theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ}
     · rw [Finset.sum_const, nsmul_eq_mul, hLdef]; field_simp
     · funext i; exact absurd ⟨i, Finset.mem_univ i⟩ hM
 
-/-- **v-representability of interior densities.** For `N` spinless fermions (`0 < N < M`) on any
+/-- **v-representability of interior densities.** For `N` spinless fermions on any
 graph, with any hopping `t` and any configuration-diagonal interaction, every density with
 `0 < ρ_i < 1` and `Σ_i ρ_i = N` is the density of a ground-state ensemble of `H(v)` for some
 potential `v`. -/
 theorem v_representable_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M))
     [DecidableRel G.Adj] (t : ℝ)
-    (Vint : Conf M N → ℝ) (hN0 : 0 < N) (hNM : N < M) {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
+    (Vint : Conf M N → ℝ) {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
     (hsum : ∑ i, ρ i = N) :
     ∃ v : Fin M → ℝ, ∃ Γ ∈ Ens (H0F G t Vint) occF v, ensDens occF Γ = ρ := by
   obtain ⟨lam, hlam, hl1, hlρ⟩ := interior_positive_mixture hρ hsum
-  exact v_representable_lattice_fermions G t Vint hN0 hNM hlam hl1 hlρ
+  exact v_representable_lattice_fermions G t Vint hlam hl1 hlρ
 
 /-- **Existence of Kohn–Sham potentials (textbook form).** Every density with `0 < ρ_i < 1`,
 `Σ_i ρ_i = N` is the ground-state ensemble density of a non-interacting system in some potential
 `vs`. -/
 theorem ks_potential_exists_interior [Nonempty (Conf M N)] (G : SimpleGraph (Fin M))
     [DecidableRel G.Adj] (t : ℝ)
-    (hN0 : 0 < N) (hNM : N < M) {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
+    (_hN0 : 0 < N) (_hNM : N < M) {ρ : Fin M → ℝ} (hρ : ∀ i, 0 < ρ i ∧ ρ i < 1)
         (hsum : ∑ i, ρ i = N) :
     ∃ vs : Fin M → ℝ, ∃ Γ ∈ Ens (H0F G t (0 : Conf M N → ℝ)) occF vs, ensDens occF Γ = ρ :=
-  v_representable_interior G t 0 hN0 hNM hρ hsum
+  v_representable_interior G t 0 hρ hsum
 
 end DFT

@@ -142,93 +142,43 @@ $\mathcal{D}=\{\sum_c\lambda_cn(c):\lambda\ \text{a probability vector}\}$.
 
 \section{Existence of the Kohn--Sham potential}
 
-Assume nonnegative occupations with fixed particle number ($\sum_in_i(c)=N$), rigid occupations, and a
-density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive mixture).
-
-\begin{lemma}[Regularity of $E$]
-  \label{lem:Egs_regular}
-  \lean{DFT.sum_dens, DFT.qf_hamN_shift, DFT.Egs_shift, DFT.Nr_nonneg, DFT.qf_hamN_diff_le, DFT.Egs_lipschitz, DFT.continuous_Egs}
-  \leanok
-  \uses{lem:lieb_basic}
-  $E(v+k)=E(v)+kN$, and $|E(v)-E(v')|\le N\|v-v'\|_\infty$. In particular $E$ is continuous.
-\end{lemma}
-\begin{proof}
-  \leanok
-  Compare expectation values in the ground states of both Hamiltonians.
-\end{proof}
-
-\begin{theorem}[Coercivity and a maximiser]
-  \label{thm:exists_maximiser}
-  \lean{DFT.aval, DFT.mval, DFT.mval_le, DFT.continuous_mval, DFT.mval_smul, DFT.weighted_aval, DFT.mval_nonpos, DFT.const_of_mval_eq_zero, DFT.coercive, DFT.sum_rho, DFT.exists_maximiser}
-  \leanok
-  \uses{lem:Egs_regular, def:NonUV}
-  There is $\delta>0$ with $E(v)-v\cdot\rho\le K-\delta\|v\|$ whenever $\sum_iv_i=0$. Consequently
-  $v\mapsto E(v)-v\cdot\rho$ attains its maximum.
-\end{theorem}
-\begin{proof}
-  \leanok
-  Let $m(v)=\min_c\,(v\cdot n(c)-v\cdot\rho)$. Since $\sum_c\lambda_c(v\cdot n(c)-v\cdot\rho)=0$ with
-  $\lambda>0$, we have $m\le0$, with equality only for constant $v$ (rigidity). Compactness of the unit sphere
-  in $\{\sum_iv_i=0\}$ gives the uniform $\delta$. Then maximise over a large ball and use shift invariance.
-\end{proof}
-
-\begin{theorem}[Ground states below the target]
-  \label{thm:exists_gs_below}
-  \lean{DFT.qf_hamN_add, DFT.continuous_qf, DFT.continuous_dens, DFT.isCompact_sphere1, DFT.exists_gs_below}
-  \leanok
-  \uses{thm:exists_maximiser, thm:exists_groundState}
-  At a maximiser $v^*$, for every direction $w$ some normalised ground state $\psi$ of $H(v^*)$ satisfies
-  $w\cdot\rho_\psi\le w\cdot\rho$.
-\end{theorem}
-\begin{proof}
-  \leanok
-  Ground states $\psi_k$ of $H(v^*+t_kw)$ satisfy $w\cdot\rho_{\psi_k}\le w\cdot\rho$ by maximality.
-  A convergent subsequence (the unit sphere is compact) gives a ground state of $H(v^*)$, by continuity of $E$.
-\end{proof}
+Lattice DFT is a scope (Theorem~\ref{thm:scope-instance-lattice}), and the existence of a potential is the scope's ensemble
+$v$-representability (Theorem~\ref{thm:scope-ens-vrep}). No assumption on the occupations is needed.
 
 \begin{definition}[Ground-state ensembles]
   \label{def:Ens}
-  \lean{DFT.Ens, DFT.ensDens, DFT.ensDens_vecMulVec, DFT.pure_mem_Ens}
+  \lean{DFT.Ens, DFT.ensDens, DFT.ensDens_vecMulVec, DFT.pure_mem_Ens, DFT.latticeScope_dens, DFT.mem_Ens_of_isEnsGS}
   \leanok
-  \uses{thm:exists_groundState}
+  \uses{thm:exists_groundState, thm:scope-instance-lattice}
   $\mathrm{Ens}(v)$ is the set of density matrices $\Gamma$ (symmetric, positive semidefinite, trace one)
   with $H(v)\Gamma=E(v)\Gamma$, i.e.\ supported on the ground-state space. Their density is
-  $\rho_\Gamma(i)=\sum_cn_i(c)\Gamma_{cc}$. Pure ground states $\psi\psi^T$ belong to $\mathrm{Ens}(v)$.
+  $\rho_\Gamma(i)=\sum_cn_i(c)\Gamma_{cc}$. Pure ground states $\psi\psi^T$ belong to $\mathrm{Ens}(v)$, and the ensemble
+  ground states of the lattice scope belong to $\mathrm{Ens}(v)$, with the same density.
 \end{definition}
-
-\begin{lemma}[Ensembles form a compact convex set]
-  \label{lem:Ens_compact}
-  \lean{DFT.quad_single, DFT.Ens_bound, DFT.convex_Ens, DFT.isCompact_Ens, DFT.continuous_ensDens}
-  \leanok
-  \uses{def:Ens}
-  $\mathrm{Ens}(v)$ is convex and compact (closed, with entries in $[-1,1]$).
-\end{lemma}
-\begin{proof}
-  \leanok
-  Entry bounds follow from positivity in the directions $e_a\pm e_b$ and the trace condition.
-\end{proof}
 
 \begin{theorem}[Ensemble $v$-representability]
   \label{thm:ensemble_vrep}
-  \lean{DFT.ensemble_v_representable}
+  \lean{DFT.ens_of_maximiser, DFT.ensemble_v_representable}
   \leanok
-  \uses{thm:exists_gs_below, lem:Ens_compact}
-  Every strictly positive mixture $\rho$ of configuration densities is the density of a ground-state ensemble
-  of $H(v)$ for some $v$. This holds for any symmetric $H_0$, interacting or not.
+  \uses{def:Ens, thm:scope-ens-vrep}
+  A maximiser $v$ of $E(\cdot)-(\cdot)\cdot\rho$ makes $\rho$ the density of a ground-state ensemble of $H(v)$. Every strictly
+  positive mixture $\rho$ of configuration densities is the density of a ground-state ensemble of $H(v)$ for some $v$. This
+  holds for any symmetric $H_0$, interacting or not, and any occupations.
 \end{theorem}
 \begin{proof}
   \leanok
-  Take a maximiser $v^*$. If $\rho$ were not an ensemble density, the compact convex set of ensemble
-  densities could be separated from $\rho$ by a direction $w$ (Hahn--Banach). That contradicts
-  Theorem~\ref{thm:exists_gs_below}.
+  The first statement is the scope's \texttt{exists\_isEnsGS\_of\_isMax}. For the second, if $\rho=\sum_c\lambda_cn(c)$ with
+  $\lambda>0$ and $\rho'=\sum_c\mu_cn(c)$ is in the density domain, then $\rho+\varepsilon(\rho-\rho')$ with $\varepsilon=\min_c\lambda_c$ has
+  nonnegative weights $\lambda_c+\varepsilon(\lambda_c-\mu_c)$, so $\rho$ is in the relative interior and the scope's ensemble
+  $v$-representability applies.
 \end{proof}
 
 \begin{theorem}[Kohn--Sham potentials exist]
   \label{thm:ks_potential_exists}
   \lean{DFT.sum_occF, DFT.v_representable_lattice_fermions, DFT.ks_potential_exists}
   \leanok
-  \uses{thm:ensemble_vrep, thm:rigid_occF, def:H0F}
-  For $N$ spinless fermions ($0<N<M$) on any graph and any density--density interaction, every strictly
+  \uses{thm:ensemble_vrep, def:H0F}
+  For $N$ spinless fermions on any graph and any density--density interaction, every strictly
   positive mixture of configuration densities is ensemble $v$-representable. With vanishing interaction this
   is the existence of a Kohn--Sham potential.
 \end{theorem}
@@ -274,7 +224,7 @@ density $\rho=\sum_c\lambda_cn(c)$ with all $\lambda_c>0$ (a strictly positive m
   \lean{DFT.v_representable_interior, DFT.ks_potential_exists_interior}
   \leanok
   \uses{thm:interior_positive_mixture, thm:ks_potential_exists}
-  For $N$ spinless fermions with $0<N<M$ on any graph, any hopping $t$ and any configuration-diagonal
+  For $N$ spinless fermions on any graph, any hopping $t$ and any configuration-diagonal
   interaction, every density with $0<\rho_i<1$ and $\sum_i\rho_i=N$ is the density of a ground-state ensemble
   of $H(v)$ for some potential $v$. In particular (no interaction), every such density has a Kohn--Sham
   potential.
@@ -483,14 +433,14 @@ the regularisation parameter.
 
 \begin{theorem}[The regularized Kohn--Sham iteration with ensembles]
   \label{thm:lattice_myksoda_ensemble}
-  \lean{DFT.ens_of_maximiser, DFT.maximiser_of_lieb_eq, DFT.ens_of_lieb_eq, DFT.lattice_myksoda_ensemble}
+  \lean{DFT.maximiser_of_lieb_eq, DFT.ens_of_lieb_eq, DFT.lattice_myksoda_ensemble}
   \leanok
-  \uses{thm:ks_iteration, thm:exists_gs_below, def:Ens, lem:Ens_compact, lem:lieb_basic}
+  \uses{thm:ks_iteration, thm:ensemble_vrep, lem:lieb_basic}
   In the regularized Kohn--Sham scheme, for every accumulation point $z$, $\rho=z+\varepsilon v$ is the density of a
   ground-state ensemble of the interacting $H(v)$, and $\rho_{KS}=z+\varepsilon v_{KS}$ of the reference $H(v_{KS})$.
 \end{theorem}
 \begin{proof}
   \leanok
-  The Lieb equality of Theorem~\ref{thm:ks_iteration} makes $v$ a maximizer of $E(\cdot)-(\cdot)\cdot\rho$; a maximizer
-  gives a ground-state ensemble by separation from the compact convex set of ensemble densities.
+  The Lieb equality of Theorem~\ref{thm:ks_iteration} makes $v$ a maximizer of $E(\cdot)-(\cdot)\cdot\rho$, and a maximizer
+  gives a ground-state ensemble (Theorem~\ref{thm:ensemble_vrep}).
 \end{proof}

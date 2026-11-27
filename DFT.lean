@@ -168,7 +168,6 @@ import DFT.Lattice.KohnSham.Aufbau
 import DFT.Lattice.KohnSham.Duality
 import DFT.Lattice.KohnSham.Existence
 import DFT.Lattice.KohnSham.Hypersimplex
-import DFT.Lattice.KohnSham.Maximizer
 import DFT.Lattice.KohnSham.MyksodaEnsemble
 import DFT.Lattice.KohnSham.RegularizedKS
 import DFT.Lattice.KohnSham.Representability

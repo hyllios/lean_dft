@@ -998,3 +998,12 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   basis ½(c_i†c_j + c_j†c_i), -(i/2)(c_i†c_j - c_j†c_i); rdmftScope_densPure (density = coords of γ of the state extended
   by zero to Fock space, extF), **rdmftScope_Be** (Coleman set, via `coleman` in both directions; restrF/extF_restrF for
   N-particle Fock states).
+- 2026-11-27 SIMPLIFICATION through the scope framework: lattice ensemble v-representability is now an instance.
+  `Scope/Representability` gains mem_Be_of_isMax, exists_isEnsGS_of_isMax, ensemble_vrep_of_extend (algebraic
+  relative interior; ensemble_vrep is its corollary), IsEnsGS.ham_mul (H(v)Γ = E(v)Γ). `Lattice/KohnSham/Maximizer`
+  (310 lines: coercivity, maximiser) deleted; `Lattice/KohnSham/Representability` reduced to Ens/ensDens plus the bridge
+  (latticeScope_dens, mem_Ens_of_isEnsGS) and short proofs of ens_of_maximiser and ensemble_v_representable, which no
+  longer need nonnegative occupations, a fixed particle number or rigidity. MyksodaEnsemble's copy of the separation
+  argument removed. v_representable_lattice_fermions, v_representable_interior lost the unused hypotheses 0 < N < M;
+  the listed ks_potential_exists(_interior) keep them (unused, `_hN0 _hNM`) pending approval. Net −480 lines.
+
