@@ -66,7 +66,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-40 modules, 12668 lines.
+41 modules, 13104 lines.
 
 ### `QM/`
 
@@ -118,6 +118,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `QM.ManyBody.Configurations` | 30 | Spinless lattice fermions: configurations and occupations |
 | `QM.ManyBody.Fock` | 341 | The fermionic Fock space of `M` modes |
 | `QM.ManyBody.HartreeFock` | 442 | Hartree–Fock theory and Lieb's variational principle |
+| `QM.ManyBody.HartreeFockAufbau` | 436 | No unfilled shells in Hartree–Fock theory |
 | `QM.ManyBody.ModeRotation` | 505 | Mode rotations |
 | `QM.ManyBody.NaturalOrbitals` | 119 | Natural orbitals |
 | `QM.ManyBody.Number` | 109 | The number operator |
@@ -511,4 +512,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 72810 lines of Lean.
+Total: 73246 lines of Lean.

@@ -110,12 +110,10 @@ this section keeps only pointers.
     states); `lieb_variational` (V ⪰ 0 on the pair space: for `0 ≤ γ ≤ 1`, `tr γ = N` there is a rank-N projection P with
     `E_HF(P) ≤ E_HF(γ)`; proof: shift between two fractional eigenvalues, E_HF is concave in the shift);
     `exists_hf_minimizer` (a Slater minimizer over all admissible γ); `ground_le_hf` (`E₀(N) ≤ E_HF(γ)` for all admissible γ).
-- B3+ ⬜ No unfilled shells in Hartree–Fock (Bach–Lieb–Loss–Solovej 1994; proposed 2026-11-26, quick win, statements
-  not yet drafted). For `V ⪰ 0` on pairs, a minimizing HF projection `P` is aufbau-filled: with the Fock operator
-  `F(P) = h + 2·pairForm(P, ·)` and its eigenvalues `ε`, every occupied `ε_a` is `≤` every unoccupied `ε_b`. Proof plan:
-  exchanging an occupied orbital `a` for an unoccupied `b` is the shift `e_b − e_a` of `lieb_variational`; its linear
-  coefficient is `ε_b − ε_a` and its quadratic coefficient is `≤ 0` (`pairForm_shift_re_nonpos`), so `ε_b < ε_a` would
-  lower the energy. Also: the first-order condition `[F(P), P] = 0` (the HF equations) at a minimizer.
+- B3+ ✅ No unfilled shells in Hartree–Fock (Bach–Lieb–Loss–Solovej 1994; statements approved and proved
+  2026-11-27), `QM/ManyBody/HartreeFockAufbau`: Fock matrix `fockMat`; `hf_first_order`; `hf_aufbau` (for `V ⪰ 0` and a
+  minimizing rank-N projection `P`, `Re⟨x, F x⟩ ≤ Re⟨y, F y⟩` for unit `x` occupied, `y` unoccupied); `hf_offDiag`,
+  `hf_equation` (`F(P) Pᵀ = Pᵀ F(P)`).
 - B5 ⬜ Pure-state N-representability: the Borland–Dennis constraints (proposed 2026-11-26, high gain / high risk,
   statements not yet drafted). For `N = 3`, `M = 6` (`∧³ℂ⁶`, dimension 20), the natural occupations `λ₁ ≥ … ≥ λ₆` of
   every pure state satisfy `λ₁ + λ₆ = λ₂ + λ₅ = λ₃ + λ₄ = 1` and `λ₄ ≤ λ₅ + λ₆`; to our knowledge the first formalized
@@ -251,7 +249,7 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 4. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
 5. **A6** Kato cusp, Tiers 1–2.
 6. **D4** unified functional-theory framework: statements approved; stages 1 → 2 → 3.
-7. Speculative (2026-11-26): **B3+** no unfilled shells (quick win); **F3** numerics first; **B5** Borland–Dennis
+7. Speculative (2026-11-26): **B3+** done (2026-11-27); **F3** numerics first; **B5** Borland–Dennis
    after a literature check for an elementary proof of the inequality, then Schilling's pinning.
 8. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
@@ -273,3 +271,4 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
   v-representability) added as proposals.
 - 2026-11-26: item C7 (N-representability of the Green's function) added as a proposal.
 - 2026-11-26: D4 statements approved; blueprint chapter `unified` added (no Lean yet).
+- 2026-11-27: B3+ done (no unfilled shells, Hartree–Fock equations).

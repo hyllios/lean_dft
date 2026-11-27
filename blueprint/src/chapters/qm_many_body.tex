@@ -353,6 +353,27 @@
   (closed, entries of modulus $\le1$), so each $s\mapsto\min_vE_{\mathrm{HF}}(\bar vD_sv^T)$ is attained; take the best $s$.
 \end{proof}
 
+\begin{theorem}[No unfilled shells; Hartree--Fock equations]\label{thm:hf-aufbau}
+  % Statements approved by Miguel 2026-11-27 (B3+).
+  \lean{QM.ManyBody.fockMat, QM.ManyBody.hfEnergy_add_smul_fock, QM.ManyBody.fockMat_isHermitian,
+    QM.ManyBody.hf_first_order, QM.ManyBody.hf_aufbau, QM.ManyBody.hf_offDiag,
+    QM.ManyBody.hf_equation}\leanok
+  \uses{thm:lieb-variational}
+  Let $F(\gamma)_{ab}=h_{ab}+\tfrac12\sum_{ik}(V_{ia,kb}+V_{ai,bk}-V_{ia,bk}-V_{ai,kb})\gamma_{ik}$, so that
+  $E_{\mathrm{HF}}(A+t\Delta)=E_{\mathrm{HF}}(A)+t\operatorname{Re}\sum F(A)_{ab}\Delta_{ab}+O(t^2)$. Let $V\succeq0$ on the pair
+  space and let $P$ minimize $E_{\mathrm{HF}}$ over Hermitian projections of trace $N$. Then (Bach--Lieb--Loss--Solovej)
+  for unit vectors $x,y$ with $P^Tx=x$ and $P^Ty=0$, $\operatorname{Re}\langle x,F(P)x\rangle\le\operatorname{Re}\langle y,F(P)y\rangle$;
+  and if $h$ is Hermitian, $\langle y,F(P)x\rangle=0$ and $F(P)P^T=P^TF(P)$.
+\end{theorem}
+\begin{proof}\leanok
+  By Lieb's principle $P$ minimizes over all $0\le\gamma\le1$, $\operatorname{tr}\gamma=N$. The segment $P+t(Q-P)$,
+  $t\in[0,1]$, to another projection $Q$ is admissible, and $E_{\mathrm{HF}}$ is quadratic in $t$, so
+  $\operatorname{Re}\sum F(P)_{ab}(Q-P)_{ab}\ge0$. For $Q=P-\pi_x+\pi_y$ ($\pi_u$ the rank-one projection) this is the aufbau
+  inequality. For $Q=P-\pi_x+\pi_{x+sey}$, $s\in\mathbb R$, $|e|=1$, it reads
+  $s\,\|x\|^2\operatorname{Re}(e\langle x,Fy\rangle+\bar e\langle y,Fx\rangle)+O(s^2)\ge0$ for all $s$, so the first-order term
+  vanishes; $e=1,i$ and $F=F^\dagger$ give $\langle y,Fx\rangle=0$, hence $(1-P^T)FP^T=0$ and its adjoint $P^TF(1-P^T)=0$.
+\end{proof}
+
 \begin{definition}[Gibbs state]\label{def:gibbs}
   $\rho_\beta = e^{-\beta(H-\mu N)}/Z$ on $\mathcal F_M$.
 \end{definition}
