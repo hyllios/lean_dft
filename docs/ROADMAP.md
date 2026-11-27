@@ -88,6 +88,23 @@ this section keeps only pointers.
   Tier 3: Kato's theorem (1957) for N-electron Coulomb eigenfunctions. Needs elliptic regularity, integration on spheres
   (E6, A4++) and the Coulomb domain (E3): research scale, possibly with Physlib.
 
+- A7 ⬜ Sturm oscillation theorem (requested by Miguel 2026-11-27; statements not yet drafted): in 1D the eigenvalues
+  are simple and the n-th eigenfunction (counting from 0) has exactly n nodes. Specific to 1D: in higher dimensions
+  only Courant's upper bound holds. Three tiers.
+  Tier 1 (finite-dimensional warm-up, `ForMathlib`/`QM/Finite`): a real symmetric tridiagonal (Jacobi) matrix with
+  negative off-diagonal entries has simple eigenvalues, and its n-th eigenvector has no zero entry at either end and
+  exactly n sign changes (Gantmacher–Krein). Proof via Sturm sequences of the leading principal minors (interlacing).
+  Also gives the nodal structure of the lattice chain in `DFT/Lattice`.
+  Tier 2 (continuum, `DFT/Continuum/Spectral/`): `-ψ'' + Wψ = Eψ` on `[0, 1]`, Dirichlet, `W` continuous.
+  Simplicity (Wronskian); the ground state has no interior zero; Sturm comparison between consecutive eigenfunctions
+  (zeros interlace); the n-th eigenfunction of the Green-operator expansion (`Spectral/Expand`, `Spectral/Eigen`) has
+  exactly n zeros in `(0, 1)`, all simple. Route: Prüfer angle `θ(t; E)`, `y = r sin θ`, `y' = r cos θ`, strictly
+  increasing in `E`, with the eigenvalues exactly where `θ(1; E) = (n+1)π`. Reuses the shooting solution (`Box/Solve`)
+  and the Sturm-type facts already proved in `Box/Sturm` (`exists_zero_of_le` is a Sturm comparison).
+  Needs: continuous dependence of the shooting solution on `E` (check `Box/Solve`, `Box/Extend`).
+  Tier 3 (optional): Courant's nodal theorem (at most n+1 nodal domains, variational) on `H¹₀(0, 1)`, as the part
+  that survives in higher dimensions.
+
 ### Track B: many-body theory with finitely many modes (`QM/ManyBody`, `QM/Thermal`)
 - B1 ✅ Fock space over `Fin M` modes with Jordan–Wigner signs and the CAR (`QM/ManyBody/Fock`), number operator (`Number`),
   particle–hole transformation (`ParticleHole`), bridge to the lattice code (`DFT/Lattice/Fermions/FockBridge`), spin bridge
@@ -249,9 +266,10 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 4. **C2 + B4** (self-energy, Gibbs states and KMS), then C3.
 5. **A6** Kato cusp, Tiers 1–2.
 6. **D4** unified functional-theory framework: statements approved; stages 1 → 2 → 3.
-7. Speculative (2026-11-26): **B3+** done (2026-11-27); **F3** numerics first; **B5** Borland–Dennis
+7. **A7** Sturm oscillation: Tier 1 (Jacobi matrices) first, then Tier 2 (Prüfer angle); statements to draft.
+8. Speculative (2026-11-26): **B3+** done (2026-11-27); **F3** numerics first; **B5** Borland–Dennis
    after a literature check for an elementary proof of the inequality, then Schilling's pinning.
-8. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
+9. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
 ## Log
 - 2026-11-25: roadmap written; Physlib inspected (~437k lines). Decisions (Miguel): depend on Physlib, our work is meant to
@@ -272,3 +290,4 @@ Done: A1–A5 (with A4+), B1, B2, most of C1.
 - 2026-11-26: item C7 (N-representability of the Green's function) added as a proposal.
 - 2026-11-26: D4 statements approved; blueprint chapter `unified` added (no Lean yet).
 - 2026-11-27: B3+ done (no unfilled shells, Hartree–Fock equations).
+- 2026-11-27: item A7 (Sturm oscillation theorem) added.
