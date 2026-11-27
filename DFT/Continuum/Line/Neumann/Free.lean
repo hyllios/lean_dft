@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miguel A. L. Marques
 -/
 import Mathlib.Algebra.QuadraticDiscriminant
-import DFT.Continuum.Line.Neumann.Slices
+import DFT.Continuum.Line.Neumann.Slater
 
 /-!
 # Non-interacting ground states with Neumann walls
@@ -18,6 +18,10 @@ lowest Neumann eigenvalues `λ_j` of `-d²/dx² + v` (`Neumann/Spec`), and that 
 * `tendsto_kinN_truncC`, `tendsto_sq_truncC`, `tendsto_v_truncC`: the energy of the cosine
   truncations converges.
 * **`lower_fer`**, **`lower_bos`**: the lower bounds for all `H¹` states.
+* **`gs_free_fer`**: `E₀ = Σ_{j<N} λ_j`, the Slater determinant of the `N` lowest orbitals
+  (`Neumann/Slater`) is a ground state, and `λ_{N-1} < λ_N` (otherwise replacing `φ_{N-1}` by
+  `φ_N` would give a second, orthogonal ground state, against `gsNH_unique`).
+* **`gs_free_bos`**: `E₀ = N λ₀`, and the product state `φ₀^{⊗N}` is a ground state.
 -/
 
 namespace DFT.Continuum.Line
@@ -146,7 +150,7 @@ end lower
 /-! ### Passing to all `H¹` states -/
 
 /-- If `b_M² ≤ a c_M` and `c_M → 0`, then `b_M → 0`. -/
-lemma tendsto_of_sq_le {a : ℝ} {b c : ℕ → ℝ} (ha : 0 ≤ a) (hbc : ∀ M, b M ^ 2 ≤ a * c M)
+lemma tendsto_of_sq_le {a : ℝ} {b c : ℕ → ℝ} (hbc : ∀ M, b M ^ 2 ≤ a * c M)
     (hc : Tendsto c atTop (𝓝 0)) : Tendsto b atTop (𝓝 0) := by
   have hac : Tendsto (fun M => a * c M) atTop (𝓝 0) := by simpa using hc.const_mul a
   have hs : Tendsto (fun M => √(a * c M)) atTop (𝓝 0) := by
@@ -174,7 +178,7 @@ lemma tendsto_kinN_truncC : Tendsto (fun M => kinN (truncC M Φ)) atTop (𝓝 (k
   have hP := h1NW_of_mem hΦ
   have hk := tendsto_kinN_sub_truncC hΦ
   have hb : Tendsto (fun M => kinN2 Φ (Φ - truncC M Φ)) atTop (𝓝 0) :=
-    tendsto_of_sq_le (kinN_nonneg Φ) (fun M => sq_le_of_quad fun s => by
+    tendsto_of_sq_le (fun M => sq_le_of_quad fun s => by
       rw [← kinN_expand hP (hY M) s]; exact kinN_nonneg _) hk
   have e : ∀ M, kinN (truncC M Φ) =
       kinN Φ + 2 * (-1) * kinN2 Φ (Φ - truncC M Φ) + (-1) ^ 2 * kinN (Φ - truncC M Φ) := fun M => by
@@ -209,8 +213,7 @@ lemma tendsto_sq_truncC :
   have hc : Tendsto (fun M => ∫ x, Y M x * Y M x ∂μN n) atTop (𝓝 0) := by
     simpa [Y, sq] using tendsto_sq_sub_truncC hΦ
   have hb : Tendsto (fun M => ∫ x, Φ x * Y M x ∂μN n) atTop (𝓝 0) :=
-    tendsto_of_sq_le (integral_nonneg fun x => mul_self_nonneg (Φ x))
-      (fun M => sq_le_of_quad fun s => by
+    tendsto_of_sq_le (fun M => sq_le_of_quad fun s => by
         rw [← hquad]; exact integral_nonneg fun x => mul_self_nonneg _) hc
   have e : ∀ M, ∫ x, truncC M Φ x * truncC M Φ x ∂μN n =
       ∫ x, Φ x * Φ x ∂μN n + 2 * (-1) * ∫ x, Φ x * Y M x ∂μN n +
@@ -288,5 +291,146 @@ theorem lower_bos {Φ : Cfg n → ℝ} (hΦ : Φ ∈ DomN .bos n) :
   le_of_tendsto_of_tendsto ((tendsto_sq_truncC hΦ).const_mul _)
     ((tendsto_kinN_truncC hΦ).add (tendsto_v_truncC hΦ v))
     (Eventually.of_forall fun M => lower_smooth_bos v hbd (truncC_mem hΦ M) (truncC_memN hΦ M))
+
+/-! ### Non-interacting ground states -/
+
+/-- `∫ det f · det f' = Σ_{σ,τ} sgn σ sgn τ Π_i ∫ f_{σ i} f'_{τ i}`. -/
+lemma integral_slater_mul {f f' : Fin (n + 1) → ℝ → ℝ} (hf : ∀ j, Continuous (f j))
+    (hf' : ∀ j, Continuous (f' j)) :
+    ∫ x, slater f x * slater f' x ∂μN n =
+      ∑ σ : Equiv.Perm (Fin (n + 1)), ∑ τ : Equiv.Perm (Fin (n + 1)),
+        sgn σ * sgn τ * ∏ i, ∫ t, f (σ i) t * f' (τ i) t ∂vol01 := by
+  have e : ∀ x : Cfg n, slater f x * slater f' x =
+      ∑ σ : Equiv.Perm (Fin (n + 1)), ∑ τ : Equiv.Perm (Fin (n + 1)),
+        sgn σ * sgn τ * ∏ i, (f (σ i) (x i) * f' (τ i) (x i)) := fun x => by
+    rw [slater_eq_sum, slater_eq_sum, Finset.sum_mul_sum]
+    refine Finset.sum_congr rfl fun σ _ => Finset.sum_congr rfl fun τ _ => ?_
+    rw [Finset.prod_mul_distrib]; ring
+  have hc : ∀ σ τ : Equiv.Perm (Fin (n + 1)), Continuous fun x : Cfg n =>
+      sgn σ * sgn τ * ∏ i, (f (σ i) (x i) * f' (τ i) (x i)) := fun σ τ =>
+    continuous_const.mul (continuous_finsetProd (s := Finset.univ)
+      (f := fun i (x : Cfg n) => f (σ i) (x i) * f' (τ i) (x i)) fun i _ =>
+        ((hf (σ i)).comp (continuous_apply i)).mul ((hf' (τ i)).comp (continuous_apply i)))
+  simp only [e]
+  rw [integral_finsetSum _ fun σ _ => integrable_finsetSum _ fun τ _ => integrableN (hc σ τ)]
+  refine Finset.sum_congr rfl fun σ _ => ?_
+  rw [integral_finsetSum _ fun τ _ => integrableN (hc σ τ)]
+  refine Finset.sum_congr rfl fun τ _ => ?_
+  rw [integral_const_mul, integral_prod_cube (fun i t => f (σ i) t * f' (τ i) t)]
+
+lemma QNH_free (τ : Stat) (v : PotH) (Φ : Cfg n → ℝ) :
+    QNH τ 0 v Φ = kinN Φ + v (rhoE τ Φ) := by
+  simp only [QNH, Pi.zero_apply, zero_mul, integral_zero, add_zero]
+
+/-- **Non-interacting fermions with Neumann walls** (`v ∈ H⁻¹`): with the Neumann orbitals
+`φ_k` and eigenvalues `λ_k` of `-d²/dx² + v`, the ground-state energy is `Σ_{j<N} λ_j`, the
+Slater determinant of `φ₀, …, φ_{N-1}` is a ground state, and `λ_{N-1} < λ_N`. -/
+theorem gs_free_fer (v : PotH) :
+    ∃ (φ : ℕ → H1E) (lam : ℕ → ℝ), Monotone lam ∧ Tendsto lam atTop atTop ∧
+      (∀ a b, ⟪JE (φ a), JE (φ b)⟫_ℝ = if a = b then 1 else 0) ∧
+      (∀ k g, ⟪(φ k).snd, g.snd⟫_ℝ + v (dE2 (φ k) g) = lam k * ⟪JE (φ k), JE g⟫_ℝ) ∧
+      gsEH .fer (0 : Cfg n → ℝ) v = ∑ j ∈ Finset.range (n + 1), lam j ∧
+      IsGSNH .fer 0 v (slN fun j : Fin (n + 1) => φ j) ∧ lam n < lam (n + 1) := by
+  obtain ⟨φ, lam, b, hm, ht, hJ, heig, hbd⟩ := exists_neuOrbitals v
+  have hw : Continuous (0 : Cfg n → ℝ) := continuous_const
+  have hon : ∀ a b, ⟪JE (φ a), JE (φ b)⟫_ℝ = if a = b then 1 else 0 := fun a c => by
+    rw [hJ, hJ]; exact orthonormal_iff_ite.1 b.orthonormal a c
+  have hlam : ∀ k, ‖(φ k).snd‖ ^ 2 + v (dE (φ k)) = lam k := fun k => by
+    have := heig k (φ k)
+    rw [real_inner_self_eq_norm_sq, dE2_self, real_inner_self_eq_norm_sq, hJ,
+      b.orthonormal.1 k, one_pow, mul_one] at this
+    exact this
+  -- every normalised state has energy at least `Σ λ_j`
+  have hlow : ∀ Ψ ∈ DomN .fer n, ∫ x, Ψ x ^ 2 ∂μN n = 1 →
+      ∑ j ∈ Finset.range (n + 1), lam j ≤ QNH .fer 0 v Ψ := fun Ψ hΨ hn => by
+    have h := lower_fer v hJ hbd hm hΨ
+    simp only [← sq, hn, mul_one] at h
+    rw [QNH_free]; exact h
+  -- a Slater determinant of orthonormal orbitals with energy `Σ λ` is a ground state
+  have hgs : ∀ e : Fin (n + 1) → H1E, (∀ a c, ⟪JE (e a), JE (e c)⟫_ℝ = if a = c then 1 else 0) →
+      QNH .fer 0 v (slN e) = ∑ j ∈ Finset.range (n + 1), lam j → IsGSNH .fer 0 v (slN e) :=
+    fun e he hE => ⟨slN_memN e, by simpa only [sq] using integral_slN_sq he,
+      fun Ψ hΨ hn => hE ▸ hlow Ψ hΨ hn⟩
+  set e : Fin (n + 1) → H1E := fun j => φ j
+  have he : ∀ a c, ⟪JE (e a), JE (e c)⟫_ℝ = if a = c then 1 else 0 := fun a c => by
+    simp only [e, hon, Fin.val_inj]
+  have hE : QNH .fer 0 v (slN e) = ∑ j ∈ Finset.range (n + 1), lam j := by
+    rw [QNH_slN he, ← Fin.sum_univ_eq_sum_range]
+    exact Finset.sum_congr rfl fun j _ => hlam j
+  have hGS := hgs e he hE
+  refine ⟨φ, lam, hm, ht, hon, heig, ?_, hGS, ?_⟩
+  · rw [gsEH_of_isGSNH hw hGS, hE]
+  -- the gap
+  by_contra hgap
+  have heq : lam n = lam (n + 1) := le_antisymm (hm (Nat.le_succ n)) (not_lt.1 hgap)
+  set idx : Fin (n + 1) → ℕ := fun j => if j = Fin.last n then n + 1 else j
+  have hidx : ∀ a c, idx a = idx c ↔ a = c := fun a c => by
+    have ha := a.2; have hc := c.2
+    simp only [idx]
+    by_cases h1 : a = Fin.last n <;> by_cases h2 : c = Fin.last n
+    · simp [h1, h2]
+    · have : (c : ℕ) ≠ n := fun h => h2 (Fin.ext (by simp [h]))
+      simp only [h1, h2, ↓reduceIte]; constructor <;> intro h <;> [omega; exact absurd h.symm h2]
+    · have : (a : ℕ) ≠ n := fun h => h1 (Fin.ext (by simp [h]))
+      simp only [h1, h2, ↓reduceIte]; constructor <;> intro h <;> [omega; exact h.elim]
+    · simp only [h1, h2, ↓reduceIte, Fin.val_inj]
+  set e' : Fin (n + 1) → H1E := fun j => φ (idx j)
+  have he' : ∀ a c, ⟪JE (e' a), JE (e' c)⟫_ℝ = if a = c then 1 else 0 := fun a c => by
+    simp only [e', hon, hidx]
+  have hE' : QNH .fer 0 v (slN e') = ∑ j ∈ Finset.range (n + 1), lam j := by
+    rw [QNH_slN he', ← Fin.sum_univ_eq_sum_range, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
+    simp only [e', idx, Fin.castSucc_ne_last, ↓reduceIte, hlam, Fin.val_castSucc, Fin.val_last,
+      heq]
+  have hGS' := hgs e' he' hE'
+  -- the two determinants are orthogonal
+  have horth : ∫ x, slN e x * slN e' x ∂μN n = 0 := by
+    have h0 : ∫ x, slater (orbs e) x * slater (orbs e') x ∂μN n = 0 := by
+      rw [integral_slater_mul (f := orbs e) (f' := orbs e') (fun j => continuous_orbF (e j))
+        (fun j => continuous_orbF (e' j))]
+      refine Finset.sum_eq_zero fun σ _ => Finset.sum_eq_zero fun τ _ => ?_
+      rw [Finset.prod_eq_zero (Finset.mem_univ (τ.symm (Fin.last n)))]
+      · ring
+      · simp only [orbs, integral_orbF_mul, Equiv.apply_symm_apply, e', e, idx, ↓reduceIte, hon]
+        have := (σ (τ.symm (Fin.last n))).2
+        simp only [ite_eq_right_iff, one_ne_zero, imp_false]
+        omega
+    simp only [slN, Pi.smul_apply, smul_eq_mul]
+    have : (fun x => (√(Nat.factorial (n + 1) : ℝ))⁻¹ * slater (orbs e) x *
+        ((√(Nat.factorial (n + 1) : ℝ))⁻¹ * slater (orbs e') x)) = fun x =>
+        ((√(Nat.factorial (n + 1) : ℝ))⁻¹ * (√(Nat.factorial (n + 1) : ℝ))⁻¹) *
+          (slater (orbs e) x * slater (orbs e') x) := by funext x; ring
+    rw [this, integral_const_mul, h0, mul_zero]
+  have hn1 := integral_slN_sq he
+  rcases gsNH_unique hw hGS hGS' with h | h
+  · have : ∫ x, slN e x * slN e' x ∂μN n = ∫ x, slN e x * slN e x ∂μN n :=
+      integral_congr_ae (h.mono fun x hx => by simp only [hx])
+    rw [horth, hn1] at this; exact absurd this (by norm_num)
+  · have : ∫ x, slN e x * slN e' x ∂μN n = -∫ x, slN e x * slN e x ∂μN n := by
+      rw [← integral_neg]
+      exact integral_congr_ae (h.mono fun x hx => by simp [hx])
+    rw [horth, hn1] at this; exact absurd this (by norm_num)
+
+/-- **Non-interacting bosons with Neumann walls** (`v ∈ H⁻¹`): the ground-state energy is
+`N λ₀` and the product state `φ₀^{⊗N}` is a ground state. -/
+theorem gs_free_bos (v : PotH) :
+    ∃ (φ₀ : H1E) (lam₀ : ℝ), ‖JE φ₀‖ = 1 ∧
+      (∀ g, ⟪φ₀.snd, g.snd⟫_ℝ + v (dE2 φ₀ g) = lam₀ * ⟪JE φ₀, JE g⟫_ℝ) ∧
+      gsEH .bos (0 : Cfg n → ℝ) v = ((n : ℝ) + 1) * lam₀ ∧ IsGSNH .bos 0 v (prN (n := n) φ₀) := by
+  obtain ⟨φ, lam, b, hm, ht, hJ, heig, hbd⟩ := exists_neuOrbitals v
+  have hw : Continuous (0 : Cfg n → ℝ) := continuous_const
+  have h1 : ‖JE (φ 0)‖ = 1 := by rw [hJ]; exact b.orthonormal.1 0
+  have hlam : ‖(φ 0).snd‖ ^ 2 + v (dE (φ 0)) = lam 0 := by
+    have := heig 0 (φ 0)
+    rw [real_inner_self_eq_norm_sq, dE2_self, real_inner_self_eq_norm_sq, h1, one_pow,
+      mul_one] at this
+    exact this
+  have hE : QNH .bos 0 v (prN (n := n) (φ 0)) = ((n : ℝ) + 1) * lam 0 := by
+    rw [QNH_prN h1, hlam]
+  have hGS : IsGSNH .bos 0 v (prN (n := n) (φ 0)) :=
+    ⟨prN_memN _, by simpa only [sq] using integral_prN_sq (n := n) h1, fun Ψ hΨ hn => by
+      have h := lower_bos v hbd hΨ
+      simp only [← sq, hn, mul_one] at h
+      rw [hE, QNH_free]; exact h⟩
+  exact ⟨φ 0, lam 0, h1, heig 0, by rw [gsEH_of_isGSNH hw hGS, hE], hGS⟩
 
 end DFT.Continuum.Line

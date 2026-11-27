@@ -69,6 +69,18 @@ lemma ae_deriv_mul (hg : H1N g) (hh : H1N h) :
   filter_upwards [hdg, hdh] with s hs hs' hsI
   exact ((hs hsI).hasDerivAt.mul (hs' hsI).hasDerivAt).deriv
 
+/-- Functions that agree on `(0, 1)` have the same derivative there. -/
+lemma deriv_eq_of_eqOn (he : EqOn g h (Icc 0 1)) {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) :
+    deriv g t = deriv h t :=
+  Filter.EventuallyEq.deriv_eq (Filter.mem_of_superset (isOpen_Ioo.mem_nhds ht)
+    fun s hs => he (Ioo_subset_Icc_self hs))
+
+/-- `H¹(0, 1)` only sees the values on `[0, 1]`. -/
+lemma congr (hg : H1N g) (he : EqOn g h (Icc 0 1)) : H1N h :=
+  ⟨hg.1.congr (by rwa [uIcc01]),
+    hg.2.congr_fun (fun t ht => by simp only [deriv_eq_of_eqOn he ht]) measurableSet_Ioo⟩
+
+
 end H1N
 
 /-! ### The sup bound without boundary conditions -/

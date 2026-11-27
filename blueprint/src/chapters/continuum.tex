@@ -385,7 +385,8 @@ walls; the interaction $w$ is continuous and invariant under relabelling, and $v
   \label{lem:pauli}
   \lean{DFT.Continuum.Line.avgK, DFT.Continuum.Line.continuous_avgK, DFT.Continuum.Line.avgK_update, DFT.Continuum.Line.mu1_real_univ, DFT.Continuum.Line.integral_avgK, DFT.Continuum.Line.integrable_prod_mu1, DFT.Continuum.Line.gK, DFT.Continuum.Line.gK_apply, DFT.Continuum.Line.continuous_gK, DFT.Continuum.Line.gK_update, DFT.Continuum.Line.pK, DFT.Continuum.Line.continuous_pK, DFT.Continuum.Line.inner_pK, DFT.Continuum.Line.pK_pK_self, DFT.Continuum.Line.double_zero, DFT.Continuum.Line.pK_pK_ne, DFT.Continuum.Line.pauli}
   \leanok
-  Let $\Phi$ be a fermionic state and $f$ a continuous function with $\int_0^1f^2=1$. With
+  Let $\Phi$ be a continuous function on $[0,1]^N$, antisymmetric under every permutation of the coordinates,
+  and $f$ a continuous function with $\int_0^1f^2=1$. With
   $G_k(x)=\int_0^1f(t)\Phi(x_{k\to t})\,dt$, where $x_{k\to t}$ is $x$ with $x_k$ replaced by $t$, and
   $P_k\Phi(x)=f(x_k)G_k(x)$,
   \[ \sum_k\langle\Phi,P_k\Phi\rangle\le\langle\Phi,\Phi\rangle. \]
@@ -1845,7 +1846,7 @@ The Slater-determinant form of $F_0$ for fermions ($F_0=T_{\rm KS}$, Corso's Lem
 
 % Statements in this section approved by Miguel 2026-11-27 (ROADMAP D5 phase 2).
 % Planned Lean: ForMathlib/Analysis/InnerProductSpace/FormEigenbasis.lean (P1, abstract);
-%   DFT/Continuum/Line/Neumann/{Spec,Free}.lean (P2–P4); DFT/Continuum/Line/NeumannKS/{Slater,Aufbau}.lean (P5–P7).
+%   DFT/Continuum/Line/Neumann/{Spec,Slices,Slater,Free}.lean (P2–P3); DFT/Continuum/Line/NeumannKS/{Slater,Aufbau}.lean (P5–P7).
 
 For $v\in H^{-1}$ let $q_v(f)=\int_0^1f'^2+v(f^2)$ on $H^1(0,1)$, the form of the one-body Neumann operator $h_v=-d^2/dx^2+v$.
 By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-C_v\int f^2$.
@@ -1887,14 +1888,15 @@ By the form bound (Theorem~\ref{thm:neu_form_bound}) $q_v(f)\ge\frac12\int f'^2-
 
 \begin{theorem}[Non-interacting ground states with Neumann walls]
   \label{thm:neu_free}
-  % Lean: Neumann/Free: gsEH_free_fer : gsEH .fer 0 v = Σ_{j ≤ n} λ_j, isGSNH_slater_free (the Slater determinant of
-  %   φ_0..φ_n is a ground state), lam_lt_lam_succ (λ_n < λ_{n+1}); bosons: gsEH_free_bos = (n+1) λ_0, isGSNH_prod_free.
+  \lean{DFT.Continuum.Line.H1N.congr, DFT.Continuum.Line.H1N.deriv_eq_of_eqOn, DFT.Continuum.Line.jC, DFT.Continuum.Line.insC, DFT.Continuum.Line.sE, DFT.Continuum.Line.fnE_sE, DFT.Continuum.Line.sE_snd_ae, DFT.Continuum.Line.continuous_sE, DFT.Continuum.Line.kinN_eq_slices, DFT.Continuum.Line.integral_sq_eq_slices, DFT.Continuum.Line.mulE, DFT.Continuum.Line.intU, DFT.Continuum.Line.rhoE_eq_slices, DFT.Continuum.Line.v_rhoE_eq_slices, DFT.Continuum.Line.inner_pK_zero_eq, DFT.Continuum.Line.inner_pK_eq_zero, DFT.Continuum.Line.occ_le, DFT.Continuum.Line.lower_smooth_fer, DFT.Continuum.Line.lower_smooth_bos, DFT.Continuum.Line.tendsto_kinN_truncC, DFT.Continuum.Line.tendsto_sq_truncC, DFT.Continuum.Line.tendsto_v_truncC, DFT.Continuum.Line.lower_fer, DFT.Continuum.Line.lower_bos, DFT.Continuum.Line.orbF, DFT.Continuum.Line.h1N_orbF, DFT.Continuum.Line.kinM_orbF, DFT.Continuum.Line.integral_tens_mul, DFT.Continuum.Line.slN, DFT.Continuum.Line.integral_slN_sq, DFT.Continuum.Line.kinN_slater_orbs, DFT.Continuum.Line.kinN_slN, DFT.Continuum.Line.rhoE_slN, DFT.Continuum.Line.QNH_slN, DFT.Continuum.Line.prN, DFT.Continuum.Line.kinN_prN, DFT.Continuum.Line.rhoE_prN, DFT.Continuum.Line.QNH_prN, DFT.Continuum.Line.integral_slater_mul, DFT.Continuum.Line.gs_free_fer, DFT.Continuum.Line.gs_free_bos}
+  \leanok
   \uses{thm:neu_orbitals, thm:neu_nondeg, thm:neu_gs_N}
   Let $w=0$. For $N$ fermions, $E_0(v)=\sum_{j<N}\lambda_j$, the Slater determinant $\varphi_0\wedge\dots\wedge\varphi_{N-1}$ is the
   ground state (unique up to sign), and $\lambda_{N-1}<\lambda_N$. For $N$ bosons, $E_0(v)=N\lambda_0$ and the ground state is
   $\varphi_0^{\otimes N}$.
 \end{theorem}
 \begin{proof}
+  \leanok
   The energy splits into one-body slices: $\langle\Phi,\sum_k h_{v,k}\Phi\rangle=\sum_k\int q_v(\Phi(\dots,\cdot_k,\dots))$, using
   $v(e)=\alpha e(0)+\int\beta e'$ and Fubini for the potential term (derivative of a marginal,
   \texttt{Neumann/DensD}). Apply the bound of Theorem~\ref{thm:neu_orbitals} slice by slice; for fermions the Pauli principle

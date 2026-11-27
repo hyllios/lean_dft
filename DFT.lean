@@ -91,6 +91,7 @@ import DFT.Continuum.Line.Neumann.Pos
 import DFT.Continuum.Line.Neumann.Pot
 import DFT.Continuum.Line.Neumann.Rep
 import DFT.Continuum.Line.Neumann.Series
+import DFT.Continuum.Line.Neumann.Slater
 import DFT.Continuum.Line.Neumann.Slices
 import DFT.Continuum.Line.Neumann.Spec
 import DFT.Continuum.Line.Neumann.Suff

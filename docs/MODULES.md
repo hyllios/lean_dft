@@ -169,7 +169,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-212 modules, 56620 lines.
+215 modules, 57621 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -210,7 +210,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `DFT.Continuum.Line.Core.Basic` | 486 | `N` particles on a line |
 | `DFT.Continuum.Line.Core.Chamber` | 152 | Orderings and collisions |
-| `DFT.Continuum.Line.Core.Pauli` | 226 | The Pauli principle for one orbital |
+| `DFT.Continuum.Line.Core.Pauli` | 228 | The Pauli principle for one orbital |
 | `DFT.Continuum.Line.Core.Strong` | 142 | Calculus for `C²` states on the cube |
 
 ### `DFT/Continuum/Line/Free/`
@@ -306,6 +306,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Continuum.Line.Neumann.DensD` | 270 | The derivative of a marginal |
 | `DFT.Continuum.Line.Neumann.EL` | 290 | The Euler–Lagrange equation with Neumann walls and `H⁻¹` potentials |
 | `DFT.Continuum.Line.Neumann.Fer` | 291 | Unique continuation for fermionic Neumann ground states of `H⁻¹` potentials |
+| `DFT.Continuum.Line.Neumann.Free` | 436 | Non-interacting ground states with Neumann walls |
 | `DFT.Continuum.Line.Neumann.GS` | 535 | Neumann walls and `H⁻¹` potentials: one-particle ground states |
 | `DFT.Continuum.Line.Neumann.HKa` | 250 | Estimates for the Hohenberg–Kohn theorem with Neumann walls |
 | `DFT.Continuum.Line.Neumann.HKb` | 831 | The pair-density term for smooth states |
@@ -314,9 +315,11 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Continuum.Line.Neumann.ND` | 287 | Nondegeneracy of Neumann ground states of `H⁻¹` potentials |
 | `DFT.Continuum.Line.Neumann.NGS` | 406 | `N` particles with Neumann walls in an `H⁻¹` potential |
 | `DFT.Continuum.Line.Neumann.Pos` | 858 | Ground-state densities with Neumann walls are positive on `[0, 1]` |
-| `DFT.Continuum.Line.Neumann.Pot` | 317 | Neumann walls and `H⁻¹` potentials: one particle, the form bound |
+| `DFT.Continuum.Line.Neumann.Pot` | 329 | Neumann walls and `H⁻¹` potentials: one particle, the form bound |
 | `DFT.Continuum.Line.Neumann.Rep` | 548 | Local `N`-representability with Neumann walls |
 | `DFT.Continuum.Line.Neumann.Series` | 415 | Cosine series and the kinetic energy with Neumann walls |
+| `DFT.Continuum.Line.Neumann.Slater` | 249 | Slater determinants and product states of `H¹` orbitals (Neumann walls) |
+| `DFT.Continuum.Line.Neumann.Slices` | 302 | Slices of smooth states with Neumann walls |
 | `DFT.Continuum.Line.Neumann.Spec` | 225 | Neumann orbitals for `H⁻¹` potentials |
 | `DFT.Continuum.Line.Neumann.Suff` | 257 | Sufficiency: `v`-representability from local `N`-representability |
 | `DFT.Continuum.Line.Neumann.Ucp` | 522 | Unique continuation for bosonic Neumann ground states of `H⁻¹` potentials |
@@ -543,4 +546,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Lattice.TDDFT.Spin` | 481 | Spin-resolved lattice TDDFT |
 | `DFT.Lattice.TDDFT.TwoElectron` | 69 | One up and one down electron: total-density HK for every potential |
 
-Total: 74510 lines of Lean.
+Total: 75511 lines of Lean.
