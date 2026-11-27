@@ -1011,4 +1011,10 @@ walls. User choices: full H⁻¹ potentials; continuous w; bosons and fermions (
   W = {a : ι(a) ∈ ℝ·1}, Fritz John multiplier rule `IsLocalExtrOn.exists_multipliers_of_hasStrictFDerivAt`, and
   non-criticality rules out a vanishing multiplier of ⟨H₀⟩). reForm, hasStrictFDerivAt_expv (derivative of
   ψ ↦ Re⟨ψ, Aψ⟩ via the bilinear rule). Also: ks_potential_exists(_interior) lost the hypotheses 0 < N < M (approved).
+- D4 stage 3 DONE (2026-11-27), D4 COMPLETE. `Scope/Reduction`: reduce (ι ∘ f, H₀ + ι v₀), pullback, reduce_ham,
+  reduce_E, reduce_Bp/Be, **reduce_Fp**, reduce_Fe (Prop 7.1). `Scope/Purification`: purify (H₀ ⊗ 1, B_i ⊗ 1),
+  expv_kronecker_one, ptrace, exists_purification, purify_Bp, **purify_Fp** (Thm 7.2: F_p(S') = F_e(S)).
+  `Scope/Qubits`: Bloch scope (blochScope_Bp sphere, blochScope_Be ball, Bp ≠ Be; exists_blochVec), double qubit
+  qqScope with H₀ = X₁X₂ + Y₁Y₂ (qq_Fp: F_p(0,0,z,0) = −√(1−z²); qq_Fe_le: F_e(0,0,½,0) ≤ −√2; **qq_Fe_lt_Fp**
+  (Prop A.1); qq_mem_interior). Shared lemmas moved to `Scope/Basic`: pot_sum, expv_pot, trv_pot.
 

@@ -174,6 +174,16 @@ omit [Fintype m] in
 lemma dens_pure (ψ : d → 𝕜) : S.dens (vecMulVec ψ (star ψ)) = S.densPure ψ := by
   funext i; simp [dens, densPure, trv_pure]
 
+lemma expv_pot (a : m → ℝ) (x : d → 𝕜) : expv (S.pot a) x = S.densPure x ⬝ᵥ a := by
+  have h := S.expv_ham a x
+  rw [ham, expv_add] at h
+  linarith
+
+lemma trv_pot (a : m → ℝ) (Γ : Matrix d d 𝕜) : trv (S.pot a) Γ = S.dens Γ ⬝ᵥ a := by
+  have h := S.trv_ham a Γ
+  rw [ham, trv_add] at h
+  linarith
+
 omit [Fintype d] in
 lemma pot_add (v w : m → ℝ) : S.pot (v + w) = S.pot v + S.pot w := by
   simp [pot, add_smul, Finset.sum_add_distrib]
@@ -185,6 +195,14 @@ lemma pot_smul (r : ℝ) (v : m → ℝ) : S.pot (r • v) = r • S.pot v := by
 omit [Fintype d] in
 lemma pot_sub (v w : m → ℝ) : S.pot (v - w) = S.pot v - S.pot w := by
   simp [pot, sub_smul, Finset.sum_sub_distrib]
+
+omit [Fintype d] in
+lemma pot_sum {ι : Type*} (s : Finset ι) (v : ι → m → ℝ) :
+    S.pot (∑ j ∈ s, v j) = ∑ j ∈ s, S.pot (v j) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp [pot]
+  | insert j s hj ih => rw [Finset.sum_insert hj, Finset.sum_insert hj, pot_add, ih]
 
 omit [Fintype d] in
 @[simp] lemma pot_zero : S.pot 0 = 0 := by simp [pot]

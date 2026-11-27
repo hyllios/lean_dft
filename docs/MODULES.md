@@ -184,7 +184,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-226 modules, 59170 lines.
+229 modules, 59806 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -568,13 +568,16 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Module | Lines | Content |
 |---|---|---|
 | `DFT.Scope.Abelian` | 102 | The ranges of an abelian scope |
-| `DFT.Scope.Basic` | 313 | Scopes: the common structure of finite-dimensional functional theories |
+| `DFT.Scope.Basic` | 331 | Scopes: the common structure of finite-dimensional functional theories |
 | `DFT.Scope.Duality` | 118 | Lieb duality for a scope |
-| `DFT.Scope.Eigenstates` | 219 | Representability by eigenstates (stage 2) |
+| `DFT.Scope.Eigenstates` | 206 | Representability by eigenstates (stage 2) |
 | `DFT.Scope.Functionals` | 153 | The constrained-search functionals of a scope |
 | `DFT.Scope.HK` | 154 | Critical states and the Hohenberg–Kohn theorems for a scope |
+| `DFT.Scope.Purification` | 133 | Purification of the ensemble functional (stage 3) |
+| `DFT.Scope.Qubits` | 380 | Qubit examples (stage 3) |
 | `DFT.Scope.Ranges` | 72 | The pure and the ensemble ranges of a scope |
+| `DFT.Scope.Reduction` | 118 | Reduction of scope (stage 3) |
 | `DFT.Scope.Representability` | 167 | Ensemble `v`-representability for a scope |
 | `DFT.Scope.SpinChain` | 122 | Spin chains as a scope |
 
-Total: 77550 lines of Lean.
+Total: 78186 lines of Lean.

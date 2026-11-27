@@ -29,7 +29,7 @@ observables `B_i` on `𝕜^d`, densities `ρ_i = ⟨B_i⟩`, the ranges `B_p`, `
 Hohenberg–Kohn and representability. It imports no other `DFT` folder; concrete theories (`Lattice`, …) import it and
 state themselves as instances (`Lattice/KohnSham/Duality`: `latticeScope`; `Lattice/RDMFT/Scope`: `rdmftScope`).
 Internal order: `Basic` → `Ranges` → `Functionals` → `Duality` → `Representability`; `HK` needs only `Basic`;
-`Eigenstates` needs `Functionals` and `HK`;
+`Eigenstates` needs `Functionals` and `HK`; `Reduction`, `Purification` and `Qubits` (examples) need `Functionals`;
 `Abelian` and `SpinChain` (the spin-chain instance, which has no folder of its own) need `Ranges`.
 
 ## `DFT/Lattice`: folder order (each folder may only import folders above it in this list)

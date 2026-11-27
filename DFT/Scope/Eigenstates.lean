@@ -33,19 +33,6 @@ open Matrix RCLike Set
 
 variable {𝕜 d m : Type*} [RCLike 𝕜] [Fintype d] [Fintype m] (S : Scope 𝕜 d m)
 
-omit [Fintype d] in
-lemma pot_sum {ι : Type*} (s : Finset ι) (v : ι → m → ℝ) :
-    S.pot (∑ j ∈ s, v j) = ∑ j ∈ s, S.pot (v j) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert j s hj ih => rw [Finset.sum_insert hj, Finset.sum_insert hj, pot_add, ih]
-
-lemma expv_pot (a : m → ℝ) (x : d → 𝕜) : expv (S.pot a) x = S.densPure x ⬝ᵥ a := by
-  have h := S.expv_ham a x
-  rw [ham, expv_add] at h
-  linarith
-
 /-- `(x, y) ↦ Re⟨x, A y⟩` as a continuous real bilinear form. -/
 noncomputable def reForm (A : Matrix d d 𝕜) : (d → 𝕜) →L[ℝ] (d → 𝕜) →L[ℝ] ℝ :=
   LinearMap.toContinuousLinearMap

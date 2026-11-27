@@ -221,6 +221,9 @@ import DFT.Scope.Duality
 import DFT.Scope.Eigenstates
 import DFT.Scope.Functionals
 import DFT.Scope.HK
+import DFT.Scope.Purification
+import DFT.Scope.Qubits
 import DFT.Scope.Ranges
+import DFT.Scope.Reduction
 import DFT.Scope.Representability
 import DFT.Scope.SpinChain

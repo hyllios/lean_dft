@@ -186,16 +186,61 @@ pairing is the dot product.
 
 \section{Change of scope and examples (stage 3)}
 
-\begin{theorem}[Reduction and purification]\label{thm:scope-change}
+\begin{theorem}[Reduction of scope]\label{thm:scope-change}
   \uses{def:scope-functionals}
-  For linear $f:V_r\to V$ and $v_0\in V$, the reduced scope $(V_r,\iota\circ f,H_0+\iota(v_0))$ has densities $f^*\circ\rho$.
-  $F_e$ of a scope equals $F_p$ of its purified scope on $\mathcal H\otimes\mathcal H$ (exact form to be checked against
-  arXiv:2606.06676, \S VII.B).
+  \lean{DFT.Scope.reduce, DFT.Scope.pullback, DFT.Scope.reduce_ham, DFT.Scope.reduce_E, DFT.Scope.reduce_densPure,
+    DFT.Scope.reduce_dens, DFT.Scope.reduce_Bp, DFT.Scope.reduce_Be, DFT.Scope.reduce_Fp, DFT.Scope.reduce_Fe}
+  \leanok
+  For linear $f:V_r\to V$ and $v_0\in V$, the reduced scope $(V_r,\iota\circ f,H_0+\iota(v_0))$ has densities $f^*\circ\rho$, ranges
+  $f^*(B_p)$, $f^*(B_e)$, and functionals $F^{(r)}(\rho')=\inf\{\rho(v_0)+F(\rho):f^*\rho=\rho'\}$ (paper, Proposition 7.1), for pure states
+  and ensembles.
 \end{theorem}
 
-\begin{theorem}[Examples]\label{thm:scope-examples}
-  \uses{def:scope-functionals}
-  For $\mathcal H=\mathbb C^2$ and $\iota(v)=v_1X+v_2Y+v_3Z$, $B_p$ is the unit sphere and $B_e$ the unit ball, so $B_p$ need not be
-  convex. For two qubits with observables $X_1,Y_1,Z_1,Z_2$ (Appendix A of the paper) there is an interior point with
-  $F_e<F_p$ (if the values are exact).
+\begin{proof}
+  \leanok
+  $H_r(v')=H(v_0+fv')$ and $\rho_r=f^*\rho$; split the constrained search over the fibres of $f^*$.
+\end{proof}
+
+\begin{theorem}[Purification]\label{thm:scope-purification}
+  \uses{def:scope-functionals, thm:scope-ranges}
+  \lean{DFT.Scope.purify, DFT.Scope.expv_kronecker_one, DFT.Scope.ptrace, DFT.Scope.trv_ptrace,
+    DFT.Scope.ptrace_mem_densMats, DFT.Scope.exists_purification, DFT.Scope.purify_densPure, DFT.Scope.purify_Bp,
+    DFT.Scope.purify_Fp}
+  \leanok
+  The purified scope on $\mathcal H\otimes\mathcal H$ has $H_0\otimes1$ and observables $\iota(v)\otimes1$. Its pure range is $B_e$ and its pure
+  functional is $F_e$ (paper, Theorem 7.2).
 \end{theorem}
+
+\begin{proof}
+  \leanok
+  $\langle\Psi,(A\otimes1)\Psi\rangle=\operatorname{tr}(A\operatorname{Tr}_2|\Psi\rangle\langle\Psi|)$, the partial trace of a unit vector is a density matrix, and every
+  density matrix $\sum_kp_k|u_k\rangle\langle u_k|$ is the partial trace of $\sum_k\sqrt{p_k}\,u_k\otimes e_k$.
+\end{proof}
+
+\begin{theorem}[Bloch sphere and ball]\label{thm:scope-examples}
+  \uses{def:scope-functionals, thm:scope-ranges}
+  \lean{DFT.Scope.pauli, DFT.Scope.blochScope, DFT.Scope.blochVec, DFT.Scope.exists_blochVec,
+    DFT.Scope.ball_subset_of_sphere_subset, DFT.Scope.blochScope_Bp, DFT.Scope.blochScope_Be,
+    DFT.Scope.blochScope_Bp_ne_Be}
+  \leanok
+  For $\mathcal H=\mathbb C^2$ and $\iota(v)=v_1X+v_2Y+v_3Z$ (any $H_0$), $B_p$ is the unit sphere and $B_e$ the unit ball, so $B_p$ need not be
+  convex.
+\end{theorem}
+
+\begin{theorem}[Double qubit]\label{thm:scope-double-qubit}
+  \uses{def:scope-functionals, thm:scope-examples}
+  \lean{DFT.Scope.qqScope, DFT.Scope.qqDens, DFT.Scope.qqScope_densPure, DFT.Scope.qq_lower, DFT.Scope.qq_Fp,
+    DFT.Scope.qq_Fe_le, DFT.Scope.qq_Fe_lt_Fp, DFT.Scope.qq_mem_Bp, DFT.Scope.qq_mem_Be, DFT.Scope.qq_mem_interior}
+  \leanok
+  Two qubits with observables $X_1,Y_1,Z_1,Z_2$ and $H_0=X_1X_2+Y_1Y_2$ (paper, Appendix A): $F_p(0,0,z,0)=-\sqrt{1-z^2}$ for
+  $0<|z|<1$; $F_e(0,0,\tfrac12,0)\le-\sqrt2$; hence $F_e<F_p$ at $(0,0,\tfrac12,0)$, which is an interior point of $B_e$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  On the fibre $\bar ac+\bar bd=0$ forces $|a|^2|c|^2=|b|^2|d|^2$, and with the linear constraints $|b|^2=(1+z)/4$, $|c|^2=(1-z)/4$, so
+  $\langle H_0\rangle=4\operatorname{Re}(\bar bc)\ge-\sqrt{1-z^2}$, attained at $\tfrac12(\sqrt{1+z},-\sqrt{1+z},\sqrt{1-z},\sqrt{1-z})$. The mixture
+  $\tfrac14|{\uparrow\uparrow}\rangle\langle{\uparrow\uparrow}|+\tfrac34|\Psi_2\rangle\langle\Psi_2|$ with $\Psi_2=-\sqrt{2/3}\,|{\uparrow\downarrow}\rangle+\tfrac1{\sqrt3}|{\downarrow\uparrow}\rangle$ has density
+  $(0,0,\tfrac12,0)$ and energy $-\sqrt2<-\sqrt3/2$. Product states give $(r,\pm1)$ for every unit Bloch vector $r$, so $B_e$ contains the
+  Bloch ball times $[-1,1]$.
+\end{proof}

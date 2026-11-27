@@ -41,7 +41,7 @@ Status: ✅ done · 🟡 partly done · ⬜ not started.
 | A. Finite-dimensional QM | A1–A5, A4+ | A4++ spherical harmonics (approved), A6 Kato cusp, A7 Sturm oscillation (statements pending approval) |
 | B. Many-body, finitely many modes | B1–B3, B3+ | B4 Gibbs/KMS, B5 Borland–Dennis and pinning (proposal) |
 | C. Green's functions | C1 for eigenstates | C1 rest, C2–C7 |
-| D. DFT | D0, D5; D4 stages 1–2 | D4 stage 3, D1–D3 |
+| D. DFT | D0, D4, D5 | D1–D3 |
 | E. Continuum operator theory | — | E1–E6 (with Physlib) |
 | F. Research frontier | F1 numerics/paper side | F1 in Lean, F2, F3 |
 
@@ -86,12 +86,14 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
   linearity in N for ensembles).
 - D2 ⬜ Sham–Schlüter equation (lattice); Kohn–Sham versus interacting response (Dyson-like equation with f_xc).
 - D3 ⬜ RDMFT ↔ quasi-free states (B3).
-- D4 🟡 Unified framework for finite-dimensional functional theories (Wang, Liebert, Penz, Schilling, arXiv:2606.06676;
+- D4 ✅ Unified framework for finite-dimensional functional theories (Wang, Liebert, Penz, Schilling, arXiv:2606.06676;
   statements approved 2026-11-26; blueprint chapter `unified`; code in `DFT/Scope`).
   Stage 1 ✅ ranges, functionals, Lieb duality, Hohenberg–Kohn, critical states, ensemble v-representability, abelian ranges;
   instances: lattice DFT (`latticeScope`; the lattice Kohn–Sham existence proofs now go through it), RDMFT (Coleman), spin
   chains. Stage 2 ✅ eigenstate v-representability (no non-redundancy needed), continuity of `F_e`.
-  Stage 3 ⬜ change of scope and examples (plan in §6.6).
+  Stage 3 ✅ reduction of scope, purification (`F_p` of the purified scope is `F_e`), Bloch sphere and ball, double qubit
+  (exact `F_p`, `F_e < F_p` at an interior point). Not covered: w-ensemble purification (§VII.C), Lie-algebra scopes and
+  moment maps (§VIII), generalized Pauli constraints.
 - D5 ✅ Exact Kohn–Sham with Neumann walls and `H⁻¹` potentials (Corso's Theorems 2.12, 2.15, Lemma 6.2;
   `DFT/Continuum/Line/Neumann{,KS}`).
 
@@ -107,18 +109,16 @@ Statements for C1–C3 are in the blueprint (Part III), approved 2026-11-26.
 - F1 🟡 Semiclassical expansion of exchange (`../semiclassical-xc/`): coefficients 7/81, 8/81, 10/81 reproduced (all known);
   ours: the exact t-representation, shape universality, a rigorous proof. Next: Tier 1 in Lean, paper proof of Tier 2.
 - F2 ⬜ Lattice → continuum limits of HK/KS; thermodynamic limits.
-- F3 ⬜ Generic pure-state v-representability in lattice DFT (conjecture, high risk; plan in §6.7).
+- F3 ⬜ Generic pure-state v-representability in lattice DFT (conjecture, high risk; plan in §6.6).
 
 ## 4. Next steps (as of 2026-11-27)
 
-1. **D4 stage 3**: reduction of scope and the Bloch example first; purification and the two-qubit example after checking
-   §VII.B and Appendix A of the paper.
-2. **A7** Sturm oscillation: approve the statements, then Tier 1 (Jacobi matrices) and Tier 2 (Prüfer angle).
-3. **A4++** spherical harmonics: stages A → B → C → D.
-4. **C1 remainder**, then **C2 + B4**, then C3.
-5. **A6** Kato cusp, Tiers 1–2.
-6. Speculative: **F3** numerics first; **B5** after a literature check for an elementary proof of the Borland–Dennis inequality.
-7. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
+1. **A7** Sturm oscillation: approve the statements, then Tier 1 (Jacobi matrices) and Tier 2 (Prüfer angle).
+2. **A4++** spherical harmonics: stages A → B → C → D.
+3. **C1 remainder**, then **C2 + B4**, then C3.
+4. **A6** Kato cusp, Tiers 1–2.
+5. Speculative: **F3** numerics first; **B5** after a literature check for an elementary proof of the Borland–Dennis inequality.
+6. In parallel: semiclassical-xc Tier 1 (F1); first contact with Physlib about E1/E3.
 
 ## 5. How we work
 
@@ -185,15 +185,7 @@ sufficiency for free Hamiltonians; with `H` fixed, the first moment is tied to `
 Trap: do not impose removal poles below addition poles (that is convexity of `E(N)`, false in general; a counterexample
 Hamiltonian is a good sanity theorem). After C2, B4 and D4.
 
-### 6.6 D4 stage 3 (change of scope and examples)
-- Reduction of scope: for linear `f : V_r → V` and `v₀`, the scope `(V_r, ι ∘ f, H₀ + ι v₀)` has densities `f* ∘ ρ`
-  (the stage 2 proof already uses this internally).
-- Purification: `F_e` of a scope equals `F_p` of the purified scope on `ℋ ⊗ ℋ` (§VII.B; exact form to be checked first).
-- Bloch example: one qubit with `X, Y, Z`; `B_p` is the sphere, `B_e` the ball.
-- Two-qubit example with `F_e < F_p` at an interior point (Appendix A), if its values are exact.
-- Out of scope: moment-map description of Lie-algebra scopes (§VIII) and generalized Pauli constraints (Kirwan/AGS convexity).
-
-### 6.7 F3 Generic pure-state v-representability (conjecture)
+### 6.6 F3 Generic pure-state v-representability (conjecture)
 For generic `H₀`, every density in the hypersimplex outside a null set is the density of a pure ground state of some `H(v)`;
 exceptions come from degeneracies (D4 gives only eigenstate representability). Tools: `DFT/Lattice/Generic`, `GenericHK`.
 First step: numerics on small lattices; the conjecture may be false.
@@ -206,4 +198,5 @@ First step: numerics on small lattices; the conjecture may be false.
   done. Items A4++ (approved), A6, B3+, B5, C7, D4 (approved), F3 added.
 - 2026-11-27: B3+ done; A7 added (statements pending approval). D5 done (Corso). D4 stages 1–2 done in `DFT/Scope`, with
   lattice, RDMFT and spin-chain instances; the lattice Kohn–Sham existence proofs rebuilt on the framework (−480 lines,
-  weaker hypotheses; `ks_potential_exists(_interior)` generalised with approval). Roadmap reorganised.
+  weaker hypotheses; `ks_potential_exists(_interior)` generalised with approval). Roadmap reorganised. D4 stage 3 done
+  (reduction, purification, Bloch, double qubit): D4 complete.

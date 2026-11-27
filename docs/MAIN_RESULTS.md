@@ -39,6 +39,9 @@ hypotheses `0 < N < M` were dropped (no longer used since the proof goes through
 | `DFT.lieb_eq_Fe` | yes |
 | `DFT.Scope.Bp_eq_Be_of_abelian` | yes |
 | `DFT.Scope.eigenstate_vrep` | yes |
+| `DFT.Scope.reduce_Fp` | yes |
+| `DFT.Scope.purify_Fp` | yes |
+| `DFT.Scope.qq_Fe_lt_Fp` | yes |
 | `DFT.Lattice.RDMFT.rdmftScope_Be` | yes |
 | `DFT.Continuum.subgrad_unique` | yes |
 | `DFT.dimH_image_le_of_pointwise_lipschitz` | yes |
