@@ -12,7 +12,7 @@ import DFT.Continuum.Line.Applications.HardCoreW
   same ground-state energy (`gsE_le_QW`).
 * **`tonks_girardeau_W`**: for every continuous `v`, Girardeau's sign times the Slater determinant
   of the `N` lowest orbitals of `-d²/dx² + v` is the hard-core ground state on `H¹₀` with no further
-  interaction. Its modulus is the modulus of the determinant, its norm is `N!`, its density is
+  interaction. It has the determinant's modulus, squared norm `N!`, and density
   `N!` times the free-fermion density `Σ_j φ_j²`, and every other ground state is a multiple of it.
 -/
 
@@ -49,8 +49,8 @@ theorem isGS_W_of_isGS {v : C01} {Φ : Cfg n → ℝ} (h : IsGS (setting τ n w 
 /-- **The Tonks–Girardeau gas on `H¹₀`.** For every continuous potential `v` there are `N`
 orthonormal `C²` orbitals `φ_j` (the lowest eigenfunctions of `-d²/dx² + v`) such that
 `A · det φ_j(x_i)` is the ground state of `N` hard-core bosons with no further interaction. Its
-modulus is `|det φ_j(x_i)|`, its norm is `N!`, its density is `N!` times the free-fermion density
-`Σ_j φ_j²`, and every other ground state is a multiple of it. -/
+modulus is `|det φ_j(x_i)|`, its squared norm is `N!`, its density is `N!` times
+the free-fermion density `Σ_j φ_j²`, and every other ground state is a multiple of it. -/
 theorem tonks_girardeau_W (v : C01) : ∃ φ : Fin (n + 1) → ℝ → ℝ, (∀ j, φ j ∈ SturmLiouville.Dom) ∧
     (∀ a b, ∫ t, φ a t * φ b t ∂vol01 = if a = b then 1 else 0) ∧
     IsGS (settingHCW n (fun _ => 0) continuous_const) v (mulA (slater φ)) ∧
