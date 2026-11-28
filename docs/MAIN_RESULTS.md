@@ -22,6 +22,9 @@ hypotheses `0 < N < M` were dropped (no longer used since the proof goes through
 | `DFT.Continuum.hk_of_ucp` | yes |
 | `DFT.Continuum.lattice_hk_of_hstar` | yes |
 | `DFT.Continuum.Line.CollisionTrace.collisionTrace_iff` | yes |
+| `DFT.Continuum.Line.orderedPairSum` | yes |
+| `DFT.Continuum.Line.orderedHartree` | yes |
+| `DFT.Continuum.Line.levyDerivativeAtDensity` | yes |
 | `DFT.Continuum.Line.hasDerivAt_liebNH` | yes |
 | `DFT.Continuum.Line.hasDerivAt_xcNH` | yes |
 | `DFT.Continuum.Line.ks_exact` | yes |

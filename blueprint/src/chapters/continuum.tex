@@ -1820,12 +1820,13 @@ $\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\math
 
 \begin{theorem}[Differentiability of the Lieb functional; Corso's Lemma 6.1]
   \label{thm:neu_lieb_diff}
-  \lean{hasDerivAt_of_sandwich, DFT.Continuum.Line.eventually_vrepNH, DFT.Continuum.Line.hasDerivAt_liebNH}
+  \lean{hasDerivAt_of_sandwich, DFT.Continuum.Line.eventually_vrepNH, DFT.Continuum.Line.hasDerivAt_liebNH, DFT.Continuum.Line.levyDerivativeAtDensity}
   \leanok
   \uses{thm:neu_lieb_eq, thm:neu_inverse_cont}
   For $\rho\in\mathcal D_N$ and $\delta\in X_0$, $\varepsilon\mapsto F_w(\rho+\varepsilon\delta)$ is finite near $0$ and
   differentiable at $0$ with derivative $-v_\rho(\delta)$. That is, $F_w$ is Gateaux differentiable on $\mathcal D_N$ and
-  $\mathrm dF_w(\rho)=-v_\rho$ modulo constants.
+  $\mathrm dF_w(\rho)=-v_\rho$ modulo constants. The constrained-search functional has the
+  same derivative because both functionals agree at the nearby representable densities.
 \end{theorem}
 \begin{proof}
   \leanok
@@ -1855,13 +1856,16 @@ $\delta\in X_0=\{\delta\in H^1(0,1):\int\delta=0\}$, the tangent space of $\math
 
 \begin{theorem}[Hartree and exchange-correlation for pair interactions]
   \label{thm:neu_hartree}
-  \lean{DFT.Continuum.Line.sqExt, DFT.Continuum.Line.continuous_sqExt, DFT.Continuum.Line.abs_sqExt_le, DFT.Continuum.Line.pairW, DFT.Continuum.Line.continuous_pairW, DFT.Continuum.Line.hartreeInt, DFT.Continuum.Line.integrable_hartreeInt, SturmLiouville.iccExt_add, SturmLiouville.iccExt_smul, DFT.Continuum.Line.vol01_prod_real_univ, DFT.Continuum.Line.hartreeB, DFT.Continuum.Line.hartreeB_apply, DFT.Continuum.Line.hartreeBE, DFT.Continuum.Line.hartreeE, DFT.Continuum.Line.hartreePot, DFT.Continuum.Line.hasFDerivAt_hartreeE, DFT.Continuum.Line.xcNH, DFT.Continuum.Line.hasDerivAt_xcNH}
+  \lean{DFT.Continuum.Line.sqExt, DFT.Continuum.Line.continuous_sqExt, DFT.Continuum.Line.abs_sqExt_le, DFT.Continuum.Line.pairW, DFT.Continuum.Line.continuous_pairW, DFT.Continuum.Line.hartreeInt, DFT.Continuum.Line.integrable_hartreeInt, SturmLiouville.iccExt_add, SturmLiouville.iccExt_smul, DFT.Continuum.Line.vol01_prod_real_univ, DFT.Continuum.Line.hartreeB, DFT.Continuum.Line.hartreeB_apply, DFT.Continuum.Line.hartreeBE, DFT.Continuum.Line.hartreeE, DFT.Continuum.Line.hartreePot, DFT.Continuum.Line.hasFDerivAt_hartreeE, DFT.Continuum.Line.orderedHartree, DFT.Continuum.Line.orderedPairSum, DFT.Continuum.Line.xcNH, DFT.Continuum.Line.hasDerivAt_xcNH}
   \leanok
   \uses{thm:neu_ks}
   Let $w(x)=\sum_{i<j}u(x_i,x_j)$ with $u$ continuous and symmetric. The Hartree energy
   $E_{\rm H}(\rho)=\tfrac12\iint u(s,t)\rho(s)\rho(t)$ is Fréchet differentiable on $H^1(0,1)$ with
   $\mathrm dE_{\rm H}(\rho)(\delta)=\iint u\,\rho\otimes\delta$, so $E_{\rm xc}=F_w-F_0-E_{\rm H}$ is Gateaux differentiable on
   $\mathcal D_N$ and $v_{\rm KS}=v+v_{\rm H}(\rho)+v_{\rm xc}(\rho)$.
+  For a symmetric continuous kernel, Corso's ordered-pair convention in Eq.~(2.2) counts each
+  unordered pair twice. Using $2u$ in the unordered sum gives the ordered sum and the
+  corresponding Hartree derivative (Lemma~6.3).
 \end{theorem}
 
 The Slater-determinant form of $F_0$ for fermions ($F_0=T_{\rm KS}$, Corso's Lemma~6.2) and the Aufbau principle

@@ -106,7 +106,9 @@ import DFT.Continuum.Line.NeumannKS.Exact
 import DFT.Continuum.Line.NeumannKS.Hartree
 import DFT.Continuum.Line.NeumannKS.Inverse
 import DFT.Continuum.Line.NeumannKS.Kinetic
+import DFT.Continuum.Line.NeumannKS.LevyDerivative
 import DFT.Continuum.Line.NeumannKS.Lieb
+import DFT.Continuum.Line.NeumannKS.OrderedHartree
 import DFT.Continuum.Line.Regularity.DensC1
 import DFT.Continuum.Line.Regularity.DensSeries
 import DFT.Continuum.Line.Regularity.H2

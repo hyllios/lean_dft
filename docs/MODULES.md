@@ -187,7 +187,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-232 modules, 60192 lines.
+234 modules, 60299 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -356,7 +356,9 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Continuum.Line.NeumannKS.Hartree` | 144 | Hartree and exchange-correlation for pair interactions (Neumann walls) |
 | `DFT.Continuum.Line.NeumannKS.Inverse` | 133 | Continuity of the inverse map `ρ ↦ v_ρ` with Neumann walls |
 | `DFT.Continuum.Line.NeumannKS.Kinetic` | 156 | The Kohn–Sham kinetic energy with Neumann walls (Corso's Lemma 6.2) |
+| `DFT.Continuum.Line.NeumannKS.LevyDerivative` | 41 | The constrained-search derivative on the fixed-mass space |
 | `DFT.Continuum.Line.NeumannKS.Lieb` | 173 | The Lieb and Levy–Lieb functionals with Neumann walls |
+| `DFT.Continuum.Line.NeumannKS.OrderedHartree` | 66 | Ordered pair interactions and the Hartree derivative |
 
 ### `DFT/Continuum/Line/Regularity/`
 
@@ -586,4 +588,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Scope.Representability` | 167 | Ensemble `v`-representability for a scope |
 | `DFT.Scope.SpinChain` | 122 | Spin chains as a scope |
 
-Total: 78949 lines of Lean.
+Total: 79056 lines of Lean.
