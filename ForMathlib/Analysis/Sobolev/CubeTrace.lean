@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 lean_dft contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: lean_dft contributors
+Authors: Stefano Pittalis
 -/
 import ForMathlib.Analysis.SturmLiouville.Basic
 import Mathlib.Probability.Moments.Variance
