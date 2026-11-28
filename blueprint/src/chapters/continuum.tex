@@ -726,6 +726,31 @@ invariant under relabelling, and $V=\sum_k v(x_k)+w$ is the total potential.
   norms and densities are preserved and the fermionic results transfer.
 \end{proof}
 
+\begin{theorem}[Pairwise collision traces and the Girardeau image]
+  \label{thm:line_girardeau_trace}
+  \lean{DFT.Continuum.Line.CollisionTrace.collisionTrace_iff, DFT.Continuum.Line.CollisionTrace.trace_smooth, DFT.Continuum.Line.CollisionTrace.trace_stability, DFT.Continuum.Line.CollisionTrace.restrictions_converge}
+  \leanok
+  \uses{thm:line_hardcore_W}
+  Let $I=(0,1)$, $N\geq1$ and let $\Phi\in H^1_0(I^N;\mathbb R)$ be symmetric.
+  For each pair $i\ne j$, let $T_{ij}$ be restriction to $x_i=x_j$ on smooth
+  zero-wall states, extended continuously into $L^2(I^{N-1})$ with Lebesgue
+  measure in the remaining coordinates. Then $T_{ij}\Phi=0$ for all pairs
+  if and only if there is an antisymmetric $\Psi\in H^1_0(I^N;\mathbb R)$
+  with $\Phi=A\Psi$ almost everywhere. This gives the real Dirichlet case of
+  \href{https://doi.org/10.1007/s00023-026-01693-0}{Corso, Remark~4.9}.
+\end{theorem}
+\begin{proof}
+  \leanok
+  On almost every coordinate line, integrating the weak derivative from the
+  wall recovers a continuous representative. Evaluation at a collision gives
+  the trace and an $L^2$ bound by the corresponding derivative. Antisymmetric
+  smooth approximants vanish at collisions, and the squared modulus is preserved
+  by $A$. Conversely, a coordinate line meets the ordered chamber in an interval
+  bounded by walls or collisions. The zero traces remove its boundary terms in
+  integration by parts, so the chamber restriction has weak derivatives. Its
+  alternating extension is the required fermionic preimage.
+\end{proof}
+
 \begin{theorem}[The Tonks--Girardeau gas on $H^1_0$]
   \label{thm:tonks_W}
   \lean{DFT.Continuum.Line.isGS_W_of_isGS, DFT.Continuum.Line.tonks_girardeau_W}

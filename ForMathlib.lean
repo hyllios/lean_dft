@@ -12,6 +12,8 @@ import ForMathlib.Analysis.Matrix.RealGram
 import ForMathlib.Analysis.Matrix.Spectrum
 import ForMathlib.Analysis.ODE.Linear
 import ForMathlib.Analysis.PoissonKernel
+import ForMathlib.Analysis.Sobolev.CubeChamber
+import ForMathlib.Analysis.Sobolev.CubeTrace
 import ForMathlib.Analysis.Sobolev.Weak
 import ForMathlib.Analysis.SturmLiouville.Basic
 import ForMathlib.Analysis.SturmLiouville.Eigen

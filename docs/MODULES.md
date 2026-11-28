@@ -5,7 +5,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `ForMathlib`: pure mathematics (Mathlib candidates)
 
-30 modules, 5276 lines.
+32 modules, 5543 lines.
 
 ### `ForMathlib/Algebra/MvPolynomial/`
 
@@ -60,6 +60,8 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `ForMathlib.Analysis.Sobolev.CubeChamber` | 68 | Coordinate sections of finite ordering chambers |
+| `ForMathlib.Analysis.Sobolev.CubeTrace` | 199 | Traces of coordinate primitives on the unit cube |
 | `ForMathlib.Analysis.Sobolev.Weak` | 296 | Weak derivatives in the plane |
 
 ### `ForMathlib/Analysis/SturmLiouville/`
@@ -109,7 +111,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `QM`: generic quantum mechanics and many-body theory (Physlib candidates)
 
-41 modules, 13104 lines.
+42 modules, 13214 lines.
 
 ### `QM/`
 
@@ -160,6 +162,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `QM.ManyBody.Configurations` | 30 | Spinless lattice fermions: configurations and occupations |
 | `QM.ManyBody.Fock` | 341 | The fermionic Fock space of `M` modes |
+| `QM.ManyBody.Girardeau` | 110 | Girardeau's sign and extension from the ordered chamber |
 | `QM.ManyBody.HartreeFock` | 442 | Hartree–Fock theory and Lieb's variational principle |
 | `QM.ManyBody.HartreeFockAufbau` | 436 | No unfilled shells in Hartree–Fock theory |
 | `QM.ManyBody.ModeRotation` | 505 | Mode rotations |
@@ -184,7 +187,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## `DFT`: density-functional theory
 
-229 modules, 59806 lines.
+232 modules, 60192 lines.
 
 ### `DFT/Continuum/Box/`
 
@@ -212,6 +215,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `DFT.Continuum.Line.Applications.GirardeauTrace` | 79 | Girardeau image criterion on the Dirichlet interval |
 | `DFT.Continuum.Line.Applications.HardCoreW` | 280 | Hard-core bosons on `H¹₀` for continuous potentials |
 | `DFT.Continuum.Line.Applications.LiebMattisTotalW` | 325 | The Lieb–Mattis theorem for the total spin, continuous potentials |
 | `DFT.Continuum.Line.Applications.LiebMattisW` | 161 | The Lieb–Mattis theorem on `H¹₀` for continuous potentials |
@@ -259,6 +263,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 | Module | Lines | Content |
 |---|---|---|
+| `DFT.Continuum.Line.HK.ChamberTrace` | 115 | Weak derivatives on an ordering chamber |
 | `DFT.Continuum.Line.HK.HKY` | 152 | Hohenberg–Kohn and the Lieb functional in a spin sector |
 | `DFT.Continuum.Line.HK.LiebCont` | 77 | Hohenberg–Kohn and the Lieb functional on `H¹₀` for continuous potentials |
 | `DFT.Continuum.Line.HK.Nondeg` | 257 | Nondegeneracy of `H¹₀` ground states for continuous potentials |
@@ -381,6 +386,7 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 |---|---|---|
 | `DFT.Continuum.Line.UCP.AbsW` | 205 | `\|Φ\|` in `H¹₀` and the first Perron–Frobenius step |
 | `DFT.Continuum.Line.UCP.Chain` | 187 | The chain rule in `H¹₀` |
+| `DFT.Continuum.Line.UCP.CollisionTrace` | 192 | Coordinate collision traces for weak Dirichlet states |
 | `DFT.Continuum.Line.UCP.Cut` | 201 | Restricting `H¹₀` functions to `{xᵢ < t₀}` |
 | `DFT.Continuum.Line.UCP.H1Approx` | 149 | Approximation of `H¹₀` states by `C²` states |
 | `DFT.Continuum.Line.UCP.HalfSpace` | 417 | Restricting `H¹₀` functions to a half-space |
@@ -580,4 +586,4 @@ Folder order and layering: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | `DFT.Scope.Representability` | 167 | Ensemble `v`-representability for a scope |
 | `DFT.Scope.SpinChain` | 122 | Spin chains as a scope |
 
-Total: 78186 lines of Lean.
+Total: 78949 lines of Lean.

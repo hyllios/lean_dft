@@ -23,6 +23,7 @@ import QM.Green.Lehmann
 import QM.Green.Spectral
 import QM.ManyBody.Configurations
 import QM.ManyBody.Fock
+import QM.ManyBody.Girardeau
 import QM.ManyBody.HartreeFock
 import QM.ManyBody.HartreeFockAufbau
 import QM.ManyBody.ModeRotation

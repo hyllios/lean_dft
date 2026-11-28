@@ -10,6 +10,7 @@ import DFT.Continuum.General.FromLattice
 import DFT.Continuum.General.HK
 import DFT.Continuum.General.Lieb
 import DFT.Continuum.General.VRep
+import DFT.Continuum.Line.Applications.GirardeauTrace
 import DFT.Continuum.Line.Applications.HardCoreW
 import DFT.Continuum.Line.Applications.LiebMattisTotalW
 import DFT.Continuum.Line.Applications.LiebMattisW
@@ -32,6 +33,7 @@ import DFT.Continuum.Line.H1.Represent
 import DFT.Continuum.Line.H1.Weak
 import DFT.Continuum.Line.H1.WeakNec
 import DFT.Continuum.Line.H1.WeakRep
+import DFT.Continuum.Line.HK.ChamberTrace
 import DFT.Continuum.Line.HK.HKY
 import DFT.Continuum.Line.HK.LiebCont
 import DFT.Continuum.Line.HK.Nondeg
@@ -119,6 +121,7 @@ import DFT.Continuum.Line.Symmetry.Young
 import DFT.Continuum.Line.Symmetry.YoungStrong
 import DFT.Continuum.Line.UCP.AbsW
 import DFT.Continuum.Line.UCP.Chain
+import DFT.Continuum.Line.UCP.CollisionTrace
 import DFT.Continuum.Line.UCP.Cut
 import DFT.Continuum.Line.UCP.H1Approx
 import DFT.Continuum.Line.UCP.HalfSpace
